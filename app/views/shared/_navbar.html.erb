@@ -1,0 +1,19 @@
+<!-- Top Navbar -->
+<nav id="main-navbar"
+     data-sidebar-target="navbar"
+     class="h-16 bg-white shadow-sm border-b border-gray-200 fixed top-0 left-0 w-full md:pl-64">
+  <div class="h-full py-0 flex items-center px-4">
+    <!-- Bouton d'ouverture de la sidebar à gauche, sobre -->
+    <button data-sidebar-target="desktopSideBarOpeningButton" data-action="click->sidebar#desktopToggle" class="mr-4 p-2 hidden">
+      <i class="fas fa-bars text-blue-600 text-xl"></i>
+    </button>
+
+    <!-- Titre à gauche avec plus d'espacement -->
+    <h1 class="text-2xl font-bold text-gray-800 ml-2 mr-auto"><%= title %></h1>
+
+    <!-- Actions à droite si besoin -->
+    <div class="w-10">
+      <!-- Espace réservé pour équilibrer le layout -->
+    </div>
+  </div>
+</nav>
