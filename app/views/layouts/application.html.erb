@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Nutri Flow" %></title>
+    <title>NutriFlow</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -18,13 +18,24 @@
     <link rel="apple-touch-icon" href="/icon.png">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   </head>
 
-  <body>
-    <main class="container mx-auto mt-28 px-5 flex">
-      <%= yield %>
-    </main>
+  <body class="bg-gray-100 min-h-screen" data-controller="sidebar">
+    <!-- Navbar toujours en haut -->
+    <%= render 'shared/navbar', title: (content_for?(:page_title) ? yield(:page_title) : "NutriFlow") %>
+
+    <!-- Desktop Sidebar -->
+    <%= render 'shared/sidebar' %>
+
+    <!-- Main Content -->
+    <div data-sidebar-target="topMenu" class="md:pl-64">
+      <main class="p-6">
+        <%= yield %>
+      </main>
+    </div>
   </body>
 </html>
