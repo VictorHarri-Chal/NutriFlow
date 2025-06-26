@@ -1,0 +1,16 @@
+<%= simple_form_for(food) do |f| %>
+  <div class="grid grid-cols-1 gap-4">
+    <%= f.input :name, input_html: { class: "w-full rounded border border-gray-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" }, label_html: { class: "font-medium text-gray-700" } %>
+    <%= f.input :brand, input_html: { class: "w-full rounded border border-gray-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" }, label_html: { class: "font-medium text-gray-700" } %>
+    <%= f.input :fats, step: 0.1, input_html: { class: "w-full rounded border border-gray-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" }, label_html: { class: "font-medium text-gray-700" } %>
+    <%= f.input :carbs, step: 0.1, input_html: { class: "w-full rounded border border-gray-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" }, label_html: { class: "font-medium text-gray-700" } %>
+    <%= f.input :sugars, step: 0.1, input_html: { class: "w-full rounded border border-gray-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" }, label_html: { class: "font-medium text-gray-700" } %>
+    <%= f.input :proteins, step: 0.1, input_html: { class: "w-full rounded border border-gray-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" }, label_html: { class: "font-medium text-gray-700" } %>
+    <%= f.input :calories, step: 1, input_html: { class: "w-full rounded border border-gray-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" }, label_html: { class: "font-medium text-gray-700" } %>
+  </div>
+
+  <div class="flex justify-end gap-4 mt-8">
+    <%= link_to "Annuler", foods_path, class: "px-6 py-2 bg-gray-200 text-gray-800 rounded-lg shadow hover:bg-gray-300 transition font-semibold" %>
+    <%= f.button :submit, "Enregistrer", class: "px-6 py-2 bg-blue-700 text-white rounded-lg shadow hover:bg-blue-800 transition font-semibold" %>
+  </div>
+<% end %>

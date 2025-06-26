@@ -1,0 +1,76 @@
+fr:
+  support:
+    array:
+      words_connector: ", "
+      two_words_connector: " et "
+      last_word_connector: " et "
+  errors:
+    analytics:
+      unauthorized_access:
+        error: "Accès non autorisé : Cette fonctionnalité n'est pas disponible"
+      invalid_date:
+        error: "Date invalide"
+    data_import:
+      etl:
+        xlsx_file_not_found: L'archive Zip doit contenir un fichier Excel du même nom.
+        transform:
+          invalid_relationship_code: Le code couleur n'est pas valide
+          only_one_contact_by_legal_entity: Un seul représentant légal doit être renseigné par personne morale
+          only_one_legal_entity: Une seule personne morale doit être renseignée par role
+          company_should_not_have_manager_with_legal_guardian: Le représentant légal d'une personne morale ne peut-être pas être dépendant d'un troisième contact
+          only_one_contact_for_legal_guardian: Un seul contact doit être renseigné si une autre personne de contact est présente
+          only_one_legal_guardian_for_contact: Une seule personne de contact doit être renseignée
+          missing_owner: Informations du propriétaire/nu-propriétaire manquantes
+          missing_usufructuary: Informations de l'usufruitier manquantes
+          missing_lease_promise_operator: Informations de l'exploitant manquantes pour la promesse de bail
+          missing_lease_promise_signed_at: Date de signature promesse de bail manquante
+          missing_lease_promise_document: Fichier PDF introuvable pour la promesse de bail
+    format: "le champ %{attribute} %{message}"
+    messages:
+      accepted: doit être accepté(e)
+      blank: doit être renseigné
+      present: doit être vide
+      confirmation: ne concorde pas avec %{attribute}
+      empty: doit être rempli(e)
+      equal_to: doit être égal à %{count}
+      even: doit être pair
+      exclusion: n'est pas disponible
+      greater_than: doit être supérieur à %{count}
+      greater_than_or_equal_to: doit être supérieur ou égal à %{count}
+      inclusion: n'est pas inclus(e) dans la liste
+      invalid: n'est pas valide
+      less_than: doit être inférieur à %{count}
+      less_than_or_equal_to: doit être inférieur ou égal à %{count}
+      model_invalid: "Validation échouée : %{errors}"
+      not_a_number: n'est pas un nombre
+      not_an_integer: doit être un nombre entier
+      odd: doit être impair
+      required: doit exister
+      taken: n'est pas disponible
+      too_long:
+        one: est trop long (pas plus d'un caractère)
+        other: est trop long (pas plus de %{count} caractères)
+      too_short:
+        one: est trop court (au moins un caractère)
+        other: est trop court (au moins %{count} caractères)
+      wrong_length:
+        one: ne fait pas la bonne longueur (doit comporter un seul caractère)
+        other: ne fait pas la bonne longueur (doit comporter %{count} caractères)
+      other_than: doit être différent de %{count}
+      invalid_format: a un format invalide
+      country_mismatch: "ne correspond pas au pays de l'IBAN"
+      complexity_requirement_not_met: "ne satisfait pas l'exigence de complexité."
+      sum_must_equal_total_amount: |
+        Les sommes engagées ne correspondent pas au montant du devis.
+        Montant total : %{total_amount}
+        Somme actuelle : %{current_sum}
+      cant_be_updated_if_part_of_contract: Cette parcelle ne peut pas être modifiée car citée dans un contrat
+      missing_chief: Il manque un∙e chef∙fe de projet
+      too_many_chief: Le nombre de chefs de projet est trop élevé
+      missing_owner: Au moins un propriétaire ou usufruitier/nu-propriétaire est requis
+      missing_usufructuary: Vous avez saisi un nu-propriétaire, dans cette configuration un usufruitier est requis
+      missing_bare_owner: Vous avez saisi un usufruitier, dans cette configuration un nu-propriétaire est requis
+      owners_have_to_be_unique: Les propriétaires/usufruitiers/nu-propriétaires doivent être différents
+      exploited_area_must_be_less_than_land_area: La surface prise bail doit être inférieure ou égale à la surface totale de la parcelle
+      must_not_be_archived: ne doit pas être archivé
+      must_be_checked: doit être coché

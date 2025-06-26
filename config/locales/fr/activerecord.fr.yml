@@ -1,0 +1,4 @@
+fr:
+  # YOU SHOULD NOT WRITE IN THIS FILE
+  # Each model has his own activerecord translation file
+  # in config/locales/fr/activerecord/
