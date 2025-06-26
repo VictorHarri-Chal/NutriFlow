@@ -1,3 +1,56 @@
 <% content_for :page_title do %>
   Banque d'Aliments
 <% end %>
+
+<% content_for :navbar_actions do %>
+  <%= link_to new_food_path, class: "inline-flex items-center px-4 py-2 bg-blue-700 text-white rounded-lg shadow hover:bg-blue-800 transition font-medium" do %>
+    <i class="fas fa-plus mr-2"></i>
+    Ajouter un aliment
+  <% end %>
+<% end %>
+
+<div class="max-w-6xl mx-auto mt-16 bg-white rounded-xl shadow-md p-8">
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:name) %></th>
+          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:brand) %></th>
+          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:fats) %></th>
+          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:carbs) %></th>
+          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:sugars) %></th>
+          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:proteins) %></th>
+          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:calories) %></th>
+          <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <% @foods.each do |food| %>
+          <tr>
+            <td class="px-4 py-2"><%= food.name %></td>
+            <td class="px-4 py-2"><%= food.brand %></td>
+            <td class="px-4 py-2"><%= food.fats %></td>
+            <td class="px-4 py-2"><%= food.carbs %></td>
+            <td class="px-4 py-2"><%= food.sugars %></td>
+            <td class="px-4 py-2"><%= food.proteins %></td>
+            <td class="px-4 py-2"><%= food.calories %></td>
+            <td class="px-4 py-2 text-center">
+              <%= link_to edit_food_path(food), class: "inline-block text-blue-600 hover:text-blue-900 mr-2", title: "Éditer" do %>
+                <i class="fa fa-pencil"></i>
+              <% end %>
+              <%= link_to food_path(food),
+                          data: {
+                            turbo_method: :delete,
+                            turbo_confirm: "Es-tu sûr de vouloir supprimer cet aliment ?"
+                          },
+                          class: "inline-block text-red-600 hover:text-red-900",
+                          title: "Supprimer" do %>
+                <i class="fa fa-trash"></i>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

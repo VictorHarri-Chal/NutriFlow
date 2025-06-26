@@ -1,0 +1,14 @@
+fr:
+  activerecord:
+    models:
+      food: "Aliment"
+      foods: "Aliments"
+    attributes:
+      food:
+        name: "Nom"
+        brand: "Marque"
+        fats: "Lipides"
+        carbs: "Glucides"
+        sugars: "Sucres"
+        proteins: "Protéines"
+        calories: "Calories"

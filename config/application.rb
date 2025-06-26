@@ -38,5 +38,12 @@ module NutriFlow
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    # Configuration de la locale par défaut
+    config.i18n.default_locale = :fr
+    config.i18n.available_locales = [:fr, :en]
+
+    # S'assurer que Rails charge tous les fichiers de traduction
+    config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}')]
   end
 end
