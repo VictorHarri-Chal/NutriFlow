@@ -1,4 +1,5 @@
 <%= simple_form_for(food) do |f| %>
+  <%= render AlertComponent.new(title: "Renseignez les macros de l'aliment sur une base de 100g", level: "warning") %>
   <div class="grid grid-cols-1 gap-4">
     <%= f.input :name, input_html: { class: "w-full rounded border border-gray-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" }, label_html: { class: "font-medium text-gray-700" } %>
     <%= f.input :brand, input_html: { class: "w-full rounded border border-gray-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" }, label_html: { class: "font-medium text-gray-700" } %>
