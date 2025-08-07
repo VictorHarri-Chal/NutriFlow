@@ -4,23 +4,27 @@ class DayFood < ApplicationRecord
 
   validates :quantity, presence: true, numericality: { greater_than: 0 }
 
+  def gram_factor
+    quantity / 100.0
+  end
+
   def total_calories
-    (food.calories * quantity).round(1)
+    (food.calories * gram_factor).round(1)
   end
 
   def total_proteins
-    (food.proteins * quantity).round(1)
+    (food.proteins * gram_factor).round(1)
   end
 
   def total_carbs
-    (food.carbs * quantity).round(1)
+    (food.carbs * gram_factor).round(1)
   end
 
   def total_fats
-    (food.fats * quantity).round(1)
+    (food.fats * gram_factor).round(1)
   end
 
   def total_sugars
-    (food.sugars * quantity).round(1)
+    (food.sugars * gram_factor).round(1)
   end
 end

@@ -1,0 +1,23 @@
+<tr data-sortable-table-target="row">
+  <td class="px-4 py-2"><%= food.name %></td>
+  <td class="px-4 py-2"><%= food.brand %></td>
+  <td class="px-4 py-2"><%= food.fats %> g</td>
+  <td class="px-4 py-2"><%= food.carbs %> g</td>
+  <td class="px-4 py-2"><%= food.sugars %> g</td>
+  <td class="px-4 py-2"><%= food.proteins %> g</td>
+  <td class="px-4 py-2"><%= food.calories %> kcal</td>
+  <td class="px-4 py-2 text-center">
+    <%= link_to edit_food_path(food), class: "inline-block text-blue-600 hover:text-blue-900 mr-2", title: "Éditer" do %>
+      <i class="fa fa-pencil"></i>
+    <% end %>
+    <%= link_to food_path(food),
+                data: {
+                  turbo_method: :delete,
+                  turbo_confirm: "Es-tu sûr de vouloir supprimer cet aliment ?"
+                },
+                class: "inline-block text-red-600 hover:text-red-900",
+                title: "Supprimer" do %>
+      <i class="fa fa-trash"></i>
+    <% end %>
+  </td>
+</tr>
