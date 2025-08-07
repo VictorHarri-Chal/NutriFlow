@@ -1,8 +1,9 @@
 class Day < ApplicationRecord
+  belongs_to :user
   has_many :day_foods, dependent: :destroy
   has_many :foods, through: :day_foods
 
-  validates :date, presence: true, uniqueness: true
+  validates :date, presence: true, uniqueness: { scope: :user_id }
 
   scope :for_date, ->(date) { where(date: date) }
 

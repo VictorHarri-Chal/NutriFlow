@@ -1,6 +1,7 @@
 class Food < ApplicationRecord
   include PgSearch::Model
 
+  belongs_to :user
   has_many :day_foods, dependent: :destroy
   has_many :days, through: :day_foods
 
