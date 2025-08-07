@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+Dir[Rails.root.join('lib/components/**/*.rb')].each { |f| require f }
+SimpleForm.include_component(InputComponent)
+
 LABEL_CLASSES = 'block text-sm font-medium text-gray-700 mb-1'
 INPUT_CLASSES = %w[
   block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6
@@ -18,8 +21,11 @@ SimpleForm.setup do |config| # rubocop:disable Metrics/BlockLength
     b.use :html5
     b.use :placeholder
     b.use :label, class: LABEL_CLASSES, error_class: 'text-red-900'
-    b.use :input, class: INPUT_CLASSES,
-                  error_class: 'border-red-300 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500'
+    b.wrapper tag: "div", class: "flex items-center" do |ba|
+      ba.use :input, class: INPUT_CLASSES,
+                    error_class: 'border-red-300 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500'
+      ba.optional :append
+    end
     b.use :error, wrap_with: { tag: :p, class: 'ml-2 text-sm text-red-600' }
   end
 
@@ -61,7 +67,10 @@ SimpleForm.setup do |config| # rubocop:disable Metrics/BlockLength
                                valid_class: 'form-group-valid' do |b|
     b.use :html5
     b.use :label, class: LABEL_CLASSES
-    b.use :input, data: { controller: 'tom-select' }
+    b.wrapper tag: "div", class: "flex items-center" do |ba|
+      ba.use :input, data: { controller: 'tom-select' }
+      ba.optional :append
+    end
 
     b.use :full_error, wrap_with: { tag: 'div', class: 'block text-sm font-medium text-red-700 mt-1 max-w-fit' }
     b.use :hint, wrap_with: { tag: 'small', class: 'block text-sm font-medium text-gray-700 mt-1' }

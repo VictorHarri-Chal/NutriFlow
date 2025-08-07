@@ -45,5 +45,8 @@ module NutriFlow
 
     # S'assurer que Rails charge tous les fichiers de traduction
     config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}')]
+
+    # Configuration de la localisation
+    config.time_zone = 'Paris'
   end
 end
