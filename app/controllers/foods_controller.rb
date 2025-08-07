@@ -3,17 +3,17 @@ class FoodsController < ApplicationController
 
   def index
     @foods = params[:query].then do |query|
-      base_query = query.present? ? Food.search_by_name(query) : Food.all
+      base_query = query.present? ? current_user.foods.search_by_name(query) : current_user.foods
       sort_foods(base_query)
     end
   end
 
   def new
-    @food = Food.new
+    @food = current_user.foods.build
   end
 
   def create
-    @food = Food.new(food_params)
+    @food = current_user.foods.build(food_params)
     if @food.save
       redirect_to foods_path, notice: "Aliment créé avec succès."
     else
@@ -40,7 +40,7 @@ class FoodsController < ApplicationController
   private
 
   def set_food
-    @food = Food.find(params[:id])
+    @food = current_user.foods.find(params[:id])
   end
 
   def food_params

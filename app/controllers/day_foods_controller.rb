@@ -36,11 +36,11 @@ class DayFoodsController < ApplicationController
   private
 
   def set_day
-    @day = Day.find(params[:day_id])
+    @day = current_user.days.find(params[:day_id])
   end
 
   def set_day_food
-    @day_food = DayFood.find(params[:id])
+    @day_food = DayFood.joins(:day).where(days: { user_id: current_user.id }).find(params[:id])
   end
 
   def day_food_params

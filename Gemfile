@@ -71,3 +71,5 @@ gem 'view_component'
 # gem "pexels"
 gem 'dotenv'
 # gem "redcarpet"
+
+gem "devise", "~> 4.9"

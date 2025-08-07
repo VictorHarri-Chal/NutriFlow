@@ -26,7 +26,7 @@
             <i class="fas fa-cog w-5 h-5 mr-3"></i>
             <span class="font-medium">Paramètres</span>
         <% end %>
-        <%= link_to "#", class: "flex items-center px-4 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg" do %>
+        <%= link_to destroy_user_session_path, data: { turbo_method: :delete }, class: "flex items-center px-4 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg" do %>
             <i class="fas fa-sign-out-alt w-5 h-5 mr-3"></i>
             <span class="font-medium">Déconnexion</span>
         <% end %>
