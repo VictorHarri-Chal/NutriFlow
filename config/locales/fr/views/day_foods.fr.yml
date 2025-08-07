@@ -1,0 +1,6 @@
+fr:
+  day_foods:
+    new:
+      new_day_food: "Ajouter un aliment"
+    edit:
+      edit_day_food: "Modifier la quantité"

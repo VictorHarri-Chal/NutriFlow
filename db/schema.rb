@@ -10,9 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_09_174840) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_26_193928) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "day_foods", force: :cascade do |t|
+    t.bigint "day_id", null: false
+    t.bigint "food_id", null: false
+    t.decimal "quantity", default: "1.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["day_id", "food_id"], name: "index_day_foods_on_day_id_and_food_id"
+    t.index ["day_id"], name: "index_day_foods_on_day_id"
+    t.index ["food_id"], name: "index_day_foods_on_food_id"
+  end
+
+  create_table "days", force: :cascade do |t|
+    t.date "date", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["date"], name: "index_days_on_date", unique: true
+  end
 
   create_table "foods", force: :cascade do |t|
     t.string "name", null: false
@@ -27,4 +45,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_174840) do
     t.index ["brand"], name: "index_foods_on_brand"
     t.index ["name"], name: "index_foods_on_name"
   end
+
+  add_foreign_key "day_foods", "days"
+  add_foreign_key "day_foods", "foods"
 end

@@ -2,11 +2,121 @@
   Calendrier
 <% end %>
 
-<div class="max-w-2xl mx-auto mt-16 bg-white rounded-xl shadow-md p-8">
-  <h1 class="text-3xl font-bold text-blue-800 mb-2">Bienvenue sur la page template</h1>
-  <h2 class="text-xl text-gray-600 mb-4">Sous-titre de la page</h2>
-  <p class="text-gray-700 mb-6">
-    Ceci est un exemple de page template basique. Vous pouvez personnaliser ce contenu selon vos besoins pour démarrer rapidement une nouvelle page dans votre application.
-  </p>
-  <a href="#" class="inline-block px-6 py-2 bg-blue-700 text-white rounded-lg shadow hover:bg-blue-800 transition">Action principale</a>
+<% content_for :navbar_actions do %>
+  <div class="flex items-center space-x-4">
+    <div class="flex items-center space-x-2">
+      <%= link_to calendars_path(date: (@selected_date - 1.day).strftime('%Y-%m-%d')),
+                  class: "p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition",
+                  data: { turbo: false } do %>
+        <i class="fas fa-chevron-left"></i>
+      <% end %>
+
+      <input type="date"
+             id="date-selector"
+             value="<%= @selected_date.strftime('%Y-%m-%d') %>"
+             class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+             data-controller="date-selector">
+
+      <%= link_to calendars_path(date: (@selected_date + 1.day).strftime('%Y-%m-%d')),
+                  class: "p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition",
+                  data: { turbo: false } do %>
+        <i class="fas fa-chevron-right"></i>
+      <% end %>
+    </div>
+
+    <%= link_to new_day_day_food_path(@day), class: "inline-flex items-center px-4 py-2 bg-blue-700 text-white rounded-lg shadow hover:bg-blue-800 transition font-medium" do %>
+      <i class="fas fa-plus mr-2"></i>
+      Ajouter un aliment
+    <% end %>
+  </div>
+<% end %>
+
+<div class="max-w-6xl mx-auto mt-16 bg-white rounded-xl shadow-md p-8" id="calendar-content">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-blue-800 mb-4">
+      <%= l(@selected_date, format: :long) %>
+    </h1>
+
+    <!-- Résumé des totaux -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 bg-gray-50 rounded-lg p-4">
+      <div class="text-center">
+        <div class="text-2xl font-bold text-blue-600"><%= @total_calories %> kcal</div>
+        <div class="text-sm text-gray-600"><%= Food.human_attribute_name(:calories) %></div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-green-600"><%= @total_proteins %> g</div>
+        <div class="text-sm text-gray-600"><%= Food.human_attribute_name(:proteins) %></div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-yellow-600"><%= @total_carbs %> g</div>
+        <div class="text-sm text-gray-600"><%= Food.human_attribute_name(:carbs) %></div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-red-600"><%= @total_fats %> g</div>
+        <div class="text-sm text-gray-600"><%= Food.human_attribute_name(:fats) %></div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-purple-600"><%= @total_sugars %> g</div>
+        <div class="text-sm text-gray-600"><%= Food.human_attribute_name(:sugars) %></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="overflow-x-auto">
+    <% if @day_foods.any? %>
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:name) %></th>
+            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:brand) %></th>
+            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Quantité</th>
+            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:calories) %></th>
+            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:proteins) %></th>
+            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:carbs) %></th>
+            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:fats) %></th>
+            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:sugars) %></th>
+            <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @day_foods.each do |day_food| %>
+            <tr>
+              <td class="px-4 py-2 font-medium"><%= day_food.food.name %></td>
+              <td class="px-4 py-2 text-gray-600"><%= day_food.food.brand %></td>
+              <td class="px-4 py-2"><%= day_food.quantity %></td>
+              <td class="px-4 py-2 font-semibold text-blue-600"><%= day_food.total_calories %> kcal</td>
+              <td class="px-4 py-2 text-green-600"><%= day_food.total_proteins %> g</td>
+              <td class="px-4 py-2 text-yellow-600"><%= day_food.total_carbs %> g</td>
+              <td class="px-4 py-2 text-red-600"><%= day_food.total_fats %> g</td>
+              <td class="px-4 py-2 text-purple-600"><%= day_food.total_sugars %> g</td>
+              <td class="px-4 py-2 text-center">
+                <%= link_to edit_day_day_food_path(@day, day_food), class: "inline-block text-blue-600 hover:text-blue-900 mr-2", title: "Modifier" do %>
+                  <i class="fa fa-pencil"></i>
+                <% end %>
+                <%= link_to day_day_food_path(@day, day_food),
+                            data: {
+                              turbo_method: :delete,
+                              turbo_confirm: "Es-tu sûr de vouloir supprimer cet aliment ?"
+                            },
+                            class: "inline-block text-red-600 hover:text-red-900",
+                            title: "Supprimer" do %>
+                  <i class="fa fa-trash"></i>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <div class="text-center py-12">
+        <i class="fas fa-utensils text-6xl text-gray-300 mb-4"></i>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun aliment consommé</h3>
+        <p class="text-gray-600 mb-6">Vous n'avez pas encore ajouté d'aliments pour cette journée.</p>
+        <%= link_to new_day_day_food_path(@day), class: "inline-flex items-center px-6 py-3 bg-blue-700 text-white rounded-lg shadow hover:bg-blue-800 transition font-medium" do %>
+          <i class="fas fa-plus mr-2"></i>
+          Ajouter votre premier aliment
+        <% end %>
+      </div>
+    <% end %>
+  </div>
 </div>
