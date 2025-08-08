@@ -5,6 +5,7 @@ Rails.application.routes.draw do
 
   resources :calendars, only: [:index]
   resources :foods, except: [:show]
+  resource :daily_calorie_requirement, only: [:show]
 
   resources :days, only: [] do
     resources :day_foods, only: [:new, :create, :edit, :update, :destroy]

@@ -1,0 +1,68 @@
+<% content_for :page_title, "Besoin calorique journalier" %>
+
+<div class="max-w-6xl mx-auto mt-16 bg-white rounded-xl shadow-md p-8">
+  <div class="mb-8 p-6 bg-gray-50 rounded-lg">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-semibold text-gray-800">Informations du profil</h2>
+      <%= link_to profile_path, class: "inline-flex items-center px-4 py-2 bg-blue-800 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors duration-200" do %>
+        <i class="fas fa-user-edit mr-2"></i>
+        Modifier le profil
+      <% end %>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white p-4 rounded-lg shadow-sm">
+        <div class="text-sm text-gray-500 font-medium">Âge</div>
+        <div class="text-lg font-semibold text-gray-900">
+          <%= @profile.age.present? ? "#{@profile.age} ans" : "Non renseigné" %>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-lg shadow-sm">
+        <div class="text-sm text-gray-500 font-medium">Taille</div>
+        <div class="text-lg font-semibold text-gray-900">
+          <%= @profile.height.present? ? "#{@profile.height} cm" : "Non renseigné" %>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-lg shadow-sm">
+        <div class="text-sm text-gray-500 font-medium">Poids</div>
+        <div class="text-lg font-semibold text-gray-900">
+          <%= @profile.weight.present? ? "#{@profile.weight} kg" : "Non renseigné" %>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-lg shadow-sm">
+        <div class="text-sm text-gray-500 font-medium">Activité physique</div>
+        <div class="text-lg font-semibold text-gray-900">
+          <%= @profile.activity_level.present? ? @profile.activity_level_text : "Non renseigné" %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-8 p-6 bg-gray-50 rounded-lg">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Besoin calorique journalier</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="<%= @profile.goal.weight_loss? ? 'bg-blue-100 border-2 border-blue-500' : 'bg-white' %> p-4 rounded-lg shadow-sm transition-all duration-200">
+        <div class="text-sm text-gray-500 font-medium">Perte de poids</div>
+        <div class="text-lg font-semibold text-gray-900">
+          <%= @daily_calorie_requirement_weight_loss %> kcal
+        </div>
+      </div>
+
+      <div class="<%= @profile.goal.maintenance? ? 'bg-blue-100 border-2 border-blue-500' : 'bg-white' %> p-4 rounded-lg shadow-sm transition-all duration-200">
+        <div class="text-sm text-gray-500 font-medium">Maintien</div>
+        <div class="text-lg font-semibold text-gray-900">
+          <%= @daily_calorie_requirement %> kcal
+        </div>
+      </div>
+
+      <div class="<%= @profile.goal.muscle_gain? ? 'bg-blue-100 border-2 border-blue-500' : 'bg-white' %> p-4 rounded-lg shadow-sm transition-all duration-200">
+        <div class="text-sm text-gray-500 font-medium">Prise de muscle</div>
+        <div class="text-lg font-semibold text-gray-900">
+          <%= @daily_calorie_requirement_muscle_gain %> kcal
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

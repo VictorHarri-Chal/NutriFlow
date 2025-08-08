@@ -1,7 +1,7 @@
 <%= simple_form_for([day, day_food]) do |f| %>
   <div class="grid grid-cols-1 gap-4">
     <%= f.association :food,
-        collection: Food.all,
+        collection: Food.where(user: current_user),
         prompt: "Sélectionnez un aliment",
         disabled: !day_food.new_record?,
         input_html: { class: "w-full rounded border border-gray-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" },
@@ -9,18 +9,17 @@
 
     <%= f.input :quantity,
         as: :numeric,
-        step: 0.1,
-        min: 0.1,
+        min: 1,
         input_html: {
           class: "w-full rounded border border-gray-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition",
-          value: day_food.quantity || 1.0
+          value: day_food.new_record? ? 100 : day_food.quantity
         },
         label_html: { class: "font-medium text-gray-700" },
         append: "g" %>
   </div>
 
   <div class="flex justify-center gap-4 mt-8">
-    <%= link_to "Annuler", foods_path, class: "px-6 py-2 bg-gray-200 text-gray-800 rounded-lg shadow hover:bg-gray-300 transition font-semibold text-center text-sm" %>
+    <%= link_to "Annuler", calendars_path, class: "px-6 py-2 bg-gray-200 text-gray-800 rounded-lg shadow hover:bg-gray-300 transition font-semibold text-center text-sm" %>
     <%= f.button :submit, "Enregistrer", class: "px-6 py-2 bg-blue-800 text-white rounded-lg shadow hover:bg-blue-600 transition font-semibold text-center text-sm" %>
   </div>
 <% end %>
