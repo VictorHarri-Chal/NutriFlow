@@ -1,0 +1,17 @@
+fr:
+  enumerize:
+    profile:
+      gender:
+        male: "Homme"
+        female: "Femme"
+        other: "Autre"
+      activity_level:
+        sedentary: "Sédentaire"
+        lightly_active: "Légèrement actif"
+        moderately_active: "Modérément actif"
+        very_active: "Très actif"
+        extremely_active: "Extrêmement actif"
+      goal:
+        weight_loss: "Perte de poids"
+        maintenance: "Maintien"
+        muscle_gain: "Prise de muscle"

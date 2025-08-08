@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   devise_for :users
 
+  resource :profile, only: [:show, :edit, :update]
+
   resources :calendars, only: [:index]
   resources :foods, except: [:show]
 

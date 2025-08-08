@@ -11,24 +11,23 @@
           </div>
         </div>
         <button class="ml-1 flex items-center justify-center h-8 w-8 rounded-lg bg-white bg-opacity-20 hover:bg-opacity-30" data-action="click->sidebar#desktopToggle">
-          <span class="sr-only">Fermer la sidebar</span>
           <i class="fas fa-times text-white"></i>
         </button>
       </div>
       <div class="flex-shrink-0 flex p-4 justify-between border-b border-gray-100">
-        <div class="flex-shrink-0 group block">
+        <%= link_to profile_path, class: "flex-shrink-0 group block" do %>
           <div class="flex items-center">
             <div class="flex-shrink-0">
               <div class="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
                 <i class="fas fa-user text-white"></i>
               </div>
             </div>
-            <div class="ml-3">
-              <p class="text-sm font-medium text-gray-900">Mon Profil</p>
-              <p class="text-xs font-medium text-gray-500 group-hover:text-gray-700">Utilisateur NutriFlow</p>
+            <div class="ml-2">
+              <p class="text-sm font-medium text-gray-900 group-hover:text-gray-700"><%= current_user.email %></p>
+              <p class="text-xs font-medium text-gray-500">Utilisateur</p>
             </div>
           </div>
-        </div>
+        <% end %>
       </div>
     <%= render "shared/sidebar_elements" %>
     </div>
