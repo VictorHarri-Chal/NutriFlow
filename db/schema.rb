@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_07_153507) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_07_210256) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -50,6 +50,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_153507) do
     t.index ["user_id"], name: "index_foods_on_user_id"
   end
 
+  create_table "profiles", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "name"
+    t.decimal "weight"
+    t.decimal "height"
+    t.integer "age"
+    t.string "gender"
+    t.string "activity_level"
+    t.string "goal"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_profiles_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -66,4 +80,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_153507) do
   add_foreign_key "day_foods", "foods"
   add_foreign_key "days", "users"
   add_foreign_key "foods", "users"
+  add_foreign_key "profiles", "users"
 end
