@@ -46,15 +46,9 @@ gem 'thruster', require: false
 
 gem 'simple_form'
 
-# gem "devise"
-
 gem 'faker'
 
 gem 'enumerize'
-
-# gem "aws-sdk-s3"
-
-# gem "geocoder"
 
 gem 'pg_search'
 
@@ -66,10 +60,8 @@ group :development do
 end
 
 gem 'view_component'
-# gem "ruby-openai"
-# gem "neighbor"
-# gem "pexels"
 gem 'dotenv'
-# gem "redcarpet"
 
 gem "devise", "~> 4.9"
+
+gem 'dentaku'

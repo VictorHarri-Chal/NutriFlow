@@ -10,7 +10,7 @@ class DayFoodsController < ApplicationController
     @day_food = @day.day_foods.build(day_food_params)
 
     if @day_food.save
-      redirect_to calendars_path(date: @day.date), notice: "Aliment ajouté avec succès."
+      redirect_to calendars_path(date: @day.date)
     else
       render :new, status: :unprocessable_entity
     end
@@ -21,7 +21,7 @@ class DayFoodsController < ApplicationController
 
   def update
     if @day_food.update(day_food_params)
-      redirect_to calendars_path(date: @day_food.day.date), notice: "Aliment mis à jour avec succès."
+      redirect_to calendars_path(date: @day_food.day.date)
     else
       render :edit, status: :unprocessable_entity
     end
@@ -30,7 +30,7 @@ class DayFoodsController < ApplicationController
   def destroy
     day_date = @day_food.day.date
     @day_food.destroy
-    redirect_to calendars_path(date: day_date), notice: "Aliment supprimé avec succès."
+    redirect_to calendars_path(date: day_date)
   end
 
   private

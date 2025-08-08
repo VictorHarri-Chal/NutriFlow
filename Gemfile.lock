@@ -85,6 +85,9 @@ GEM
     connection_pool (2.5.0)
     crass (1.0.6)
     date (3.4.1)
+    dentaku (3.5.4)
+      bigdecimal
+      concurrent-ruby
     devise (4.9.4)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -323,6 +326,7 @@ PLATFORMS
 
 DEPENDENCIES
   bootsnap
+  dentaku
   devise (~> 4.9)
   dotenv
   enumerize
