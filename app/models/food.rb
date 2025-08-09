@@ -17,4 +17,8 @@ class Food < ApplicationRecord
   using: {
     tsearch: { prefix: true }
   }
+
+  def self.ransackable_attributes(auth_object = nil)
+    ["brand", "calories", "carbs", "fats", "name", "proteins", "sugars"]
+  end
 end

@@ -4,8 +4,11 @@
   <div class="flex justify-between items-center mb-6">
     <div class="w-full sm:max-w-xs">
       <%= form_with url: foods_path, method: :get, class: "relative" do %>
-        <%= hidden_field_tag :sort_by, params[:sort_by] if params[:sort_by].present? %>
-        <%= hidden_field_tag :direction, params[:direction] if params[:direction].present? %>
+        <% if params[:q].present? %>
+          <% params[:q].each do |key, value| %>
+            <%= hidden_field_tag "q[#{key}]", value %>
+          <% end %>
+        <% end %>
         <%= text_field_tag :query,
             params[:query],
             class: "block w-full rounded-md bg-white py-1.5 pr-3 pl-10 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6",
@@ -24,10 +27,7 @@
   </div>
 
   <div class="overflow-x-auto">
-    <table class="min-w-full divide-y divide-gray-200"
-           data-controller="sortable-table"
-           data-sortable-table-current-sort-value="<%= params[:sort_by] || 'name' %>"
-           data-sortable-table-current-direction-value="<%= params[:direction] || 'asc' %>">
+    <table class="min-w-full divide-y divide-gray-200">
 
       <%= render "table_headers" %>
 
