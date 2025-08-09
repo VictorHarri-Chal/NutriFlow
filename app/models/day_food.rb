@@ -1,6 +1,7 @@
 class DayFood < ApplicationRecord
   belongs_to :day
   belongs_to :food
+  belongs_to :day_food_group, optional: true
 
   validates :quantity, presence: true, numericality: { greater_than: 0 }
 

@@ -1,0 +1,8 @@
+fr:
+  activerecord:
+    models:
+      day_food_group: "Groupe de repas"
+    attributes:
+      day_food_group:
+        name: "Nom"
+        user: "Utilisateur"

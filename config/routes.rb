@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   resource :daily_calorie_requirement, only: [:show]
 
   resource :setting, only: [:show]
+  resources :day_food_groups, only: [:create, :destroy]
 
   resources :days, only: [] do
     resources :day_foods, only: [:new, :create, :edit, :update, :destroy]

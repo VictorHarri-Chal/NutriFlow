@@ -10,9 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_07_210256) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_09_144307) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "day_food_groups", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_day_food_groups_on_user_id"
+  end
 
   create_table "day_foods", force: :cascade do |t|
     t.bigint "day_id", null: false
@@ -20,6 +28,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_210256) do
     t.decimal "quantity", default: "1.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "day_food_group_id"
+    t.index ["day_food_group_id"], name: "index_day_foods_on_day_food_group_id"
     t.index ["day_id", "food_id"], name: "index_day_foods_on_day_id_and_food_id"
     t.index ["day_id"], name: "index_day_foods_on_day_id"
     t.index ["food_id"], name: "index_day_foods_on_food_id"
@@ -76,6 +86,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_210256) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "day_food_groups", "users"
+  add_foreign_key "day_foods", "day_food_groups"
   add_foreign_key "day_foods", "days"
   add_foreign_key "day_foods", "foods"
   add_foreign_key "days", "users"
