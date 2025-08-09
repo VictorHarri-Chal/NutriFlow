@@ -1,18 +1,23 @@
 <% content_for :page_title, "Paramètres" %>
 
-<div class="max-w-6xl mx-auto mt-16 bg-white rounded-xl shadow-md overflow-hidden" data-controller="tabs">
+<div class="max-w-6xl mx-auto mt-16 bg-white rounded-xl shadow-md overflow-hidden" data-controller="tabs" data-tabs-active-tab-value="<%= @active_tab %>">
   <!-- Navigation par onglets -->
   <div class="border-b border-gray-200">
     <nav class="flex space-x-8 px-8 pt-6" aria-label="Onglets">
-      <a href="#general" class="active border-b-2 border-blue-600 py-4 px-1 text-sm font-medium text-blue-600 hover:text-gray-700 hover:border-gray-300" data-tab="general" data-tabs-target="tab" data-action="click->tabs#switchTab">
+      <a href="#general" class="<%= @active_tab == 'general' ? 'active border-b-2 border-blue-600 text-blue-600' : 'border-b-2 border-transparent text-gray-500' %> py-4 px-1 text-sm font-medium hover:text-gray-700 hover:border-gray-300" data-tab="general" data-tabs-target="tab" data-action="click->tabs#switchTab">
         <i class="fas fa-cog mr-2"></i>
         Général
       </a>
-      <%# <a href="#notifications" class="border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="notifications" data-tabs-target="tab" data-action="click->tabs#switchTab">
-        <i class="fas fa-bell mr-2"></i>
-        Notifications
-      </a> %>
-      <a href="#security" class="border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="security" data-tabs-target="tab" data-action="click->tabs#switchTab">
+      <a href="#food_groups" class="<%= @active_tab == 'food_groups' ? 'active border-b-2 border-blue-600 text-blue-600' : 'border-b-2 border-transparent text-gray-500' %> py-4 px-1 text-sm font-medium hover:text-gray-700 hover:border-gray-300" data-tab="food_groups" data-tabs-target="tab" data-action="click->tabs#switchTab">
+        <i class="fas fa-carrot mr-2"></i>
+        Groupes d'aliments
+      </a>
+      <a href="#day_food_groups" class="<%= @active_tab == 'day_food_groups' ? 'active border-b-2 border-blue-600 text-blue-600' : 'border-b-2 border-transparent text-gray-500' %> py-4 px-1 text-sm font-medium hover:text-gray-700 hover:border-gray-300" data-tab="day_food_groups" data-tabs-target="tab" data-action="click->tabs#switchTab">
+        <i class="fas fa-utensils mr-2"></i>
+        Groupes de repas
+      </a>
+
+      <a href="#security" class="<%= @active_tab == 'security' ? 'active border-b-2 border-blue-600 text-blue-600' : 'border-b-2 border-transparent text-gray-500' %> py-4 px-1 text-sm font-medium hover:text-gray-700 hover:border-gray-300" data-tab="security" data-tabs-target="tab" data-action="click->tabs#switchTab">
         <i class="fas fa-shield-alt mr-2"></i>
         Sécurité
       </a>
@@ -21,8 +26,17 @@
 
   <!-- Contenu des onglets -->
   <div class="p-8">
-    <%= render 'general' %>
-    <%= render 'notifications' %>
-    <%= render 'security' %>
+    <div id="general-tab" data-tabs-target="content" class="<%= @active_tab == 'general' ? '' : 'hidden' %>">
+      <%= render 'settings/general' %>
+    </div>
+    <div id="food_groups-tab" data-tabs-target="content" class="<%= @active_tab == 'food_groups' ? '' : 'hidden' %>">
+      <%= render 'settings/food_groups' %>
+    </div>
+    <div id="day_food_groups-tab" data-tabs-target="content" class="<%= @active_tab == 'day_food_groups' ? '' : 'hidden' %>">
+      <%= render 'settings/day_food_groups' %>
+    </div>
+    <div id="security-tab" data-tabs-target="content" class="<%= @active_tab == 'security' ? '' : 'hidden' %>">
+      <%= render 'settings/security' %>
+    </div>
   </div>
 </div>

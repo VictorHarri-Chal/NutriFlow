@@ -18,8 +18,17 @@ export default class extends Controller {
     this.inactiveBorderValue = this.inactiveBorderValue || "border-transparent"
     this.inactiveTextValue = this.inactiveTextValue || "text-gray-500"
 
-    // Activer le premier onglet par défaut si aucun n'est actif
-    if (!this.activeTabValue && this.tabTargets.length > 0) {
+    // Si un onglet actif est défini via data-tabs-active-tab-value, l'utiliser
+    if (this.activeTabValue) {
+      const activeTab = this.tabTargets.find(tab => tab.dataset.tab === this.activeTabValue)
+      if (activeTab) {
+        this.switchToTab(activeTab)
+        return
+      }
+    }
+
+    // Sinon, activer le premier onglet par défaut si aucun n'est actif
+    if (this.tabTargets.length > 0) {
       this.switchToTab(this.tabTargets[0])
     }
   }
