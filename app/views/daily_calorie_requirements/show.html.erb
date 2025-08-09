@@ -1,13 +1,20 @@
-<% content_for :page_title, "Besoin calorique journalier" %>
+<% content_for :page_title, "Besoins caloriques journaliers" %>
 
 <div class="max-w-6xl mx-auto mt-16 bg-white rounded-xl shadow-md p-8">
-  <div class="mb-8 p-6 bg-gray-50 rounded-lg">
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-semibold text-gray-800">Informations du profil</h2>
-      <%= link_to profile_path, class: "inline-flex items-center px-4 py-2 bg-blue-800 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors duration-200" do %>
-        <i class="fas fa-user-edit mr-2"></i>
-        Modifier le profil
-      <% end %>
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">Mes besoins caloriques journaliers</h1>
+    <%= link_to profile_path, class: "inline-flex items-center px-4 py-2 bg-blue-800 text-white rounded-lg shadow hover:bg-blue-600 transition font-medium" do %>
+      <i class="fas fa-user-edit mr-2"></i>
+      Aller au profil
+    <% end %>
+  </div>
+
+  <!-- Section Informations du profil -->
+  <div class="bg-gray-50 rounded-lg p-6 mb-6">
+    <div class="flex items-center mb-4">
+      <div>
+        <h2 class="text-xl font-semibold text-gray-900">Informations du profil</h2>
+      </div>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="bg-white p-4 rounded-lg shadow-sm">
@@ -40,8 +47,9 @@
     </div>
   </div>
 
-  <div class="mb-8 p-6 bg-gray-50 rounded-lg">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">Besoin calorique journalier</h2>
+  <!-- Section Besoins caloriques -->
+  <div class="bg-gray-50 rounded-lg p-6 mb-6">
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Besoin calorique journalier</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div class="<%= @profile.goal.weight_loss? ? 'bg-blue-100 border-2 border-blue-500' : 'bg-white' %> p-4 rounded-lg shadow-sm transition-all duration-200">
         <div class="text-sm text-gray-500 font-medium">Perte de poids</div>
