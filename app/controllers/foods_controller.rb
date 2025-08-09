@@ -2,9 +2,11 @@ class FoodsController < ApplicationController
   before_action :set_food, only: [:edit, :update, :destroy]
 
   def index
-    @foods = params[:query].then do |query|
-      base_query = query.present? ? current_user.foods.search_by_name(query) : current_user.foods
-      sort_foods(base_query)
+    @q = current_user.foods.ransack(params[:q])
+    @foods = @q.result
+
+    if params[:query].present?
+      @foods = @foods.search_by_name(params[:query])
     end
   end
 
@@ -45,13 +47,5 @@ class FoodsController < ApplicationController
 
   def food_params
     params.require(:food).permit(:name, :brand, :fats, :carbs, :sugars, :proteins, :calories)
-  end
-
-  def sort_foods(base_query)
-    allowed_fields = %w[name brand fats carbs sugars proteins calories]
-    sort_by = allowed_fields.include?(params[:sort_by]) ? params[:sort_by] : 'name'
-    direction = %w[asc desc].include?(params[:direction]) ? params[:direction] : 'asc'
-
-    base_query.order(sort_by => direction)
   end
 end

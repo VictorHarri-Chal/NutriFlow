@@ -237,6 +237,10 @@ GEM
       thor (~> 1.0, >= 1.2.2)
       zeitwerk (~> 2.6)
     rake (13.2.1)
+    ransack (4.3.0)
+      activerecord (>= 6.1.5)
+      activesupport (>= 6.1.5)
+      i18n
     rdoc (6.13.1)
       psych (>= 4.0.0)
     reline (0.6.1)
@@ -340,6 +344,7 @@ DEPENDENCIES
   propshaft
   puma (>= 5.0)
   rails (~> 8.0.2)
+  ransack
   simple_form
   solid_cable
   solid_cache
