@@ -36,4 +36,11 @@
       </tbody>
     </table>
   </div>
+
+  <!-- Pagination en bas de page -->
+  <div class="px-4 sm:px-6 lg:px-8 mt-6">
+    <div class="flex justify-center">
+      <%= render PaginationComponent.new(pagy: @pagy, full_result_option: true) %>
+    </div>
+  </div>
 </div>

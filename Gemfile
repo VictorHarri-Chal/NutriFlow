@@ -52,7 +52,7 @@ gem 'enumerize'
 
 gem 'pg_search'
 
-gem 'pagy'
+gem 'pagy', "~> 5.10"
 
 gem 'ransack'
 
