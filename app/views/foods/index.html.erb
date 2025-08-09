@@ -1,46 +1,60 @@
 <% content_for :page_title, "Banque d'aliments" %>
 
 <div class="max-w-6xl mx-auto mt-16 bg-white rounded-xl shadow-md p-8">
-  <div class="flex justify-between items-center mb-6">
-    <div class="w-full sm:max-w-xs">
-      <%= form_with url: foods_path, method: :get, class: "relative" do %>
-        <% if params[:q].present? %>
-          <% params[:q].each do |key, value| %>
-            <%= hidden_field_tag "q[#{key}]", value %>
+    <!-- En-tête avec titre, recherche et actions -->
+  <header class="mb-8">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <!-- Titre -->
+      <h1 class="text-2xl font-bold text-gray-900 flex-shrink-0">Mes aliments</h1>
+
+      <!-- Barre de recherche -->
+      <div class="flex-1 max-w-md lg:mx-6">
+        <%= form_with url: foods_path, method: :get, local: true, class: "relative" do |f| %>
+          <% if params[:q].present? %>
+            <% params[:q].each do |key, value| %>
+              <%= hidden_field_tag "q[#{key}]", value %>
+            <% end %>
+          <% end %>
+
+          <%= text_field_tag :query, params[:query],
+              class: "w-full pl-10 #{params[:query].present? ? 'pr-10' : 'pr-4'} py-1.5 text-sm bg-gray-50 border border-gray-200 rounded-md focus:outline-2 focus:outline-indigo-600 placeholder-gray-400",
+              placeholder: "Rechercher un aliment...",
+              autocomplete: "off" %>
+
+          <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+
+          <% if params[:query].present? %>
+            <%= link_to foods_path, class: "absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors" do %>
+              <i class="fas fa-times"></i>
+            <% end %>
           <% end %>
         <% end %>
-        <%= text_field_tag :query,
-            params[:query],
-            class: "block w-full rounded-md bg-white py-1.5 pr-3 pl-10 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6",
-            placeholder: "Rechercher un aliment..."
-        %>
-        <svg class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 size-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-          <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" />
-        </svg>
+      </div>
+
+      <!-- Bouton d'ajout -->
+      <%= link_to new_food_path, class: "inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm transition-colors font-medium flex-shrink-0" do %>
+        <i class="fas fa-plus mr-2"></i>
+        Ajouter un aliment
       <% end %>
     </div>
+  </header>
 
-    <%= link_to new_food_path, class: "inline-flex items-center px-4 py-2 bg-blue-800 text-white rounded-lg shadow hover:bg-blue-600 transition font-medium" do %>
-      <i class="fas fa-plus mr-2"></i>
-      Ajouter un aliment
-    <% end %>
-  </div>
-
-  <div class="overflow-x-auto">
-    <table class="min-w-full divide-y divide-gray-200">
-
-      <%= render "table_headers" %>
-
-      <tbody class="bg-white divide-y divide-gray-200">
-        <%= render partial: "table_row", collection: @foods, as: :food %>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Pagination en bas de page -->
-  <div class="px-4 sm:px-6 lg:px-8 mt-6">
-    <div class="flex justify-center">
-      <%= render PaginationComponent.new(pagy: @pagy, full_result_option: true) %>
+  <!-- Tableau des aliments -->
+  <div class="bg-gray-50 rounded-lg overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <%= render "table_headers" %>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <%= render partial: "table_row", collection: @foods, as: :food %>
+        </tbody>
+      </table>
     </div>
   </div>
+
+  <!-- Pagination -->
+  <% if @pagy.pages > 1 %>
+    <div class="mt-6 flex justify-center">
+      <%= render PaginationComponent.new(pagy: @pagy, full_result_option: true) %>
+    </div>
+  <% end %>
 </div>
