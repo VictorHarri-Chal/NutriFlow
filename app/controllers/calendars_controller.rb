@@ -16,5 +16,17 @@ class CalendarsController < ApplicationController
     @total_carbs = @day.total_carbs
     @total_fats = @day.total_fats
     @total_sugars = @day.total_sugars
+
+    # Calcul des objectifs
+    @profile = current_user.profile
+    if @profile.weight.present?
+      @daily_calorie_goal = @profile&.calories_needed_for_goal
+      @daily_protein_goal = @profile&.daily_protein_goal
+      @daily_fats_goal = @profile&.daily_fats_goal
+
+      @calories_percentage = @daily_calorie_goal > 0 ? (@total_calories / @daily_calorie_goal.to_f * 100).round(1) : 0
+      @proteins_percentage = @daily_protein_goal > 0 ? (@total_proteins / @daily_protein_goal.to_f * 100).round(1) : 0
+      @fats_percentage = @daily_fats_goal > 0 ? (@total_fats / @daily_fats_goal.to_f * 100).round(1) : 0
+    end
   end
 end

@@ -1,0 +1,43 @@
+<% if profile&.weight.present? %>
+  <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200 mt-8">
+    <h3 class="text-lg font-semibold text-blue-800 mb-4 flex items-center">
+      <i class="fas fa-bullseye mr-2"></i>
+      Objectifs du jour
+    </h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <%= render 'calendars/calories_objective',
+                 total_calories: total_calories,
+                 daily_calorie_goal: daily_calorie_goal,
+                 calories_percentage: calories_percentage %>
+
+      <%= render 'calendars/proteins_objective',
+                 total_proteins: total_proteins,
+                 daily_protein_goal: daily_protein_goal,
+                 proteins_percentage: proteins_percentage %>
+
+      <%= render 'calendars/fats_objective',
+                 total_fats: total_fats,
+                 daily_fats_goal: daily_fats_goal,
+                 fats_percentage: fats_percentage %>
+    </div>
+  </div>
+<% else %>
+  <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg p-6 border border-yellow-200 mt-8">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center">
+        <i class="fas fa-exclamation-triangle text-yellow-600 mr-3 text-xl"></i>
+        <div>
+          <h3 class="text-lg font-semibold text-yellow-800">Objectifs non disponibles</h3>
+          <p class="text-yellow-700 text-sm mt-1">
+            Pour afficher vos objectifs, veuillez renseigner votre poids dans votre profil.
+          </p>
+        </div>
+      </div>
+      <%= link_to edit_profile_path, class: "inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded-lg shadow hover:bg-yellow-500 transition font-medium" do %>
+        <i class="fas fa-user-edit mr-2"></i>
+        Compléter le profil
+      <% end %>
+    </div>
+  </div>
+<% end %>

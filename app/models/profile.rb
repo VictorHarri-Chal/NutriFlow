@@ -35,6 +35,8 @@ class Profile < ApplicationRecord
   end
 
   def calculate_calories_needed_maintenance
+    return nil unless weight.present? && height.present? && age.present?
+
     daily_calorie_requirement = Dentaku::Calculator.new
     result = daily_calorie_requirement.evaluate("(10 * #{weight} + 6.25 * #{height} - 5 * #{age} + 5) * #{activity_level_multiplier}")
     result.round
@@ -42,21 +44,37 @@ class Profile < ApplicationRecord
 
   def calculate_calories_needed_weight_loss
     maintenance_calories = calculate_calories_needed_maintenance
+    return nil unless maintenance_calories
     (maintenance_calories * 0.85).round
   end
 
   def calculate_calories_needed_muscle_gain
     maintenance_calories = calculate_calories_needed_maintenance
+    return nil unless maintenance_calories
     (maintenance_calories * 1.15).round
   end
 
   def calories_needed_for_goal
+    return nil unless weight.present? && height.present? && age.present?
+
     if goal.weight_loss?
       calculate_calories_needed_weight_loss
     elsif goal.maintenance?
       calculate_calories_needed_maintenance
     elsif goal.muscle_gain?
       calculate_calories_needed_muscle_gain
+    else
+      calculate_calories_needed_maintenance
     end
+  end
+
+  def daily_protein_goal
+    return nil unless weight.present?
+    weight * 2
+  end
+
+  def daily_fats_goal
+    return nil unless weight.present?
+    weight * 1
   end
 end

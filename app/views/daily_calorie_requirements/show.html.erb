@@ -48,29 +48,49 @@
   </div>
 
   <!-- Section Besoins caloriques -->
-  <div class="bg-gray-50 rounded-lg p-6 mb-6">
-    <h2 class="text-xl font-semibold text-gray-900 mb-4">Besoin calorique journalier</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div class="<%= @profile.goal.weight_loss? ? 'bg-blue-100 border-2 border-blue-500' : 'bg-white' %> p-4 rounded-lg shadow-sm transition-all duration-200">
-        <div class="text-sm text-gray-500 font-medium">Perte de poids</div>
-        <div class="text-lg font-semibold text-gray-900">
-          <%= @daily_calorie_requirement_weight_loss %> kcal
+  <% if @profile.weight.present? && @profile.height.present? && @profile.age.present? %>
+    <div class="bg-gray-50 rounded-lg p-6 mb-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Besoin calorique journalier</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="<%= @profile.goal.weight_loss? ? 'bg-blue-100 border-2 border-blue-500' : 'bg-white' %> p-4 rounded-lg shadow-sm transition-all duration-200">
+          <div class="text-sm text-gray-500 font-medium">Perte de poids</div>
+          <div class="text-lg font-semibold text-gray-900">
+            <%= @daily_calorie_requirement_weight_loss %> kcal
+          </div>
         </div>
-      </div>
 
-      <div class="<%= @profile.goal.maintenance? ? 'bg-blue-100 border-2 border-blue-500' : 'bg-white' %> p-4 rounded-lg shadow-sm transition-all duration-200">
-        <div class="text-sm text-gray-500 font-medium">Maintien</div>
-        <div class="text-lg font-semibold text-gray-900">
-          <%= @daily_calorie_requirement %> kcal
+        <div class="<%= @profile.goal.maintenance? ? 'bg-blue-100 border-2 border-blue-500' : 'bg-white' %> p-4 rounded-lg shadow-sm transition-all duration-200">
+          <div class="text-sm text-gray-500 font-medium">Maintien</div>
+          <div class="text-lg font-semibold text-gray-900">
+            <%= @daily_calorie_requirement %> kcal
+          </div>
         </div>
-      </div>
 
-      <div class="<%= @profile.goal.muscle_gain? ? 'bg-blue-100 border-2 border-blue-500' : 'bg-white' %> p-4 rounded-lg shadow-sm transition-all duration-200">
-        <div class="text-sm text-gray-500 font-medium">Prise de muscle</div>
-        <div class="text-lg font-semibold text-gray-900">
-          <%= @daily_calorie_requirement_muscle_gain %> kcal
+        <div class="<%= @profile.goal.muscle_gain? ? 'bg-blue-100 border-2 border-blue-500' : 'bg-white' %> p-4 rounded-lg shadow-sm transition-all duration-200">
+          <div class="text-sm text-gray-500 font-medium">Prise de muscle</div>
+          <div class="text-lg font-semibold text-gray-900">
+            <%= @daily_calorie_requirement_muscle_gain %> kcal
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  <% else %>
+    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg p-6 mb-6 border border-yellow-200">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <i class="fas fa-exclamation-triangle text-yellow-600 mr-3 text-xl"></i>
+          <div>
+            <h2 class="text-xl font-semibold text-yellow-800 mb-2">Besoin calorique non calculable</h2>
+            <p class="text-yellow-700 text-sm">
+              Pour calculer vos besoins caloriques journaliers, veuillez renseigner votre âge, votre taille et votre poids dans votre profil.
+            </p>
+          </div>
+        </div>
+        <%= link_to edit_profile_path, class: "inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded-lg shadow hover:bg-yellow-500 transition font-medium" do %>
+          <i class="fas fa-user-edit mr-2"></i>
+          Compléter le profil
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 </div>
