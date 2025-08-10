@@ -20,5 +20,7 @@ Rails.application.routes.draw do
 
   post 'days/:date/add_food', to: 'days#add_food', as: :add_food_to_day
 
-  root "calendars#index"
+  get 'home', to: 'home#index', as: :home
+
+  root "home#index"
 end
