@@ -2,7 +2,7 @@ class FoodsController < ApplicationController
   before_action :set_food, only: [:edit, :update, :destroy]
 
   def index
-    @q = current_user.foods.ransack(params[:q])
+    @q = current_user.foods.includes(:food_labels).ransack(params[:q])
     @foods = @q.result
 
     if params[:query].present?
@@ -19,6 +19,7 @@ class FoodsController < ApplicationController
 
   def new
     @food = current_user.foods.build
+    @food_labels = current_user.food_labels
   end
 
   def create
@@ -31,6 +32,7 @@ class FoodsController < ApplicationController
   end
 
   def edit
+    @food_labels = current_user.food_labels
   end
 
   def update
@@ -53,6 +55,6 @@ class FoodsController < ApplicationController
   end
 
   def food_params
-    params.require(:food).permit(:name, :brand, :fats, :carbs, :sugars, :proteins, :calories)
+    params.require(:food).permit(:name, :brand, :fats, :carbs, :sugars, :proteins, :calories, food_label_ids: [])
   end
 end

@@ -1,30 +1,30 @@
-<h2 class="text-xl font-semibold text-gray-900 mb-6">Groupes d'aliments</h2>
+<h2 class="text-xl font-semibold text-gray-900 mb-6">Labels d'aliments</h2>
 
-<!-- Formulaire pour créer un nouveau groupe -->
+<!-- Formulaire pour créer un nouveau label -->
 <div class="bg-gray-50 p-6 rounded-lg mb-6">
-  <%= simple_form_for @day_food_group, url: day_food_groups_path, html: { class: "flex items-end gap-4" } do |f| %>
+  <%= simple_form_for @food_label, url: food_labels_path, html: { class: "flex items-end gap-4" } do |f| %>
     <div class="flex-1">
       <%= f.input :name,
-          label: "Nom du groupe",
-          placeholder: "Ex: Petit-déjeuner, Déjeuner, Dîner...",
+          label: "Nom du label",
+          placeholder: "Ex: Protéines, Glucides, Lipides, Bio, etc.",
           wrapper_html: { class: "mb-0" },
           input_html: { class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" } %>
     </div>
     <div>
-      <%= f.submit "Créer le groupe",
+      <%= f.submit "Créer le label",
           class: "bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
     </div>
   <% end %>
 </div>
 
-<!-- Tableau des groupes existants -->
+<!-- Tableau des labels existants -->
 <div class="bg-white shadow-sm rounded-lg overflow-hidden">
-  <% if @day_food_groups.any? %>
+  <% if @food_labels.any? %>
     <table class="min-w-full divide-y divide-gray-200">
       <thead class="bg-gray-50">
         <tr>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Nom du groupe
+            Nom du label
           </th>
           <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
             Aliments
@@ -35,23 +35,23 @@
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-gray-200">
-        <% @day_food_groups.each do |group| %>
+        <% @food_labels.each do |label| %>
           <tr class="hover:bg-gray-50">
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center">
-                <i class="fas fa-utensils text-blue-500 mr-3"></i>
-                <div class="text-sm font-medium text-gray-900"><%= group.name %></div>
+                <i class="fas fa-tag text-blue-500 mr-3"></i>
+                <div class="text-sm font-medium text-gray-900"><%= label.name %></div>
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center justify-center">
-                <% food_count = group.day_foods.count %>
+                <% food_count = label.foods.count %>
                 <% if food_count == 0 %>
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
                     <i class="fas fa-circle text-gray-400 mr-1 text-xs"></i>
                     Aucun aliment
                   </span>
-                <% elsif  %>
+                <% else %>
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                     <i class="fas fa-check-circle text-green-500 mr-1 text-xs"></i>
                     <%= food_count %> aliment<%= 's' if food_count > 1 %>
@@ -60,8 +60,8 @@
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <%= delete_link_with_confirm(day_food_group_path(group),
-                                          confirm: "Êtes-vous sûr de vouloir supprimer ce groupe ? Tous les repas associés seront déplacés vers 'Aliments sans groupe'.",
+              <%= delete_link_with_confirm(food_label_path(label),
+                                          confirm: "Êtes-vous sûr de vouloir supprimer ce label ?",
                                           icon_class: "fas fa-trash mr-2",
                                           class: "text-red-600 hover:text-red-900 inline-flex items-center",
                                           title: "Supprimer") %>
@@ -72,12 +72,12 @@
     </table>
   <% else %>
     <div class="text-center py-12">
-      <i class="fas fa-utensils text-gray-400 text-4xl mb-4"></i>
-      <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun groupe de repas</h3>
-      <p class="text-gray-500 mb-4">Commencez par créer votre premier groupe de repas.</p>
+      <i class="fas fa-tag text-gray-400 text-4xl mb-4"></i>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun label d'aliment</h3>
+      <p class="text-gray-500 mb-4">Commencez par créer votre premier label d'aliment.</p>
       <p class="text-sm text-gray-400">
-        Les groupes de repas vous permettent d'organiser vos aliments par catégories comme
-        "Petit-déjeuner", "Déjeuner", "Dîner", "Collations", etc.
+        Les labels vous permettent de catégoriser vos aliments avec des tags comme
+        "Protéines", "Glucides", "Lipides", "Bio", etc.
       </p>
     </div>
   <% end %>

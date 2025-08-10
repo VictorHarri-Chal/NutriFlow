@@ -44,6 +44,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_09_144307) do
     t.index ["user_id"], name: "index_days_on_user_id"
   end
 
+  create_table "food_labels", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name", "user_id"], name: "index_food_labels_on_name_and_user_id", unique: true
+    t.index ["user_id"], name: "index_food_labels_on_user_id"
+  end
+
+  create_table "food_labels_foods", id: false, force: :cascade do |t|
+    t.bigint "food_label_id", null: false
+    t.bigint "food_id", null: false
+    t.index ["food_id"], name: "index_food_labels_foods_on_food_id"
+    t.index ["food_label_id", "food_id"], name: "index_food_labels_foods_on_food_label_id_and_food_id", unique: true
+    t.index ["food_label_id"], name: "index_food_labels_foods_on_food_label_id"
+  end
+
   create_table "foods", force: :cascade do |t|
     t.string "name", null: false
     t.string "brand"
@@ -91,6 +108,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_09_144307) do
   add_foreign_key "day_foods", "days"
   add_foreign_key "day_foods", "foods"
   add_foreign_key "days", "users"
+  add_foreign_key "food_labels", "users"
+  add_foreign_key "food_labels_foods", "food_labels"
+  add_foreign_key "food_labels_foods", "foods"
   add_foreign_key "foods", "users"
   add_foreign_key "profiles", "users"
 end
