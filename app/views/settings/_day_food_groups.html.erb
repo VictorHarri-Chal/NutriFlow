@@ -26,6 +26,9 @@
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
             Nom du groupe
           </th>
+          <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Aliments
+          </th>
           <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
             Actions
           </th>
@@ -38,6 +41,22 @@
               <div class="flex items-center">
                 <i class="fas fa-utensils text-blue-500 mr-3"></i>
                 <div class="text-sm font-medium text-gray-900"><%= group.name %></div>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center justify-center">
+                <% food_count = group.day_foods.count %>
+                <% if food_count == 0 %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                    <i class="fas fa-circle text-gray-400 mr-1 text-xs"></i>
+                    Aucun aliment
+                  </span>
+                <% elsif  %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <i class="fas fa-check-circle text-green-500 mr-1 text-xs"></i>
+                    <%= food_count %> aliment<%= 's' if food_count > 1 %>
+                  </span>
+                <% end %>
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

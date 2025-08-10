@@ -4,8 +4,21 @@
         collection: Food.where(user: current_user),
         prompt: "Sélectionnez un aliment",
         disabled: !day_food.new_record?,
-        input_html: { class: "w-full rounded border border-gray-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" },
+        input_html: {
+          class: "w-full rounded border border-gray-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition appearance-none pr-10",
+          style: "background-image: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"%23374151\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19 9l-7 7-7-7\"/></svg>'); background-position: right 12px center; background-size: 20px 20px; background-repeat: no-repeat;"
+        },
         label_html: { class: "font-medium text-gray-700" } %>
+
+    <%= f.association :day_food_group,
+        collection: @day_food_groups,
+        prompt: "Sélectionnez un groupe",
+        input_html: {
+          class: "w-full rounded border border-gray-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition appearance-none pr-10",
+          style: "background-image: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"%23374151\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19 9l-7 7-7-7\"/></svg>'); background-position: right 12px center; background-size: 20px 20px; background-repeat: no-repeat;"
+        },
+        label_html: { class: "font-medium text-gray-700" },
+        label: "Groupe de repas" %>
 
     <%= f.input :quantity,
         as: :numeric,

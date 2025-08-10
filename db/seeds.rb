@@ -2,18 +2,27 @@
 # development, test). The code here should be idempotent so that it can be executed at any point in every environment.
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
 
-puts "🌱 Début du seeding..."
+puts "Seeding database..."
 
-# Création d'un utilisateur de test s'il n'existe pas
+# Création d'un utilisateur de test
 user = User.find_or_create_by!(email: "test@example.com") do |u|
   u.password = "password123"
   u.password_confirmation = "password123"
 end
 
-puts "👤 Utilisateur de test créé/trouvé : #{user.email}"
+# Création des groupes de repas
+day_food_groups = [
+  "Petit-Déjeuner",
+  "Déjeuner",
+  "Collations",
+  "Dîner"
+]
 
-# Génération de 50 aliments aléatoires
-puts "🍎 Génération de 50 aliments aléatoires..."
+day_food_groups.each do |group_name|
+  DayFoodGroup.find_or_create_by!(name: group_name, user: user)
+end
+
+puts "Created #{day_food_groups.length} day food groups"
 
 # Listes d'aliments et de marques pour la génération aléatoire
 food_names = [
@@ -29,11 +38,11 @@ brands = [
   "Herta", "Knorr", "Maggi", "Leader Price", "Système U", "Leclerc", "Auchan", nil
 ]
 
-# Supprimer les aliments existants pour l'utilisateur de test (pour éviter les doublons)
+# Supprimer les aliments existants pour l'utilisateur de test
 user.foods.destroy_all
 
 # Génération des 50 aliments
-50.times do |i|
+50.times do
   food_name = food_names.sample
   Food.create!(
     name: food_name,
@@ -45,10 +54,7 @@ user.foods.destroy_all
     calories: rand(20..500),
     user: user
   )
-  print "."
 end
 
-puts "\n✅ 50 aliments aléatoires créés avec succès !"
-puts "📊 Total d'aliments dans la base : #{Food.count}"
-puts "👥 Aliments pour l'utilisateur #{user.email} : #{user.foods.count}"
-puts "🌱 Seeding terminé !"
+puts "Created #{user.foods.count} foods for user #{user.email}"
+puts "Seeding completed"
