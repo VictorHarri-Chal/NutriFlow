@@ -6,6 +6,7 @@ class User < ApplicationRecord
   has_many :foods, dependent: :destroy
   has_many :days, dependent: :destroy
   has_many :day_food_groups, dependent: :destroy
+  has_many :food_labels, dependent: :destroy
 
   after_create :create_profile
 
