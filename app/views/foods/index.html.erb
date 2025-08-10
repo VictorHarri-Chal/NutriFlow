@@ -52,9 +52,13 @@
   </div>
 
   <!-- Pagination -->
-  <% if @pagy.pages > 1 %>
+  <% if @pagy&.pages&.> 1 %>
     <div class="mt-6 flex justify-center">
       <%= render PaginationComponent.new(pagy: @pagy, full_result_option: true) %>
+    </div>
+  <% elsif @pagy.nil? && params[:full_result] == "true" %>
+    <div class="mt-6 flex justify-center">
+      <%= render PaginationComponent.new(pagy: nil, full_result_option: true) %>
     </div>
   <% end %>
 </div>

@@ -8,7 +8,13 @@ class FoodsController < ApplicationController
     if params[:query].present?
       @foods = @foods.search_by_name(params[:query])
     end
-    @pagy, @foods = pagy(@foods.order(created_at: :desc), items: 10)
+
+    if params[:full_result] == "true"
+      @foods = @foods.order(created_at: :desc)
+      @pagy = nil
+    else
+      @pagy, @foods = pagy(@foods.order(created_at: :desc), items: 10)
+    end
   end
 
   def new
