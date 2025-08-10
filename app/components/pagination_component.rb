@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PaginationComponent < ApplicationComponent
-  def initialize(pagy:, full_result_option: false)
+  def initialize(pagy: nil, full_result_option: false)
     super
     @pagy = pagy
     @full_result_option = full_result_option
@@ -17,6 +17,7 @@ class PaginationComponent < ApplicationComponent
   end
 
   def pagination_active_class(page)
+    return unless @pagy
     page_number = (params[:page].presence || 1).to_i
     "z-10 bg-primary-50 border-primary-500 text-primary-600" if page_number == page
   end
@@ -57,6 +58,7 @@ class PaginationComponent < ApplicationComponent
   end
 
   def link_to_page(page)
+    return unless @pagy
     link_to page,
             helpers.pagy_url_for(@pagy, page),
             class: "#{pagination_links_class} #{pagination_active_class(page)} px-4"
