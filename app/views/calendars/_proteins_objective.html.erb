@@ -1,0 +1,28 @@
+<div class="bg-white rounded-lg p-4 shadow-sm border border-green-100">
+  <div class="flex justify-between items-center mb-2">
+    <h4 class="font-medium text-gray-700">Protéines</h4>
+    <span class="text-sm text-gray-500">
+      <%= total_proteins.round(1) %> / <%= daily_protein_goal.round(1) %> g
+    </span>
+  </div>
+
+  <div class="w-full bg-gray-200 rounded-full h-3 mb-2">
+    <div class="h-3 rounded-full transition-all duration-300 <%= proteins_percentage > 100 ? 'bg-green-500' : proteins_percentage > 80 ? 'bg-yellow-500' : 'bg-red-500' %>"
+         style="width: <%= [proteins_percentage, 100].min %>%"></div>
+  </div>
+
+  <div class="flex justify-between items-center">
+    <span class="text-sm font-medium <%= proteins_percentage > 100 ? 'text-green-600' : proteins_percentage > 80 ? 'text-yellow-600' : 'text-red-600' %>">
+      <%= proteins_percentage %>%
+    </span>
+    <% if proteins_percentage > 100 %>
+      <span class="text-xs text-green-600">
+        +<%= (total_proteins - daily_protein_goal).round(1) %> g
+      </span>
+    <% elsif proteins_percentage < 100 %>
+      <span class="text-xs text-red-600">
+        -<%= (daily_protein_goal - total_proteins).round(1) %> g
+      </span>
+    <% end %>
+  </div>
+</div>

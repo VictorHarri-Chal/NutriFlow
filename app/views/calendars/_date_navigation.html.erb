@@ -1,0 +1,29 @@
+<div class="flex items-center space-x-4">
+  <%= link_to calendars_path(date: Date.current.strftime('%Y-%m-%d')),
+              class: "inline-flex items-center px-4 py-2 bg-green-700 text-white rounded-lg shadow hover:bg-green-600 transition font-medium",
+              data: { turbo: false },
+              title: "Aller à aujourd'hui" do %>
+    <i class="fas fa-calendar-day mr-2"></i>
+    Aujourd'hui
+  <% end %>
+
+  <div class="flex items-center space-x-2">
+    <%= link_to calendars_path(date: (@selected_date - 1.day).strftime('%Y-%m-%d')),
+                class: "p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition",
+                data: { turbo: false } do %>
+      <i class="fas fa-chevron-left"></i>
+    <% end %>
+
+    <input type="date"
+           id="date-selector"
+           value="<%= @selected_date.strftime('%Y-%m-%d') %>"
+           class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+           data-controller="date-selector">
+
+    <%= link_to calendars_path(date: (@selected_date + 1.day).strftime('%Y-%m-%d')),
+                class: "p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition",
+                data: { turbo: false } do %>
+      <i class="fas fa-chevron-right"></i>
+    <% end %>
+  </div>
+</div>

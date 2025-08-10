@@ -1,0 +1,87 @@
+<% if day_foods_without_group.any? %>
+  <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden" data-controller="collapsible">
+    <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <button class="text-gray-600 hover:text-blue-600 transition-colors"
+                  data-action="click->collapsible#toggle"
+                  data-collapsible-target="trigger">
+            <i class="fas fa-chevron-down transition-transform duration-200" data-collapsible-target="icon"></i>
+          </button>
+          <h3 class="text-lg font-semibold text-gray-800">
+            Aliments sans groupe
+          </h3>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+            <%= day_foods_without_group.count %> aliment<%= 's' if day_foods_without_group.count > 1 %>
+          </span>
+        </div>
+
+        <!-- Totaux des aliments sans groupe -->
+        <div class="flex items-center space-x-4 text-sm">
+          <div class="text-center">
+            <div class="font-semibold text-blue-600"><%= day_foods_without_group.sum(&:total_calories).round(1) %> kcal</div>
+            <div class="text-gray-500">Calories</div>
+          </div>
+          <div class="text-center">
+            <div class="font-semibold text-green-600"><%= day_foods_without_group.sum(&:total_proteins).round(1) %> g</div>
+            <div class="text-gray-500">Protéines</div>
+          </div>
+          <div class="text-center">
+            <div class="font-semibold text-yellow-600"><%= day_foods_without_group.sum(&:total_carbs).round(1) %> g</div>
+            <div class="text-gray-500">Glucides</div>
+          </div>
+          <div class="text-center">
+            <div class="font-semibold text-red-600"><%= day_foods_without_group.sum(&:total_fats).round(1) %> g</div>
+            <div class="text-gray-500">Lipides</div>
+          </div>
+          <div class="text-center">
+            <div class="font-semibold text-purple-600"><%= day_foods_without_group.sum(&:total_sugars).round(1) %> g</div>
+            <div class="text-gray-500">Sucres</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hidden" data-collapsible-target="content">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:name) %></th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:brand) %></th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Quantité</th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:calories) %></th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:proteins) %></th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:carbs) %></th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:fats) %></th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= Food.human_attribute_name(:sugars) %></th>
+              <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% day_foods_without_group.each do |day_food| %>
+              <tr>
+                <td class="px-4 py-2 font-medium"><%= day_food.food.name %></td>
+                <td class="px-4 py-2 text-gray-600"><%= day_food.food.brand %></td>
+                <td class="px-4 py-2"><%= day_food.quantity %> g</td>
+                <td class="px-4 py-2 font-semibold text-blue-600"><%= day_food.total_calories %> kcal</td>
+                <td class="px-4 py-2 text-green-600"><%= day_food.total_proteins %> g</td>
+                <td class="px-4 py-2 text-yellow-600"><%= day_food.total_carbs %> g</td>
+                <td class="px-4 py-2 text-red-600"><%= day_food.total_fats %> g</td>
+                <td class="px-4 py-2 text-purple-600"><%= day_food.total_sugars %> g</td>
+                <td class="px-4 py-2 text-center">
+                  <%= link_to edit_day_day_food_path(day, day_food), class: "inline-block text-blue-600 hover:text-blue-900 mr-2", title: "Modifier" do %>
+                    <i class="fa fa-pencil"></i>
+                  <% end %>
+                  <%= delete_link_with_confirm(day_day_food_path(day, day_food),
+                                              confirm: "Es-tu sûr de vouloir supprimer cet aliment ?",
+                                              title: "Supprimer") %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+<% end %>
