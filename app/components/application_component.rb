@@ -6,6 +6,8 @@
 # to generate a new component: https://viewcomponent.org/guide/generators.html
 # (by default, sidecar is set to true)
 class ApplicationComponent < ViewComponent::Base
+  include ApplicationHelper
+
   delegate :nested_dom_id,
            :money_with_cents,
            :allowed_to?,

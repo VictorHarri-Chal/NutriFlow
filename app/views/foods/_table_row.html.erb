@@ -10,14 +10,8 @@
     <%= link_to edit_food_path(food), class: "inline-block text-blue-600 hover:text-blue-900 mr-2", title: "Éditer" do %>
       <i class="fa fa-pencil"></i>
     <% end %>
-    <%= link_to food_path(food),
-                data: {
-                  turbo_method: :delete,
-                  turbo_confirm: "Es-tu sûr de vouloir supprimer cet aliment ?"
-                },
-                class: "inline-block text-red-600 hover:text-red-900",
-                title: "Supprimer" do %>
-      <i class="fa fa-trash"></i>
-    <% end %>
+    <%= delete_link_with_confirm(food_path(food),
+                                confirm: "Es-tu sûr de vouloir supprimer cet aliment ?",
+                                title: "Supprimer") %>
   </td>
 </tr>

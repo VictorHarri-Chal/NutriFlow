@@ -60,15 +60,11 @@
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <%= link_to day_food_group_path(group),
-                  data: {
-                    "turbo-method": "delete",
-                    "turbo-confirm": "Êtes-vous sûr de vouloir supprimer ce groupe ? Tous les repas associés seront également supprimés."
-                  },
-                  class: "text-red-600 hover:text-red-900 inline-flex items-center" do %>
-                <i class="fas fa-trash mr-2"></i>
-                Supprimer
-              <% end %>
+              <%= delete_link_with_confirm(day_food_group_path(group),
+                                          confirm: "Êtes-vous sûr de vouloir supprimer ce groupe ? Tous les repas associés seront déplacés vers 'Aliments sans groupe'.",
+                                          icon_class: "fas fa-trash mr-2",
+                                          class: "text-red-600 hover:text-red-900 inline-flex items-center",
+                                          title: "Supprimer") %>
             </td>
           </tr>
         <% end %>
