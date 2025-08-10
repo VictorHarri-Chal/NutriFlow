@@ -4,6 +4,7 @@ class DayFoodsController < ApplicationController
 
   def new
     @day_food = @day.day_foods.build
+    @day_food_groups = current_user.day_food_groups.order(:name)
   end
 
   def create
@@ -12,17 +13,20 @@ class DayFoodsController < ApplicationController
     if @day_food.save
       redirect_to calendars_path(date: @day.date)
     else
+      @day_food_groups = current_user.day_food_groups.order(:name)
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
+    @day_food_groups = current_user.day_food_groups.order(:name)
   end
 
   def update
     if @day_food.update(day_food_params)
       redirect_to calendars_path(date: @day_food.day.date)
     else
+      @day_food_groups = current_user.day_food_groups.order(:name)
       render :edit, status: :unprocessable_entity
     end
   end
@@ -44,6 +48,6 @@ class DayFoodsController < ApplicationController
   end
 
   def day_food_params
-    params.require(:day_food).permit(:food_id, :quantity)
+    params.require(:day_food).permit(:food_id, :quantity, :day_food_group_id)
   end
 end
