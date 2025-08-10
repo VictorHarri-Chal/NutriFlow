@@ -155,15 +155,9 @@
                       <%= link_to edit_day_day_food_path(@day, day_food), class: "inline-block text-blue-600 hover:text-blue-900 mr-2", title: "Modifier" do %>
                         <i class="fa fa-pencil"></i>
                       <% end %>
-                      <%= link_to day_day_food_path(@day, day_food),
-                                  data: {
-                                    turbo_method: :delete,
-                                    turbo_confirm: "Es-tu sûr de vouloir supprimer cet aliment ?"
-                                  },
-                                  class: "inline-block text-red-600 hover:text-red-900",
-                                  title: "Supprimer" do %>
-                        <i class="fa fa-trash"></i>
-                      <% end %>
+                      <%= delete_link_with_confirm(day_day_food_path(@day, day_food),
+                                                  confirm: "Es-tu sûr de vouloir supprimer cet aliment ?",
+                                                  title: "Supprimer") %>
                     </td>
                   </tr>
                 <% end %>
