@@ -1,0 +1,115 @@
+<% content_for :page_title do %>
+  Recette
+<% end %>
+
+<div class="max-w-4xl mx-auto mt-16 bg-white rounded-xl shadow-md p-8">
+  <!-- En-tête avec navigation -->
+  <div class="flex items-center gap-4 mb-6">
+    <%= link_to recipes_path, class: "text-gray-400 hover:text-gray-600 transition" do %>
+      <i class="fas fa-arrow-left text-xl"></i>
+    <% end %>
+    <h1 class="text-3xl font-bold text-blue-800"><%= @recipe.name %></h1>
+  </div>
+
+  <!-- Résumé nutritionnel -->
+  <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg p-6 mb-8">
+    <h2 class="text-lg font-semibold text-gray-800 mb-4">Valeurs nutritionnelles</h2>
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div class="text-center">
+        <div class="text-2xl font-bold text-blue-600"><%= @recipe.total_calories %></div>
+        <div class="text-sm text-gray-600">Calories</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-green-600"><%= @recipe.total_proteins %></div>
+        <div class="text-sm text-gray-600">Protéines (g)</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-yellow-600"><%= @recipe.total_carbs %></div>
+        <div class="text-sm text-gray-600">Glucides (g)</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-red-600"><%= @recipe.total_fats %></div>
+        <div class="text-sm text-gray-600">Lipides (g)</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-purple-600"><%= @recipe.total_sugars %></div>
+        <div class="text-sm text-gray-600">Sucres (g)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+    <!-- Ingrédients -->
+    <div>
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Ingrédients</h2>
+      <div class="bg-gray-50 rounded-lg overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Aliment
+              </th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Quantité
+              </th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Calories
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @recipe.recipe_items.each do |item| %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3 font-medium text-gray-900">
+                  <%= item.food.name %>
+                </td>
+                <td class="px-4 py-3 text-gray-600">
+                  <%= item.quantity %> g
+                </td>
+                <td class="px-4 py-3 font-semibold text-blue-600">
+                  <%= item.total_calories %> kcal
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Instructions -->
+    <div>
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Instructions</h2>
+      <% if @recipe.instructions.present? %>
+        <div class="bg-gray-50 rounded-lg p-6">
+          <div class="prose prose-sm max-w-none">
+            <%= simple_format(@recipe.instructions, class: "text-gray-700 leading-relaxed") %>
+          </div>
+        </div>
+      <% else %>
+        <div class="bg-gray-50 rounded-lg p-6 text-center">
+          <div class="w-12 h-12 mx-auto mb-3 bg-gray-200 rounded-full flex items-center justify-center">
+            <i class="fas fa-clipboard text-gray-400"></i>
+          </div>
+          <p class="text-gray-600">Aucune instruction renseignée</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Actions en bas -->
+  <div class="flex justify-center gap-4 pt-6 border-t border-gray-200">
+    <%= link_to edit_recipe_path(@recipe),
+                class: "inline-flex items-center px-6 py-3 bg-gray-200 text-gray-800 rounded-lg shadow hover:bg-gray-300 transition font-medium" do %>
+      <i class="fas fa-pen mr-2"></i>
+      Modifier
+    <% end %>
+
+    <%= delete_link_with_confirm(recipe_path(@recipe),
+                                confirm: "Es-tu sûr de vouloir supprimer cette recette ?",
+                                text: "Supprimer",
+                                class: "inline-flex items-center px-6 py-3 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition font-medium") do %>
+      <i class="fas fa-trash mr-2"></i>
+      Supprimer
+    <% end %>
+  </div>
+</div>

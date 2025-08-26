@@ -1,0 +1,9 @@
+<div class="max-w-4xl mx-auto mt-16 bg-white rounded-xl shadow-md p-8">
+  <div class="flex items-center gap-4 mb-6">
+    <%= link_to recipe_path(@recipe), class: "text-gray-400 hover:text-gray-600 transition" do %>
+      <i class="fas fa-arrow-left text-xl"></i>
+    <% end %>
+    <h1 class="text-3xl font-bold text-blue-800">Modifier la recette</h1>
+  </div>
+  <%= render "form", recipe: @recipe %>
+</div>

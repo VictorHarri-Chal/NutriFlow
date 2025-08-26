@@ -18,6 +18,8 @@ Rails.application.routes.draw do
     resources :day_foods, only: [:new, :create, :edit, :update, :destroy]
   end
 
+  resources :recipes
+
   post 'days/:date/add_food', to: 'days#add_food', as: :add_food_to_day
 
   get 'home', to: 'home#index', as: :home
