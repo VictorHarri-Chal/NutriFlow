@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_26_140459) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_26_191250) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -33,6 +33,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_140459) do
     t.index ["day_id", "food_id"], name: "index_day_foods_on_day_id_and_food_id"
     t.index ["day_id"], name: "index_day_foods_on_day_id"
     t.index ["food_id"], name: "index_day_foods_on_food_id"
+  end
+
+  create_table "day_recipes", force: :cascade do |t|
+    t.bigint "day_id", null: false
+    t.bigint "recipe_id", null: false
+    t.bigint "day_food_group_id"
+    t.decimal "quantity", precision: 8, scale: 2
+    t.boolean "use_recipe_quantity", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["day_food_group_id"], name: "index_day_recipes_on_day_food_group_id"
+    t.index ["day_id"], name: "index_day_recipes_on_day_id"
+    t.index ["recipe_id"], name: "index_day_recipes_on_recipe_id"
   end
 
   create_table "days", force: :cascade do |t|
@@ -127,6 +140,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_140459) do
   add_foreign_key "day_foods", "day_food_groups"
   add_foreign_key "day_foods", "days"
   add_foreign_key "day_foods", "foods"
+  add_foreign_key "day_recipes", "day_food_groups"
+  add_foreign_key "day_recipes", "days"
+  add_foreign_key "day_recipes", "recipes"
   add_foreign_key "days", "users"
   add_foreign_key "food_labels", "users"
   add_foreign_key "food_labels_foods", "food_labels"

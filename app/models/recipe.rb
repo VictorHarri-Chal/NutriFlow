@@ -21,6 +21,7 @@ class Recipe < ApplicationRecord
   def total_carbs    = recipe_items.to_a.sum(&:total_carbs).round(1)
   def total_fats     = recipe_items.to_a.sum(&:total_fats).round(1)
   def total_sugars   = recipe_items.to_a.sum(&:total_sugars).round(1)
+  def total_weight   = recipe_items.to_a.sum(&:quantity).round(1)
 
   private
 

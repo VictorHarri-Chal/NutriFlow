@@ -16,6 +16,7 @@ Rails.application.routes.draw do
 
   resources :days, only: [] do
     resources :day_foods, only: [:new, :create, :edit, :update, :destroy]
+    resources :day_recipes, only: [:new, :create, :edit, :update, :destroy]
   end
 
   resources :recipes

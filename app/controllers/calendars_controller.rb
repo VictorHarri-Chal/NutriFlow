@@ -6,10 +6,13 @@ class CalendarsController < ApplicationController
     end
 
     @day_foods = @day.day_foods.includes(:food, :day_food_group)
+    @day_recipes = @day.day_recipes.includes(:recipe, :day_food_group)
 
-    @day_foods_by_group = @day_foods.group_by(&:day_food_group)
+    # Combiner les aliments et recettes pour le groupement
+    @all_day_items = @day_foods + @day_recipes
+    @day_items_by_group = @all_day_items.group_by(&:day_food_group)
 
-    @day_foods_without_group = @day_foods_by_group.delete(nil) || []
+    @day_items_without_group = @day_items_by_group.delete(nil) || []
 
     @total_calories = @day.total_calories
     @total_proteins = @day.total_proteins
