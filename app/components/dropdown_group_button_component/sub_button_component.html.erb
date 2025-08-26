@@ -1,0 +1,19 @@
+<%# Renders a single dropdown entry depending on type %>
+<% case type %>
+<% when :link %>
+  <%= link_to path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100", role: "menuitem", tabindex: "-1" do %>
+    <%= text %>
+  <% end %>
+<% when :button %>
+  <%= button_tag type: 'button', class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100", data: data do %>
+    <%= text %>
+  <% end %>
+<% when :button_to %>
+  <%= button_to path, method: method, form: { data: data }, class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" do %>
+    <%= text %>
+  <% end %>
+<% when :custom %>
+  <div class="px-1 py-0.5">
+    <%= custom_content %>
+  </div>
+<% end %>

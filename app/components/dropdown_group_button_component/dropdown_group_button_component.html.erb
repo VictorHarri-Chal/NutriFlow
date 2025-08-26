@@ -1,0 +1,17 @@
+<div class="inline-flex rounded-md shadow-sm h-fit <%= 'relative' unless right? %>" data-controller="dropdown-group-button">
+  <%= first_button_tag %>
+  <% if buttons.size > 1 %>
+    <div class="-ml-px block <%= 'relative' if right? %>" data-action="click->dropdown-group-button#openButtonList">
+      <button type="button" aria-expanded="true" aria-haspopup="true" class="option-menu-button <%= chevron_button_classes %>" id="<%= option_menu_button_id %>">
+        <i class="fa-solid fa-chevron-down opened-icon fa-fw"></i>
+      </button>
+      <div class="hidden absolute z-10 -mr-1 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black-1000 ring-opacity-5 focus:outline-none <%= right? ? 'right-0' : 'left-0' %>" role="menu" aria-orientation="vertical" aria-labelledby="<%= option_menu_button_id %>" tabindex="-1" data-dropdown-group-button-target="buttonList">
+        <div class="py-1" role="none">
+          <% buttons.drop(1).each do |button| %>
+            <%= render button %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
