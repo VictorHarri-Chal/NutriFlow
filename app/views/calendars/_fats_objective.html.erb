@@ -1,26 +1,46 @@
-<div class="bg-white rounded-lg p-4 shadow-sm border border-red-100">
-  <div class="flex justify-between items-center mb-2">
-    <h4 class="font-medium text-gray-700">Lipides</h4>
-    <span class="text-sm text-gray-500">
+<div class="<%= fats_percentage > 105 ? 'bg-red-50 border-red-300 shadow-red-100' : fats_percentage >= 100 ? 'bg-green-50 border-green-300 shadow-green-100' : 'bg-white border-red-100' %> rounded-lg p-4 shadow-sm border transition-all duration-300">
+  <div class="flex justify-between items-center mb-3">
+    <div class="flex items-center">
+      <h4 class="font-medium text-gray-700">Lipides</h4>
+      <% if fats_percentage > 105 %>
+        <div class="ml-2 flex items-center">
+          <i class="fas fa-exclamation-triangle text-red-500 mr-1"></i>
+          <span class="text-xs font-medium text-red-600">DÉPASSÉ</span>
+        </div>
+      <% elsif fats_percentage >= 100 %>
+        <div class="ml-2 flex items-center">
+          <i class="fas fa-check-circle text-green-500 mr-1"></i>
+          <span class="text-xs font-medium text-green-600">ATTEINT</span>
+        </div>
+      <% end %>
+    </div>
+    <span class="text-sm <%= fats_percentage > 105 ? 'text-red-600 font-medium' : fats_percentage >= 100 ? 'text-green-600 font-medium' : 'text-gray-500' %>">
       <%= total_fats.round(1) %> / <%= daily_fats_goal.round(1) %> g
     </span>
   </div>
 
-  <div class="w-full bg-gray-200 rounded-full h-3 mb-2">
-    <div class="h-3 rounded-full transition-all duration-300 <%= fats_percentage > 100 ? 'bg-red-500' : fats_percentage > 80 ? 'bg-yellow-500' : 'bg-green-500' %>"
+  <div class="w-full bg-gray-200 rounded-full h-4 mb-3 relative overflow-hidden">
+    <div class="h-4 rounded-full transition-all duration-500 <%= fats_percentage > 105 ? 'bg-red-500' : fats_percentage >= 100 ? 'bg-green-500' : 'bg-green-500' %>"
          style="width: <%= [fats_percentage, 100].min %>%"></div>
+    <% if fats_percentage > 105 %>
+      <div class="absolute inset-0 bg-red-300 opacity-30 animate-pulse"></div>
+    <% end %>
   </div>
 
   <div class="flex justify-between items-center">
-    <span class="text-sm font-medium <%= fats_percentage > 100 ? 'text-red-600' : fats_percentage > 80 ? 'text-yellow-600' : 'text-green-600' %>">
+    <span class="text-sm font-bold <%= fats_percentage > 105 ? 'text-red-700' : fats_percentage >= 100 ? 'text-green-700' : 'text-green-700' %>">
       <%= fats_percentage %>%
     </span>
-    <% if fats_percentage > 100 %>
-      <span class="text-xs text-red-600">
+    <% if fats_percentage > 105 %>
+      <span class="text-sm font-bold text-red-600 bg-red-100 px-2 py-1 rounded-full">
         +<%= (total_fats - daily_fats_goal).round(1) %> g
       </span>
-    <% elsif fats_percentage < 100 %>
-      <span class="text-xs text-blue-600">
+    <% elsif fats_percentage >= 100 %>
+      <span class="text-sm font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full">
+        <i class="fas fa-check mr-1"></i>Objectif atteint
+      </span>
+    <% else %>
+      <span class="text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
         -<%= (daily_fats_goal - total_fats).round(1) %> g
       </span>
     <% end %>
