@@ -1,0 +1,11 @@
+fr:
+  activerecord:
+    models:
+      day_recipe:
+        one: "Recette"
+        other: "Recettes"
+    attributes:
+      day_recipe:
+        recipe: "Recette"
+        quantity: "Quantité"
+        use_recipe_quantity: "Utiliser la quantité de la recette"
