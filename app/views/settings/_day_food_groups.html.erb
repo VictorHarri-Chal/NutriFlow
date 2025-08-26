@@ -1,18 +1,26 @@
 <h2 class="text-xl font-semibold text-gray-900 mb-6">Groupes d'aliments</h2>
 
 <!-- Formulaire pour créer un nouveau groupe -->
-<div class="bg-gray-50 p-6 rounded-lg mb-6">
+<div class="bg-gray-50 p-6 rounded-lg mb-6" data-controller="form-validation">
   <%= simple_form_for @day_food_group, url: day_food_groups_path, html: { class: "flex items-end gap-4" } do |f| %>
     <div class="flex-1">
       <%= f.input :name,
           label: "Nom du groupe",
           placeholder: "Ex: Petit-déjeuner, Déjeuner, Dîner...",
           wrapper_html: { class: "mb-0" },
-          input_html: { class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" } %>
+          input_html: {
+            class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+            data: {
+              form_validation_target: "input",
+              action: "input->form-validation#input keyup->form-validation#keyup"
+            }
+          } %>
     </div>
     <div>
       <%= f.submit "Créer le groupe",
-          class: "bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
+          class: "bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400",
+          data: { form_validation_target: "submit" },
+          disabled: true %>
     </div>
   <% end %>
 </div>
