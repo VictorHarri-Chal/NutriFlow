@@ -1,6 +1,6 @@
 <div class="mb-6 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden" data-controller="collapsible">
   <!-- En-tête du groupe -->
-  <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
+  <div class="bg-gradient-to-r <%= group_bg_class %> px-6 py-4 border-b border-gray-200">
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-3">
         <button class="text-gray-600 hover:text-blue-600 transition-colors"
@@ -9,10 +9,10 @@
           <i class="fas fa-chevron-down transition-transform duration-200" data-collapsible-target="icon"></i>
         </button>
         <h3 class="text-lg font-semibold text-gray-800">
-          <%= day_food_group.name %>
+          <%= group_title %>
         </h3>
-        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-          <%= day_foods.count %> aliment<%= 's' if day_foods.count > 1 %>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= badge_bg_class %>">
+          <%= item_count_text %>
         </span>
       </div>
 
@@ -78,40 +78,44 @@
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          <% day_foods.each do |day_food| %>
+          <% day_foods.each do |item| %>
             <tr class="hover:bg-gray-50">
               <td class="px-4 py-3 font-medium text-gray-900">
-                <%= day_food.food.name %>
+                <%= item.food_name %>
               </td>
               <td class="px-4 py-3 text-gray-600">
-                <%= day_food.food.brand %>
+                <% if is_recipe?(item) %>
+                  <span class="text-orange-600">Recette</span>
+                <% else %>
+                  <%= item.food.brand %>
+                <% end %>
               </td>
               <td class="px-4 py-3 text-gray-900">
-                <%= day_food.quantity %> g
+                <%= item.display_quantity %>
               </td>
               <td class="px-4 py-3 font-semibold text-blue-600">
-                <%= day_food.total_calories %> kcal
+                <%= item.total_calories %> kcal
               </td>
               <td class="px-4 py-3 text-green-600">
-                <%= day_food.total_proteins %> g
+                <%= item.total_proteins %> g
               </td>
               <td class="px-4 py-3 text-yellow-600">
-                <%= day_food.total_carbs %> g
+                <%= item.total_carbs %> g
               </td>
               <td class="px-4 py-3 text-red-600">
-                <%= day_food.total_fats %> g
+                <%= item.total_fats %> g
               </td>
               <td class="px-4 py-3 text-purple-600">
-                <%= day_food.total_sugars %> g
+                <%= item.total_sugars %> g
               </td>
               <td class="px-4 py-3 text-center">
-                <%= link_to edit_day_day_food_path(day_food.day, day_food),
+                <%= link_to edit_path(item),
                             class: "inline-block text-blue-600 hover:text-blue-900 mr-2",
                             title: "Modifier" do %>
                   <i class="fa fa-pencil"></i>
                 <% end %>
-                <%= delete_link_with_confirm(day_day_food_path(day_food.day, day_food),
-                                            confirm: "Es-tu sûr de vouloir supprimer cet aliment ?",
+                <%= delete_link_with_confirm(delete_path(item),
+                                            confirm: delete_confirm_message(item),
                                             title: "Supprimer") %>
               </td>
             </tr>

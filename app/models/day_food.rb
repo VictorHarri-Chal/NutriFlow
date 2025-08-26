@@ -28,4 +28,13 @@ class DayFood < ApplicationRecord
   def total_sugars
     (food.sugars * gram_factor).round(1)
   end
+
+  # Pour la cohérence avec DayRecipe
+  def food_name
+    food.name
+  end
+
+  def display_quantity
+    "#{quantity} g"
+  end
 end

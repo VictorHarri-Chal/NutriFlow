@@ -7,16 +7,23 @@
 <% end %>
 
 <div class="max-w-6xl mx-auto mt-16 bg-white rounded-xl shadow-md p-8" id="calendar-content">
-  <!-- En-tête avec titre et bouton d'ajout -->
+  <!-- En-tête avec titre et boutons d'ajout -->
   <div class="flex justify-between items-center mb-4">
     <h1 class="text-3xl font-bold text-blue-800">
       <%= l(@selected_date, format: :long) %>
     </h1>
 
-    <%= link_to new_day_day_food_path(@day), class: "inline-flex items-center px-4 py-2 bg-blue-800 text-white rounded-lg shadow hover:bg-blue-600 transition font-medium" do %>
-      <i class="fas fa-plus mr-2"></i>
-      Ajouter un aliment
-    <% end %>
+    <div class="flex gap-3">
+      <%= link_to new_day_day_recipe_path(@day), class: "inline-flex items-center px-4 py-2 bg-orange-600 text-white rounded-lg shadow hover:bg-orange-500 transition font-medium" do %>
+        <i class="fas fa-plus mr-2"></i>
+        Ajouter une recette
+      <% end %>
+
+      <%= link_to new_day_day_food_path(@day), class: "inline-flex items-center px-4 py-2 bg-blue-800 text-white rounded-lg shadow hover:bg-blue-600 transition font-medium" do %>
+        <i class="fas fa-plus mr-2"></i>
+        Ajouter un aliment
+      <% end %>
+    </div>
   </div>
 
   <!-- Résumé nutritionnel -->
@@ -40,18 +47,18 @@
              proteins_percentage: @proteins_percentage,
              fats_percentage: @fats_percentage %>
 
-  <!-- Contenu des aliments -->
+  <!-- Contenu des aliments et recettes -->
   <div class="space-y-6 mt-8">
-    <% if @day_foods.any? %>
+    <% if @all_day_items.any? %>
       <!-- Groupes de repas -->
-      <% @day_foods_by_group.each do |day_food_group, day_foods| %>
-        <%= render DayFoodGroupComponent.new(day_food_group: day_food_group, day_foods: day_foods) %>
+      <% @day_items_by_group.each do |day_food_group, day_items| %>
+        <%= render DayFoodGroupComponent.new(day_food_group: day_food_group, day_foods: day_items) %>
       <% end %>
 
-      <!-- Aliments sans groupe -->
-      <%= render 'calendars/ungrouped_foods',
-                 day_foods_without_group: @day_foods_without_group,
-                 day: @day %>
+      <!-- Aliments et recettes sans groupe -->
+      <% if @day_items_without_group.any? %>
+        <%= render DayFoodGroupComponent.new(day_foods: @day_items_without_group) %>
+      <% end %>
     <% else %>
       <!-- État vide -->
       <%= render 'calendars/empty_state', day: @day %>
