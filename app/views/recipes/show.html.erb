@@ -14,7 +14,11 @@
   <!-- Résumé nutritionnel -->
   <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg p-6 mb-8">
     <h2 class="text-lg font-semibold text-gray-800 mb-4">Valeurs nutritionnelles</h2>
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+      <div class="text-center">
+        <div class="text-2xl font-bold text-indigo-600"><%= @recipe.total_weight %></div>
+        <div class="text-sm text-gray-600">Poids total (g)</div>
+      </div>
       <div class="text-center">
         <div class="text-2xl font-bold text-blue-600"><%= @recipe.total_calories %></div>
         <div class="text-sm text-gray-600">Calories</div>
