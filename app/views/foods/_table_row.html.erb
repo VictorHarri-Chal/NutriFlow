@@ -10,11 +10,14 @@
   <td class="px-4 py-2"><%= food.fats %> g</td>
   <td class="px-4 py-2"><%= food.sugars %> g</td>
   <td class="px-4 py-2 text-center">
-    <%= link_to edit_food_path(food), class: "inline-block text-blue-600 hover:text-blue-900 mr-2", title: "Éditer" do %>
-      <i class="fa fa-pencil"></i>
+    <%= render DropdownGroupButtonComponent.new(dropdown: false) do |dropdown| %>
+      <% dropdown.with_button(type: :link, path: edit_food_path(food), text: 'Modifier') %>
+
+      <% dropdown.with_button(type: :custom, custom_content: delete_link_with_confirm(food_path(food),
+                                              confirm: "Es-tu sûr de vouloir supprimer cet aliment ?",
+                                              title: "Supprimer",
+                                              text: "Supprimer",
+                                              class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100")) %>
     <% end %>
-    <%= delete_link_with_confirm(food_path(food),
-                                confirm: "Es-tu sûr de vouloir supprimer cet aliment ?",
-                                title: "Supprimer") %>
   </td>
 </tr>

@@ -1,11 +1,16 @@
 module ApplicationHelper
   include Pagy::Frontend
 
+  def nested_dom_id(*args)
+    args.map { |arg| arg.respond_to?(:to_key) ? dom_id(arg) : arg }.join("_")
+  end
+
   def delete_link_with_confirm(path, options = {})
     message = options.delete(:confirm) || "Es-tu sûr de vouloir supprimer cet élément ?"
     icon_class = options.delete(:icon_class) || "fa fa-trash"
     title = options.delete(:title) || "Supprimer"
     link_class = options.delete(:class) || "inline-block text-red-600 hover:text-red-900"
+    text = options.delete(:text)
 
     link_to path,
             data: {
@@ -15,7 +20,11 @@ module ApplicationHelper
             },
             class: link_class,
             title: title do
-      content_tag :i, nil, class: icon_class
+      if text.present?
+        content_tag :span, text
+      else
+        content_tag :i, nil, class: icon_class
+      end
     end
   end
 
