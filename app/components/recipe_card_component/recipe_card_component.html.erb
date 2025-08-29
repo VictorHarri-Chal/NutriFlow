@@ -1,0 +1,84 @@
+<%= link_to recipe_path(recipe), class: "group block" do %>
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg hover:border-blue-200 transition-all duration-300 transform hover:scale-[1.02]">
+
+    <!-- En-tête avec gradient et titre -->
+    <div class="relative bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 px-6 py-5">
+      <!-- Badge de notation si disponible -->
+      <% if recipe.rating > 0 %>
+        <div class="absolute top-3 right-3 flex items-center bg-white/80 backdrop-blur-sm rounded-full px-2 py-1 text-xs font-medium text-gray-700">
+          <i class="fas fa-star text-yellow-500 mr-1"></i>
+          <%= recipe.rating %>
+        </div>
+      <% end %>
+
+      <h3 class="font-bold text-gray-900 text-lg leading-tight group-hover:text-blue-700 transition-colors">
+        <%= recipe.name %>
+      </h3>
+
+      <!-- Nombre d'ingrédients -->
+      <div class="flex items-center mt-2 text-sm text-gray-600">
+        <i class="fas fa-list-ul mr-1"></i>
+        <%= pluralize(recipe.recipe_items.size, "ingrédient") %>
+      </div>
+    </div>
+
+    <!-- Section nutritionnelle -->
+    <div class="px-6 py-4">
+      <!-- Calories principales -->
+      <div class="flex items-center justify-between mb-4">
+        <div class="text-center flex-1">
+          <div class="text-2xl font-bold text-blue-600 mb-1">
+            <%= recipe.total_calories %>
+          </div>
+          <div class="text-xs text-gray-500 font-medium">kcal</div>
+        </div>
+        <div class="w-px h-8 bg-gray-200"></div>
+        <div class="text-center flex-1">
+          <div class="text-2xl font-bold text-indigo-600 mb-1">
+            <%= recipe.total_weight %>
+          </div>
+          <div class="text-xs text-gray-500 font-medium">g total</div>
+        </div>
+      </div>
+
+      <!-- Macros détaillées -->
+      <div class="grid grid-cols-3 gap-3">
+        <div class="text-center p-2 bg-green-50 rounded-lg">
+          <div class="flex items-center justify-center mb-1">
+            <i class="fas fa-dumbbell text-green-600 text-sm"></i>
+          </div>
+          <div class="font-bold text-green-700 text-sm"><%= recipe.total_proteins %></div>
+          <div class="text-xs text-green-600">Protéines</div>
+        </div>
+
+        <div class="text-center p-2 bg-yellow-50 rounded-lg">
+          <div class="flex items-center justify-center mb-1">
+            <i class="fas fa-bread-slice text-yellow-600 text-sm"></i>
+          </div>
+          <div class="font-bold text-yellow-700 text-sm"><%= recipe.total_carbs %></div>
+          <div class="text-xs text-yellow-600">Glucides</div>
+        </div>
+
+        <div class="text-center p-2 bg-red-50 rounded-lg">
+          <div class="flex items-center justify-center mb-1">
+            <i class="fas fa-oil-can text-red-600 text-sm"></i>
+          </div>
+          <div class="font-bold text-red-700 text-sm"><%= recipe.total_fats %></div>
+          <div class="text-xs text-red-600">Lipides</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer avec action -->
+    <div class="px-6 py-3 bg-gray-50 border-t border-gray-100">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center text-sm text-gray-600">
+          <span>Voir les détails</span>
+        </div>
+        <div class="text-blue-600 group-hover:text-blue-700 transition-colors">
+          <i class="fas fa-arrow-right text-sm"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

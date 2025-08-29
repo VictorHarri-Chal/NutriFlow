@@ -4,6 +4,8 @@ class Recipe < ApplicationRecord
   belongs_to :user
   has_many :recipe_items, dependent: :destroy
   has_many :foods, through: :recipe_items
+  has_one :recipe_rating, dependent: :destroy
+  has_many :recipe_comments, dependent: :destroy
 
   accepts_nested_attributes_for :recipe_items, allow_destroy: true, reject_if: :all_blank
 
@@ -22,6 +24,14 @@ class Recipe < ApplicationRecord
   def total_fats     = recipe_items.to_a.sum(&:total_fats).round(1)
   def total_sugars   = recipe_items.to_a.sum(&:total_sugars).round(1)
   def total_weight   = recipe_items.to_a.sum(&:quantity).round(1)
+
+  def rating
+    recipe_rating&.rating || 0
+  end
+
+  def rating_comment
+    recipe_rating&.comment
+  end
 
   private
 

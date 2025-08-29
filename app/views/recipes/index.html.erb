@@ -39,66 +39,7 @@
     <!-- Grille de cartes -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <% @recipes.each do |recipe| %>
-        <%= link_to recipe_path(recipe), class: "block bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]" do %>
-          <!-- En-tête de la carte -->
-          <div class="bg-gradient-to-r from-orange-50 to-amber-50 px-4 py-4 border-b border-gray-200">
-            <div class="mb-3">
-              <h3 class="font-semibold text-gray-800 text-lg"><%= recipe.name %></h3>
-            </div>
-
-            <!-- Macros avec icônes -->
-            <div class="grid grid-cols-5 gap-2">
-              <div class="text-center">
-                <div class="flex items-center justify-center mb-1">
-                  <i class="fas fa-weight-hanging text-indigo-600 text-sm"></i>
-                </div>
-                <div class="font-bold text-indigo-600 text-sm"><%= recipe.total_weight %></div>
-                <div class="text-xs text-gray-500">g</div>
-              </div>
-              <div class="text-center">
-                <div class="flex items-center justify-center mb-1">
-                  <i class="fas fa-fire text-blue-600 text-sm"></i>
-                </div>
-                <div class="font-bold text-blue-600 text-sm"><%= recipe.total_calories %></div>
-                <div class="text-xs text-gray-500">kcal</div>
-              </div>
-              <div class="text-center">
-                <div class="flex items-center justify-center mb-1">
-                  <i class="fas fa-dumbbell text-green-600 text-sm"></i>
-                </div>
-                <div class="font-bold text-green-600 text-sm"><%= recipe.total_proteins %></div>
-                <div class="text-xs text-gray-500">Protéines</div>
-              </div>
-              <div class="text-center">
-                <div class="flex items-center justify-center mb-1">
-                  <i class="fas fa-bread-slice text-yellow-600 text-sm"></i>
-                </div>
-                <div class="font-bold text-yellow-600 text-sm"><%= recipe.total_carbs %></div>
-                <div class="text-xs text-gray-500">Glucides</div>
-              </div>
-              <div class="text-center">
-                <div class="flex items-center justify-center mb-1">
-                  <i class="fas fa-oil-can text-red-600 text-sm"></i>
-                </div>
-                <div class="font-bold text-red-600 text-sm"><%= recipe.total_fats %></div>
-                <div class="text-xs text-gray-500">Lipides</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Footer de la carte -->
-          <div class="p-4">
-            <div class="flex items-center justify-between text-sm text-gray-500">
-              <span class="flex items-center">
-                <i class="fas fa-clock mr-1"></i>
-                <%= pluralize(recipe.recipe_items.size, "ingrédient") %>
-              </span>
-              <span class="flex items-center">
-                <i class="fas fa-arrow-right text-gray-400"></i>
-              </span>
-            </div>
-          </div>
-        <% end %>
+        <%= render RecipeCardComponent.new(recipe: recipe) %>
       <% end %>
     </div>
   <% else %>
