@@ -19,7 +19,10 @@ Rails.application.routes.draw do
     resources :day_recipes, only: [:new, :create, :edit, :update, :destroy]
   end
 
-  resources :recipes
+  resources :recipes do
+    resources :recipe_ratings, only: [:create, :update, :destroy]
+    resources :recipe_comments, only: [:create, :update, :destroy]
+  end
 
   post 'days/:date/add_food', to: 'days#add_food', as: :add_food_to_day
 
