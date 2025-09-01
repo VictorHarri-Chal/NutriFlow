@@ -2,12 +2,12 @@
 service: nutri_flow
 
 # Name of the container image.
-image: your-user/nutri_flow
+image: victorharrichal/nutri_flow
 
 # Deploy to these servers.
 servers:
   web:
-    - 192.168.0.1
+    - 91.98.133.64
   # job:
   #   hosts:
   #     - 192.168.0.1
@@ -19,17 +19,18 @@ servers:
 # Note: If using Cloudflare, set encryption mode in SSL/TLS setting to "Full" to enable CF-to-app encryption.
 proxy:
   ssl: true
-  host: app.example.com
+  host: app.example.com // Mettre le nom de domaine ici
 
-# Credentials for your image host.
-registry:
-  # Specify the registry server, if you're not using Docker Hub
-  # server: registry.digitalocean.com / ghcr.io / ...
-  username: your-user
+
+# # Credentials for your image host.
+# registry:
+#   # Specify the registry server, if you're not using Docker Hub
+#   # server: registry.digitalocean.com / ghcr.io / ...
+#   username: your-user
 
   # Always use an access token rather than real password when possible.
   password:
-    - KAMAL_REGISTRY_PASSWORD
+    - KAMAL_REGISTRY_PASSWORD // Mettre le mot de passe de l'image docker hub ici
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
 env:
