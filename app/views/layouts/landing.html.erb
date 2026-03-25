@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+  <head>
+    <title>NutriFlow — Suivez votre nutrition, atteignez vos objectifs</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="NutriFlow est une application de suivi nutritionnel moderne. Calendrier alimentaire, recettes personnalisées, suivi des macros — tout en un.">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  </head>
+
+  <body class="bg-white antialiased">
+    <%= yield %>
+  </body>
+</html>
