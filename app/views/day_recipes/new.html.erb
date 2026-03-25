@@ -1,5 +1,15 @@
-<div class="max-w-lg mx-auto mt-16 bg-white rounded-xl shadow-md p-8">
-  <h1 class="text-2xl font-bold text-blue-800 mb-6">Ajouter un plat</h1>
+<%= turbo_frame_tag "item_form" do %>
+  <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-6 mt-4 mb-2">
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="text-lg font-semibold text-gray-900">Ajouter un plat</h2>
+      <button type="button"
+              data-controller="close-frame"
+              data-action="click->close-frame#close"
+              class="text-gray-400 hover:text-gray-600 transition-colors">
+        <i class="fas fa-times text-lg"></i>
+      </button>
+    </div>
 
-  <%= render "form", day: @day, day_recipe: @day_recipe, submit_text: "Ajouter" %>
-</div>
+    <%= render "form", day: @day, day_recipe: @day_recipe, submit_text: "Ajouter" %>
+  </div>
+<% end %>
