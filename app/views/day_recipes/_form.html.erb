@@ -51,7 +51,12 @@
   </div>
 
   <div class="flex justify-center gap-4 mt-8">
-    <%= link_to "Annuler", calendars_path, class: "px-6 py-2 bg-gray-200 text-gray-800 rounded-lg shadow hover:bg-gray-300 transition font-semibold text-center text-sm" %>
-    <%= f.button :submit, submit_text, class: "px-6 py-2 bg-blue-800 text-white rounded-lg shadow hover:bg-blue-600 transition font-semibold text-center text-sm" %>
+    <button type="button"
+            data-controller="close-frame"
+            data-action="click->close-frame#close"
+            class="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg shadow hover:bg-gray-300 transition font-semibold text-sm">
+      Annuler
+    </button>
+    <%= f.button :submit, submit_text, class: "px-6 py-2 bg-blue-800 text-white rounded-lg shadow hover:bg-blue-600 transition font-semibold text-sm" %>
   </div>
 <% end %>

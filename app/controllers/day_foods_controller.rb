@@ -1,9 +1,11 @@
 class DayFoodsController < ApplicationController
-  before_action :set_day, only: [:new, :create]
+  include CalendarData
+
+  before_action :set_day,      only: [:new, :create]
   before_action :set_day_food, only: [:edit, :update, :destroy]
 
   def new
-    @day_food = @day.day_foods.build
+    @day_food        = @day.day_foods.build
     @day_food_groups = current_user.day_food_groups.order(:name)
   end
 
@@ -11,10 +13,17 @@ class DayFoodsController < ApplicationController
     @day_food = @day.day_foods.build(day_food_params)
 
     if @day_food.save
-      redirect_to calendars_path(date: @day.date)
+      load_calendar_data(@day)
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to calendars_path(date: @day.date) }
+      end
     else
       @day_food_groups = current_user.day_food_groups.order(:name)
-      render :new, status: :unprocessable_entity
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("item_form", partial: "day_foods/form", locals: { day: @day, day_food: @day_food, submit_text: "Ajouter" }) }
+        format.html         { render :new, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -32,9 +41,13 @@ class DayFoodsController < ApplicationController
   end
 
   def destroy
-    day_date = @day_food.day.date
+    day = @day_food.day
     @day_food.destroy
-    redirect_to calendars_path(date: day_date)
+    load_calendar_data(day)
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to calendars_path(date: day.date) }
+    end
   end
 
   private

@@ -1,28 +1,37 @@
 class DayRecipesController < ApplicationController
-  before_action :set_day, only: [:new, :create]
+  include CalendarData
+
+  before_action :set_day,        only: [:new, :create]
   before_action :set_day_recipe, only: [:edit, :update, :destroy]
 
   def new
-    @day_recipe = @day.day_recipes.build
+    @day_recipe      = @day.day_recipes.build
     @day_food_groups = current_user.day_food_groups.order(:name)
-    @recipes = current_user.recipes.order(:name)
+    @recipes         = current_user.recipes.order(:name)
   end
 
   def create
     @day_recipe = @day.day_recipes.build(day_recipe_params)
 
     if @day_recipe.save
-      redirect_to calendars_path(date: @day.date)
+      load_calendar_data(@day)
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to calendars_path(date: @day.date) }
+      end
     else
       @day_food_groups = current_user.day_food_groups.order(:name)
-      @recipes = current_user.recipes.order(:name)
-      render :new, status: :unprocessable_entity
+      @recipes         = current_user.recipes.order(:name)
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("item_form", partial: "day_recipes/form", locals: { day: @day, day_recipe: @day_recipe, submit_text: "Ajouter" }) }
+        format.html         { render :new, status: :unprocessable_entity }
+      end
     end
   end
 
   def edit
     @day_food_groups = current_user.day_food_groups.order(:name)
-    @recipes = current_user.recipes.order(:name)
+    @recipes         = current_user.recipes.order(:name)
   end
 
   def update
@@ -30,15 +39,19 @@ class DayRecipesController < ApplicationController
       redirect_to calendars_path(date: @day_recipe.day.date)
     else
       @day_food_groups = current_user.day_food_groups.order(:name)
-      @recipes = current_user.recipes.order(:name)
+      @recipes         = current_user.recipes.order(:name)
       render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
-    day_date = @day_recipe.day.date
+    day = @day_recipe.day
     @day_recipe.destroy
-    redirect_to calendars_path(date: day_date)
+    load_calendar_data(day)
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to calendars_path(date: day.date) }
+    end
   end
 
   private
