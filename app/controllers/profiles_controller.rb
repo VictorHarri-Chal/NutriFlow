@@ -22,8 +22,7 @@ class ProfilesController < ApplicationController
 
   def set_profile
     @profile = current_user.profile
-  rescue ActiveRecord::RecordNotFound
-    redirect_to root_path
+    redirect_to root_path unless @profile
   end
 
   def profile_params

@@ -2,9 +2,9 @@
   <%= link_to calendars_path(date: Date.current.strftime('%Y-%m-%d')),
               class: "inline-flex items-center px-4 py-2 bg-green-700 text-white rounded-lg shadow hover:bg-green-600 transition font-medium",
               data: { turbo: false },
-              title: "Aller à aujourd'hui" do %>
+              title: t("views.calendars.today") do %>
     <i class="fas fa-calendar-day mr-2"></i>
-    Aujourd'hui
+    <%= t("views.calendars.today") %>
   <% end %>
 
   <div class="flex items-center space-x-2">

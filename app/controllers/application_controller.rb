@@ -5,8 +5,24 @@ class ApplicationController < ActionController::Base
   include Pagy::Backend
 
   before_action :authenticate_user!
+  before_action :set_locale
 
   private
+
+  def set_locale
+    I18n.locale = if user_signed_in? && I18n.available_locales.include?(current_user.locale.to_sym)
+      current_user.locale.to_sym
+    else
+      browser_locale
+    end
+  end
+
+  def browser_locale
+    accepted = request.env["HTTP_ACCEPT_LANGUAGE"].to_s
+                       .scan(/[a-z]{2}(?=-|,|;|$)/i)
+                       .map { |l| l.downcase.to_sym }
+    accepted.find { |l| I18n.available_locales.include?(l) } || I18n.default_locale
+  end
 
   def after_sign_in_path_for(resource)
     calendars_path

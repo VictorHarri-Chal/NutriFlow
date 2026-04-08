@@ -1,6 +1,10 @@
 class User < ApplicationRecord
+  AVAILABLE_LOCALES = %w[fr en].freeze
+
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
+
+  validates :locale, inclusion: { in: AVAILABLE_LOCALES }
 
   has_one :profile, dependent: :destroy
   has_many :foods, dependent: :destroy

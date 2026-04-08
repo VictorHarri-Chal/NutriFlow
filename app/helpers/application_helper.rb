@@ -6,9 +6,9 @@ module ApplicationHelper
   end
 
   def delete_link_with_confirm(path, options = {})
-    message = options.delete(:confirm) || "Es-tu sûr de vouloir supprimer cet élément ?"
+    message = options.delete(:confirm) || I18n.t("shared.delete_confirm")
     icon_class = options.delete(:icon_class) || "fa fa-trash"
-    title = options.delete(:title) || "Supprimer"
+    title = options.delete(:title) || I18n.t("shared.delete")
     link_class = options.delete(:class) || "inline-block text-red-600 hover:text-red-900"
     text = options.delete(:text)
 
@@ -30,8 +30,8 @@ module ApplicationHelper
 
     # Helper pour créer des boutons de suppression avec confirmation personnalisée
   def delete_button_with_confirm(path, options = {})
-    message = options.delete(:confirm) || "Es-tu sûr de vouloir supprimer cet élément ?"
-    text = options.delete(:text) || "Supprimer"
+    message = options.delete(:confirm) || I18n.t("shared.delete_confirm")
+    text = options.delete(:text) || I18n.t("shared.delete")
     button_class = options.delete(:class) || "btn btn-danger"
 
     button_to path,
@@ -47,9 +47,9 @@ module ApplicationHelper
 
   # Helper pour créer des liens de déconnexion avec confirmation personnalisée
   def logout_link_with_confirm(path, options = {})
-    message = options.delete(:confirm) || "Es-tu sûr de vouloir te déconnecter ?"
+    message = options.delete(:confirm) || I18n.t("views.shared.sidebar.logout_confirm")
     icon_class = options.delete(:icon_class) || "fas fa-sign-out-alt w-5 h-5 mr-3"
-    text = options.delete(:text) || "Déconnexion"
+    text = options.delete(:text) || I18n.t("views.shared.sidebar.logout")
     link_class = options.delete(:class) || "flex items-center px-4 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg"
 
     link_to path,

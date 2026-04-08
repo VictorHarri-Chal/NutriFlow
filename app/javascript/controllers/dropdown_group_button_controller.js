@@ -4,6 +4,14 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["buttonList"]
 
+  disconnect() {
+    if (this.closeButtonListOnClickOutside) {
+      window.removeEventListener("click", this.closeButtonListOnClickOutside)
+      this.closeButtonListOnClickOutside = null
+    }
+    this._buttonListOpened = false
+  }
+
   openButtonList(event) {
     event.stopPropagation();
 

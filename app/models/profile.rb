@@ -18,28 +18,24 @@ class Profile < ApplicationRecord
 
 
   def activity_level_multiplier
-    case activity_level
-    when 'sedentary'
-      return 1.2
-    when 'lightly_active'
-      return 1.375
-    when 'moderately_active'
-      return 1.55
-    when 'very_active'
-      return 1.725
-    when 'extremely_active'
-      return 1.9
-    else
-      return 1.2
+    case activity_level.to_s
+    when 'lightly_active'    then 1.375
+    when 'moderately_active' then 1.55
+    when 'very_active'       then 1.725
+    when 'extremely_active'  then 1.9
+    else                          1.2
     end
   end
 
   def calculate_calories_needed_maintenance
     return nil unless weight.present? && height.present? && age.present?
 
-    daily_calorie_requirement = Dentaku::Calculator.new
-    result = daily_calorie_requirement.evaluate("(10 * #{weight} + 6.25 * #{height} - 5 * #{age} + 5) * #{activity_level_multiplier}")
-    result.round
+    @calculate_calories_needed_maintenance ||= begin
+      result = Dentaku::Calculator.new.evaluate(
+        "(10 * #{weight} + 6.25 * #{height} - 5 * #{age} + 5) * #{activity_level_multiplier}"
+      )
+      result.round
+    end
   end
 
   def calculate_calories_needed_weight_loss

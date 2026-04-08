@@ -1,0 +1,350 @@
+fr:
+  controllers:
+    settings:
+      locale_updated: "Langue mise à jour avec succès."
+      locale_error: "Erreur lors de la mise à jour de la langue."
+    foods:
+      created: "Aliment créé avec succès."
+      updated: "Aliment mis à jour avec succès."
+      destroyed: "Aliment supprimé avec succès."
+    days:
+      food_added: "Aliment ajouté avec succès."
+      food_add_error: "Erreur lors de l'ajout de l'aliment."
+    recipe_ratings:
+      created: "Notation enregistrée avec succès."
+      updated: "Notation mise à jour avec succès."
+      destroyed: "Notation supprimée avec succès."
+
+  activerecord:
+    errors:
+      models:
+        recipe:
+          at_least_one_ingredient: "Au moins un ingrédient est requis"
+        recipe_rating:
+          attributes:
+            recipe_id:
+              taken: "Vous avez déjà noté cette recette"
+
+  shared:
+    cancel: "Annuler"
+    save: "Enregistrer"
+    update: "Mettre à jour"
+    delete: "Supprimer"
+    edit: "Modifier"
+    add: "Ajouter"
+    delete_confirm: "Es-tu sûr de vouloir supprimer cet élément ?"
+    actions: "Actions"
+    labels: "Labels"
+    quantity: "Quantité"
+    not_defined: "Non défini"
+    not_provided: "Non renseigné"
+    select_blank: "— Sélectionner —"
+    food_count:
+      one: "1 aliment"
+      other: "%{count} aliments"
+    no_food_groups: "Aucun groupe de repas"
+    create_groups_in_settings: "Créez des groupes de repas dans les paramètres"
+    no_food_labels: "Aucun label d'aliment"
+    create_labels_in_settings: "Créez des labels d'aliments dans les paramètres"
+
+  day_foods:
+    edit:
+      edit_day_food: "Modifier l'aliment"
+
+  views:
+    shared:
+      sidebar:
+        calendar: "Calendrier"
+        foods: "Aliments"
+        calorie_requirement: "Besoin calorique"
+        recipes: "Recettes"
+        settings: "Paramètres"
+        logout: "Déconnexion"
+        logout_confirm: "Es-tu sûr de vouloir te déconnecter ?"
+
+    calendars:
+      add_recipe: "Ajouter un plat"
+      add_food: "Ajouter un aliment"
+      today: "Aujourd'hui"
+      exceeded: "DÉPASSÉ"
+      reached: "ATTEINT"
+      excellent: "EXCELLENT"
+      goal_reached: "Objectif atteint"
+      calories: "Calories"
+      proteins: "Protéines"
+      fats: "Lipides"
+      carbs: "Glucides"
+      sugars: "Sucres"
+      nutrition_summary: "Résumé nutritionnel du jour"
+      daily_objectives: "Objectifs du jour"
+      objectives_unavailable: "Objectifs non disponibles"
+      objectives_unavailable_hint: "Pour afficher vos objectifs, veuillez renseigner votre poids dans votre profil."
+      complete_profile: "Compléter le profil"
+      empty_state:
+        title: "Aucun aliment consommé"
+        description: "Vous n'avez pas encore ajouté d'aliments pour cette journée."
+        add_first_food: "Ajouter votre premier aliment"
+
+    foods:
+      page_title: "Banque d'aliments"
+      title: "Mes aliments"
+      add_food: "Ajouter un aliment"
+      edit_food: "Modifier un aliment"
+      delete_confirm: "Es-tu sûr de vouloir supprimer « %{name} » ?"
+      search_placeholder: "Rechercher un aliment..."
+      labels_col: "Labels"
+      form:
+        macros_hint: "Renseignez les macros de l'aliment sur une base de 100g"
+        food_labels: "Labels d'aliments"
+        no_labels: "Aucun label d'aliment"
+        create_labels_hint: "Créez des labels d'aliments dans les paramètres"
+
+    day_foods:
+      new:
+        title: "Ajouter un aliment"
+      edit:
+        edit_day_food: "Modifier l'aliment"
+      form:
+        select_food: "Sélectionnez un aliment"
+        select_group: "Sélectionnez un groupe"
+        food_group: "Groupe de repas"
+        cancel: "Annuler"
+
+    day_recipes:
+      new:
+        title: "Ajouter un plat"
+      edit:
+        title: "Modifier le plat"
+      form:
+        select_recipe: "Sélectionnez une recette"
+        use_recipe_quantity: "Utiliser la quantité totale de la recette"
+        food_group: "Groupe de repas"
+
+    recipes:
+      title: "Mes recettes"
+      new_recipe: "Nouvelle recette"
+      search_placeholder: "Rechercher une recette..."
+      no_recipes: "Aucune recette"
+      no_results: "Aucune recette trouvée"
+      no_results_for: "Aucune recette ne correspond à votre recherche \"%{query}\""
+      create_first: "Créez votre première recette pour la retrouver ici."
+      new:
+        title: "Nouvelle recette"
+      edit:
+        title: "Modifier la recette"
+      show:
+        page_title: "Recette"
+        nutritional_values: "Valeurs nutritionnelles"
+        total_weight: "Poids total (g)"
+        calories: "Calories"
+        proteins: "Protéines (g)"
+        carbs: "Glucides (g)"
+        fats: "Lipides (g)"
+        sugars: "Sucres (g)"
+        ingredients: "Ingrédients"
+        food_col: "Aliment"
+        quantity_col: "Quantité"
+        instructions: "Instructions"
+        no_instructions: "Aucune instruction renseignée"
+        edit: "Modifier"
+        delete: "Supprimer"
+        delete_confirm: "Es-tu sûr de vouloir supprimer cette recette ?"
+      form:
+        name: "Nom *"
+        instructions: "Instructions"
+        ingredients: "Ingrédients"
+        add_ingredient: "Ajouter un ingrédient"
+        no_ingredients: "Aucun ingrédient"
+        add_ingredient_hint: "Ajoutez au moins un ingrédient à votre recette"
+        add_first_ingredient: "Ajouter le premier ingrédient"
+      item_fields:
+        food: "Aliment *"
+        select_blank: "— Sélectionner —"
+        quantity: "Quantité (g) *"
+        remove: "Supprimer"
+
+    profiles:
+      show:
+        title: "Mon Profil"
+        edit_link: "Modifier le profil"
+        personal_info: "Informations Personnelles"
+        name: "Nom"
+        email: "Email"
+        age: "Âge"
+        weight: "Poids"
+        height: "Taille"
+        gender: "Genre"
+        activity_level: "Niveau d'activité"
+        goal: "Objectif"
+        age_years: "%{age} ans"
+      edit:
+        title: "Modifier le Profil"
+        name: "Nom"
+        age: "Âge"
+        weight: "Poids (kg)"
+        height: "Taille (cm)"
+        gender: "Genre"
+        activity_level: "Niveau d'activité"
+        goal: "Objectif"
+
+    settings:
+      show:
+        page_title: "Paramètres"
+        general: "Général"
+        food_groups: "Groupes d'aliments"
+        food_labels: "Labels d'aliments"
+        security: "Sécurité"
+      general:
+        title: "Paramètres généraux"
+        language: "Langue"
+        language_hint: "La langue sera appliquée immédiatement après la sauvegarde."
+        save: "Sauvegarder"
+      security:
+        title: "Sécurité du compte"
+        change_password: "Changer le mot de passe"
+        current_password: "Mot de passe actuel"
+        current_password_placeholder: "Entrez votre mot de passe actuel"
+        new_password: "Nouveau mot de passe"
+        new_password_placeholder: "Entrez votre nouveau mot de passe"
+        min_chars: "Minimum %{count} caractères"
+        confirm_password: "Confirmer le nouveau mot de passe"
+        confirm_password_placeholder: "Confirmez votre nouveau mot de passe"
+        update_password: "Mettre à jour le mot de passe"
+        forgot_password: "Mot de passe oublié ?"
+        forgot_password_hint: "Si vous avez oublié votre mot de passe, vous pouvez demander un lien de réinitialisation par email."
+        email_address: "Adresse email"
+        send_reset_link: "Envoyer le lien de réinitialisation"
+        delete_account: "Supprimer mon compte"
+        delete_account_warning: "Cette action est irréversible. Toutes vos données seront définitivement supprimées."
+        delete_account_button: "Supprimer le compte"
+      food_groups:
+        title: "Groupes d'aliments"
+        group_name_label: "Nom du groupe"
+        group_name_placeholder: "Ex: Petit-déjeuner, Déjeuner, Dîner..."
+        create: "Créer le groupe"
+        name_col: "Nom du groupe"
+        foods_col: "Aliments"
+        no_food: "Aucun aliment"
+        no_groups: "Aucun groupe de repas"
+        no_groups_hint: "Commencez par créer votre premier groupe de repas."
+        explanation: "Les groupes de repas vous permettent d'organiser vos aliments par catégories comme \"Petit-déjeuner\", \"Déjeuner\", \"Dîner\", \"Collations\", etc."
+        delete_confirm: "Êtes-vous sûr de vouloir supprimer ce groupe ? Tous les repas associés seront déplacés vers 'Aliments sans groupe'."
+      food_labels:
+        title: "Labels d'aliments"
+        label_name_label: "Nom du label"
+        label_name_placeholder: "Ex: Protéines, Glucides, Lipides, Bio, etc."
+        create: "Créer le label"
+        name_col: "Nom du label"
+        foods_col: "Aliments"
+        no_labels: "Aucun label d'aliment"
+        no_labels_hint: "Commencez par créer votre premier label d'aliment."
+        explanation: "Les labels vous permettent de catégoriser vos aliments avec des tags comme \"Protéines\", \"Glucides\", \"Lipides\", \"Bio\", etc."
+        delete_confirm: "Êtes-vous sûr de vouloir supprimer ce label ?"
+
+    confirm:
+      title: "Confirmation requise"
+      confirm_btn: "Confirmer"
+      default_message: "Es-tu sûr de vouloir supprimer cet élément ?"
+
+    home:
+      nav:
+        features: "Fonctionnalités"
+        how_it_works: "Comment ça marche"
+        login: "Se connecter"
+        signup: "S'inscrire"
+      hero:
+        title_line1: "Prenez le contrôle"
+        title_line2: "de votre nutrition"
+        subtitle: "Suivez vos repas jour par jour, créez vos recettes, et atteignez vos objectifs nutritionnels — simplement."
+        cta_start: "Commencer gratuitement"
+        cta_login: "Se connecter"
+        free_label: "Gratuit · Aucune carte bancaire requise"
+      features:
+        section_label: "Fonctionnalités"
+        section_title: "Tout ce dont vous avez besoin"
+        section_subtitle: "Un suivi nutritionnel complet, conçu pour être aussi simple qu'efficace."
+        calendar_title: "Calendrier nutritionnel"
+        calendar_desc: "Naviguez jour par jour et ajoutez vos aliments ou recettes. Organisez vos repas en catégories personnalisables."
+        foods_title: "Base d'aliments"
+        foods_desc: "Constituez votre bibliothèque d'aliments avec leurs valeurs nutritionnelles. Recherchez et filtrez en quelques secondes."
+        recipes_title: "Recettes personnalisées"
+        recipes_desc: "Composez des recettes avec leurs ingrédients et quantités. Les macros se calculent automatiquement au gramme près."
+        calories_title: "Besoins caloriques"
+        calories_desc: "Calculez vos apports idéaux selon votre profil, votre niveau d'activité et votre objectif — perte de poids, maintien ou prise de masse."
+        ratings_title: "Notes & commentaires"
+        ratings_desc: "Notez vos recettes de 1 à 5 étoiles et laissez des commentaires pour retrouver vos coups de cœur."
+        labels_title: "Étiquettes & groupes"
+        labels_desc: "Étiquetez vos aliments par catégorie et regroupez vos repas du jour comme vous le souhaitez."
+      how_it_works:
+        section_label: "Comment ça marche"
+        section_title: "Démarrez en 3 étapes"
+        step1_title: "Créez votre profil"
+        step1_desc: "Renseignez votre poids, taille, âge et objectif. NutriFlow calcule vos apports quotidiens idéaux."
+        step2_title: "Ajoutez vos aliments"
+        step2_desc: "Constituez votre base d'aliments et créez vos recettes favorites avec tous leurs ingrédients."
+        step3_title: "Suivez vos journées"
+        step3_desc: "Loggez ce que vous mangez chaque jour et visualisez vos macros en temps réel."
+      cta:
+        title: "Prêt à mieux manger ?"
+        subtitle: "Rejoignez NutriFlow et commencez à suivre votre nutrition dès aujourd'hui. C'est gratuit."
+        button: "Commencer gratuitement"
+      footer:
+        login: "Se connecter"
+        signup: "S'inscrire"
+
+    daily_calorie_requirements:
+      page_title: "Besoins caloriques journaliers"
+      title: "Mes besoins caloriques journaliers"
+      go_to_profile: "Aller au profil"
+      profile_info: "Informations du profil"
+      age: "Âge"
+      height: "Taille"
+      weight: "Poids"
+      physical_activity: "Activité physique"
+      daily_need: "Besoin calorique journalier"
+      weight_loss: "Perte de poids"
+      maintenance: "Maintien"
+      muscle_gain: "Prise de muscle"
+      not_calculable: "Besoin calorique non calculable"
+      not_calculable_hint: "Pour calculer vos besoins caloriques journaliers, veuillez renseigner votre âge, votre taille et votre poids dans votre profil."
+      complete_profile: "Compléter le profil"
+
+    components:
+      recipe_card:
+        ingredient_count:
+          one: "1 ingrédient"
+          other: "%{count} ingrédients"
+        total_g: "g total"
+        proteins: "Protéines"
+        carbs: "Glucides"
+        fats: "Lipides"
+        see_details: "Voir les détails"
+      recipe_comments:
+        title: "Commentaires"
+        add_comment: "Ajouter un commentaire"
+        placeholder: "Vos notes, modifications, conseils..."
+        add_btn: "Ajouter"
+        you: "Vous"
+        delete_confirm: "Supprimer ce commentaire ?"
+        no_comments: "Aucun commentaire pour le moment"
+        add_first_comment: "Ajoutez votre premier commentaire ci-dessus pour commencer"
+      recipe_rating_form:
+        title: "Notation personnelle"
+        delete_confirm: "Supprimer cette notation ?"
+        rating_label: "Note sur 5 étoiles"
+        comment_label: "Commentaire (optionnel)"
+        comment_placeholder: "Vos impressions sur cette recette..."
+        rate_btn: "Noter"
+        update_btn: "Mettre à jour"
+      day_food_group:
+        quantity_col: "Quantité"
+        actions_col: "Actions"
+        recipe_label: "Plat"
+        item_count:
+          one: "1 élément"
+          other: "%{count} éléments"
+        ungrouped_title: "Éléments sans groupe"
+        delete_recipe_confirm: "Es-tu sûr de vouloir supprimer cette recette ?"
+        delete_food_confirm: "Es-tu sûr de vouloir supprimer cet aliment ?"
+      food_labels:
+        no_labels: "Aucun label"

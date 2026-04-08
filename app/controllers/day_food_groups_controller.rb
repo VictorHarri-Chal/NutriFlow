@@ -1,5 +1,4 @@
 class DayFoodGroupsController < ApplicationController
-  before_action :authenticate_user!
   before_action :set_day_food_group, only: [:destroy]
 
   def create

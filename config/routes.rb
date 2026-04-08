@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   resources :foods, except: [:show]
   resource :daily_calorie_requirement, only: [:show]
 
-  resource :setting, only: [:show]
+  resource :setting, only: [:show, :update]
   resources :day_food_groups, only: [:create, :destroy]
   resources :food_labels, only: [:create, :destroy]
 

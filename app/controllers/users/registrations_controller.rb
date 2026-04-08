@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
-  before_action :authenticate_user!
+  skip_before_action :authenticate_user!, only: [:new, :create]
   before_action :configure_account_update_params, only: [:update]
 
   # PUT /resource

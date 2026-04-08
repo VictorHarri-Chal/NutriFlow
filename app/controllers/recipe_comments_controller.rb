@@ -1,8 +1,7 @@
 class RecipeCommentsController < ApplicationController
-  before_action :authenticate_user!
   before_action :set_recipe
   before_action :set_comment, only: [:update, :destroy]
-  before_action :ensure_recipe_owner, only: [:create, :update, :destroy]
+  before_action :ensure_comment_author, only: [:update, :destroy]
 
   def create
     @comment = @recipe.recipe_comments.build(comment_params)
@@ -31,17 +30,15 @@ class RecipeCommentsController < ApplicationController
   private
 
   def set_recipe
-    @recipe = Recipe.find(params[:recipe_id])
+    @recipe = current_user.recipes.find(params[:recipe_id])
   end
 
   def set_comment
     @comment = @recipe.recipe_comments.find(params[:id])
   end
 
-  def ensure_recipe_owner
-    unless @recipe.user == current_user
-      redirect_to @recipe
-    end
+  def ensure_comment_author
+    redirect_to @recipe unless @comment.user == current_user
   end
 
   def comment_params

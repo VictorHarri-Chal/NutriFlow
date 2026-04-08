@@ -3,7 +3,7 @@
     <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3 shadow-sm">
       <i class="fas fa-comments text-white text-lg"></i>
     </div>
-    Commentaires
+    <%= t("views.components.recipe_comments.title") %>
   </h3>
 
   <% if recipe.user == current_user %>
@@ -11,7 +11,7 @@
     <div class="mb-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
       <h4 class="text-sm font-semibold text-gray-800 mb-4 flex items-center">
         <i class="fas fa-plus-circle text-blue-600 mr-2"></i>
-        Ajouter un commentaire
+        <%= t("views.components.recipe_comments.add_comment") %>
       </h4>
       <%= form_with model: [recipe, RecipeComment.new],
                     url: recipe_recipe_comments_path(recipe),
@@ -20,10 +20,10 @@
         <%= f.text_area :content,
                         rows: 3,
                         class: "w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none bg-white/80 backdrop-blur-sm",
-                        placeholder: "Vos notes, modifications, conseils..." %>
+                        placeholder: t("views.components.recipe_comments.placeholder") %>
 
         <div class="flex justify-end">
-          <%= f.submit "Ajouter",
+          <%= f.submit t("views.components.recipe_comments.add_btn"),
                         class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors" %>
         </div>
       <% end %>
@@ -42,7 +42,7 @@
                   <i class="fas fa-user text-white text-sm"></i>
                 </div>
                 <div class="flex flex-col">
-                  <span class="text-sm font-medium text-gray-700">Vous</span>
+                  <span class="text-sm font-medium text-gray-700"><%= t("views.components.recipe_comments.you") %></span>
                   <span class="text-xs text-gray-400 flex items-center">
                     <i class="fas fa-clock mr-1"></i>
                     <%= comment.created_at.strftime("%d/%m/%Y à %H:%M") %>
@@ -59,7 +59,7 @@
                 <%= button_to recipe_recipe_comment_path(recipe, comment),
                               method: :delete,
                               class: "w-8 h-8 text-red-600 hover:text-red-700 rounded-lg flex items-center justify-center",
-                              data: { confirm: "Supprimer ce commentaire ?" } do %>
+                              data: { confirm: t("views.components.recipe_comments.delete_confirm") } do %>
                   <i class="fas fa-trash text-sm"></i>
                 <% end %>
               </div>
@@ -72,9 +72,9 @@
     <div class="text-center py-12 text-gray-400">
       <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
       </div>
-      <p class="text-lg font-medium text-gray-600 mb-2">Aucun commentaire pour le moment</p>
+      <p class="text-lg font-medium text-gray-600 mb-2"><%= t("views.components.recipe_comments.no_comments") %></p>
       <% if recipe.user == current_user %>
-        <p class="text-sm">Ajoutez votre premier commentaire ci-dessus pour commencer</p>
+        <p class="text-sm"><%= t("views.components.recipe_comments.add_first_comment") %></p>
       <% end %>
     </div>
   <% end %>

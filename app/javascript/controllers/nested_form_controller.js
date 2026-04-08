@@ -2,6 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["template", "item", "destroyField", "emptyState"]
+  static values = { wrapperSelector: { type: String, default: ".ingredients-container" } }
 
   connect() {
     this.updateEmptyState()
@@ -9,6 +10,7 @@ export default class extends Controller {
 
   add(event) {
     event.preventDefault()
+    if (!this.wrapper) return
     const content = this.templateTarget.innerHTML.replace(/NEW_RECORD/g, new Date().getTime())
     this.wrapper.insertAdjacentHTML("beforeend", content)
     this.updateEmptyState()
@@ -40,6 +42,6 @@ export default class extends Controller {
   }
 
   get wrapper() {
-    return this.element.querySelector(".ingredients-container")
+    return this.element.querySelector(this.wrapperSelectorValue)
   }
 }

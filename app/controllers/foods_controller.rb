@@ -25,7 +25,7 @@ class FoodsController < ApplicationController
   def create
     @food = current_user.foods.build(food_params)
     if @food.save
-      redirect_to foods_path, notice: "Aliment créé avec succès."
+      redirect_to foods_path, notice: t("controllers.foods.created")
     else
       render :new, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class FoodsController < ApplicationController
 
   def update
     if @food.update(food_params)
-      redirect_to foods_path, notice: "Aliment mis à jour avec succès."
+      redirect_to foods_path, notice: t("controllers.foods.updated")
     else
       render :edit, status: :unprocessable_entity
     end
@@ -45,7 +45,7 @@ class FoodsController < ApplicationController
 
   def destroy
     @food.destroy
-    redirect_to foods_path, notice: "Aliment supprimé avec succès."
+    redirect_to foods_path, notice: t("controllers.foods.destroyed")
   end
 
   private

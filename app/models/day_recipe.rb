@@ -5,13 +5,27 @@ class DayRecipe < ApplicationRecord
 
   validates :quantity, presence: true, numericality: { greater_than: 0 }, unless: :use_recipe_quantity?
   validates :recipe_id, presence: true
+  validate :day_food_group_belongs_to_user, if: -> { day_food_group_id.present? && day.present? }
+
+  private
+
+  def day_food_group_belongs_to_user
+    unless day.user.day_food_groups.exists?(day_food_group_id)
+      errors.add(:day_food_group, :invalid)
+    end
+  end
+
+  public
 
   def effective_quantity
     use_recipe_quantity? ? recipe.total_weight : quantity
   end
 
   def gram_factor
-    effective_quantity / recipe.total_weight.to_f
+    total = recipe.total_weight.to_f
+    return 0.0 if total.zero?
+
+    effective_quantity / total
   end
 
   # Méthodes pour compatibilité avec DayFood

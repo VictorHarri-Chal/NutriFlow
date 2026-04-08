@@ -3,7 +3,7 @@
     <%= link_to recipe_path(@recipe), class: "text-gray-400 hover:text-gray-600 transition" do %>
       <i class="fas fa-arrow-left text-xl"></i>
     <% end %>
-    <h1 class="text-3xl font-bold text-blue-800">Modifier la recette</h1>
+    <h1 class="text-3xl font-bold text-blue-800"><%= t("views.recipes.edit.title") %></h1>
   </div>
   <%= render "form", recipe: @recipe %>
 </div>

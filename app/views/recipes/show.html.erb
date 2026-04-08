@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  Recette
+  <%= t("views.recipes.show.page_title") %>
 <% end %>
 
 <div class="max-w-7xl mx-auto mt-16">
@@ -17,31 +17,31 @@
 
         <!-- Résumé nutritionnel -->
         <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg p-6 mb-8">
-          <h2 class="text-lg font-semibold text-gray-800 mb-4">Valeurs nutritionnelles</h2>
+          <h2 class="text-lg font-semibold text-gray-800 mb-4"><%= t("views.recipes.show.nutritional_values") %></h2>
           <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
             <div class="text-center">
               <div class="text-2xl font-bold text-indigo-600"><%= @recipe.total_weight %></div>
-              <div class="text-sm text-gray-600">Poids total (g)</div>
+              <div class="text-sm text-gray-600"><%= t("views.recipes.show.total_weight") %></div>
             </div>
             <div class="text-center">
               <div class="text-2xl font-bold text-blue-600"><%= @recipe.total_calories %></div>
-              <div class="text-sm text-gray-600">Calories</div>
+              <div class="text-sm text-gray-600"><%= t("views.recipes.show.calories") %></div>
             </div>
             <div class="text-center">
               <div class="text-2xl font-bold text-green-600"><%= @recipe.total_proteins %></div>
-              <div class="text-sm text-gray-600">Protéines (g)</div>
+              <div class="text-sm text-gray-600"><%= t("views.recipes.show.proteins") %></div>
             </div>
             <div class="text-center">
               <div class="text-2xl font-bold text-yellow-600"><%= @recipe.total_carbs %></div>
-              <div class="text-sm text-gray-600">Glucides (g)</div>
+              <div class="text-sm text-gray-600"><%= t("views.recipes.show.carbs") %></div>
             </div>
             <div class="text-center">
               <div class="text-2xl font-bold text-red-600"><%= @recipe.total_fats %></div>
-              <div class="text-sm text-gray-600">Lipides (g)</div>
+              <div class="text-sm text-gray-600"><%= t("views.recipes.show.fats") %></div>
             </div>
             <div class="text-center">
               <div class="text-2xl font-bold text-purple-600"><%= @recipe.total_sugars %></div>
-              <div class="text-sm text-gray-600">Sucres (g)</div>
+              <div class="text-sm text-gray-600"><%= t("views.recipes.show.sugars") %></div>
             </div>
           </div>
         </div>
@@ -49,19 +49,19 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           <!-- Ingrédients -->
           <div>
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Ingrédients</h2>
+            <h2 class="text-xl font-semibold text-gray-800 mb-4"><%= t("views.recipes.show.ingredients") %></h2>
             <div class="bg-gray-50 rounded-lg overflow-hidden">
               <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-100">
                   <tr>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Aliment
+                      <%= t("views.recipes.show.food_col") %>
                     </th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Quantité
+                      <%= t("views.recipes.show.quantity_col") %>
                     </th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Calories
+                      <%= t("views.recipes.show.calories") %>
                     </th>
                   </tr>
                 </thead>
@@ -86,7 +86,7 @@
 
           <!-- Instructions -->
           <div>
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Instructions</h2>
+            <h2 class="text-xl font-semibold text-gray-800 mb-4"><%= t("views.recipes.show.instructions") %></h2>
             <% if @recipe.instructions.present? %>
               <div class="bg-gray-50 rounded-lg p-6">
                 <div class="prose prose-sm max-w-none">
@@ -98,7 +98,7 @@
                 <div class="w-12 h-12 mx-auto mb-3 bg-gray-200 rounded-full flex items-center justify-center">
                   <i class="fas fa-clipboard text-gray-400"></i>
                 </div>
-                <p class="text-gray-600">Aucune instruction renseignée</p>
+                <p class="text-gray-600"><%= t("views.recipes.show.no_instructions") %></p>
               </div>
             <% end %>
           </div>
@@ -112,15 +112,15 @@
           <%= link_to edit_recipe_path(@recipe),
                       class: "inline-flex items-center px-6 py-3 bg-gray-200 text-gray-800 rounded-lg shadow hover:bg-gray-300 transition font-medium" do %>
             <i class="fas fa-pen mr-2"></i>
-            Modifier
+            <%= t("views.recipes.show.edit") %>
           <% end %>
 
           <%= delete_link_with_confirm(recipe_path(@recipe),
-                                      confirm: "Es-tu sûr de vouloir supprimer cette recette ?",
-                                      text: "Supprimer",
+                                      confirm: t("views.recipes.show.delete_confirm"),
+                                      text: t("views.recipes.show.delete"),
                                       class: "inline-flex items-center px-6 py-3 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition font-medium") do %>
             <i class="fas fa-trash mr-2"></i>
-            Supprimer
+            <%= t("views.recipes.show.delete") %>
           <% end %>
         </div>
       </div>

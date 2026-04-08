@@ -27,6 +27,7 @@ export default class extends Controller {
   updateStars(rating) {
     this.starTargets.forEach((star, index) => {
       const icon = star.querySelector('i')
+      if (!icon) return
       if (index < rating) {
         icon.className = 'fas fa-star text-yellow-500'
       } else {
