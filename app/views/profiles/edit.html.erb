@@ -1,25 +1,25 @@
-<% content_for :page_title, "Profil" %>
+<% content_for :page_title, t("views.profiles.edit.title") %>
 
 <div class="max-w-4xl mx-auto mt-16 bg-white rounded-xl shadow-lg p-8">
   <div class="flex justify-between items-center rounded-lg p-4">
-    <h1 class="text-2xl font-bold text-gray-900">Modifier le Profil</h1>
+    <h1 class="text-2xl font-bold text-gray-900"><%= t("views.profiles.edit.title") %></h1>
   </div>
 
   <%= simple_form_for @profile, url: profile_path, method: :patch, html: { class: "bg-gray-50 rounded-lg shadow-sm p-6" } do |f| %>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <div class="space-y-6">
         <%= f.input :name,
-            label: "Nom",
+            label: t("views.profiles.edit.name"),
             wrapper_html: { class: "mb-4" },
             input_html: { class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors bg-white" } %>
 
         <%= f.input :age,
-            label: "Âge",
+            label: t("views.profiles.edit.age"),
             wrapper_html: { class: "mb-4" },
             input_html: { class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors bg-white" } %>
 
         <%= f.input :weight,
-            label: "Poids (kg)",
+            label: t("views.profiles.edit.weight"),
             as: :numeric,
             input_html: { class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors bg-white" },
             wrapper_html: { class: "mb-4" } %>
@@ -27,19 +27,19 @@
 
       <div class="space-y-6">
         <%= f.input :height,
-            label: "Taille (cm)",
+            label: t("views.profiles.edit.height"),
             as: :numeric,
             input_html: { class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors bg-white" },
             wrapper_html: { class: "mb-4" } %>
 
         <%= f.input :gender,
-            label: "Genre",
+            label: t("views.profiles.edit.gender"),
             collection: Profile.gender.values.map { |g| [g.text, g] },
             wrapper_html: { class: "mb-4 relative" },
             input_html: { class: "w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors bg-white appearance-none bg-chevron-down bg-no-repeat bg-right", style: "background-image: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"%23374151\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19 9l-7 7-7-7\"/></svg>'); background-position: right 12px center; background-size: 20px 20px; background-color: white;" } %>
 
         <%= f.input :activity_level,
-            label: "Niveau d'activité",
+            label: t("views.profiles.edit.activity_level"),
             collection: Profile.activity_level.values.map { |al| [al.text, al] },
             wrapper_html: { class: "mb-4 relative" },
             input_html: { class: "w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors bg-white appearance-none", style: "background-image: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"%23374151\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19 9l-7 7-7-7\"/></svg>'); background-position: right 12px center; background-size: 20px 20px; background-repeat: no-repeat; background-color: white;" } %>
@@ -48,15 +48,15 @@
 
     <div class="mt-6">
       <%= f.input :goal,
-          label: "Objectif",
+          label: t("views.profiles.edit.goal"),
           collection: Profile.goal.values.map { |g| [g.text, g] },
           wrapper_html: { class: "mb-6 relative" },
           input_html: { class: "w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors bg-white appearance-none", style: "background-image: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"%23374151\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M19 9l-7 7-7-7\"/></svg>'); background-position: right 12px center; background-size: 20px 20px; background-repeat: no-repeat; background-color: white;" } %>
     </div>
 
     <div class="flex justify-center space-x-4 pt-8 border-gray-100 mt-8">
-      <%= link_to "Annuler", profile_path, class: "inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200" %>
-      <%= f.button :submit, "Enregistrer", class: "inline-flex items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-800 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200" %>
+      <%= link_to t("shared.cancel"), profile_path, class: "inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200" %>
+      <%= f.button :submit, t("shared.save"), class: "inline-flex items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-800 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200" %>
     </div>
   <% end %>
 </div>

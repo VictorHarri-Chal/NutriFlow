@@ -1,11 +1,11 @@
-<% content_for :page_title, "Profil" %>
+<% content_for :page_title, t("views.profiles.show.title") %>
 
 <div class="max-w-6xl mx-auto mt-16 bg-white rounded-xl shadow-md p-8">
   <div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold text-gray-900">Mon Profil</h1>
+    <h1 class="text-2xl font-bold text-gray-900"><%= t("views.profiles.show.title") %></h1>
     <%= link_to edit_profile_path, class: "inline-flex items-center px-4 py-2 bg-blue-800 text-white rounded-lg shadow hover:bg-blue-600 transition font-medium" do %>
       <i class="fas fa-edit mr-2"></i>
-      Modifier le profil
+      <%= t("views.profiles.show.edit_link") %>
     <% end %>
   </div>
 
@@ -13,64 +13,56 @@
   <div class="bg-gray-50 rounded-lg p-6 mb-6">
     <div class="flex items-center mb-4">
       <div>
-        <h2 class="text-xl font-semibold text-gray-900">Informations Personnelles</h2>
+        <h2 class="text-xl font-semibold text-gray-900"><%= t("views.profiles.show.personal_info") %></h2>
       </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1"><%= t("views.profiles.show.name") %></label>
           <div class="bg-white px-3 py-2 rounded-md">
             <span class="text-gray-900">
-              <% if @profile.name.present? %>
-                <%= @profile.name %>
-              <% else %>
-                Non défini
-              <% end %>
+              <%= @profile.name.presence || t("shared.not_defined") %>
             </span>
           </div>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1"><%= t("views.profiles.show.email") %></label>
           <div class="bg-white px-3 py-2 rounded-md">
             <span class="text-gray-900"><%= @user.email %></span>
           </div>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Âge</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1"><%= t("views.profiles.show.age") %></label>
           <div class="bg-white px-3 py-2 rounded-md">
-            <span class="text-gray-900"><%= @profile.age ? "#{@profile.age} ans" : "Non défini" %></span>
+            <span class="text-gray-900"><%= @profile.age ? t("views.profiles.show.age_years", age: @profile.age) : t("shared.not_defined") %></span>
           </div>
         </div>
       </div>
 
       <div class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Poids</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1"><%= t("views.profiles.show.weight") %></label>
           <div class="bg-white px-3 py-2 rounded-md">
-            <span class="text-gray-900"><%= @profile.weight ? "#{@profile.weight} kg" : "Non défini" %></span>
+            <span class="text-gray-900"><%= @profile.weight ? "#{@profile.weight} kg" : t("shared.not_defined") %></span>
           </div>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Taille</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1"><%= t("views.profiles.show.height") %></label>
           <div class="bg-white px-3 py-2 rounded-md">
-            <span class="text-gray-900"><%= @profile.height ? "#{@profile.height} cm" : "Non défini" %></span>
+            <span class="text-gray-900"><%= @profile.height ? "#{@profile.height} cm" : t("shared.not_defined") %></span>
           </div>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Genre</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1"><%= t("views.profiles.show.gender") %></label>
           <div class="bg-white px-3 py-2 rounded-md">
             <span class="text-gray-900">
-              <% if @profile.gender.present? %>
-                <%= @profile.gender_text %>
-              <% else %>
-                Non défini
-              <% end %>
+              <%= @profile.gender.present? ? @profile.gender_text : t("shared.not_defined") %>
             </span>
           </div>
         </div>
@@ -78,27 +70,19 @@
 
       <div class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Niveau d'activité</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1"><%= t("views.profiles.show.activity_level") %></label>
           <div class="bg-white px-3 py-2 rounded-md">
             <span class="text-gray-900">
-              <% if @profile.activity_level.present? %>
-                <%= @profile.activity_level_text %>
-              <% else %>
-                Non défini
-              <% end %>
+              <%= @profile.activity_level.present? ? @profile.activity_level_text : t("shared.not_defined") %>
             </span>
           </div>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Objectif</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1"><%= t("views.profiles.show.goal") %></label>
           <div class="bg-white px-3 py-2 rounded-md">
             <span class="text-gray-900">
-              <% if @profile.goal.present? %>
-                <%= @profile.goal_text %>
-              <% else %>
-                Non défini
-              <% end %>
+              <%= @profile.goal.present? ? @profile.goal_text : t("shared.not_defined") %>
             </span>
           </div>
         </div>

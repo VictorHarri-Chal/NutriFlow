@@ -1,7 +1,7 @@
 <%= turbo_frame_tag "item_form" do %>
   <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-6 mt-4 mb-2">
     <div class="flex items-center justify-between mb-5">
-      <h2 class="text-lg font-semibold text-gray-900">Ajouter un aliment</h2>
+      <h2 class="text-lg font-semibold text-gray-900"><%= t("views.day_foods.new.title") %></h2>
       <button type="button"
               data-controller="close-frame"
               data-action="click->close-frame#close"
@@ -10,6 +10,6 @@
       </button>
     </div>
 
-    <%= render "form", day: @day, day_food: @day_food, submit_text: "Ajouter" %>
+    <%= render "form", day: @day, day_food: @day_food, submit_text: t("shared.add") %>
   </div>
 <% end %>

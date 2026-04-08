@@ -1,11 +1,11 @@
-<% content_for :page_title, "Banque d'aliments" %>
+<% content_for :page_title, t("views.foods.page_title") %>
 
 <div class="max-w-6xl mx-auto mt-16 bg-white rounded-xl shadow-md p-8">
     <!-- En-tête avec titre, recherche et actions -->
   <header class="mb-8">
     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
       <!-- Titre -->
-      <h1 class="text-2xl font-bold text-gray-900 flex-shrink-0">Mes aliments</h1>
+      <h1 class="text-2xl font-bold text-gray-900 flex-shrink-0"><%= t("views.foods.title") %></h1>
 
       <!-- Barre de recherche -->
       <div class="flex-1 max-w-md lg:mx-6">
@@ -18,7 +18,7 @@
 
           <%= text_field_tag :query, params[:query],
               class: "w-full pl-10 #{params[:query].present? ? 'pr-10' : 'pr-4'} py-1.5 text-sm bg-gray-50 border border-gray-200 rounded-md focus:outline-2 focus:outline-indigo-600 placeholder-gray-400",
-              placeholder: "Rechercher un aliment...",
+              placeholder: t("views.foods.search_placeholder"),
               autocomplete: "off" %>
 
           <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
@@ -34,7 +34,7 @@
       <!-- Bouton d'ajout -->
       <%= link_to new_food_path, class: "inline-flex items-center justify-center px-4 py-2 bg-blue-800 hover:bg-blue-600 text-white rounded-lg shadow-sm transition-colors font-medium flex-shrink-0" do %>
         <i class="fas fa-plus mr-2"></i>
-        Ajouter un aliment
+        <%= t("views.foods.add_food") %>
       <% end %>
     </div>
   </header>

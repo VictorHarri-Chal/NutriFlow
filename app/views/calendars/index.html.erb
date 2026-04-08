@@ -17,14 +17,14 @@
             class: "inline-flex items-center px-4 py-2 bg-orange-600 text-white rounded-lg shadow hover:bg-orange-500 transition font-medium",
             data: { turbo_frame: "item_form" } do %>
         <i class="fas fa-plus mr-2"></i>
-        Ajouter un plat
+        <%= t("views.calendars.add_recipe") %>
       <% end %>
 
       <%= link_to new_day_day_food_path(@day),
             class: "inline-flex items-center px-4 py-2 bg-blue-800 text-white rounded-lg shadow hover:bg-blue-600 transition font-medium",
             data: { turbo_frame: "item_form" } do %>
         <i class="fas fa-plus mr-2"></i>
-        Ajouter un aliment
+        <%= t("views.calendars.add_food") %>
       <% end %>
     </div>
   </div>

@@ -1,9 +1,8 @@
 class RecipesController < ApplicationController
-  before_action :authenticate_user!
   before_action :set_recipe, only: [:show, :edit, :update, :destroy]
 
   def index
-    @recipes = current_user.recipes.includes(recipe_items: :food).order(:name)
+    @recipes = current_user.recipes.includes(recipe_items: :food, recipe_ratings: []).order(:name)
 
     if params[:query].present?
       @recipes = @recipes.search_by_name(params[:query])
@@ -49,7 +48,7 @@ class RecipesController < ApplicationController
   private
 
   def set_recipe
-    @recipe = current_user.recipes.find(params[:id])
+    @recipe = current_user.recipes.includes(recipe_items: :food, recipe_ratings: []).find(params[:id])
   end
 
   def recipe_params

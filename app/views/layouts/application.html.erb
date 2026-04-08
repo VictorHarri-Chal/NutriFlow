@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="<%= I18n.locale %>">
   <head>
     <title>NutriFlow</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -21,11 +21,15 @@
     <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   </head>
 
-  <body class="bg-gray-100 min-h-screen" data-controller="sidebar confirm">
+  <body class="bg-gray-100 min-h-screen"
+        data-controller="sidebar confirm"
+        data-confirm-title-value="<%= t('views.confirm.title') %>"
+        data-confirm-default-message-value="<%= t('views.confirm.default_message') %>"
+        data-confirm-cancel-label-value="<%= t('shared.cancel') %>"
+        data-confirm-confirm-label-value="<%= t('views.confirm.confirm_btn') %>">
     <!-- Navbar toujours en haut -->
     <%= render 'shared/navbar', title: (content_for?(:page_title) ? yield(:page_title) : "NutriFlow") %>
 

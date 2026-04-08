@@ -1,12 +1,12 @@
-<h2 class="text-xl font-semibold text-gray-900 mb-6">Labels d'aliments</h2>
+<h2 class="text-xl font-semibold text-gray-900 mb-6"><%= t("views.settings.food_labels.title") %></h2>
 
 <!-- Formulaire pour créer un nouveau label -->
 <div class="bg-gray-50 p-6 rounded-lg mb-6" data-controller="form-validation">
   <%= simple_form_for @food_label, url: food_labels_path, html: { class: "flex items-end gap-4" } do |f| %>
     <div class="flex-1">
       <%= f.input :name,
-          label: "Nom du label",
-          placeholder: "Ex: Protéines, Glucides, Lipides, Bio, etc.",
+          label: t("views.settings.food_labels.label_name_label"),
+          placeholder: t("views.settings.food_labels.label_name_placeholder"),
           wrapper_html: { class: "mb-0" },
           input_html: {
             class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
@@ -17,7 +17,7 @@
           } %>
     </div>
     <div>
-      <%= f.submit "Créer le label",
+      <%= f.submit t("views.settings.food_labels.create"),
           class: "bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400",
           data: { form_validation_target: "submit" },
           disabled: true %>
@@ -32,13 +32,13 @@
       <thead class="bg-gray-50">
         <tr>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Nom du label
+            <%= t("views.settings.food_labels.name_col") %>
           </th>
           <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Aliments
+            <%= t("views.settings.food_labels.foods_col") %>
           </th>
           <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Actions
+            <%= t("shared.actions") %>
           </th>
         </tr>
       </thead>
@@ -57,22 +57,22 @@
                 <% if food_count == 0 %>
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
                     <i class="fas fa-circle text-gray-400 mr-1 text-xs"></i>
-                    Aucun aliment
+                    <%= t("views.settings.food_groups.no_food") %>
                   </span>
                 <% else %>
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                     <i class="fas fa-check-circle text-green-500 mr-1 text-xs"></i>
-                    <%= food_count %> aliment<%= 's' if food_count > 1 %>
+                    <%= t("shared.food_count", count: food_count) %>
                   </span>
                 <% end %>
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <%= delete_link_with_confirm(food_label_path(label),
-                                          confirm: "Êtes-vous sûr de vouloir supprimer ce label ?",
+                                          confirm: t("views.settings.food_labels.delete_confirm"),
                                           icon_class: "fas fa-trash mr-2",
                                           class: "text-red-600 hover:text-red-900 inline-flex items-center",
-                                          title: "Supprimer") %>
+                                          title: t("shared.delete")) %>
             </td>
           </tr>
         <% end %>
@@ -81,11 +81,10 @@
   <% else %>
     <div class="text-center py-12">
       <i class="fas fa-tag text-gray-400 text-4xl mb-4"></i>
-      <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun label d'aliment</h3>
-      <p class="text-gray-500 mb-4">Commencez par créer votre premier label d'aliment.</p>
+      <h3 class="text-lg font-medium text-gray-900 mb-2"><%= t("views.settings.food_labels.no_labels") %></h3>
+      <p class="text-gray-500 mb-4"><%= t("views.settings.food_labels.no_labels_hint") %></p>
       <p class="text-sm text-gray-400">
-        Les labels vous permettent de catégoriser vos aliments avec des tags comme
-        "Protéines", "Glucides", "Lipides", "Bio", etc.
+        <%= t("views.settings.food_labels.explanation") %>
       </p>
     </div>
   <% end %>

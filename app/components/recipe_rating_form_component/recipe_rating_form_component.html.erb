@@ -1,7 +1,7 @@
 <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
   <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
     <i class="fas fa-star text-yellow-500 mr-2"></i>
-    Notation personnelle
+    <%= t("views.components.recipe_rating_form.title") %>
   </h3>
 
   <% if existing_rating && existing_rating > 0 %>
@@ -18,12 +18,12 @@
             <p class="text-sm text-gray-600 italic">"<%= existing_comment %>"</p>
           <% end %>
         </div>
-        <% if recipe.user == current_user && recipe.recipe_rating %>
+        <% if current_user_rating %>
           <div class="flex gap-2">
-            <%= button_to recipe_recipe_rating_path(recipe, recipe.recipe_rating),
+            <%= button_to recipe_recipe_rating_path(recipe, current_user_rating),
                           method: :delete,
                           class: "text-red-600 hover:text-red-800 text-sm font-medium",
-                          data: { confirm: "Supprimer cette notation ?" } do %>
+                          data: { confirm: t("views.components.recipe_rating_form.delete_confirm") } do %>
               <i class="fas fa-trash mr-1"></i>
             <% end %>
           </div>
@@ -32,50 +32,43 @@
     </div>
   <% end %>
 
-  <% if recipe.user == current_user %>
-    <div data-controller="recipe-rating" data-recipe-rating-current-rating-value="<%= existing_rating || 0 %>">
-      <%= form_with model: [recipe, RecipeRating.new],
-                    url: recipe_recipe_ratings_path(recipe),
-                    method: :post,
-                    class: "space-y-4" do |f| %>
+  <div data-controller="recipe-rating" data-recipe-rating-current-rating-value="<%= existing_rating || 0 %>">
+    <%= form_with model: [recipe, current_user_rating || RecipeRating.new],
+                  url: recipe_recipe_ratings_path(recipe),
+                  method: :post,
+                  class: "space-y-4" do |f| %>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Note sur 5 étoiles</label>
-          <div class="flex items-center space-x-2" data-recipe-rating-target="starContainer" data-action="mouseleave->recipe-rating#leaveStars">
-            <% 5.times do |i| %>
-              <button type="button"
-                      class="star-btn text-2xl transition-colors duration-200 hover:scale-110"
-                      data-rating="<%= i + 1 %>"
-                      data-recipe-rating-target="star"
-                      data-action="click->recipe-rating#selectRating mouseenter->recipe-rating#hoverRating">
-                <i class="fas fa-star text-gray-300 hover:text-yellow-400"></i>
-              </button>
-            <% end %>
-          </div>
-          <%= f.hidden_field :rating, value: existing_rating || 0, data: { recipe_rating_target: "ratingInput" } %>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2"><%= t("views.components.recipe_rating_form.rating_label") %></label>
+        <div class="flex items-center space-x-2" data-recipe-rating-target="starContainer" data-action="mouseleave->recipe-rating#leaveStars">
+          <% 5.times do |i| %>
+            <button type="button"
+                    class="star-btn text-2xl transition-colors duration-200 hover:scale-110"
+                    data-rating="<%= i + 1 %>"
+                    data-recipe-rating-target="star"
+                    data-action="click->recipe-rating#selectRating mouseenter->recipe-rating#hoverRating">
+              <i class="fas fa-star text-gray-300 hover:text-yellow-400"></i>
+            </button>
+          <% end %>
         </div>
+        <%= f.hidden_field :rating, value: existing_rating || 0, data: { recipe_rating_target: "ratingInput" } %>
+      </div>
 
-        <div>
-          <label for="recipe_rating_comment" class="block text-sm font-medium text-gray-700 mb-2">
-            Commentaire (optionnel)
-          </label>
-          <%= f.text_area :comment,
-                          value: existing_comment,
-                          rows: 3,
-                          class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
-                          placeholder: "Vos impressions sur cette recette..." %>
-        </div>
+      <div>
+        <label for="recipe_rating_comment" class="block text-sm font-medium text-gray-700 mb-2">
+          <%= t("views.components.recipe_rating_form.comment_label") %>
+        </label>
+        <%= f.text_area :comment,
+                        value: existing_comment,
+                        rows: 3,
+                        class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+                        placeholder: t("views.components.recipe_rating_form.comment_placeholder") %>
+      </div>
 
-        <div class="flex justify-end">
-          <%= f.submit existing_rating ? "Mettre à jour" : "Noter",
-                        class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors" %>
-        </div>
-      <% end %>
-    </div>
-  <% else %>
-    <div class="text-center py-6 text-gray-500">
-      <i class="fas fa-lock text-2xl mb-2"></i>
-      <p class="text-sm">Seul le créateur de la recette peut la noter</p>
-    </div>
-  <% end %>
+      <div class="flex justify-end">
+        <%= f.submit existing_rating && existing_rating > 0 ? t("views.components.recipe_rating_form.update_btn") : t("views.components.recipe_rating_form.rate_btn"),
+                      class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors" %>
+      </div>
+    <% end %>
+  </div>
 </div>

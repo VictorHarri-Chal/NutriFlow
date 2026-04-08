@@ -19,20 +19,11 @@ class DayFoodGroupComponent < ApplicationComponent
   end
 
   def item_count_text
-    count = day_foods.count
-    if count == 1
-      "1 élément"
-    else
-      "#{count} éléments"
-    end
+    I18n.t("views.components.day_food_group.item_count", count: day_foods.count)
   end
 
   def group_title
-    if day_food_group
-      day_food_group.name
-    else
-      "Éléments sans groupe"
-    end
+    day_food_group ? day_food_group.name : I18n.t("views.components.day_food_group.ungrouped_title")
   end
 
   def group_bg_class
@@ -72,10 +63,7 @@ class DayFoodGroupComponent < ApplicationComponent
   end
 
   def delete_confirm_message(item)
-    if is_recipe?(item)
-      "Es-tu sûr de vouloir supprimer cette recette ?"
-    else
-      "Es-tu sûr de vouloir supprimer cet aliment ?"
-    end
+    key = is_recipe?(item) ? "delete_recipe_confirm" : "delete_food_confirm"
+    I18n.t("views.components.day_food_group.#{key}")
   end
 end

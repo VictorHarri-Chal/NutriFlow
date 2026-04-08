@@ -20,23 +20,23 @@
       <div class="flex items-center space-x-4 text-sm">
         <div class="text-center">
           <div class="font-semibold text-blue-600"><%= group_totals[:calories].round(1) %> kcal</div>
-          <div class="text-gray-500">Calories</div>
+          <div class="text-gray-500"><%= t("views.calendars.calories") %></div>
         </div>
         <div class="text-center">
           <div class="font-semibold text-green-600"><%= group_totals[:proteins].round(1) %> g</div>
-          <div class="text-gray-500">Protéines</div>
+          <div class="text-gray-500"><%= t("views.calendars.proteins") %></div>
         </div>
         <div class="text-center">
           <div class="font-semibold text-yellow-600"><%= group_totals[:carbs].round(1) %> g</div>
-          <div class="text-gray-500">Glucides</div>
+          <div class="text-gray-500"><%= t("views.calendars.carbs") %></div>
         </div>
         <div class="text-center">
           <div class="font-semibold text-red-600"><%= group_totals[:fats].round(1) %> g</div>
-          <div class="text-gray-500">Lipides</div>
+          <div class="text-gray-500"><%= t("views.calendars.fats") %></div>
         </div>
         <div class="text-center">
           <div class="font-semibold text-purple-600"><%= group_totals[:sugars].round(1) %> g</div>
-          <div class="text-gray-500">Sucres</div>
+          <div class="text-gray-500"><%= t("views.calendars.sugars") %></div>
         </div>
       </div>
     </div>
@@ -55,7 +55,7 @@
               <%= Food.human_attribute_name(:brand) %>
             </th>
             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Quantité
+              <%= t("views.components.day_food_group.quantity_col") %>
             </th>
             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <%= Food.human_attribute_name(:calories) %>
@@ -73,7 +73,7 @@
               <%= Food.human_attribute_name(:sugars) %>
             </th>
             <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Actions
+              <%= t("views.components.day_food_group.actions_col") %>
             </th>
           </tr>
         </thead>
@@ -85,7 +85,7 @@
               </td>
               <td class="px-4 py-3 text-gray-600">
                 <% if is_recipe?(item) %>
-                  <span class="text-orange-600">Plat</span>
+                  <span class="text-orange-600"><%= t("views.components.day_food_group.recipe_label") %></span>
                 <% else %>
                   <%= item.food.brand %>
                 <% end %>
@@ -111,12 +111,12 @@
               <td class="px-4 py-3 text-center">
                 <%= link_to edit_path(item),
                             class: "inline-block text-blue-600 hover:text-blue-900 mr-2",
-                            title: "Modifier" do %>
+                            title: t("shared.edit") do %>
                   <i class="fa fa-pencil"></i>
                 <% end %>
                 <%= delete_link_with_confirm(delete_path(item),
                                             confirm: delete_confirm_message(item),
-                                            title: "Supprimer") %>
+                                            title: t("shared.delete")) %>
               </td>
             </tr>
           <% end %>

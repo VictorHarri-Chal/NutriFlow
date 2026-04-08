@@ -4,10 +4,10 @@
       <div class="flex items-center flex-shrink-0 justify-between px-4 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-700 to-blue-900">
         <div class="relative z-10 flex">
           <div class="flex shrink-0 items-center">
-            <%= link_to root_path do %>
+            <%= link_to calendars_path, class: "flex items-center gap-2" do %>
               <%= image_tag "logo.png", class: "h-10 w-auto", alt: "NutriFlow logo" %>
+              <h1 class="text-white text-xl font-bold">NutriFlow</h1>
             <% end %>
-            <h1 class="text-white text-xl font-bold">NutriFlow</h1>
           </div>
         </div>
         <button class="ml-1 flex items-center justify-center h-8 w-8 rounded-lg bg-white bg-opacity-20 hover:bg-opacity-30" data-action="click->sidebar#desktopToggle">

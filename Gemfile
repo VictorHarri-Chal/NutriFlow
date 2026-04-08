@@ -46,8 +46,6 @@ gem 'thruster', require: false
 
 gem 'simple_form'
 
-gem 'faker'
-
 gem 'enumerize'
 
 gem 'pg_search'
@@ -55,6 +53,10 @@ gem 'pg_search'
 gem 'pagy', "~> 5.10"
 
 gem 'ransack'
+
+group :development, :test do
+  gem 'faker'
+end
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]

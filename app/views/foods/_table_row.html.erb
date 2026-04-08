@@ -1,23 +1,28 @@
-<tr>
-  <td class="px-4 py-2"><%= food.name %></td>
-  <td class="px-4 py-2"><%= food.brand %></td>
-  <td class="px-4 py-2">
+<tr class="hover:bg-gray-50 transition-colors">
+  <td class="px-4 py-3 font-medium text-gray-900"><%= food.name %></td>
+  <td class="px-4 py-3 text-gray-600"><%= food.brand.presence || "—" %></td>
+  <td class="px-4 py-3">
     <%= render FoodLabelsComponent.new(food: food) %>
   </td>
-  <td class="px-4 py-2"><%= food.calories %> kcal</td>
-  <td class="px-4 py-2"><%= food.proteins %> g</td>
-  <td class="px-4 py-2"><%= food.carbs %> g</td>
-  <td class="px-4 py-2"><%= food.fats %> g</td>
-  <td class="px-4 py-2"><%= food.sugars %> g</td>
-  <td class="px-4 py-2 text-center">
-    <%= render DropdownGroupButtonComponent.new(dropdown: false) do |dropdown| %>
-      <% dropdown.with_button(type: :link, path: edit_food_path(food), text: 'Modifier') %>
+  <td class="px-4 py-3 text-gray-800"><%= food.calories %> kcal</td>
+  <td class="px-4 py-3 text-gray-800"><%= food.proteins %> g</td>
+  <td class="px-4 py-3 text-gray-800"><%= food.carbs %> g</td>
+  <td class="px-4 py-3 text-gray-800"><%= food.fats %> g</td>
+  <td class="px-4 py-3 text-gray-800"><%= food.sugars %> g</td>
+  <td class="px-4 py-3">
+    <div class="flex items-center justify-center gap-2">
+      <%= link_to edit_food_path(food),
+            class: "inline-flex items-center justify-center w-8 h-8 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors",
+            title: t("shared.edit") do %>
+        <i class="fas fa-pen text-sm"></i>
+      <% end %>
 
-      <% dropdown.with_button(type: :custom, custom_content: delete_link_with_confirm(food_path(food),
-                                              confirm: "Es-tu sûr de vouloir supprimer cet aliment ?",
-                                              title: "Supprimer",
-                                              text: "Supprimer",
-                                              class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100")) %>
-    <% end %>
+      <%= delete_link_with_confirm(
+            food_path(food),
+            confirm: t("views.foods.delete_confirm", name: food.name),
+            icon_class: "fas fa-trash text-sm",
+            title: t("shared.delete"),
+            class: "inline-flex items-center justify-center w-8 h-8 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors") %>
+    </div>
   </td>
 </tr>

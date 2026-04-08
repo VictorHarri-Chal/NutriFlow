@@ -1,20 +1,18 @@
-<% content_for :page_title do %>
-  Recettes
-<% end %>
+<% content_for :page_title, t("views.recipes.title") %>
 
 <div class="max-w-7xl mx-auto mt-16 bg-white rounded-xl shadow-md p-8">
   <!-- En-tête avec titre, recherche et actions -->
   <header class="mb-8">
     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
       <!-- Titre -->
-      <h1 class="text-2xl font-bold text-gray-900 flex-shrink-0">Mes recettes</h1>
+      <h1 class="text-2xl font-bold text-gray-900 flex-shrink-0"><%= t("views.recipes.title") %></h1>
 
       <!-- Barre de recherche -->
       <div class="flex-1 max-w-md lg:mx-6">
         <%= form_with url: recipes_path, method: :get, local: true, class: "relative" do |f| %>
           <%= text_field_tag :query, params[:query],
               class: "w-full pl-10 #{params[:query].present? ? 'pr-10' : 'pr-4'} py-1.5 text-sm bg-gray-50 border border-gray-200 rounded-md focus:outline-2 focus:outline-indigo-600 placeholder-gray-400",
-              placeholder: "Rechercher une recette...",
+              placeholder: t("views.recipes.search_placeholder"),
               autocomplete: "off" %>
 
           <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
@@ -30,7 +28,7 @@
       <!-- Bouton d'ajout -->
       <%= link_to new_recipe_path, class: "inline-flex items-center justify-center px-4 py-2 bg-blue-800 hover:bg-blue-600 text-white rounded-lg shadow-sm transition-colors font-medium flex-shrink-0" do %>
         <i class="fas fa-plus mr-2"></i>
-        Nouvelle recette
+        <%= t("views.recipes.new_recipe") %>
       <% end %>
     </div>
   </header>
@@ -39,7 +37,7 @@
     <!-- Grille de cartes -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <% @recipes.each do |recipe| %>
-        <%= render RecipeCardComponent.new(recipe: recipe) %>
+        <%= render RecipeCardComponent.new(recipe: recipe, current_user: current_user) %>
       <% end %>
     </div>
   <% else %>
@@ -48,23 +46,15 @@
         <i class="fas fa-bowl-food text-blue-700 text-xl"></i>
       </div>
       <h3 class="text-lg font-semibold text-gray-900 mb-1">
-        <% if params[:query].present? %>
-          Aucune recette trouvée
-        <% else %>
-          Aucune recette
-        <% end %>
+        <%= params[:query].present? ? t("views.recipes.no_results") : t("views.recipes.no_recipes") %>
       </h3>
       <p class="text-gray-600 mb-4">
-        <% if params[:query].present? %>
-          Aucune recette ne correspond à votre recherche "<%= params[:query] %>"
-        <% else %>
-          Créez votre première recette pour la retrouver ici.
-        <% end %>
+        <%= params[:query].present? ? t("views.recipes.no_results_for", query: params[:query]) : t("views.recipes.create_first") %>
       </p>
       <% unless params[:query].present? %>
         <%= link_to new_recipe_path, class: "inline-flex items-center px-4 py-2 bg-blue-800 text-white rounded-lg shadow hover:bg-blue-600 transition font-medium" do %>
           <i class="fas fa-plus mr-2"></i>
-          Nouvelle recette
+          <%= t("views.recipes.new_recipe") %>
         <% end %>
       <% end %>
     </div>

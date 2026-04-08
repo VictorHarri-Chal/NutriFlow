@@ -1,5 +1,4 @@
 class FoodLabelsController < ApplicationController
-  before_action :authenticate_user!
   before_action :set_food_label, only: [:destroy]
 
   def create

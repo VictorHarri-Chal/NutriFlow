@@ -1,0 +1,350 @@
+en:
+  controllers:
+    settings:
+      locale_updated: "Language updated successfully."
+      locale_error: "Error updating language."
+    foods:
+      created: "Food created successfully."
+      updated: "Food updated successfully."
+      destroyed: "Food deleted successfully."
+    days:
+      food_added: "Food added successfully."
+      food_add_error: "Error adding food."
+    recipe_ratings:
+      created: "Rating saved successfully."
+      updated: "Rating updated successfully."
+      destroyed: "Rating deleted successfully."
+
+  activerecord:
+    errors:
+      models:
+        recipe:
+          at_least_one_ingredient: "At least one ingredient is required"
+        recipe_rating:
+          attributes:
+            recipe_id:
+              taken: "You have already rated this recipe"
+
+  shared:
+    cancel: "Cancel"
+    save: "Save"
+    update: "Update"
+    delete: "Delete"
+    edit: "Edit"
+    add: "Add"
+    delete_confirm: "Are you sure you want to delete this item?"
+    actions: "Actions"
+    labels: "Labels"
+    quantity: "Quantity"
+    not_defined: "Not defined"
+    not_provided: "Not provided"
+    select_blank: "— Select —"
+    food_count:
+      one: "1 food"
+      other: "%{count} foods"
+    no_food_groups: "No meal groups"
+    create_groups_in_settings: "Create meal groups in settings"
+    no_food_labels: "No food labels"
+    create_labels_in_settings: "Create food labels in settings"
+
+  day_foods:
+    edit:
+      edit_day_food: "Edit food"
+
+  views:
+    shared:
+      sidebar:
+        calendar: "Calendar"
+        foods: "Foods"
+        calorie_requirement: "Calorie requirement"
+        recipes: "Recipes"
+        settings: "Settings"
+        logout: "Log out"
+        logout_confirm: "Are you sure you want to log out?"
+
+    calendars:
+      add_recipe: "Add a dish"
+      add_food: "Add a food"
+      today: "Today"
+      exceeded: "EXCEEDED"
+      reached: "REACHED"
+      excellent: "EXCELLENT"
+      goal_reached: "Goal reached"
+      calories: "Calories"
+      proteins: "Proteins"
+      fats: "Fats"
+      carbs: "Carbs"
+      sugars: "Sugars"
+      nutrition_summary: "Daily nutritional summary"
+      daily_objectives: "Daily goals"
+      objectives_unavailable: "Goals unavailable"
+      objectives_unavailable_hint: "To display your goals, please enter your weight in your profile."
+      complete_profile: "Complete profile"
+      empty_state:
+        title: "No foods logged"
+        description: "You haven't added any foods for this day yet."
+        add_first_food: "Add your first food"
+
+    foods:
+      page_title: "Food bank"
+      title: "My foods"
+      add_food: "Add a food"
+      edit_food: "Edit food"
+      delete_confirm: "Are you sure you want to delete \"%{name}\"?"
+      search_placeholder: "Search for a food..."
+      labels_col: "Labels"
+      form:
+        macros_hint: "Enter the food macros per 100g"
+        food_labels: "Food labels"
+        no_labels: "No food labels"
+        create_labels_hint: "Create food labels in settings"
+
+    day_foods:
+      new:
+        title: "Add a food"
+      edit:
+        edit_day_food: "Edit food"
+      form:
+        select_food: "Select a food"
+        select_group: "Select a group"
+        food_group: "Meal group"
+        cancel: "Cancel"
+
+    day_recipes:
+      new:
+        title: "Add a dish"
+      edit:
+        title: "Edit dish"
+      form:
+        select_recipe: "Select a recipe"
+        use_recipe_quantity: "Use the total recipe quantity"
+        food_group: "Meal group"
+
+    recipes:
+      title: "My recipes"
+      new_recipe: "New recipe"
+      search_placeholder: "Search for a recipe..."
+      no_recipes: "No recipes"
+      no_results: "No recipes found"
+      no_results_for: "No recipe matches your search \"%{query}\""
+      create_first: "Create your first recipe to see it here."
+      new:
+        title: "New recipe"
+      edit:
+        title: "Edit recipe"
+      show:
+        page_title: "Recipe"
+        nutritional_values: "Nutritional values"
+        total_weight: "Total weight (g)"
+        calories: "Calories"
+        proteins: "Proteins (g)"
+        carbs: "Carbs (g)"
+        fats: "Fats (g)"
+        sugars: "Sugars (g)"
+        ingredients: "Ingredients"
+        food_col: "Food"
+        quantity_col: "Quantity"
+        instructions: "Instructions"
+        no_instructions: "No instructions provided"
+        edit: "Edit"
+        delete: "Delete"
+        delete_confirm: "Are you sure you want to delete this recipe?"
+      form:
+        name: "Name *"
+        instructions: "Instructions"
+        ingredients: "Ingredients"
+        add_ingredient: "Add an ingredient"
+        no_ingredients: "No ingredients"
+        add_ingredient_hint: "Add at least one ingredient to your recipe"
+        add_first_ingredient: "Add the first ingredient"
+      item_fields:
+        food: "Food *"
+        select_blank: "— Select —"
+        quantity: "Quantity (g) *"
+        remove: "Remove"
+
+    profiles:
+      show:
+        title: "My Profile"
+        edit_link: "Edit profile"
+        personal_info: "Personal Information"
+        name: "Name"
+        email: "Email"
+        age: "Age"
+        weight: "Weight"
+        height: "Height"
+        gender: "Gender"
+        activity_level: "Activity level"
+        goal: "Goal"
+        age_years: "%{age} years old"
+      edit:
+        title: "Edit Profile"
+        name: "Name"
+        age: "Age"
+        weight: "Weight (kg)"
+        height: "Height (cm)"
+        gender: "Gender"
+        activity_level: "Activity level"
+        goal: "Goal"
+
+    settings:
+      show:
+        page_title: "Settings"
+        general: "General"
+        food_groups: "Food groups"
+        food_labels: "Food labels"
+        security: "Security"
+      general:
+        title: "General settings"
+        language: "Language"
+        language_hint: "The language will be applied immediately after saving."
+        save: "Save"
+      security:
+        title: "Account security"
+        change_password: "Change password"
+        current_password: "Current password"
+        current_password_placeholder: "Enter your current password"
+        new_password: "New password"
+        new_password_placeholder: "Enter your new password"
+        min_chars: "Minimum %{count} characters"
+        confirm_password: "Confirm new password"
+        confirm_password_placeholder: "Confirm your new password"
+        update_password: "Update password"
+        forgot_password: "Forgot password?"
+        forgot_password_hint: "If you forgot your password, you can request a reset link by email."
+        email_address: "Email address"
+        send_reset_link: "Send reset link"
+        delete_account: "Delete my account"
+        delete_account_warning: "This action is irreversible. All your data will be permanently deleted."
+        delete_account_button: "Delete account"
+      food_groups:
+        title: "Food groups"
+        group_name_label: "Group name"
+        group_name_placeholder: "E.g.: Breakfast, Lunch, Dinner..."
+        create: "Create group"
+        name_col: "Group name"
+        foods_col: "Foods"
+        no_food: "No foods"
+        no_groups: "No meal groups"
+        no_groups_hint: "Start by creating your first meal group."
+        explanation: "Meal groups allow you to organize your foods into categories like \"Breakfast\", \"Lunch\", \"Dinner\", \"Snacks\", etc."
+        delete_confirm: "Are you sure you want to delete this group? All associated meals will be moved to 'Ungrouped foods'."
+      food_labels:
+        title: "Food labels"
+        label_name_label: "Label name"
+        label_name_placeholder: "E.g.: Proteins, Carbs, Fats, Organic, etc."
+        create: "Create label"
+        name_col: "Label name"
+        foods_col: "Foods"
+        no_labels: "No food labels"
+        no_labels_hint: "Start by creating your first food label."
+        explanation: "Labels allow you to categorize your foods with tags like \"Proteins\", \"Carbs\", \"Fats\", \"Organic\", etc."
+        delete_confirm: "Are you sure you want to delete this label?"
+
+    confirm:
+      title: "Confirmation required"
+      confirm_btn: "Confirm"
+      default_message: "Are you sure you want to delete this item?"
+
+    home:
+      nav:
+        features: "Features"
+        how_it_works: "How it works"
+        login: "Log in"
+        signup: "Sign up"
+      hero:
+        title_line1: "Take control"
+        title_line2: "of your nutrition"
+        subtitle: "Track your meals day by day, create your recipes, and reach your nutritional goals — simply."
+        cta_start: "Get started for free"
+        cta_login: "Log in"
+        free_label: "Free · No credit card required"
+      features:
+        section_label: "Features"
+        section_title: "Everything you need"
+        section_subtitle: "Complete nutrition tracking, designed to be as simple as it is effective."
+        calendar_title: "Nutrition calendar"
+        calendar_desc: "Browse day by day and add your foods or recipes. Organise your meals in customisable categories."
+        foods_title: "Food bank"
+        foods_desc: "Build your food library with their nutritional values. Search and filter in seconds."
+        recipes_title: "Custom recipes"
+        recipes_desc: "Compose recipes with their ingredients and quantities. Macros are calculated automatically to the gram."
+        calories_title: "Calorie needs"
+        calories_desc: "Calculate your ideal intake based on your profile, activity level and goal — weight loss, maintenance or muscle gain."
+        ratings_title: "Ratings & comments"
+        ratings_desc: "Rate your recipes from 1 to 5 stars and leave comments to find your favourites again."
+        labels_title: "Labels & groups"
+        labels_desc: "Label your foods by category and group your daily meals however you like."
+      how_it_works:
+        section_label: "How it works"
+        section_title: "Get started in 3 steps"
+        step1_title: "Create your profile"
+        step1_desc: "Enter your weight, height, age and goal. NutriFlow calculates your ideal daily intake."
+        step2_title: "Add your foods"
+        step2_desc: "Build your food bank and create your favourite recipes with all their ingredients."
+        step3_title: "Track your days"
+        step3_desc: "Log what you eat each day and visualise your macros in real time."
+      cta:
+        title: "Ready to eat better?"
+        subtitle: "Join NutriFlow and start tracking your nutrition today. It's free."
+        button: "Get started for free"
+      footer:
+        login: "Log in"
+        signup: "Sign up"
+
+    daily_calorie_requirements:
+      page_title: "Daily calorie requirements"
+      title: "My daily calorie requirements"
+      go_to_profile: "Go to profile"
+      profile_info: "Profile information"
+      age: "Age"
+      height: "Height"
+      weight: "Weight"
+      physical_activity: "Physical activity"
+      daily_need: "Daily calorie need"
+      weight_loss: "Weight loss"
+      maintenance: "Maintenance"
+      muscle_gain: "Muscle gain"
+      not_calculable: "Calorie need cannot be calculated"
+      not_calculable_hint: "To calculate your daily calorie needs, please fill in your age, height and weight in your profile."
+      complete_profile: "Complete profile"
+
+    components:
+      recipe_card:
+        ingredient_count:
+          one: "1 ingredient"
+          other: "%{count} ingredients"
+        total_g: "g total"
+        proteins: "Proteins"
+        carbs: "Carbs"
+        fats: "Fats"
+        see_details: "See details"
+      recipe_comments:
+        title: "Comments"
+        add_comment: "Add a comment"
+        placeholder: "Your notes, changes, tips..."
+        add_btn: "Add"
+        you: "You"
+        delete_confirm: "Delete this comment?"
+        no_comments: "No comments yet"
+        add_first_comment: "Add your first comment above to get started"
+      recipe_rating_form:
+        title: "Personal rating"
+        delete_confirm: "Delete this rating?"
+        rating_label: "Rating out of 5 stars"
+        comment_label: "Comment (optional)"
+        comment_placeholder: "Your impressions of this recipe..."
+        rate_btn: "Rate"
+        update_btn: "Update"
+      day_food_group:
+        quantity_col: "Quantity"
+        actions_col: "Actions"
+        recipe_label: "Dish"
+        item_count:
+          one: "1 item"
+          other: "%{count} items"
+        ungrouped_title: "Ungrouped items"
+        delete_recipe_confirm: "Are you sure you want to delete this dish?"
+        delete_food_confirm: "Are you sure you want to delete this food?"
+      food_labels:
+        no_labels: "No labels"

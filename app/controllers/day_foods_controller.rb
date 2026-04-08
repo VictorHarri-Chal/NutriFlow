@@ -7,6 +7,7 @@ class DayFoodsController < ApplicationController
   def new
     @day_food        = @day.day_foods.build
     @day_food_groups = current_user.day_food_groups.order(:name)
+    @foods           = current_user.foods.order(:name)
   end
 
   def create
@@ -20,8 +21,9 @@ class DayFoodsController < ApplicationController
       end
     else
       @day_food_groups = current_user.day_food_groups.order(:name)
+      @foods           = current_user.foods.order(:name)
       respond_to do |format|
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("item_form", partial: "day_foods/form", locals: { day: @day, day_food: @day_food, submit_text: "Ajouter" }) }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("item_form", partial: "day_foods/form", locals: { day: @day, day_food: @day_food, submit_text: t("shared.add") }) }
         format.html         { render :new, status: :unprocessable_entity }
       end
     end
@@ -29,6 +31,7 @@ class DayFoodsController < ApplicationController
 
   def edit
     @day_food_groups = current_user.day_food_groups.order(:name)
+    @foods           = current_user.foods.order(:name)
   end
 
   def update

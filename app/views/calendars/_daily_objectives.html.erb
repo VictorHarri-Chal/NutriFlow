@@ -3,7 +3,7 @@
   <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200 mt-8">
     <h3 class="text-lg font-semibold text-blue-800 mb-4 flex items-center">
       <i class="fas fa-bullseye mr-2"></i>
-      Objectifs du jour
+      <%= t("views.calendars.daily_objectives") %>
     </h3>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -29,15 +29,15 @@
       <div class="flex items-center">
         <i class="fas fa-exclamation-triangle text-yellow-600 mr-3 text-xl"></i>
         <div>
-          <h3 class="text-lg font-semibold text-yellow-800">Objectifs non disponibles</h3>
+          <h3 class="text-lg font-semibold text-yellow-800"><%= t("views.calendars.objectives_unavailable") %></h3>
           <p class="text-yellow-700 text-sm mt-1">
-            Pour afficher vos objectifs, veuillez renseigner votre poids dans votre profil.
+            <%= t("views.calendars.objectives_unavailable_hint") %>
           </p>
         </div>
       </div>
       <%= link_to edit_profile_path, class: "inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded-lg shadow hover:bg-yellow-500 transition font-medium" do %>
         <i class="fas fa-user-edit mr-2"></i>
-        Compléter le profil
+        <%= t("views.calendars.complete_profile") %>
       <% end %>
     </div>
   </div>
