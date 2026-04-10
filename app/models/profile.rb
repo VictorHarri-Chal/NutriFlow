@@ -32,7 +32,7 @@ class Profile < ApplicationRecord
 
     @calculate_calories_needed_maintenance ||= begin
       result = Dentaku::Calculator.new.evaluate(
-        "(10 * #{weight} + 6.25 * #{height} - 5 * #{age} + 5) * #{activity_level_multiplier}"
+        "(10 * #{weight} + 6.25 * #{height} - 5 * #{age} + #{gender_bmr_constant}) * #{activity_level_multiplier}"
       )
       result.round
     end
@@ -72,5 +72,27 @@ class Profile < ApplicationRecord
   def daily_fats_goal
     return nil unless weight.present?
     weight * 1
+  end
+
+  def daily_carbs_goal
+    calorie_goal = calories_needed_for_goal
+    return nil unless calorie_goal && weight.present?
+
+    protein_kcal = daily_protein_goal * 4
+    fat_kcal     = daily_fats_goal * 9
+    remaining    = calorie_goal - protein_kcal - fat_kcal
+    return nil if remaining <= 0
+
+    (remaining / 4.0).round
+  end
+
+  private
+
+  def gender_bmr_constant
+    case gender.to_s
+    when 'female' then -161
+    when 'male'   then 5
+    else               -78 # other : moyenne homme/femme
+    end
   end
 end
