@@ -2,45 +2,45 @@
   <div class="grid grid-cols-1 gap-4">
     <%= f.input :name,
                 label: t("views.recipes.form.name"),
-                input_html: { class: "w-full rounded border border-gray-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" },
-                label_html: { class: "font-medium text-gray-700" } %>
+                input_html: { class: "input-dark" },
+                label_html: { class: "label-dark" } %>
 
     <%= f.input :instructions,
                 as: :text,
                 label: t("views.recipes.form.instructions"),
-                input_html: { rows: 4, class: "w-full rounded border border-gray-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" },
-                label_html: { class: "font-medium text-gray-700" } %>
+                input_html: { rows: 4, class: "input-dark" },
+                label_html: { class: "label-dark" } %>
 
     <div class="mb-4" data-controller="nested-form" data-nested-form-wrapper-selector-value=".ingredients-container">
       <div class="flex items-center justify-between mb-4">
         <div>
-          <h2 class="text-lg font-semibold text-gray-800"><%= t("views.recipes.form.ingredients") %></h2>
+          <h2 class="text-lg font-semibold text-ink-primary"><%= t("views.recipes.form.ingredients") %></h2>
         </div>
         <button type="button"
-                class="inline-flex items-center px-4 py-2 bg-blue-800 text-white rounded-lg shadow-sm hover:bg-blue-700 transition font-medium text-sm"
+                class="btn-primary text-sm"
                 data-action="nested-form#add">
-          <i class="fas fa-plus mr-2"></i>
+          <i class="fas fa-plus"></i>
           <%= t("views.recipes.form.add_ingredient") %>
         </button>
       </div>
 
       <!-- Container scrollable pour les ingrédients -->
-      <div class="ingredients-container max-h-96 overflow-y-auto bg-gray-50 rounded-xl p-6 space-y-4">
+      <div class="ingredients-container max-h-96 overflow-y-auto bg-surface-base rounded-xl border border-surface-border/40 p-6 space-y-4">
         <%= f.simple_fields_for :recipe_items do |item_fields| %>
           <%= render "item_fields", f: item_fields %>
         <% end %>
 
         <!-- Placeholder quand aucun ingrédient -->
         <div class="empty-state text-center py-8" data-nested-form-target="emptyState">
-          <div class="w-16 h-16 mx-auto mb-4 bg-gray-200 rounded-full flex items-center justify-center">
-            <i class="fas fa-bowl-food text-gray-400 text-xl"></i>
+          <div class="w-16 h-16 mx-auto mb-4 bg-surface-hover rounded-full flex items-center justify-center">
+            <i class="fas fa-bowl-food text-ink-subtle text-xl"></i>
           </div>
-          <h3 class="text-lg font-medium text-gray-900 mb-2"><%= t("views.recipes.form.no_ingredients") %></h3>
-          <p class="text-gray-600 mb-4"><%= t("views.recipes.form.add_ingredient_hint") %></p>
+          <h3 class="text-lg font-medium text-ink-primary mb-2"><%= t("views.recipes.form.no_ingredients") %></h3>
+          <p class="text-ink-muted mb-4"><%= t("views.recipes.form.add_ingredient_hint") %></p>
           <button type="button"
-                  class="inline-flex items-center px-4 py-2 bg-blue-800 text-white rounded-lg shadow-sm hover:bg-blue-700 transition font-medium text-sm"
+                  class="btn-primary text-sm"
                   data-action="nested-form#add">
-            <i class="fas fa-plus mr-2"></i>
+            <i class="fas fa-plus"></i>
             <%= t("views.recipes.form.add_first_ingredient") %>
           </button>
         </div>
@@ -57,10 +57,10 @@
 
   <div class="flex justify-center gap-4 mt-8">
     <% if recipe.persisted? %>
-      <%= link_to t("shared.cancel"), recipe_path(recipe), class: "px-6 py-2 bg-gray-200 text-gray-800 rounded-lg shadow hover:bg-gray-300 transition font-semibold text-center text-sm" %>
+      <%= link_to t("shared.cancel"), recipe_path(recipe), class: "btn-ghost" %>
     <% else %>
-      <%= link_to t("shared.cancel"), recipes_path, class: "px-6 py-2 bg-gray-200 text-gray-800 rounded-lg shadow hover:bg-gray-300 transition font-semibold text-center text-sm" %>
+      <%= link_to t("shared.cancel"), recipes_path, class: "btn-ghost" %>
     <% end %>
-    <%= f.button :submit, t("shared.save"), class: "px-6 py-2 bg-blue-800 text-white rounded-lg shadow hover:bg-blue-600 transition font-semibold text-center text-sm" %>
+    <%= f.button :submit, t("shared.save"), class: "btn-primary" %>
   </div>
 <% end %>

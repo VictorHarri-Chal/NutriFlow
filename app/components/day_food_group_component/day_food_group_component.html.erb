@@ -1,122 +1,124 @@
-<div class="mb-6 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden" data-controller="collapsible">
-  <!-- En-tête du groupe -->
-  <div class="bg-gradient-to-r <%= group_bg_class %> px-6 py-4 border-b border-gray-200">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <button class="text-gray-600 hover:text-blue-600 transition-colors"
+<div class="bg-surface-raised border border-surface-border/50 rounded-xl shadow-sm overflow-hidden"
+     data-controller="collapsible"
+     data-collapsible-storage-key="<%= storage_key %>">
+
+  <%# ── Group header ──────────────────────────────────────────────────── %>
+  <div class="bg-gradient-to-r <%= group_bg_class %> px-4 py-3 border-b border-surface-border/50">
+    <div class="flex items-center justify-between gap-3">
+
+      <%# Left: toggle + title + badge %>
+      <div class="flex items-center gap-3 min-w-0">
+        <button class="text-ink-muted hover:text-brand transition-colors flex-shrink-0 w-6 h-6 flex items-center justify-center"
                 data-action="click->collapsible#toggle"
                 data-collapsible-target="trigger">
-          <i class="fas fa-chevron-down transition-transform duration-200" data-collapsible-target="icon"></i>
+          <i class="fas fa-chevron-down text-xs transition-transform duration-200" data-collapsible-target="icon"></i>
         </button>
-        <h3 class="text-lg font-semibold text-gray-800">
-          <%= group_title %>
-        </h3>
-        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= badge_bg_class %>">
+        <h3 class="text-sm font-semibold text-ink-primary truncate"><%= group_title %></h3>
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 <%= badge_bg_class %>">
           <%= item_count_text %>
         </span>
       </div>
 
-      <!-- Totaux du groupe -->
-      <div class="flex items-center space-x-4 text-sm">
-        <div class="text-center">
-          <div class="font-semibold text-blue-600"><%= group_totals[:calories].round(1) %> kcal</div>
-          <div class="text-gray-500"><%= t("views.calendars.calories") %></div>
+      <%# Right: totals + add buttons %>
+      <div class="flex items-center gap-4">
+        <%# Compact totals %>
+        <div class="hidden md:flex items-center gap-3 text-xs text-ink-subtle">
+          <span class="font-semibold text-brand"><%= group_totals[:calories].round(1) %> kcal</span>
+          <span><%= group_totals[:proteins].round(1) %> g prot</span>
+          <span><%= group_totals[:carbs].round(1) %> g glu</span>
+          <span><%= group_totals[:fats].round(1) %> g lip</span>
         </div>
-        <div class="text-center">
-          <div class="font-semibold text-green-600"><%= group_totals[:proteins].round(1) %> g</div>
-          <div class="text-gray-500"><%= t("views.calendars.proteins") %></div>
-        </div>
-        <div class="text-center">
-          <div class="font-semibold text-yellow-600"><%= group_totals[:carbs].round(1) %> g</div>
-          <div class="text-gray-500"><%= t("views.calendars.carbs") %></div>
-        </div>
-        <div class="text-center">
-          <div class="font-semibold text-red-600"><%= group_totals[:fats].round(1) %> g</div>
-          <div class="text-gray-500"><%= t("views.calendars.fats") %></div>
-        </div>
-        <div class="text-center">
-          <div class="font-semibold text-purple-600"><%= group_totals[:sugars].round(1) %> g</div>
-          <div class="text-gray-500"><%= t("views.calendars.sugars") %></div>
+
+        <%# + buttons %>
+        <div class="flex items-center gap-1">
+          <%= link_to add_food_path,
+                class: "inline-flex items-center gap-1 px-2 py-1 text-xs text-ink-subtle hover:text-brand hover:bg-surface-hover rounded-md transition-colors",
+                data: { turbo_frame: "item_form" },
+                title: t("views.calendars.add_food") do %>
+            <i class="fas fa-plus text-xs"></i>
+            <span class="hidden sm:inline"><%= t("views.components.day_food_group.add_food") %></span>
+          <% end %>
+          <%= link_to add_recipe_path,
+                class: "inline-flex items-center gap-1 px-2 py-1 text-xs text-ink-subtle hover:text-brand hover:bg-surface-hover rounded-md transition-colors",
+                data: { turbo_frame: "item_form" },
+                title: t("views.calendars.add_recipe") do %>
+            <i class="fas fa-plus text-xs"></i>
+            <span class="hidden sm:inline"><%= t("views.components.day_food_group.add_recipe") %></span>
+          <% end %>
         </div>
       </div>
+
     </div>
   </div>
 
-  <!-- Contenu dépliable -->
-  <div class="hidden" data-collapsible-target="content">
+  <%# ── Collapsible content ──────────────────────────────────────────── %>
+  <div data-collapsible-target="content">
     <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+      <table class="min-w-full table-dark">
+        <thead>
           <tr>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <%= Food.human_attribute_name(:name) %>
-            </th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <%= Food.human_attribute_name(:brand) %>
-            </th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <%= t("views.components.day_food_group.quantity_col") %>
-            </th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <%= Food.human_attribute_name(:calories) %>
-            </th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <%= Food.human_attribute_name(:proteins) %>
-            </th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <%= Food.human_attribute_name(:carbs) %>
-            </th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <%= Food.human_attribute_name(:fats) %>
-            </th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <%= Food.human_attribute_name(:sugars) %>
-            </th>
-            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <%= t("views.components.day_food_group.actions_col") %>
-            </th>
+            <th class="text-left"><%= Food.human_attribute_name(:name) %></th>
+            <th class="text-left hidden sm:table-cell"><%= Food.human_attribute_name(:brand) %></th>
+            <th class="text-left"><%= t("views.components.day_food_group.quantity_col") %></th>
+            <th class="text-left"><%= Food.human_attribute_name(:calories) %></th>
+            <th class="text-right"><%= t("views.components.day_food_group.actions_col") %></th>
           </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
+        <tbody>
           <% day_foods.each do |item| %>
-            <tr class="hover:bg-gray-50">
-              <td class="px-4 py-3 font-medium text-gray-900">
-                <%= item.food_name %>
-              </td>
-              <td class="px-4 py-3 text-gray-600">
+            <tr>
+              <td class="font-medium text-ink-primary"><%= item.food_name %></td>
+
+              <td class="hidden sm:table-cell">
                 <% if is_recipe?(item) %>
-                  <span class="text-orange-600"><%= t("views.components.day_food_group.recipe_label") %></span>
+                  <span class="text-brand text-xs font-medium"><%= t("views.components.day_food_group.recipe_label") %></span>
                 <% else %>
-                  <%= item.food.brand %>
+                  <span class="text-ink-muted"><%= item.food.brand.presence || "—" %></span>
                 <% end %>
               </td>
-              <td class="px-4 py-3 text-gray-900">
-                <%= item.display_quantity %>
+
+              <%# Inline quantity edit %>
+              <td>
+                <div data-controller="inline-edit">
+                  <span data-inline-edit-target="display"
+                        data-action="click->inline-edit#edit"
+                        class="cursor-pointer group flex items-center gap-1 hover:text-brand transition-colors">
+                    <%= item.display_quantity %>
+                    <i class="fas fa-pen text-xs text-ink-subtle opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                  </span>
+                  <%= form_with url: update_path(item), method: :patch,
+                                class: "hidden",
+                                data: { "inline-edit-target": "form" } do %>
+                    <div class="flex items-center gap-1">
+                      <input type="number"
+                             name="<%= quantity_param_name(item) %>"
+                             value="<%= item.quantity.to_i %>"
+                             min="1" step="1"
+                             class="w-20 bg-surface-base border border-surface-border rounded px-2 py-1 text-sm text-ink-primary focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand"
+                             data-inline-edit-target="input"
+                             data-action="keydown->inline-edit#keydown blur->inline-edit#blur">
+                      <span class="text-ink-subtle text-xs">g</span>
+                    </div>
+                  <% end %>
+                </div>
               </td>
-              <td class="px-4 py-3 font-semibold text-blue-600">
-                <%= item.total_calories %> kcal
-              </td>
-              <td class="px-4 py-3 text-green-600">
-                <%= item.total_proteins %> g
-              </td>
-              <td class="px-4 py-3 text-yellow-600">
-                <%= item.total_carbs %> g
-              </td>
-              <td class="px-4 py-3 text-red-600">
-                <%= item.total_fats %> g
-              </td>
-              <td class="px-4 py-3 text-purple-600">
-                <%= item.total_sugars %> g
-              </td>
-              <td class="px-4 py-3 text-center">
-                <%= link_to edit_path(item),
-                            class: "inline-block text-blue-600 hover:text-blue-900 mr-2",
-                            title: t("shared.edit") do %>
-                  <i class="fa fa-pencil"></i>
-                <% end %>
-                <%= delete_link_with_confirm(delete_path(item),
-                                            confirm: delete_confirm_message(item),
-                                            title: t("shared.delete")) %>
+
+              <td class="font-semibold text-brand"><%= item.total_calories %> kcal</td>
+
+              <%# Actions: edit + delete with clear separation %>
+              <td class="text-right">
+                <div class="flex items-center justify-end gap-3">
+                  <%= link_to edit_path(item),
+                        class: "w-8 h-8 inline-flex items-center justify-center rounded-lg text-ink-subtle hover:text-brand hover:bg-surface-hover transition-colors",
+                        title: t("shared.edit") do %>
+                    <i class="fas fa-pen text-xs"></i>
+                  <% end %>
+                  <%= delete_link_with_confirm(delete_path(item),
+                        confirm: delete_confirm_message(item),
+                        icon_class: "fas fa-trash text-xs",
+                        title: t("shared.delete"),
+                        class: "w-8 h-8 inline-flex items-center justify-center rounded-lg text-ink-subtle hover:text-status-danger hover:bg-status-danger_dim/20 transition-colors") %>
+                </div>
               </td>
             </tr>
           <% end %>
@@ -124,4 +126,5 @@
       </table>
     </div>
   </div>
+
 </div>

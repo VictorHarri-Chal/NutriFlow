@@ -9,7 +9,7 @@ module ApplicationHelper
     message = options.delete(:confirm) || I18n.t("shared.delete_confirm")
     icon_class = options.delete(:icon_class) || "fa fa-trash"
     title = options.delete(:title) || I18n.t("shared.delete")
-    link_class = options.delete(:class) || "inline-block text-red-600 hover:text-red-900"
+    link_class = options.delete(:class) || "inline-block text-status-danger hover:text-red-400 transition-colors"
     text = options.delete(:text)
 
     link_to path,
@@ -50,7 +50,7 @@ module ApplicationHelper
     message = options.delete(:confirm) || I18n.t("views.shared.sidebar.logout_confirm")
     icon_class = options.delete(:icon_class) || "fas fa-sign-out-alt w-5 h-5 mr-3"
     text = options.delete(:text) || I18n.t("views.shared.sidebar.logout")
-    link_class = options.delete(:class) || "flex items-center px-4 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg"
+    link_class = options.delete(:class) || "flex items-center px-4 py-3 text-ink-muted hover:bg-status-danger_dim/20 hover:text-status-danger rounded-lg transition-colors"
 
     link_to path,
             data: {

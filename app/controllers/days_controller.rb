@@ -1,4 +1,26 @@
 class DaysController < ApplicationController
+  before_action :set_day, only: [:update]
+
+  def update
+    if @day.update(day_params)
+      head :ok
+    else
+      head :unprocessable_entity
+    end
+  end
+
+  private
+
+  def set_day
+    @day = current_user.days.find(params[:id])
+  end
+
+  def day_params
+    params.require(:day).permit(:note)
+  end
+
+  public
+
   def add_food
     @day = current_user.days.find_or_create_by(date: params[:date]) do |day|
       day.user = current_user

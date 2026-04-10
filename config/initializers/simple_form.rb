@@ -11,25 +11,23 @@ SimpleForm.setup do |config|
   config.wrappers :default, class: 'mb-4' do |b|
     b.use :html5
     b.use :placeholder
-    b.use :label, class: 'block text-sm font-medium text-gray-700'
-    b.use :input,
-          class: 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
-    b.use :error, wrap_with: { tag: :p, class: 'mt-2 text-sm text-red-600' }
+    b.use :label, class: 'label-dark'
+    b.use :input, class: 'input-dark'
+    b.use :error, wrap_with: { tag: :p, class: 'mt-1 text-sm text-status-danger' }
   end
 
   config.wrappers :numeric, class: 'mb-4' do |b|
     b.use :html5
     b.use :placeholder
-    b.use :label, class: 'block text-sm font-medium text-gray-700'
-    b.use :input,
-          class: 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500', input_html: { step: :any }
-    b.use :error, wrap_with: { tag: :p, class: 'mt-2 text-sm text-red-600' }
+    b.use :label, class: 'label-dark'
+    b.use :input, class: 'input-dark', input_html: { step: :any }
+    b.use :error, wrap_with: { tag: :p, class: 'mt-1 text-sm text-status-danger' }
   end
 
   config.default_wrapper = :default
   config.boolean_style = :nested
-  config.button_class = 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-  config.boolean_label_class = 'text-sm font-medium text-gray-700'
+  config.button_class = 'btn-primary'
+  config.boolean_label_class = 'text-sm font-medium text-ink-muted'
   config.label_text = ->(label, required, explicit_label) { "#{label} #{required}" }
   config.generate_additional_classes_for = []
   config.browser_validations = true

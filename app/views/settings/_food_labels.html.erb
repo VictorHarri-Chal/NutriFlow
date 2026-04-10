@@ -1,7 +1,7 @@
-<h2 class="text-xl font-semibold text-gray-900 mb-6"><%= t("views.settings.food_labels.title") %></h2>
+<h2 class="text-xl font-semibold text-ink-primary mb-6"><%= t("views.settings.food_labels.title") %></h2>
 
 <!-- Formulaire pour créer un nouveau label -->
-<div class="bg-gray-50 p-6 rounded-lg mb-6" data-controller="form-validation">
+<div class="bg-surface-base border border-surface-border/40 p-6 rounded-lg mb-6" data-controller="form-validation">
   <%= simple_form_for @food_label, url: food_labels_path, html: { class: "flex items-end gap-4" } do |f| %>
     <div class="flex-1">
       <%= f.input :name,
@@ -9,7 +9,7 @@
           placeholder: t("views.settings.food_labels.label_name_placeholder"),
           wrapper_html: { class: "mb-0" },
           input_html: {
-            class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+            class: "input-dark",
             data: {
               form_validation_target: "input",
               action: "input->form-validation#input keyup->form-validation#keyup"
@@ -18,7 +18,7 @@
     </div>
     <div>
       <%= f.submit t("views.settings.food_labels.create"),
-          class: "bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400",
+          class: "btn-primary cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
           data: { form_validation_target: "submit" },
           disabled: true %>
     </div>
@@ -26,42 +26,36 @@
 </div>
 
 <!-- Tableau des labels existants -->
-<div class="bg-white shadow-sm rounded-lg overflow-hidden">
+<div class="bg-surface-raised border border-surface-border/50 rounded-lg overflow-hidden">
   <% if @food_labels.any? %>
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-gray-50">
+    <table class="min-w-full table-dark">
+      <thead>
         <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            <%= t("views.settings.food_labels.name_col") %>
-          </th>
-          <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-            <%= t("views.settings.food_labels.foods_col") %>
-          </th>
-          <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-            <%= t("shared.actions") %>
-          </th>
+          <th class="text-left"><%= t("views.settings.food_labels.name_col") %></th>
+          <th class="text-center"><%= t("views.settings.food_labels.foods_col") %></th>
+          <th class="text-right"><%= t("shared.actions") %></th>
         </tr>
       </thead>
-      <tbody class="bg-white divide-y divide-gray-200">
+      <tbody>
         <% @food_labels.each do |label| %>
-          <tr class="hover:bg-gray-50">
+          <tr>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center">
-                <i class="fas fa-tag text-blue-500 mr-3"></i>
-                <div class="text-sm font-medium text-gray-900"><%= label.name %></div>
+                <i class="fas fa-tag text-brand mr-3"></i>
+                <div class="text-sm font-medium text-ink-primary"><%= label.name %></div>
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center justify-center">
                 <% food_count = label.foods.count %>
                 <% if food_count == 0 %>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-                    <i class="fas fa-circle text-gray-400 mr-1 text-xs"></i>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-hover text-ink-subtle">
+                    <i class="fas fa-circle mr-1 text-xs"></i>
                     <%= t("views.settings.food_groups.no_food") %>
                   </span>
                 <% else %>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    <i class="fas fa-check-circle text-green-500 mr-1 text-xs"></i>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-status-success_dim/30 text-status-success border border-status-success/20">
+                    <i class="fas fa-check-circle mr-1 text-xs"></i>
                     <%= t("shared.food_count", count: food_count) %>
                   </span>
                 <% end %>
@@ -71,7 +65,7 @@
               <%= delete_link_with_confirm(food_label_path(label),
                                           confirm: t("views.settings.food_labels.delete_confirm"),
                                           icon_class: "fas fa-trash mr-2",
-                                          class: "text-red-600 hover:text-red-900 inline-flex items-center",
+                                          class: "text-status-danger hover:text-red-400 inline-flex items-center transition-colors",
                                           title: t("shared.delete")) %>
             </td>
           </tr>
@@ -80,10 +74,10 @@
     </table>
   <% else %>
     <div class="text-center py-12">
-      <i class="fas fa-tag text-gray-400 text-4xl mb-4"></i>
-      <h3 class="text-lg font-medium text-gray-900 mb-2"><%= t("views.settings.food_labels.no_labels") %></h3>
-      <p class="text-gray-500 mb-4"><%= t("views.settings.food_labels.no_labels_hint") %></p>
-      <p class="text-sm text-gray-400">
+      <i class="fas fa-tag text-ink-subtle text-4xl mb-4"></i>
+      <h3 class="text-lg font-medium text-ink-primary mb-2"><%= t("views.settings.food_labels.no_labels") %></h3>
+      <p class="text-ink-muted mb-4"><%= t("views.settings.food_labels.no_labels_hint") %></p>
+      <p class="text-sm text-ink-subtle">
         <%= t("views.settings.food_labels.explanation") %>
       </p>
     </div>

@@ -4,21 +4,39 @@ export default class extends Controller {
   static targets = ["content", "trigger", "icon"]
 
   connect() {
-    this.contentTarget.classList.add("hidden")
+    const saved = this.storageKey ? localStorage.getItem(this.storageKey) : null
+    if (saved === "open") {
+      this._open(false)
+    } else {
+      this._close(false)
+    }
   }
 
   toggle() {
-    this.contentTarget.classList.toggle("hidden")
-    this.iconTarget.classList.toggle("rotate-180")
+    if (this.contentTarget.classList.contains("hidden")) {
+      this._open(true)
+    } else {
+      this._close(true)
+    }
   }
 
-  show() {
+  // Kept for backward compatibility
+  show() { this._open(true) }
+  hide() { this._close(true) }
+
+  _open(persist) {
     this.contentTarget.classList.remove("hidden")
     this.iconTarget.classList.add("rotate-180")
+    if (persist && this.storageKey) localStorage.setItem(this.storageKey, "open")
   }
 
-  hide() {
+  _close(persist) {
     this.contentTarget.classList.add("hidden")
     this.iconTarget.classList.remove("rotate-180")
+    if (persist && this.storageKey) localStorage.setItem(this.storageKey, "closed")
+  }
+
+  get storageKey() {
+    return this.element.dataset.collapsibleStorageKey || null
   }
 }

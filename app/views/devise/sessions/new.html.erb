@@ -1,43 +1,65 @@
-<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-  <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-    <%= image_tag "logo.png", class: "mx-auto h-16 w-auto", alt: "Votre Logo" %>
-    <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Sign in to your account</h2>
-  </div>
+<div class="w-full">
+  <!-- Card -->
+  <div class="bg-surface-raised rounded-2xl border border-surface-border/50 shadow-2xl overflow-hidden">
+    <!-- Amber top accent -->
+    <div class="h-1 bg-gradient-to-r from-brand via-brand-hover to-brand"></div>
 
-  <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-    <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+    <div class="px-8 py-10">
+      <!-- Logo + branding -->
+      <div class="flex flex-col items-center mb-8">
+        <%= image_tag "logo.png", class: "h-14 w-auto mb-4", alt: "NutriFlow" %>
+        <h1 class="text-2xl font-bold text-ink-primary">Connexion</h1>
+        <p class="text-sm text-ink-subtle mt-1">Bienvenue sur NutriFlow</p>
+      </div>
 
-      <div>
-        <label for="email" class="block text-sm/6 font-medium text-gray-900">Email address</label>
-        <div class="mt-2">
+      <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "space-y-5" }) do |f| %>
+
+        <div>
+          <label class="label-dark">Adresse e-mail</label>
           <%= f.input :email,
                 label: false,
                 required: false,
                 autofocus: true,
-                input_html: { autocomplete: "email" }%>
+                input_html: { autocomplete: "email", class: "input-dark", placeholder: "ton@email.com" } %>
         </div>
-      </div>
 
-      <div>
-        <div class="flex items-center justify-between">
-          <label for="password" class="block text-sm/6 font-medium text-gray-900">Password</label>
-        </div>
-        <div class="mt-2">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="label-dark">Mot de passe</label>
+            <% if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
+              <%= link_to "Mot de passe oublié ?", new_password_path(resource_name),
+                    class: "text-xs text-ink-subtle hover:text-brand transition-colors" %>
+            <% end %>
+          </div>
           <%= f.input :password,
                 label: false,
                 required: false,
-                input_html: { autocomplete: "current-password" }%>
+                input_html: { autocomplete: "current-password", class: "input-dark", placeholder: "••••••••" } %>
         </div>
-      </div>
 
-      <div>
-        <%= f.button :submit, "Log in", class: "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" %>
-      </div>
-    <% end %>
+        <% if devise_mapping.rememberable? %>
+          <div class="flex items-center gap-2">
+            <%= f.input :remember_me, as: :boolean, label: "Se souvenir de moi",
+                  label_html: { class: "text-sm text-ink-muted cursor-pointer" },
+                  input_html: { class: "rounded border-surface-border bg-surface-hover text-brand focus:ring-brand/50" },
+                  wrapper: false %>
+          </div>
+        <% end %>
 
-    <p class="mt-10 text-center text-sm/6 text-gray-500">
-      Not a member?
-      <%= link_to "Sign up", new_registration_path(resource_name), class: "font-semibold text-indigo-600 hover:text-indigo-500" %>
-    </p>
+        <div class="pt-1">
+          <%= f.button :submit, "Se connecter",
+                class: "btn-primary w-full justify-center py-2.5 text-base" %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Footer -->
+    <div class="px-8 pb-8 text-center">
+      <p class="text-sm text-ink-subtle">
+        Pas encore de compte ?
+        <%= link_to "Créer un compte", new_registration_path(resource_name),
+              class: "font-semibold text-brand hover:text-brand-hover transition-colors" %>
+      </p>
+    </div>
   </div>
 </div>

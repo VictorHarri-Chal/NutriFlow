@@ -1,5 +1,5 @@
-<div class="max-w-lg mx-auto mt-16 bg-white rounded-xl shadow-md p-8">
-  <h1 class="text-2xl font-bold text-blue-800 mb-6"><%= t("views.day_recipes.edit.title") %></h1>
+<div class="max-w-lg mx-auto mt-16 card p-8">
+  <h1 class="text-2xl font-bold text-ink-primary mb-6"><%= t("views.day_recipes.edit.title") %></h1>
 
   <%= render "form", day: @day_recipe.day, day_recipe: @day_recipe, submit_text: t("shared.update") %>
 </div>

@@ -1,9 +1,21 @@
-<div class="text-center py-12">
-  <i class="fas fa-utensils text-6xl text-gray-300 mb-4"></i>
-  <h3 class="text-lg font-medium text-gray-900 mb-2"><%= t("views.calendars.empty_state.title") %></h3>
-  <p class="text-gray-600 mb-6"><%= t("views.calendars.empty_state.description") %></p>
-  <%= link_to new_day_day_food_path(day), class: "inline-flex items-center px-6 py-3 bg-blue-800 text-white rounded-lg shadow hover:bg-blue-600 transition font-medium", data: { turbo_frame: "item_form" } do %>
-    <i class="fas fa-plus mr-2"></i>
-    <%= t("views.calendars.empty_state.add_first_food") %>
-  <% end %>
+<div class="text-center py-16">
+  <div class="w-16 h-16 bg-surface-raised border border-surface-border/40 rounded-full flex items-center justify-center mx-auto mb-4">
+    <i class="fas fa-utensils text-2xl text-ink-subtle"></i>
+  </div>
+  <h3 class="text-lg font-medium text-ink-primary mb-1"><%= t("views.calendars.empty_state.title") %></h3>
+  <p class="text-ink-muted text-sm mb-6"><%= t("views.calendars.empty_state.description") %></p>
+  <div class="flex items-center justify-center gap-3">
+    <%= link_to new_day_day_food_path(day),
+          class: "btn-primary",
+          data: { turbo_frame: "item_form" } do %>
+      <i class="fas fa-plus"></i>
+      <%= t("views.calendars.add_food") %>
+    <% end %>
+    <%= link_to new_day_day_recipe_path(day),
+          class: "btn-secondary",
+          data: { turbo_frame: "item_form" } do %>
+      <i class="fas fa-book-open"></i>
+      <%= t("views.calendars.add_recipe") %>
+    <% end %>
+  </div>
 </div>

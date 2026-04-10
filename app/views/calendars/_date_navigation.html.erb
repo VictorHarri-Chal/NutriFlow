@@ -1,29 +1,52 @@
-<div class="flex items-center space-x-4">
-  <%= link_to calendars_path(date: Date.current.strftime('%Y-%m-%d')),
-              class: "inline-flex items-center px-4 py-2 bg-green-700 text-white rounded-lg shadow hover:bg-green-600 transition font-medium",
-              data: { turbo: false },
-              title: t("views.calendars.today") do %>
-    <i class="fas fa-calendar-day mr-2"></i>
-    <%= t("views.calendars.today") %>
-  <% end %>
+<div class="flex items-center gap-2">
 
-  <div class="flex items-center space-x-2">
-    <%= link_to calendars_path(date: (@selected_date - 1.day).strftime('%Y-%m-%d')),
-                class: "p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition",
-                data: { turbo: false } do %>
-      <i class="fas fa-chevron-left"></i>
+  <%# ── Date picker pill ── %>
+  <div class="flex items-center bg-surface-raised border border-surface-border/50 rounded-xl overflow-hidden text-sm">
+    <%= link_to calendars_path(date: (selected_date - 1.day).strftime('%Y-%m-%d')),
+                class: "w-8 h-8 flex items-center justify-center text-ink-subtle hover:text-ink-primary hover:bg-surface-hover transition-colors",
+                data: { turbo: false },
+                title: t("views.calendars.previous_day") do %>
+      <i class="fas fa-chevron-left text-xs"></i>
     <% end %>
 
     <input type="date"
            id="date-selector"
-           value="<%= @selected_date.strftime('%Y-%m-%d') %>"
-           class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+           value="<%= selected_date.strftime('%Y-%m-%d') %>"
+           class="bg-transparent border-x border-surface-border/40 px-3 h-8 text-ink-primary text-sm focus:outline-none hover:bg-surface-hover focus:bg-surface-hover transition-colors cursor-pointer"
+           autocomplete="off"
+           data-lpignore="true"
+           data-1p-ignore
            data-controller="date-selector">
 
-    <%= link_to calendars_path(date: (@selected_date + 1.day).strftime('%Y-%m-%d')),
-                class: "p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition",
-                data: { turbo: false } do %>
-      <i class="fas fa-chevron-right"></i>
+    <%= link_to calendars_path(date: (selected_date + 1.day).strftime('%Y-%m-%d')),
+                class: "w-8 h-8 flex items-center justify-center text-ink-subtle hover:text-ink-primary hover:bg-surface-hover transition-colors",
+                data: { turbo: false },
+                title: t("views.calendars.next_day") do %>
+      <i class="fas fa-chevron-right text-xs"></i>
     <% end %>
   </div>
+
+  <%# ── Secondary actions: icon-only buttons, same height as pill ── %>
+  <div class="flex items-center gap-1">
+
+    <% unless selected_date == Date.current %>
+      <%= link_to calendars_path(date: Date.current.strftime('%Y-%m-%d')),
+                  class: "w-8 h-8 flex items-center justify-center rounded-xl text-ink-primary bg-surface-raised border border-surface-border/50 hover:bg-white/10 transition-all",
+                  data: { turbo: false },
+                  title: t("views.calendars.today") do %>
+        <i class="fas fa-calendar-day text-xs"></i>
+      <% end %>
+    <% end %>
+
+    <%= button_to copy_yesterday_calendars_path,
+          params: { date: selected_date.to_s },
+          method: :post,
+          class: "w-8 h-8 flex items-center justify-center rounded-xl text-ink-primary bg-surface-raised border border-surface-border/50 hover:bg-white/10 transition-all",
+          form: { class: "contents" },
+          title: t("views.calendars.copy_yesterday_title") do %>
+      <i class="fas fa-copy text-xs"></i>
+    <% end %>
+
+  </div>
+
 </div>

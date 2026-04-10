@@ -1,20 +1,21 @@
 class DayFoodGroupComponent < ApplicationComponent
-  def initialize(day_food_group: nil, day_foods:)
+  def initialize(day_food_group: nil, day_foods:, day:)
     @day_food_group = day_food_group
-    @day_foods = day_foods
+    @day_foods      = day_foods
+    @day            = day
   end
 
   private
 
-  attr_reader :day_food_group, :day_foods
+  attr_reader :day_food_group, :day_foods, :day
 
   def group_totals
     {
       calories: day_foods.sum(&:total_calories),
       proteins: day_foods.sum(&:total_proteins),
-      carbs: day_foods.sum(&:total_carbs),
-      fats: day_foods.sum(&:total_fats),
-      sugars: day_foods.sum(&:total_sugars)
+      carbs:    day_foods.sum(&:total_carbs),
+      fats:     day_foods.sum(&:total_fats),
+      sugars:   day_foods.sum(&:total_sugars)
     }
   end
 
@@ -27,19 +28,24 @@ class DayFoodGroupComponent < ApplicationComponent
   end
 
   def group_bg_class
-    if day_food_group
-      "from-blue-50 to-indigo-50"
-    else
-      "from-gray-50 to-gray-100"
-    end
+    day_food_group ? "from-brand-muted/30 to-brand-muted/10" : "from-surface-hover to-surface-hover"
   end
 
   def badge_bg_class
-    if day_food_group
-      "bg-blue-100 text-blue-800"
-    else
-      "bg-gray-100 text-gray-800"
-    end
+    day_food_group ? "bg-brand-muted text-brand" : "bg-surface-hover text-ink-muted"
+  end
+
+  def storage_key
+    key = day_food_group ? "group_#{day_food_group.id}" : "ungrouped"
+    "collapsible:calendar:#{key}"
+  end
+
+  def add_food_path
+    new_day_day_food_path(day, day_food: { day_food_group_id: day_food_group&.id }.compact)
+  end
+
+  def add_recipe_path
+    new_day_day_recipe_path(day, day_recipe: { day_food_group_id: day_food_group&.id }.compact)
   end
 
   def is_recipe?(item)
@@ -47,19 +53,19 @@ class DayFoodGroupComponent < ApplicationComponent
   end
 
   def edit_path(item)
-    if is_recipe?(item)
-      edit_day_day_recipe_path(item.day, item)
-    else
-      edit_day_day_food_path(item.day, item)
-    end
+    is_recipe?(item) ? edit_day_day_recipe_path(item.day, item) : edit_day_day_food_path(item.day, item)
+  end
+
+  def update_path(item)
+    is_recipe?(item) ? day_day_recipe_path(item.day, item) : day_day_food_path(item.day, item)
   end
 
   def delete_path(item)
-    if is_recipe?(item)
-      day_day_recipe_path(item.day, item)
-    else
-      day_day_food_path(item.day, item)
-    end
+    is_recipe?(item) ? day_day_recipe_path(item.day, item) : day_day_food_path(item.day, item)
+  end
+
+  def quantity_param_name(item)
+    is_recipe?(item) ? "day_recipe[quantity]" : "day_food[quantity]"
   end
 
   def delete_confirm_message(item)

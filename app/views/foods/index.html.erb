@@ -1,11 +1,11 @@
 <% content_for :page_title, t("views.foods.page_title") %>
 
-<div class="max-w-6xl mx-auto mt-16 bg-white rounded-xl shadow-md p-8">
+<div class="max-w-6xl mx-auto mt-16 card p-8">
     <!-- En-tête avec titre, recherche et actions -->
   <header class="mb-8">
     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
       <!-- Titre -->
-      <h1 class="text-2xl font-bold text-gray-900 flex-shrink-0"><%= t("views.foods.title") %></h1>
+      <h1 class="text-2xl font-bold text-ink-primary flex-shrink-0"><%= t("views.foods.title") %></h1>
 
       <!-- Barre de recherche -->
       <div class="flex-1 max-w-md lg:mx-6">
@@ -17,14 +17,14 @@
           <% end %>
 
           <%= text_field_tag :query, params[:query],
-              class: "w-full pl-10 #{params[:query].present? ? 'pr-10' : 'pr-4'} py-1.5 text-sm bg-gray-50 border border-gray-200 rounded-md focus:outline-2 focus:outline-indigo-600 placeholder-gray-400",
+              class: "input-dark pl-10 #{params[:query].present? ? 'pr-10' : ''} py-1.5 text-sm",
               placeholder: t("views.foods.search_placeholder"),
               autocomplete: "off" %>
 
-          <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+          <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-ink-subtle pointer-events-none"></i>
 
           <% if params[:query].present? %>
-            <%= link_to foods_path, class: "absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors" do %>
+            <%= link_to foods_path, class: "absolute right-3 top-1/2 -translate-y-1/2 text-ink-subtle hover:text-ink-muted transition-colors" do %>
               <i class="fas fa-times"></i>
             <% end %>
           <% end %>
@@ -32,19 +32,19 @@
       </div>
 
       <!-- Bouton d'ajout -->
-      <%= link_to new_food_path, class: "inline-flex items-center justify-center px-4 py-2 bg-blue-800 hover:bg-blue-600 text-white rounded-lg shadow-sm transition-colors font-medium flex-shrink-0" do %>
-        <i class="fas fa-plus mr-2"></i>
+      <%= link_to new_food_path, class: "btn-primary flex-shrink-0" do %>
+        <i class="fas fa-plus"></i>
         <%= t("views.foods.add_food") %>
       <% end %>
     </div>
   </header>
 
   <!-- Tableau des aliments -->
-  <div class="bg-gray-50 rounded-lg overflow-hidden">
+  <div class="bg-surface-base rounded-lg overflow-hidden border border-surface-border/40">
     <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200">
+      <table class="min-w-full table-dark">
         <%= render "table_headers" %>
-        <tbody class="bg-white divide-y divide-gray-200">
+        <tbody>
           <%= render partial: "table_row", collection: @foods, as: :food %>
         </tbody>
       </table>

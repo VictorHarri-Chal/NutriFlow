@@ -1,27 +1,27 @@
-<thead class="bg-gray-50">
+<thead>
   <tr>
-    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-      <%= sort_link(@q, :name, Food.human_attribute_name(:name), class: "text-gray-500 hover:text-gray-700 cursor-pointer") %>
+    <th>
+      <%= sort_link(@q, :name, Food.human_attribute_name(:name), class: "text-ink-subtle hover:text-ink-muted cursor-pointer") %>
     </th>
-    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-      <%= sort_link(@q, :brand, Food.human_attribute_name(:brand), class: "text-gray-500 hover:text-gray-700 cursor-pointer") %>
+    <th>
+      <%= sort_link(@q, :brand, Food.human_attribute_name(:brand), class: "text-ink-subtle hover:text-ink-muted cursor-pointer") %>
     </th>
-    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><%= t("views.foods.labels_col") %></th>
-    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-      <%= sort_link(@q, :calories, Food.human_attribute_name(:calories), class: "text-gray-500 hover:text-gray-700 cursor-pointer") %>
+    <th><%= t("views.foods.labels_col") %></th>
+    <th>
+      <%= sort_link(@q, :calories, Food.human_attribute_name(:calories), class: "text-ink-subtle hover:text-ink-muted cursor-pointer") %>
     </th>
-    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-      <%= sort_link(@q, :proteins, Food.human_attribute_name(:proteins), class: "text-gray-500 hover:text-gray-700 cursor-pointer") %>
+    <th>
+      <%= sort_link(@q, :proteins, Food.human_attribute_name(:proteins), class: "text-ink-subtle hover:text-ink-muted cursor-pointer") %>
     </th>
-    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-      <%= sort_link(@q, :carbs, Food.human_attribute_name(:carbs), class: "text-gray-500 hover:text-gray-700 cursor-pointer") %>
+    <th>
+      <%= sort_link(@q, :carbs, Food.human_attribute_name(:carbs), class: "text-ink-subtle hover:text-ink-muted cursor-pointer") %>
     </th>
-    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-      <%= sort_link(@q, :fats, Food.human_attribute_name(:fats), class: "text-gray-500 hover:text-gray-700 cursor-pointer") %>
+    <th>
+      <%= sort_link(@q, :fats, Food.human_attribute_name(:fats), class: "text-ink-subtle hover:text-ink-muted cursor-pointer") %>
     </th>
-    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-      <%= sort_link(@q, :sugars, Food.human_attribute_name(:sugars), class: "text-gray-500 hover:text-gray-700 cursor-pointer") %>
+    <th>
+      <%= sort_link(@q, :sugars, Food.human_attribute_name(:sugars), class: "text-ink-subtle hover:text-ink-muted cursor-pointer") %>
     </th>
-    <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase"><%= t("shared.actions") %></th>
+    <th class="text-center"><%= t("shared.actions") %></th>
   </tr>
 </thead>

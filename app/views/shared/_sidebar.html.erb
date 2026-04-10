@@ -1,30 +1,30 @@
 <div data-sidebar-target="desktopSideMenu" class="hidden md:w-64 md:flex-col md:fixed md:inset-y-0 md:flex z-50">
-  <div class="flex-1 flex flex-col min-h-0 bg-white shadow-lg">
+  <div class="flex-1 flex flex-col min-h-0 bg-surface-raised border-r border-surface-border/50">
     <div class="flex-1 flex flex-col pb-4 overflow-y-auto">
-      <div class="flex items-center flex-shrink-0 justify-between px-4 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-700 to-blue-900">
+      <div class="flex items-center flex-shrink-0 justify-between px-4 py-4 border-b border-surface-border/50 bg-surface-base">
         <div class="relative z-10 flex">
           <div class="flex shrink-0 items-center">
             <%= link_to calendars_path, class: "flex items-center gap-2" do %>
               <%= image_tag "logo.png", class: "h-10 w-auto", alt: "NutriFlow logo" %>
-              <h1 class="text-white text-xl font-bold">NutriFlow</h1>
+              <h1 class="text-ink-primary text-xl font-bold">NutriFlow</h1>
             <% end %>
           </div>
         </div>
-        <button class="ml-1 flex items-center justify-center h-8 w-8 rounded-lg bg-white bg-opacity-20 hover:bg-opacity-30" data-action="click->sidebar#desktopToggle">
-          <i class="fas fa-times text-white"></i>
+        <button class="ml-1 flex items-center justify-center h-8 w-8 rounded-lg bg-surface-hover hover:bg-surface-border transition-colors" data-action="click->sidebar#desktopToggle">
+          <i class="fas fa-times text-ink-muted"></i>
         </button>
       </div>
-      <div class="flex-shrink-0 flex p-4 justify-between border-b border-gray-100">
+      <div class="flex-shrink-0 flex p-4 justify-between border-b border-surface-border/40">
         <%= link_to profile_path, class: "flex-shrink-0 group block" do %>
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <div class="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
-                <i class="fas fa-user text-white"></i>
+              <div class="h-10 w-10 rounded-full bg-brand flex items-center justify-center">
+                <i class="fas fa-user text-zinc-900"></i>
               </div>
             </div>
             <div class="ml-2">
-              <p class="text-sm font-medium text-gray-900 group-hover:text-gray-700"><%= current_user.email %></p>
-              <p class="text-xs font-medium text-gray-500">Utilisateur</p>
+              <p class="text-sm font-medium text-ink-primary group-hover:text-ink-muted transition-colors"><%= current_user.email %></p>
+              <p class="text-xs font-medium text-ink-subtle">Utilisateur</p>
             </div>
           </div>
         <% end %>

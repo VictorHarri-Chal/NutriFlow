@@ -11,15 +11,16 @@ class PaginationComponent < ApplicationComponent
 
   def pagination_links_class
     <<-TXT.squish
-      relative inline-flex items-center py-2 border border-gray-300 bg-white
-      text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20
+      relative inline-flex items-center py-2 border border-surface-border
+      bg-surface-raised text-sm font-medium text-ink-muted
+      hover:bg-surface-hover hover:text-ink-primary focus:z-20 transition-colors
     TXT
   end
 
   def pagination_active_class(page)
     return unless @pagy
     page_number = (params[:page].presence || 1).to_i
-    "z-10 bg-primary-50 border-primary-500 text-primary-600" if page_number == page
+    "z-10 bg-brand-muted border-brand text-brand" if page_number == page
   end
 
   def right_arrow_class

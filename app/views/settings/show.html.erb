@@ -1,23 +1,22 @@
 <% content_for :page_title, t("views.settings.show.page_title") %>
 
-<div class="max-w-6xl mx-auto mt-16 bg-white rounded-xl shadow-md overflow-hidden" data-controller="tabs" data-tabs-active-tab-value="<%= @active_tab %>">
+<div class="max-w-6xl mx-auto mt-16 card overflow-hidden" data-controller="tabs" data-tabs-active-tab-value="<%= @active_tab %>">
   <!-- Navigation par onglets -->
-  <div class="border-b border-gray-200">
+  <div class="border-b border-surface-border/50">
     <nav class="flex space-x-8 px-8 pt-6" aria-label="Onglets">
-      <a href="#general" class="<%= @active_tab == 'general' ? 'active border-b-2 border-blue-600 text-blue-600' : 'border-b-2 border-transparent text-gray-500' %> py-4 px-1 text-sm font-medium hover:text-gray-700 hover:border-gray-300" data-tab="general" data-tabs-target="tab" data-action="click->tabs#switchTab">
+      <a href="#general" class="<%= @active_tab == 'general' ? 'border-b-2 border-brand text-brand' : 'border-b-2 border-transparent text-ink-muted' %> py-4 px-1 text-sm font-medium hover:text-ink-primary hover:border-surface-border transition-colors" data-tab="general" data-tabs-target="tab" data-action="click->tabs#switchTab">
         <i class="fas fa-cog mr-2"></i>
         <%= t("views.settings.show.general") %>
       </a>
-      <a href="#day_food_groups" class="<%= @active_tab == 'day_food_groups' ? 'active border-b-2 border-blue-600 text-blue-600' : 'border-b-2 border-transparent text-gray-500' %> py-4 px-1 text-sm font-medium hover:text-gray-700 hover:border-gray-300" data-tab="day_food_groups" data-tabs-target="tab" data-action="click->tabs#switchTab">
+      <a href="#day_food_groups" class="<%= @active_tab == 'day_food_groups' ? 'border-b-2 border-brand text-brand' : 'border-b-2 border-transparent text-ink-muted' %> py-4 px-1 text-sm font-medium hover:text-ink-primary hover:border-surface-border transition-colors" data-tab="day_food_groups" data-tabs-target="tab" data-action="click->tabs#switchTab">
         <i class="fas fa-utensils mr-2"></i>
         <%= t("views.settings.show.food_groups") %>
       </a>
-      <a href="#food_labels" class="<%= @active_tab == 'food_labels' ? 'active border-b-2 border-blue-600 text-blue-600' : 'border-b-2 border-transparent text-gray-500' %> py-4 px-1 text-sm font-medium hover:text-gray-700 hover:border-gray-300" data-tab="food_labels" data-tabs-target="tab" data-action="click->tabs#switchTab">
+      <a href="#food_labels" class="<%= @active_tab == 'food_labels' ? 'border-b-2 border-brand text-brand' : 'border-b-2 border-transparent text-ink-muted' %> py-4 px-1 text-sm font-medium hover:text-ink-primary hover:border-surface-border transition-colors" data-tab="food_labels" data-tabs-target="tab" data-action="click->tabs#switchTab">
         <i class="fas fa-tag mr-2"></i>
         <%= t("views.settings.show.food_labels") %>
       </a>
-
-      <a href="#security" class="<%= @active_tab == 'security' ? 'active border-b-2 border-blue-600 text-blue-600' : 'border-b-2 border-transparent text-gray-500' %> py-4 px-1 text-sm font-medium hover:text-gray-700 hover:border-gray-300" data-tab="security" data-tabs-target="tab" data-action="click->tabs#switchTab">
+      <a href="#security" class="<%= @active_tab == 'security' ? 'border-b-2 border-brand text-brand' : 'border-b-2 border-transparent text-ink-muted' %> py-4 px-1 text-sm font-medium hover:text-ink-primary hover:border-surface-border transition-colors" data-tab="security" data-tabs-target="tab" data-action="click->tabs#switchTab">
         <i class="fas fa-shield-alt mr-2"></i>
         <%= t("views.settings.show.security") %>
       </a>

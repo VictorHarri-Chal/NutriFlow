@@ -1,8 +1,8 @@
 <div id="daily_objectives">
 <% if profile&.weight.present? %>
-  <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200 mt-8">
-    <h3 class="text-lg font-semibold text-blue-800 mb-4 flex items-center">
-      <i class="fas fa-bullseye mr-2"></i>
+  <div class="card-section p-6 mt-8">
+    <h3 class="text-lg font-semibold text-ink-primary mb-4 flex items-center">
+      <i class="fas fa-bullseye mr-2 text-brand"></i>
       <%= t("views.calendars.daily_objectives") %>
     </h3>
 
@@ -24,19 +24,19 @@
     </div>
   </div>
 <% else %>
-  <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg p-6 border border-yellow-200 mt-8">
+  <div class="bg-status-warning_dim/20 border border-status-warning/30 rounded-lg p-6 mt-8">
     <div class="flex items-center justify-between">
       <div class="flex items-center">
-        <i class="fas fa-exclamation-triangle text-yellow-600 mr-3 text-xl"></i>
+        <i class="fas fa-exclamation-triangle text-status-warning mr-3 text-xl"></i>
         <div>
-          <h3 class="text-lg font-semibold text-yellow-800"><%= t("views.calendars.objectives_unavailable") %></h3>
-          <p class="text-yellow-700 text-sm mt-1">
+          <h3 class="text-lg font-semibold text-status-warning"><%= t("views.calendars.objectives_unavailable") %></h3>
+          <p class="text-status-warning/70 text-sm mt-1">
             <%= t("views.calendars.objectives_unavailable_hint") %>
           </p>
         </div>
       </div>
-      <%= link_to edit_profile_path, class: "inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded-lg shadow hover:bg-yellow-500 transition font-medium" do %>
-        <i class="fas fa-user-edit mr-2"></i>
+      <%= link_to edit_profile_path, class: "btn-primary" do %>
+        <i class="fas fa-user-edit"></i>
         <%= t("views.calendars.complete_profile") %>
       <% end %>
     </div>
