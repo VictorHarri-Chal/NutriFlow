@@ -11,14 +11,14 @@
             <span class="font-medium pb-1"><%= t("views.shared.sidebar.foods") %></span>
         <% end %>
 
-        <%= link_to daily_calorie_requirement_path, class: current_page?(daily_calorie_requirement_path) ? "nav-link-active" : "nav-link" do %>
-            <i class="fas fa-fire-flame-simple w-5 h-5 mr-3"></i>
-            <span class="font-medium pb-1"><%= t("views.shared.sidebar.calorie_requirement") %></span>
-        <% end %>
-
         <%= link_to recipes_path, class: current_page?(recipes_path) ? "nav-link-active" : "nav-link" do %>
             <i class="fas fa-book-open w-5 h-5 mr-3"></i>
             <span class="font-medium pb-1"><%= t("views.shared.sidebar.recipes") %></span>
+        <% end %>
+
+        <%= link_to daily_calorie_requirement_path, class: current_page?(daily_calorie_requirement_path) ? "nav-link-active" : "nav-link" do %>
+            <i class="fas fa-fire-flame-simple w-5 h-5 mr-3"></i>
+            <span class="font-medium pb-1"><%= t("views.shared.sidebar.calorie_requirement") %></span>
         <% end %>
     </div>
     <div class="mt-auto pt-4 border-t border-surface-border/40">

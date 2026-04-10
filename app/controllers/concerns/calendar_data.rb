@@ -30,6 +30,9 @@ module CalendarData
     @total_fats     = totals[:fats].round(1)
     @total_sugars   = totals[:sugars].round(1)
 
+    @has_foods   = current_user.foods.exists?
+    @has_recipes = current_user.recipes.exists?
+
     @profile = current_user.profile
     return unless @profile&.weight.present?
 
