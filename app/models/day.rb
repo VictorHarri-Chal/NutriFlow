@@ -11,22 +11,32 @@ class Day < ApplicationRecord
   scope :for_date, ->(date) { where(date: date) }
 
   def total_calories
-    day_foods.sum(&:total_calories) + day_recipes.sum(&:total_calories)
+    preloaded_day_foods.sum(&:total_calories) + preloaded_day_recipes.sum(&:total_calories)
   end
 
   def total_proteins
-    day_foods.sum(&:total_proteins) + day_recipes.sum(&:total_proteins)
+    preloaded_day_foods.sum(&:total_proteins) + preloaded_day_recipes.sum(&:total_proteins)
   end
 
   def total_carbs
-    day_foods.sum(&:total_carbs) + day_recipes.sum(&:total_carbs)
+    preloaded_day_foods.sum(&:total_carbs) + preloaded_day_recipes.sum(&:total_carbs)
   end
 
   def total_fats
-    day_foods.sum(&:total_fats) + day_recipes.sum(&:total_fats)
+    preloaded_day_foods.sum(&:total_fats) + preloaded_day_recipes.sum(&:total_fats)
   end
 
   def total_sugars
-    day_foods.sum(&:total_sugars) + day_recipes.sum(&:total_sugars)
+    preloaded_day_foods.sum(&:total_sugars) + preloaded_day_recipes.sum(&:total_sugars)
+  end
+
+  private
+
+  def preloaded_day_foods
+    day_foods.loaded? ? day_foods : day_foods.includes(:food)
+  end
+
+  def preloaded_day_recipes
+    day_recipes.loaded? ? day_recipes : day_recipes.includes(recipe: { recipe_items: :food })
   end
 end

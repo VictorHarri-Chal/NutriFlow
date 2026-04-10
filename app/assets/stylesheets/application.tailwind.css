@@ -66,7 +66,22 @@
     @apply px-4 py-3 text-ink-primary;
   }
   .table-dark tr {
-    @apply hover:bg-surface-hover/50 transition-colors;
+    @apply group hover:bg-surface-hover/50 transition-colors;
+  }
+  /* Colonne de tri active (Ransack ajoute .asc / .desc sur le <a>) */
+  .table-dark th a.asc,
+  .table-dark th a.desc {
+    @apply text-brand;
+  }
+
+  /* Colonne sticky droite */
+  .table-sticky-col {
+    @apply sticky right-0 transition-colors;
+  }
+  .table-sticky-col::before {
+    content: '';
+    @apply absolute inset-y-0 -left-8 w-8 pointer-events-none;
+    background: linear-gradient(to right, transparent, var(--sticky-bg));
   }
 
   /* ---- Sidebar nav links ---- */
