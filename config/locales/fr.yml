@@ -64,6 +64,7 @@ fr:
         settings: "Paramètres"
         logout: "Déconnexion"
         logout_confirm: "Es-tu sûr de vouloir te déconnecter ?"
+        profile: "Mon profil"
 
     calendars:
       page_title: "Calendrier"
