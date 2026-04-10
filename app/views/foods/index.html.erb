@@ -47,12 +47,12 @@
   <!-- Filtre par label -->
   <% if @food_labels.any? %>
     <div class="flex flex-wrap items-center gap-2 mb-4">
-      <%= link_to foods_path(query: params[:query], q: params[:q]),
+      <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h),
             class: "inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border transition-colors #{@selected_label_id.nil? ? 'bg-brand text-zinc-900 border-brand' : 'bg-surface-hover text-ink-muted border-surface-border hover:border-brand/50'}" do %>
         <%= t("views.foods.all_labels") %>
       <% end %>
       <% @food_labels.each do |label| %>
-        <%= link_to foods_path(query: params[:query], q: params[:q], label_id: label.id),
+        <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, label_id: label.id),
               class: "inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border transition-colors #{@selected_label_id == label.id ? 'bg-brand text-zinc-900 border-brand' : 'bg-surface-hover text-ink-muted border-surface-border hover:border-brand/50'}" do %>
           <i class="fas fa-tag text-xs"></i>
           <%= label.name %>

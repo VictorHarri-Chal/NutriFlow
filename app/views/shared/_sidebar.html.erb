@@ -14,19 +14,16 @@
           <i class="fas fa-times text-ink-muted"></i>
         </button>
       </div>
-      <div class="flex-shrink-0 flex p-4 justify-between border-b border-surface-border/40">
-        <%= link_to profile_path, class: "flex-shrink-0 group block" do %>
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <div class="h-10 w-10 rounded-full bg-brand flex items-center justify-center">
-                <i class="fas fa-user text-zinc-900"></i>
-              </div>
-            </div>
-            <div class="ml-2">
-              <p class="text-sm font-medium text-ink-primary group-hover:text-ink-muted transition-colors"><%= current_user.email %></p>
-              <p class="text-xs font-medium text-ink-subtle">Utilisateur</p>
-            </div>
+      <div class="flex-shrink-0 border-b border-surface-border/40">
+        <%= link_to profile_path, class: "group flex items-center gap-3 px-4 py-3 hover:bg-surface-hover transition-colors" do %>
+          <div class="flex-shrink-0 h-8 w-8 rounded-full bg-brand flex items-center justify-center text-zinc-900 text-xs font-bold">
+            <%= current_user.email[0].upcase %>
           </div>
+          <div class="min-w-0 flex-1">
+            <p class="text-xs font-medium text-ink-primary truncate group-hover:text-brand transition-colors"><%= current_user.email %></p>
+            <p class="text-xs text-ink-subtle"><%= t("views.shared.sidebar.profile") %></p>
+          </div>
+          <i class="fas fa-chevron-right text-xs text-ink-subtle group-hover:text-brand transition-colors flex-shrink-0"></i>
         <% end %>
       </div>
     <%= render "shared/sidebar_elements" %>
