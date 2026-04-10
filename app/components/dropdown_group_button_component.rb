@@ -55,11 +55,11 @@ class DropdownGroupButtonComponent < ApplicationComponent
     else
       <<~TXT
         relative inline-flex items-center
-        #{buttons.size > 1 ? 'rounded-l-md' : 'rounded-md'} bg-white
+        #{buttons.size > 1 ? 'rounded-l-md' : 'rounded-md'} bg-surface-raised
         px-3 py-2
-        text-sm font-semibold text-gray-900
-        ring-1 ring-inset ring-gray-300
-        hover:bg-gray-50
+        text-sm font-semibold text-ink-primary
+        ring-1 ring-inset ring-surface-border
+        hover:bg-surface-hover
         #{additionnal_classes}
       TXT
     end
@@ -70,15 +70,15 @@ class DropdownGroupButtonComponent < ApplicationComponent
       <<~TXT
         relative text-center items-center
         rounded-l-none btn btn-primary p-2 h-full
-        border-0 border-l border-white
+        border-0 border-l border-brand-hover/50
         focus:ring-0 focus:border-0
       TXT
     else
       <<~TXT
         relative text-center items-center
-        rounded-r-md bg-white p-2 text-gray-400
-        ring-1 ring-inset ring-gray-300
-        hover:bg-gray-50
+        rounded-r-md bg-surface-raised p-2 text-ink-subtle
+        ring-1 ring-inset ring-surface-border
+        hover:bg-surface-hover
       TXT
     end
   end

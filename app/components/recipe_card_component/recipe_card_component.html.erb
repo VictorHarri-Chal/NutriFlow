@@ -1,22 +1,22 @@
 <%= link_to recipe_path(recipe), class: "group block" do %>
-  <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg hover:border-blue-200 transition-all duration-300 transform hover:scale-[1.02]">
+  <div class="bg-surface-raised rounded-xl border border-surface-border/50 overflow-hidden hover:shadow-xl hover:border-brand/40 transition-all duration-300 transform hover:scale-[1.02]">
 
-    <!-- En-tête avec gradient et titre -->
-    <div class="relative bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 px-6 py-5">
+    <!-- En-tête avec accent ambre et titre -->
+    <div class="relative bg-surface-base border-t-2 border-brand px-6 py-5">
       <!-- Badge de notation si disponible -->
       <% if user_rating > 0 %>
-        <div class="absolute top-3 right-3 flex items-center bg-white/80 backdrop-blur-sm rounded-full px-2 py-1 text-xs font-medium text-gray-700">
-          <i class="fas fa-star text-yellow-500 mr-1"></i>
+        <div class="absolute top-3 right-3 flex items-center bg-surface-raised/80 backdrop-blur-sm rounded-full px-2 py-1 text-xs font-medium text-ink-muted border border-surface-border/40">
+          <i class="fas fa-star text-brand mr-1"></i>
           <%= user_rating %>
         </div>
       <% end %>
 
-      <h3 class="font-bold text-gray-900 text-lg leading-tight group-hover:text-blue-700 transition-colors">
+      <h3 class="font-bold text-ink-primary text-lg leading-tight group-hover:text-brand transition-colors">
         <%= recipe.name %>
       </h3>
 
       <!-- Nombre d'ingrédients -->
-      <div class="flex items-center mt-2 text-sm text-gray-600">
+      <div class="flex items-center mt-2 text-sm text-ink-muted">
         <i class="fas fa-list-ul mr-1"></i>
         <%= t("views.components.recipe_card.ingredient_count", count: recipe.recipe_items.size) %>
       </div>
@@ -27,55 +27,55 @@
       <!-- Calories principales -->
       <div class="flex items-center justify-between mb-4">
         <div class="text-center flex-1">
-          <div class="text-2xl font-bold text-blue-600 mb-1">
+          <div class="text-2xl font-bold text-brand mb-1">
             <%= recipe.total_calories %>
           </div>
-          <div class="text-xs text-gray-500 font-medium">kcal</div>
+          <div class="text-xs text-ink-subtle font-medium">kcal</div>
         </div>
-        <div class="w-px h-8 bg-gray-200"></div>
+        <div class="w-px h-8 bg-surface-border"></div>
         <div class="text-center flex-1">
-          <div class="text-2xl font-bold text-indigo-600 mb-1">
+          <div class="text-2xl font-bold text-ink-muted mb-1">
             <%= recipe.total_weight %>
           </div>
-          <div class="text-xs text-gray-500 font-medium"><%= t("views.components.recipe_card.total_g") %></div>
+          <div class="text-xs text-ink-subtle font-medium"><%= t("views.components.recipe_card.total_g") %></div>
         </div>
       </div>
 
       <!-- Macros détaillées -->
       <div class="grid grid-cols-3 gap-3">
-        <div class="text-center p-2 bg-green-50 rounded-lg">
+        <div class="text-center p-2 bg-surface-hover/60 rounded-lg">
           <div class="flex items-center justify-center mb-1">
-            <i class="fas fa-dumbbell text-green-600 text-sm"></i>
+            <i class="fas fa-dumbbell text-ink-subtle text-sm"></i>
           </div>
-          <div class="font-bold text-green-700 text-sm"><%= recipe.total_proteins %></div>
-          <div class="text-xs text-green-600"><%= t("views.components.recipe_card.proteins") %></div>
+          <div class="font-bold text-ink-primary text-sm"><%= recipe.total_proteins %></div>
+          <div class="text-xs text-ink-subtle"><%= t("views.components.recipe_card.proteins") %></div>
         </div>
 
-        <div class="text-center p-2 bg-yellow-50 rounded-lg">
+        <div class="text-center p-2 bg-surface-hover/60 rounded-lg">
           <div class="flex items-center justify-center mb-1">
-            <i class="fas fa-bread-slice text-yellow-600 text-sm"></i>
+            <i class="fas fa-bread-slice text-ink-subtle text-sm"></i>
           </div>
-          <div class="font-bold text-yellow-700 text-sm"><%= recipe.total_carbs %></div>
-          <div class="text-xs text-yellow-600"><%= t("views.components.recipe_card.carbs") %></div>
+          <div class="font-bold text-ink-primary text-sm"><%= recipe.total_carbs %></div>
+          <div class="text-xs text-ink-subtle"><%= t("views.components.recipe_card.carbs") %></div>
         </div>
 
-        <div class="text-center p-2 bg-red-50 rounded-lg">
+        <div class="text-center p-2 bg-surface-hover/60 rounded-lg">
           <div class="flex items-center justify-center mb-1">
-            <i class="fas fa-oil-can text-red-600 text-sm"></i>
+            <i class="fas fa-oil-can text-ink-subtle text-sm"></i>
           </div>
-          <div class="font-bold text-red-700 text-sm"><%= recipe.total_fats %></div>
-          <div class="text-xs text-red-600"><%= t("views.components.recipe_card.fats") %></div>
+          <div class="font-bold text-ink-primary text-sm"><%= recipe.total_fats %></div>
+          <div class="text-xs text-ink-subtle"><%= t("views.components.recipe_card.fats") %></div>
         </div>
       </div>
     </div>
 
     <!-- Footer avec action -->
-    <div class="px-6 py-3 bg-gray-50 border-t border-gray-100">
+    <div class="px-6 py-3 bg-surface-base border-t border-surface-border/40">
       <div class="flex items-center justify-between">
-        <div class="flex items-center text-sm text-gray-600">
+        <div class="flex items-center text-sm text-ink-muted">
           <span><%= t("views.components.recipe_card.see_details") %></span>
         </div>
-        <div class="text-blue-600 group-hover:text-blue-700 transition-colors">
+        <div class="text-brand transition-colors">
           <i class="fas fa-arrow-right text-sm"></i>
         </div>
       </div>

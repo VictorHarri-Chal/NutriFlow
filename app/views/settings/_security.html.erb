@@ -1,59 +1,58 @@
-<h2 class="text-xl font-semibold text-gray-900 mb-6"><%= t("views.settings.security.title") %></h2>
+<h2 class="text-xl font-semibold text-ink-primary mb-6"><%= t("views.settings.security.title") %></h2>
 <div class="space-y-8">
   <!-- Changement de mot de passe -->
-  <div class="bg-blue-50 p-6 rounded-lg">
-    <h3 class="text-lg font-medium text-gray-900 mb-4"><%= t("views.settings.security.change_password") %></h3>
+  <div class="bg-surface-base border border-surface-border/40 p-6 rounded-lg">
+    <h3 class="text-lg font-medium text-ink-primary mb-4"><%= t("views.settings.security.change_password") %></h3>
     <%= form_with(model: current_user, url: registration_path(current_user), local: true, method: :patch, class: "space-y-4") do |form| %>
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2"><%= t("views.settings.security.current_password") %></label>
+        <label class="label-dark"><%= t("views.settings.security.current_password") %></label>
         <%= form.password_field :current_password, required: true, autocomplete: "current-password",
-                                class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500",
+                                class: "input-dark",
                                 placeholder: t("views.settings.security.current_password_placeholder") %>
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2"><%= t("views.settings.security.new_password") %></label>
+        <label class="label-dark"><%= t("views.settings.security.new_password") %></label>
         <%= form.password_field :password, required: true, autocomplete: "new-password",
-                                class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500",
+                                class: "input-dark",
                                 placeholder: t("views.settings.security.new_password_placeholder") %>
-        <p class="text-xs text-gray-500 mt-1"><%= t("views.settings.security.min_chars", count: @minimum_password_length || 6) %></p>
+        <p class="text-xs text-ink-subtle mt-1"><%= t("views.settings.security.min_chars", count: @minimum_password_length || 6) %></p>
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2"><%= t("views.settings.security.confirm_password") %></label>
+        <label class="label-dark"><%= t("views.settings.security.confirm_password") %></label>
         <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password",
-                                class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500",
+                                class: "input-dark",
                                 placeholder: t("views.settings.security.confirm_password_placeholder") %>
       </div>
 
-      <%= form.submit t("views.settings.security.update_password"),
-                      class: "bg-blue-800 text-white px-6 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200" %>
+      <%= form.submit t("views.settings.security.update_password"), class: "btn-primary cursor-pointer" %>
     <% end %>
   </div>
 
   <!-- Réinitialisation par email -->
-  <div class="bg-yellow-50 p-6 rounded-lg">
-    <h3 class="text-lg font-medium text-gray-900 mb-4"><%= t("views.settings.security.forgot_password") %></h3>
-    <p class="text-sm text-gray-700 mb-4"><%= t("views.settings.security.forgot_password_hint") %></p>
+  <div class="bg-status-warning_dim/20 border border-status-warning/30 p-6 rounded-lg">
+    <h3 class="text-lg font-medium text-ink-primary mb-4"><%= t("views.settings.security.forgot_password") %></h3>
+    <p class="text-sm text-ink-muted mb-4"><%= t("views.settings.security.forgot_password_hint") %></p>
 
     <%= form_with(model: User.new, url: password_path(:user), local: true, method: :post, class: "space-y-4") do |form| %>
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2"><%= t("views.settings.security.email_address") %></label>
+        <label class="label-dark"><%= t("views.settings.security.email_address") %></label>
         <%= form.email_field :email, required: true, autocomplete: "email",
                               value: current_user.email, readonly: true,
-                              class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50 text-gray-500 focus:outline-none" %>
+                              class: "input-dark bg-surface-hover text-ink-subtle cursor-not-allowed" %>
       </div>
 
       <%= form.submit t("views.settings.security.send_reset_link"),
-                      class: "bg-yellow-600 text-white px-6 py-2 rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition duration-200" %>
+                      class: "inline-flex items-center gap-2 px-4 py-2 bg-status-warning text-zinc-900 font-semibold rounded-lg hover:bg-amber-400 transition-colors cursor-pointer" %>
     <% end %>
   </div>
 
   <!-- Suppression du compte -->
-  <div class="bg-red-50 p-6 rounded-lg border border-red-200">
-    <h3 class="text-lg font-medium text-red-900 mb-4"><%= t("views.settings.security.delete_account") %></h3>
+  <div class="bg-status-danger_dim/20 border border-status-danger/30 p-6 rounded-lg">
+    <h3 class="text-lg font-medium text-status-danger mb-4"><%= t("views.settings.security.delete_account") %></h3>
     <div class="space-y-4">
       <div>
-        <p class="text-sm text-red-700 mb-4"><%= t("views.settings.security.delete_account_warning") %></p>
-        <button class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-200">
+        <p class="text-sm text-status-danger/80 mb-4"><%= t("views.settings.security.delete_account_warning") %></p>
+        <button class="btn-danger">
           <%= t("views.settings.security.delete_account_button") %>
         </button>
       </div>

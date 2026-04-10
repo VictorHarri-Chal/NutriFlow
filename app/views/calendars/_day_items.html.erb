@@ -1,10 +1,10 @@
-<div id="day_items" class="space-y-6 mt-8">
+<div id="day_items" class="space-y-3">
   <% if all_day_items.any? %>
     <% day_items_by_group.each do |group, items| %>
-      <%= render DayFoodGroupComponent.new(day_food_group: group, day_foods: items) %>
+      <%= render DayFoodGroupComponent.new(day_food_group: group, day_foods: items, day: day) %>
     <% end %>
     <% if day_items_without_group.any? %>
-      <%= render DayFoodGroupComponent.new(day_foods: day_items_without_group) %>
+      <%= render DayFoodGroupComponent.new(day_foods: day_items_without_group, day: day) %>
     <% end %>
   <% else %>
     <%= render "calendars/empty_state", day: day %>

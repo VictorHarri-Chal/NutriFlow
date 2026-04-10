@@ -5,7 +5,8 @@ class DayRecipesController < ApplicationController
   before_action :set_day_recipe, only: [:edit, :update, :destroy]
 
   def new
-    @day_recipe      = @day.day_recipes.build
+    group_id         = params.dig(:day_recipe, :day_food_group_id)
+    @day_recipe      = @day.day_recipes.build(day_food_group_id: group_id)
     @day_food_groups = current_user.day_food_groups.order(:name)
     @recipes         = current_user.recipes.order(:name)
   end
@@ -36,11 +37,19 @@ class DayRecipesController < ApplicationController
 
   def update
     if @day_recipe.update(day_recipe_params)
-      redirect_to calendars_path(date: @day_recipe.day.date)
+      respond_to do |format|
+        format.turbo_stream do
+          load_calendar_data(@day)
+        end
+        format.html { redirect_to calendars_path(date: @day.date) }
+      end
     else
       @day_food_groups = current_user.day_food_groups.order(:name)
       @recipes         = current_user.recipes.order(:name)
-      render :edit, status: :unprocessable_entity
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("item_form", partial: "day_recipes/form", locals: { day: @day, day_recipe: @day_recipe, submit_text: t("shared.update") }) }
+        format.html         { render :edit, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -62,6 +71,7 @@ class DayRecipesController < ApplicationController
 
   def set_day_recipe
     @day_recipe = DayRecipe.joins(:day).where(days: { user_id: current_user.id }).find(params[:id])
+    @day = @day_recipe.day
   end
 
   def day_recipe_params

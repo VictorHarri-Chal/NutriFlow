@@ -1,0 +1,112 @@
+<%
+  all_done = defined?(calories_percentage) && calories_percentage &&
+             calories_percentage.between?(90, 115) &&
+             proteins_percentage.between?(85, 115)
+%>
+
+<div id="daily_panel" class="bg-surface-raised border border-surface-border/40 rounded-2xl px-6 py-4 mb-4">
+
+  <% if defined?(daily_calorie_goal) && daily_calorie_goal %>
+
+    <% if all_done %>
+      <div class="flex items-center gap-1.5 mb-3 text-status-success text-xs font-medium tracking-wide uppercase">
+        <i class="fas fa-check-circle"></i>
+        <%= t("views.calendars.day_complete") %>
+      </div>
+    <% end %>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-4">
+
+      <%# Calories %>
+      <div>
+        <div class="flex justify-between items-baseline mb-1.5">
+          <span class="text-xs font-medium text-ink-subtle uppercase tracking-wider"><%= t("views.calendars.calories") %></span>
+          <span class="text-xs text-ink-subtle">
+            <span class="text-base font-bold <%= calories_percentage > 105 ? 'text-status-danger' : calories_percentage >= 100 ? 'text-status-success' : 'text-ink-primary' %>"><%= total_calories %></span>
+            <span class="text-ink-subtle ml-0.5">/ <%= daily_calorie_goal %> kcal</span>
+          </span>
+        </div>
+        <div class="w-full bg-surface-hover rounded-full h-1.5 overflow-hidden">
+          <div class="h-1.5 rounded-full transition-all duration-700 ease-out <%= calories_percentage > 105 ? 'bg-status-danger' : calories_percentage >= 100 ? 'bg-status-success' : 'bg-brand' %>"
+               style="width: <%= [calories_percentage.to_f, 100].min %>%"></div>
+        </div>
+      </div>
+
+      <%# Protéines %>
+      <div>
+        <div class="flex justify-between items-baseline mb-1.5">
+          <span class="text-xs font-medium text-ink-subtle uppercase tracking-wider"><%= t("views.calendars.proteins") %></span>
+          <span class="text-xs text-ink-subtle">
+            <span class="text-base font-bold <%= proteins_percentage >= 100 ? 'text-status-success' : 'text-ink-primary' %>"><%= total_proteins %></span>
+            <span class="ml-0.5">/ <%= daily_protein_goal.round(0) %> g</span>
+          </span>
+        </div>
+        <div class="w-full bg-surface-hover rounded-full h-1.5 overflow-hidden">
+          <div class="h-1.5 rounded-full transition-all duration-700 ease-out <%= proteins_percentage >= 100 ? 'bg-status-success' : 'bg-brand' %>"
+               style="width: <%= [proteins_percentage.to_f, 100].min %>%"></div>
+        </div>
+      </div>
+
+      <%# Lipides %>
+      <div>
+        <div class="flex justify-between items-baseline mb-1.5">
+          <span class="text-xs font-medium text-ink-subtle uppercase tracking-wider"><%= t("views.calendars.fats") %></span>
+          <span class="text-xs text-ink-subtle">
+            <span class="text-base font-bold <%= fats_percentage > 105 ? 'text-status-danger' : fats_percentage >= 100 ? 'text-status-success' : 'text-ink-primary' %>"><%= total_fats %></span>
+            <span class="ml-0.5">/ <%= daily_fats_goal.round(0) %> g</span>
+          </span>
+        </div>
+        <div class="w-full bg-surface-hover rounded-full h-1.5 overflow-hidden">
+          <div class="h-1.5 rounded-full transition-all duration-700 ease-out <%= fats_percentage > 105 ? 'bg-status-danger' : fats_percentage >= 100 ? 'bg-status-success' : 'bg-brand' %>"
+               style="width: <%= [fats_percentage.to_f, 100].min %>%"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="flex items-center gap-2 mt-4">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-hover text-xs text-ink-subtle">
+        <i class="fas fa-bread-slice text-[10px]"></i>
+        <%= t("views.calendars.carbs") %>
+        <span class="font-semibold text-ink-primary"><%= total_carbs %> g</span>
+      </span>
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-hover text-xs text-ink-subtle">
+        <i class="fas fa-candy-cane text-[10px]"></i>
+        <%= t("views.calendars.sugars") %>
+        <span class="font-semibold text-ink-primary"><%= total_sugars %> g</span>
+      </span>
+    </div>
+
+  <% else %>
+
+    <div class="flex items-center justify-between gap-6">
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-6 flex-1">
+        <div>
+          <div class="text-lg font-bold text-brand"><%= total_calories %></div>
+          <div class="text-xs text-ink-subtle uppercase tracking-wider mt-0.5">kcal</div>
+        </div>
+        <div>
+          <div class="text-lg font-bold text-ink-primary"><%= total_proteins %></div>
+          <div class="text-xs text-ink-subtle uppercase tracking-wider mt-0.5"><%= t("views.calendars.proteins") %></div>
+        </div>
+        <div>
+          <div class="text-lg font-bold text-ink-primary"><%= total_carbs %></div>
+          <div class="text-xs text-ink-subtle uppercase tracking-wider mt-0.5"><%= t("views.calendars.carbs") %></div>
+        </div>
+        <div>
+          <div class="text-lg font-bold text-ink-primary"><%= total_fats %></div>
+          <div class="text-xs text-ink-subtle uppercase tracking-wider mt-0.5"><%= t("views.calendars.fats") %></div>
+        </div>
+        <div>
+          <div class="text-lg font-bold text-ink-primary"><%= total_sugars %></div>
+          <div class="text-xs text-ink-subtle uppercase tracking-wider mt-0.5"><%= t("views.calendars.sugars") %></div>
+        </div>
+      </div>
+      <%= link_to edit_profile_path, class: "text-xs text-brand hover:text-brand-hover transition-colors flex-shrink-0" do %>
+        <i class="fas fa-user-edit mr-1"></i><%= t("views.calendars.complete_profile_hint") %>
+      <% end %>
+    </div>
+
+  <% end %>
+
+</div>

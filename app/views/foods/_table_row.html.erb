@@ -1,18 +1,18 @@
-<tr class="hover:bg-gray-50 transition-colors">
-  <td class="px-4 py-3 font-medium text-gray-900"><%= food.name %></td>
-  <td class="px-4 py-3 text-gray-600"><%= food.brand.presence || "—" %></td>
-  <td class="px-4 py-3">
+<tr>
+  <td class="font-medium text-ink-primary"><%= food.name %></td>
+  <td class="text-ink-muted"><%= food.brand.presence || "—" %></td>
+  <td>
     <%= render FoodLabelsComponent.new(food: food) %>
   </td>
-  <td class="px-4 py-3 text-gray-800"><%= food.calories %> kcal</td>
-  <td class="px-4 py-3 text-gray-800"><%= food.proteins %> g</td>
-  <td class="px-4 py-3 text-gray-800"><%= food.carbs %> g</td>
-  <td class="px-4 py-3 text-gray-800"><%= food.fats %> g</td>
-  <td class="px-4 py-3 text-gray-800"><%= food.sugars %> g</td>
-  <td class="px-4 py-3">
+  <td class="text-brand font-medium"><%= food.calories %> kcal</td>
+  <td class="text-ink-muted"><%= food.proteins %> g</td>
+  <td class="text-ink-muted"><%= food.carbs %> g</td>
+  <td class="text-ink-muted"><%= food.fats %> g</td>
+  <td class="text-ink-muted"><%= food.sugars %> g</td>
+  <td>
     <div class="flex items-center justify-center gap-2">
       <%= link_to edit_food_path(food),
-            class: "inline-flex items-center justify-center w-8 h-8 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors",
+            class: "inline-flex items-center justify-center w-8 h-8 rounded-lg text-ink-subtle hover:text-brand hover:bg-surface-hover transition-colors",
             title: t("shared.edit") do %>
         <i class="fas fa-pen text-sm"></i>
       <% end %>
@@ -22,7 +22,7 @@
             confirm: t("views.foods.delete_confirm", name: food.name),
             icon_class: "fas fa-trash text-sm",
             title: t("shared.delete"),
-            class: "inline-flex items-center justify-center w-8 h-8 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors") %>
+            class: "inline-flex items-center justify-center w-8 h-8 rounded-lg text-ink-subtle hover:text-status-danger hover:bg-status-danger_dim/20 transition-colors") %>
     </div>
   </td>
 </tr>

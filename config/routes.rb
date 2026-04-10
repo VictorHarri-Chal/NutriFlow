@@ -6,7 +6,11 @@ Rails.application.routes.draw do
 
   resource :profile, only: [:show, :edit, :update]
 
-  resources :calendars, only: [:index]
+  resources :calendars, only: [:index] do
+    collection do
+      post :copy_yesterday
+    end
+  end
   resources :foods, except: [:show]
   resource :daily_calorie_requirement, only: [:show]
 
@@ -14,7 +18,7 @@ Rails.application.routes.draw do
   resources :day_food_groups, only: [:create, :destroy]
   resources :food_labels, only: [:create, :destroy]
 
-  resources :days, only: [] do
+  resources :days, only: [:update] do
     resources :day_foods, only: [:new, :create, :edit, :update, :destroy]
     resources :day_recipes, only: [:new, :create, :edit, :update, :destroy]
   end

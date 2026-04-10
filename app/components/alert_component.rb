@@ -4,21 +4,21 @@ class AlertComponent < ApplicationComponent
   attr_reader :title, :description, :level
 
   TITLE_LEVEL_CLASSES = {
-    info: "text-blue-800",
-    warning: "text-yellow-800",
-    alert: "text-red-800"
+    info: "text-macro-calories",
+    warning: "text-status-warning",
+    alert: "text-status-danger"
   }.freeze
 
   DESCRIPTION_LEVEL_CLASSES = {
-    info: "text-blue-700",
-    warning: "text-yellow-700",
-    alert: "text-red-700"
+    info: "text-macro-calories/80",
+    warning: "text-status-warning/80",
+    alert: "text-status-danger/80"
   }.freeze
 
   BACKGROUND_LEVEL_CLASSES = {
-    info: "bg-blue-50",
-    warning: "bg-yellow-50",
-    alert: "bg-red-50"
+    info: "bg-status-info_dim/20 border border-status-info/30 rounded-lg",
+    warning: "bg-status-warning_dim/20 border border-status-warning/30 rounded-lg",
+    alert: "bg-status-danger_dim/20 border border-status-danger/30 rounded-lg"
   }.freeze
 
   def initialize(title:, level:, description: nil)

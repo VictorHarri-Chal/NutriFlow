@@ -6,6 +6,7 @@ class Day < ApplicationRecord
   has_many :recipes, through: :day_recipes
 
   validates :date, presence: true, uniqueness: { scope: :user_id }
+  validates :note, length: { maximum: 1000 }, allow_blank: true
 
   scope :for_date, ->(date) { where(date: date) }
 

@@ -1,11 +1,11 @@
 <%= turbo_frame_tag "item_form" do %>
-  <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-6 mt-4 mb-2">
+  <div class="bg-surface-raised border border-surface-border/50 rounded-xl shadow-sm p-6 mt-4 mb-2">
     <div class="flex items-center justify-between mb-5">
-      <h2 class="text-lg font-semibold text-gray-900"><%= t("views.day_recipes.new.title") %></h2>
+      <h2 class="text-lg font-semibold text-ink-primary"><%= t("views.day_recipes.new.title") %></h2>
       <button type="button"
               data-controller="close-frame"
               data-action="click->close-frame#close"
-              class="text-gray-400 hover:text-gray-600 transition-colors">
+              class="text-ink-subtle hover:text-ink-muted transition-colors">
         <i class="fas fa-times text-lg"></i>
       </button>
     </div>

@@ -2,11 +2,105 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    @apply bg-surface-base text-ink-primary;
+  }
+}
+
 @layer components {
+
+  /* ---- Cards ---- */
+  .card {
+    @apply bg-surface-raised rounded-xl border border-surface-border/50 shadow-lg;
+  }
+  .card-section {
+    @apply bg-surface-base rounded-lg border border-surface-border/40;
+  }
+
+  /* ---- Buttons ---- */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2
+           bg-brand text-zinc-900 font-semibold rounded-lg
+           hover:bg-brand-hover transition-colors shadow-md shadow-brand/20;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2
+           bg-surface-hover text-ink-primary font-medium rounded-lg
+           border border-surface-border/50
+           hover:bg-surface-border transition-colors;
+  }
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2
+           bg-status-danger text-white font-medium rounded-lg
+           hover:bg-red-600 transition-colors;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2
+           text-ink-muted font-medium rounded-lg
+           hover:bg-surface-hover hover:text-ink-primary transition-colors;
+  }
+
+  /* ---- Inputs ---- */
+  .input-dark {
+    @apply w-full bg-surface-base border border-surface-border rounded-lg
+           px-3 py-2 text-ink-primary placeholder-ink-subtle
+           focus:outline-none focus:ring-2 focus:ring-brand/50 focus:border-brand
+           transition;
+  }
+  .label-dark {
+    @apply block text-sm font-medium text-ink-muted mb-1;
+  }
+
+  /* ---- Tables ---- */
+  .table-dark thead {
+    @apply bg-surface-base;
+  }
+  .table-dark th {
+    @apply px-4 py-2 text-left text-xs font-medium text-ink-subtle uppercase tracking-wider;
+  }
+  .table-dark tbody {
+    @apply divide-y divide-surface-border/40;
+  }
+  .table-dark td {
+    @apply px-4 py-3 text-ink-primary;
+  }
+  .table-dark tr {
+    @apply hover:bg-surface-hover/50 transition-colors;
+  }
+
+  /* ---- Sidebar nav links ---- */
+  .nav-link {
+    @apply flex items-center px-4 py-3 text-ink-muted rounded-lg
+           hover:bg-surface-hover hover:text-ink-primary transition-colors;
+  }
+  .nav-link-active {
+    @apply flex items-center px-4 py-3 text-brand bg-brand-muted rounded-lg font-medium;
+  }
+
+  /* ---- Macro nutrition cards ---- */
+  .macro-card {
+    @apply bg-surface-base rounded-lg p-4 border border-surface-border/40
+           text-center hover:border-surface-border transition-all;
+  }
+
+  /* ---- Progress bars ---- */
+  .progress-track {
+    @apply w-full bg-surface-hover rounded-full h-4 relative overflow-hidden;
+  }
+
+  /* ---- Select chevron (dark version) ---- */
   .select-chevron {
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="%23374151" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>');
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="%23A1A1AA" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>');
     background-position: right 12px center;
     background-size: 20px 20px;
     background-repeat: no-repeat;
+  }
+
+  /* ---- Devise forms ---- */
+  .devise-form input[type="email"],
+  .devise-form input[type="password"],
+  .devise-form input[type="text"] {
+    @apply input-dark;
   }
 }

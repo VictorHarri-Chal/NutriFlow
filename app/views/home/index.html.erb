@@ -1,23 +1,23 @@
 <%# ============================================================ %>
 <%# NAVBAR %>
 <%# ============================================================ %>
-<header class="fixed top-0 inset-x-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+<header class="fixed top-0 inset-x-0 z-50 bg-surface-base/80 backdrop-blur-md border-b border-surface-border/40">
   <div class="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
     <a href="<%= root_path %>" class="flex items-center gap-2.5">
       <%= image_tag "logo.png", class: "h-8 w-8", alt: "NutriFlow" %>
-      <span class="text-xl font-bold text-gray-900">NutriFlow</span>
+      <span class="text-xl font-bold text-ink-primary">NutriFlow</span>
     </a>
 
-    <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-500">
-      <a href="#features" class="hover:text-gray-900 transition-colors"><%= t("views.home.nav.features") %></a>
-      <a href="#how-it-works" class="hover:text-gray-900 transition-colors"><%= t("views.home.nav.how_it_works") %></a>
+    <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-ink-muted">
+      <a href="#features" class="hover:text-ink-primary transition-colors"><%= t("views.home.nav.features") %></a>
+      <a href="#how-it-works" class="hover:text-ink-primary transition-colors"><%= t("views.home.nav.how_it_works") %></a>
     </nav>
 
     <div class="flex items-center gap-2">
       <%= link_to t("views.home.nav.login"), new_user_session_path,
-            class: "text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors px-4 py-2 rounded-lg" %>
+            class: "text-sm font-medium text-ink-muted hover:text-ink-primary transition-colors px-4 py-2 rounded-lg" %>
       <%= link_to t("views.home.nav.signup"), new_user_registration_path,
-            class: "text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors" %>
+            class: "btn-primary text-sm" %>
     </div>
   </div>
 </header>
@@ -26,11 +26,11 @@
 <%# ============================================================ %>
 <%# HERO %>
 <%# ============================================================ %>
-<section class="relative min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 flex items-center overflow-hidden pt-16">
+<section class="relative min-h-screen bg-gradient-to-br from-zinc-950 via-surface-base to-zinc-900 flex items-center overflow-hidden pt-16">
 
   <div class="absolute inset-0 pointer-events-none overflow-hidden">
-    <div class="absolute -top-32 -right-32 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl"></div>
-    <div class="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-3xl"></div>
+    <div class="absolute -top-32 -right-32 w-[500px] h-[500px] bg-brand/8 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-brand/5 rounded-full blur-3xl"></div>
   </div>
 
   <div class="relative max-w-7xl mx-auto px-6 lg:px-8 py-20 grid lg:grid-cols-2 gap-16 items-center w-full">
@@ -38,7 +38,7 @@
     <div>
       <h1 class="text-5xl lg:text-6xl font-bold text-white leading-[1.1] tracking-tight mb-6">
         <%= t("views.home.hero.title_line1") %>
-        <span class="block bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
+        <span class="block bg-gradient-to-r from-brand to-amber-300 bg-clip-text text-transparent">
           <%= t("views.home.hero.title_line2") %>
         </span>
       </h1>
@@ -49,7 +49,7 @@
 
       <div class="flex flex-col sm:flex-row gap-3">
         <%= link_to new_user_registration_path,
-              class: "inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold px-6 py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue-900/50 hover:-translate-y-px" do %>
+              class: "inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-hover text-zinc-900 font-semibold px-6 py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-brand/30 hover:-translate-y-px" do %>
           <%= t("views.home.hero.cta_start") %>
           <i class="fas fa-arrow-right text-sm"></i>
         <% end %>
@@ -65,106 +65,106 @@
     <%# App mockup %>
     <div class="hidden lg:block">
       <div class="relative">
-        <div class="absolute -inset-4 bg-blue-500/15 blur-3xl rounded-3xl"></div>
+        <div class="absolute -inset-4 bg-brand/10 blur-3xl rounded-3xl"></div>
 
-        <div class="relative bg-slate-800 border border-slate-700/60 rounded-2xl overflow-hidden shadow-2xl">
+        <div class="relative bg-surface-raised border border-surface-border/60 rounded-2xl overflow-hidden shadow-2xl">
           <%# Browser chrome %>
-          <div class="bg-slate-900 px-4 py-3 flex items-center gap-2 border-b border-slate-700/60">
+          <div class="bg-surface-base px-4 py-3 flex items-center gap-2 border-b border-surface-border/60">
             <div class="flex gap-1.5">
               <div class="w-3 h-3 rounded-full bg-red-500/60"></div>
               <div class="w-3 h-3 rounded-full bg-yellow-500/60"></div>
               <div class="w-3 h-3 rounded-full bg-green-500/60"></div>
             </div>
-            <div class="ml-3 flex-1 bg-slate-700/50 rounded-md h-5 flex items-center px-3">
-              <span class="text-xs text-slate-500">nutriflow.app/calendars</span>
+            <div class="ml-3 flex-1 bg-surface-hover/50 rounded-md h-5 flex items-center px-3">
+              <span class="text-xs text-ink-subtle">nutriflow.app/calendars</span>
             </div>
           </div>
 
           <%# App layout %>
           <div class="flex h-[340px]">
             <%# Mini sidebar %>
-            <div class="w-14 bg-slate-900/80 border-r border-slate-700/40 flex flex-col items-center py-5 gap-3">
-              <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
-                <i class="fas fa-calendar-alt text-white text-xs"></i>
+            <div class="w-14 bg-surface-base border-r border-surface-border/40 flex flex-col items-center py-5 gap-3">
+              <div class="w-8 h-8 rounded-lg bg-brand flex items-center justify-center">
+                <i class="fas fa-calendar-alt text-zinc-900 text-xs"></i>
               </div>
-              <div class="w-8 h-8 rounded-lg bg-slate-700/60 flex items-center justify-center">
-                <i class="fas fa-utensils text-slate-500 text-xs"></i>
+              <div class="w-8 h-8 rounded-lg bg-surface-hover flex items-center justify-center">
+                <i class="fas fa-utensils text-ink-subtle text-xs"></i>
               </div>
-              <div class="w-8 h-8 rounded-lg bg-slate-700/60 flex items-center justify-center">
-                <i class="fas fa-book-open text-slate-500 text-xs"></i>
+              <div class="w-8 h-8 rounded-lg bg-surface-hover flex items-center justify-center">
+                <i class="fas fa-book-open text-ink-subtle text-xs"></i>
               </div>
-              <div class="w-8 h-8 rounded-lg bg-slate-700/60 flex items-center justify-center">
-                <i class="fas fa-user text-slate-500 text-xs"></i>
+              <div class="w-8 h-8 rounded-lg bg-surface-hover flex items-center justify-center">
+                <i class="fas fa-user text-ink-subtle text-xs"></i>
               </div>
             </div>
 
             <%# Main content — demo data, intentionally not translated %>
             <div class="flex-1 p-4 space-y-3 overflow-hidden">
               <div class="flex items-center justify-between">
-                <span class="text-white text-sm font-semibold">Mardi 25 mars 2025</span>
-                <span class="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-full font-medium">
+                <span class="text-ink-primary text-sm font-semibold">Mardi 25 mars 2025</span>
+                <span class="text-xs bg-macro-proteins/20 text-macro-proteins border border-macro-proteins/20 px-2.5 py-0.5 rounded-full font-medium">
                   1 540 kcal restantes
                 </span>
               </div>
 
               <%# Macro progress %>
-              <div class="bg-slate-700/30 rounded-xl p-3.5 space-y-2.5">
+              <div class="bg-surface-hover/30 rounded-xl p-3.5 space-y-2.5">
                 <div>
                   <div class="flex justify-between text-xs mb-1.5">
-                    <span class="text-slate-300 font-medium">Calories</span>
-                    <span class="text-slate-400">660 / 2 200 kcal</span>
+                    <span class="text-ink-muted font-medium">Calories</span>
+                    <span class="text-ink-subtle">660 / 2 200 kcal</span>
                   </div>
-                  <div class="h-1.5 bg-slate-700 rounded-full">
-                    <div class="h-full w-[30%] bg-gradient-to-r from-blue-500 to-blue-400 rounded-full"></div>
+                  <div class="h-1.5 bg-surface-hover rounded-full">
+                    <div class="h-full w-[30%] bg-gradient-to-r from-macro-calories to-blue-300 rounded-full"></div>
                   </div>
                 </div>
                 <div>
                   <div class="flex justify-between text-xs mb-1.5">
-                    <span class="text-slate-300 font-medium">Protéines</span>
-                    <span class="text-slate-400">48 / 160 g</span>
+                    <span class="text-ink-muted font-medium">Protéines</span>
+                    <span class="text-ink-subtle">48 / 160 g</span>
                   </div>
-                  <div class="h-1.5 bg-slate-700 rounded-full">
-                    <div class="h-full w-[30%] bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full"></div>
+                  <div class="h-1.5 bg-surface-hover rounded-full">
+                    <div class="h-full w-[30%] bg-gradient-to-r from-macro-proteins to-emerald-300 rounded-full"></div>
                   </div>
                 </div>
                 <div>
                   <div class="flex justify-between text-xs mb-1.5">
-                    <span class="text-slate-300 font-medium">Glucides</span>
-                    <span class="text-slate-400">82 / 275 g</span>
+                    <span class="text-ink-muted font-medium">Glucides</span>
+                    <span class="text-ink-subtle">82 / 275 g</span>
                   </div>
-                  <div class="h-1.5 bg-slate-700 rounded-full">
-                    <div class="h-full w-[30%] bg-gradient-to-r from-amber-500 to-amber-400 rounded-full"></div>
+                  <div class="h-1.5 bg-surface-hover rounded-full">
+                    <div class="h-full w-[30%] bg-gradient-to-r from-macro-carbs to-amber-300 rounded-full"></div>
                   </div>
                 </div>
               </div>
 
               <%# Meal groups %>
               <div class="space-y-2">
-                <div class="bg-slate-700/30 rounded-xl p-3">
-                  <p class="text-xs font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
-                    <i class="fas fa-sun text-amber-400"></i> Petit-déjeuner
-                    <span class="ml-auto text-slate-500 font-normal">428 kcal</span>
+                <div class="bg-surface-hover/30 rounded-xl p-3">
+                  <p class="text-xs font-semibold text-ink-muted mb-2 flex items-center gap-1.5">
+                    <i class="fas fa-sun text-brand"></i> Petit-déjeuner
+                    <span class="ml-auto text-ink-subtle font-normal">428 kcal</span>
                   </p>
                   <div class="space-y-1.5">
                     <div class="flex justify-between">
-                      <span class="text-xs text-slate-300">Flocons d'avoine</span>
-                      <span class="text-xs text-slate-500">80g</span>
+                      <span class="text-xs text-ink-muted">Flocons d'avoine</span>
+                      <span class="text-xs text-ink-subtle">80g</span>
                     </div>
                     <div class="flex justify-between">
-                      <span class="text-xs text-slate-300">Yaourt grec nature</span>
-                      <span class="text-xs text-slate-500">150g</span>
+                      <span class="text-xs text-ink-muted">Yaourt grec nature</span>
+                      <span class="text-xs text-ink-subtle">150g</span>
                     </div>
                   </div>
                 </div>
 
-                <div class="bg-slate-700/30 rounded-xl p-3">
-                  <p class="text-xs font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
-                    <i class="fas fa-cloud-sun text-blue-400"></i> Déjeuner
-                    <span class="ml-auto text-slate-500 font-normal">232 kcal</span>
+                <div class="bg-surface-hover/30 rounded-xl p-3">
+                  <p class="text-xs font-semibold text-ink-muted mb-2 flex items-center gap-1.5">
+                    <i class="fas fa-cloud-sun text-macro-calories"></i> Déjeuner
+                    <span class="ml-auto text-ink-subtle font-normal">232 kcal</span>
                   </p>
                   <div class="flex justify-between">
-                    <span class="text-xs text-slate-300">Poulet rôti & légumes</span>
-                    <span class="text-xs text-slate-500">350g</span>
+                    <span class="text-xs text-ink-muted">Poulet rôti & légumes</span>
+                    <span class="text-xs text-ink-subtle">350g</span>
                   </div>
                 </div>
               </div>
@@ -181,63 +181,63 @@
 <%# ============================================================ %>
 <%# FEATURES %>
 <%# ============================================================ %>
-<section id="features" class="py-24 bg-white">
+<section id="features" class="py-24 bg-surface-raised">
   <div class="max-w-7xl mx-auto px-6 lg:px-8">
 
     <div class="text-center mb-14">
-      <p class="text-sm font-semibold text-blue-600 uppercase tracking-widest mb-3"><%= t("views.home.features.section_label") %></p>
-      <h2 class="text-4xl font-bold text-gray-900 tracking-tight"><%= t("views.home.features.section_title") %></h2>
-      <p class="mt-4 text-lg text-gray-500 max-w-xl mx-auto"><%= t("views.home.features.section_subtitle") %></p>
+      <p class="text-sm font-semibold text-brand uppercase tracking-widest mb-3"><%= t("views.home.features.section_label") %></p>
+      <h2 class="text-4xl font-bold text-ink-primary tracking-tight"><%= t("views.home.features.section_title") %></h2>
+      <p class="mt-4 text-lg text-ink-muted max-w-xl mx-auto"><%= t("views.home.features.section_subtitle") %></p>
     </div>
 
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
 
-      <div class="group bg-gray-50 hover:bg-blue-50 border border-transparent hover:border-blue-100 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
-        <div class="w-11 h-11 bg-blue-100 group-hover:bg-blue-200 rounded-xl flex items-center justify-center mb-4 transition-colors">
-          <i class="fas fa-calendar-alt text-blue-600"></i>
+      <div class="group bg-surface-base hover:bg-surface-hover border border-surface-border/40 hover:border-brand/30 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
+        <div class="w-11 h-11 bg-brand-muted group-hover:bg-brand/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
+          <i class="fas fa-calendar-alt text-brand"></i>
         </div>
-        <h3 class="text-base font-semibold text-gray-900 mb-2"><%= t("views.home.features.calendar_title") %></h3>
-        <p class="text-sm text-gray-500 leading-relaxed"><%= t("views.home.features.calendar_desc") %></p>
+        <h3 class="text-base font-semibold text-ink-primary mb-2"><%= t("views.home.features.calendar_title") %></h3>
+        <p class="text-sm text-ink-muted leading-relaxed"><%= t("views.home.features.calendar_desc") %></p>
       </div>
 
-      <div class="group bg-gray-50 hover:bg-emerald-50 border border-transparent hover:border-emerald-100 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
-        <div class="w-11 h-11 bg-emerald-100 group-hover:bg-emerald-200 rounded-xl flex items-center justify-center mb-4 transition-colors">
-          <i class="fas fa-apple-alt text-emerald-600"></i>
+      <div class="group bg-surface-base hover:bg-surface-hover border border-surface-border/40 hover:border-macro-proteins/30 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
+        <div class="w-11 h-11 bg-macro-proteins/10 group-hover:bg-macro-proteins/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
+          <i class="fas fa-apple-alt text-macro-proteins"></i>
         </div>
-        <h3 class="text-base font-semibold text-gray-900 mb-2"><%= t("views.home.features.foods_title") %></h3>
-        <p class="text-sm text-gray-500 leading-relaxed"><%= t("views.home.features.foods_desc") %></p>
+        <h3 class="text-base font-semibold text-ink-primary mb-2"><%= t("views.home.features.foods_title") %></h3>
+        <p class="text-sm text-ink-muted leading-relaxed"><%= t("views.home.features.foods_desc") %></p>
       </div>
 
-      <div class="group bg-gray-50 hover:bg-orange-50 border border-transparent hover:border-orange-100 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
-        <div class="w-11 h-11 bg-orange-100 group-hover:bg-orange-200 rounded-xl flex items-center justify-center mb-4 transition-colors">
-          <i class="fas fa-book-open text-orange-600"></i>
+      <div class="group bg-surface-base hover:bg-surface-hover border border-surface-border/40 hover:border-brand/30 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
+        <div class="w-11 h-11 bg-brand-muted group-hover:bg-brand/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
+          <i class="fas fa-book-open text-brand"></i>
         </div>
-        <h3 class="text-base font-semibold text-gray-900 mb-2"><%= t("views.home.features.recipes_title") %></h3>
-        <p class="text-sm text-gray-500 leading-relaxed"><%= t("views.home.features.recipes_desc") %></p>
+        <h3 class="text-base font-semibold text-ink-primary mb-2"><%= t("views.home.features.recipes_title") %></h3>
+        <p class="text-sm text-ink-muted leading-relaxed"><%= t("views.home.features.recipes_desc") %></p>
       </div>
 
-      <div class="group bg-gray-50 hover:bg-purple-50 border border-transparent hover:border-purple-100 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
-        <div class="w-11 h-11 bg-purple-100 group-hover:bg-purple-200 rounded-xl flex items-center justify-center mb-4 transition-colors">
-          <i class="fas fa-fire-flame-simple text-purple-600"></i>
+      <div class="group bg-surface-base hover:bg-surface-hover border border-surface-border/40 hover:border-macro-sugars/30 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
+        <div class="w-11 h-11 bg-macro-sugars/10 group-hover:bg-macro-sugars/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
+          <i class="fas fa-fire-flame-simple text-macro-sugars"></i>
         </div>
-        <h3 class="text-base font-semibold text-gray-900 mb-2"><%= t("views.home.features.calories_title") %></h3>
-        <p class="text-sm text-gray-500 leading-relaxed"><%= t("views.home.features.calories_desc") %></p>
+        <h3 class="text-base font-semibold text-ink-primary mb-2"><%= t("views.home.features.calories_title") %></h3>
+        <p class="text-sm text-ink-muted leading-relaxed"><%= t("views.home.features.calories_desc") %></p>
       </div>
 
-      <div class="group bg-gray-50 hover:bg-pink-50 border border-transparent hover:border-pink-100 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
-        <div class="w-11 h-11 bg-pink-100 group-hover:bg-pink-200 rounded-xl flex items-center justify-center mb-4 transition-colors">
-          <i class="fas fa-star text-pink-600"></i>
+      <div class="group bg-surface-base hover:bg-surface-hover border border-surface-border/40 hover:border-macro-fats/30 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
+        <div class="w-11 h-11 bg-macro-fats/10 group-hover:bg-macro-fats/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
+          <i class="fas fa-star text-macro-fats"></i>
         </div>
-        <h3 class="text-base font-semibold text-gray-900 mb-2"><%= t("views.home.features.ratings_title") %></h3>
-        <p class="text-sm text-gray-500 leading-relaxed"><%= t("views.home.features.ratings_desc") %></p>
+        <h3 class="text-base font-semibold text-ink-primary mb-2"><%= t("views.home.features.ratings_title") %></h3>
+        <p class="text-sm text-ink-muted leading-relaxed"><%= t("views.home.features.ratings_desc") %></p>
       </div>
 
-      <div class="group bg-gray-50 hover:bg-cyan-50 border border-transparent hover:border-cyan-100 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
-        <div class="w-11 h-11 bg-cyan-100 group-hover:bg-cyan-200 rounded-xl flex items-center justify-center mb-4 transition-colors">
-          <i class="fas fa-tags text-cyan-600"></i>
+      <div class="group bg-surface-base hover:bg-surface-hover border border-surface-border/40 hover:border-macro-calories/30 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
+        <div class="w-11 h-11 bg-macro-calories/10 group-hover:bg-macro-calories/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
+          <i class="fas fa-tags text-macro-calories"></i>
         </div>
-        <h3 class="text-base font-semibold text-gray-900 mb-2"><%= t("views.home.features.labels_title") %></h3>
-        <p class="text-sm text-gray-500 leading-relaxed"><%= t("views.home.features.labels_desc") %></p>
+        <h3 class="text-base font-semibold text-ink-primary mb-2"><%= t("views.home.features.labels_title") %></h3>
+        <p class="text-sm text-ink-muted leading-relaxed"><%= t("views.home.features.labels_desc") %></p>
       </div>
 
     </div>
@@ -248,39 +248,39 @@
 <%# ============================================================ %>
 <%# HOW IT WORKS %>
 <%# ============================================================ %>
-<section id="how-it-works" class="py-24 bg-gray-50">
+<section id="how-it-works" class="py-24 bg-surface-base">
   <div class="max-w-5xl mx-auto px-6 lg:px-8">
 
     <div class="text-center mb-16">
-      <p class="text-sm font-semibold text-blue-600 uppercase tracking-widest mb-3"><%= t("views.home.how_it_works.section_label") %></p>
-      <h2 class="text-4xl font-bold text-gray-900 tracking-tight"><%= t("views.home.how_it_works.section_title") %></h2>
+      <p class="text-sm font-semibold text-brand uppercase tracking-widest mb-3"><%= t("views.home.how_it_works.section_label") %></p>
+      <h2 class="text-4xl font-bold text-ink-primary tracking-tight"><%= t("views.home.how_it_works.section_title") %></h2>
     </div>
 
     <div class="relative grid md:grid-cols-3 gap-10">
-      <div class="hidden md:block absolute top-9 left-[calc(16.67%+2rem)] right-[calc(16.67%+2rem)] h-px bg-gradient-to-r from-blue-200 via-blue-300 to-blue-200"></div>
+      <div class="hidden md:block absolute top-9 left-[calc(16.67%+2rem)] right-[calc(16.67%+2rem)] h-px bg-gradient-to-r from-surface-border via-brand/40 to-surface-border"></div>
 
       <div class="relative flex flex-col items-center text-center">
-        <div class="w-[4.5rem] h-[4.5rem] rounded-2xl bg-blue-600 text-white flex items-center justify-center text-2xl font-bold mb-6 shadow-lg shadow-blue-200 relative z-10">
+        <div class="w-[4.5rem] h-[4.5rem] rounded-2xl bg-brand text-zinc-900 flex items-center justify-center text-2xl font-bold mb-6 shadow-lg shadow-brand/20 relative z-10">
           1
         </div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2"><%= t("views.home.how_it_works.step1_title") %></h3>
-        <p class="text-sm text-gray-500 leading-relaxed"><%= t("views.home.how_it_works.step1_desc") %></p>
+        <h3 class="text-lg font-semibold text-ink-primary mb-2"><%= t("views.home.how_it_works.step1_title") %></h3>
+        <p class="text-sm text-ink-muted leading-relaxed"><%= t("views.home.how_it_works.step1_desc") %></p>
       </div>
 
       <div class="relative flex flex-col items-center text-center">
-        <div class="w-[4.5rem] h-[4.5rem] rounded-2xl bg-blue-600 text-white flex items-center justify-center text-2xl font-bold mb-6 shadow-lg shadow-blue-200 relative z-10">
+        <div class="w-[4.5rem] h-[4.5rem] rounded-2xl bg-brand text-zinc-900 flex items-center justify-center text-2xl font-bold mb-6 shadow-lg shadow-brand/20 relative z-10">
           2
         </div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2"><%= t("views.home.how_it_works.step2_title") %></h3>
-        <p class="text-sm text-gray-500 leading-relaxed"><%= t("views.home.how_it_works.step2_desc") %></p>
+        <h3 class="text-lg font-semibold text-ink-primary mb-2"><%= t("views.home.how_it_works.step2_title") %></h3>
+        <p class="text-sm text-ink-muted leading-relaxed"><%= t("views.home.how_it_works.step2_desc") %></p>
       </div>
 
       <div class="relative flex flex-col items-center text-center">
-        <div class="w-[4.5rem] h-[4.5rem] rounded-2xl bg-blue-600 text-white flex items-center justify-center text-2xl font-bold mb-6 shadow-lg shadow-blue-200 relative z-10">
+        <div class="w-[4.5rem] h-[4.5rem] rounded-2xl bg-brand text-zinc-900 flex items-center justify-center text-2xl font-bold mb-6 shadow-lg shadow-brand/20 relative z-10">
           3
         </div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2"><%= t("views.home.how_it_works.step3_title") %></h3>
-        <p class="text-sm text-gray-500 leading-relaxed"><%= t("views.home.how_it_works.step3_desc") %></p>
+        <h3 class="text-lg font-semibold text-ink-primary mb-2"><%= t("views.home.how_it_works.step3_title") %></h3>
+        <p class="text-sm text-ink-muted leading-relaxed"><%= t("views.home.how_it_works.step3_desc") %></p>
       </div>
     </div>
 
@@ -291,21 +291,21 @@
 <%# ============================================================ %>
 <%# CTA FINAL %>
 <%# ============================================================ %>
-<section class="relative py-28 bg-gradient-to-br from-blue-600 to-indigo-700 overflow-hidden">
+<section class="relative py-28 bg-gradient-to-br from-zinc-950 via-surface-base to-zinc-900 overflow-hidden">
   <div class="absolute inset-0 pointer-events-none">
-    <div class="absolute -top-24 -right-24 w-80 h-80 bg-white/5 rounded-full blur-3xl"></div>
-    <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-white/5 rounded-full blur-3xl"></div>
+    <div class="absolute -top-24 -right-24 w-80 h-80 bg-brand/10 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-brand/8 rounded-full blur-3xl"></div>
   </div>
 
   <div class="relative max-w-2xl mx-auto px-6 text-center">
     <h2 class="text-4xl lg:text-5xl font-bold text-white tracking-tight mb-5">
       <%= t("views.home.cta.title") %>
     </h2>
-    <p class="text-lg text-blue-100 mb-10 leading-relaxed">
+    <p class="text-lg text-ink-muted mb-10 leading-relaxed">
       <%= t("views.home.cta.subtitle") %>
     </p>
     <%= link_to new_user_registration_path,
-          class: "inline-flex items-center gap-2 bg-white text-blue-700 font-bold px-8 py-4 rounded-xl text-base hover:bg-blue-50 transition-all duration-200 shadow-2xl shadow-blue-900/30 hover:-translate-y-0.5" do %>
+          class: "inline-flex items-center gap-2 bg-brand text-zinc-900 font-bold px-8 py-4 rounded-xl text-base hover:bg-brand-hover transition-all duration-200 shadow-2xl shadow-brand/30 hover:-translate-y-0.5" do %>
       <%= t("views.home.cta.button") %>
       <i class="fas fa-arrow-right"></i>
     <% end %>
@@ -316,18 +316,18 @@
 <%# ============================================================ %>
 <%# FOOTER %>
 <%# ============================================================ %>
-<footer class="bg-slate-900 py-10 border-t border-slate-800">
+<footer class="bg-surface-base py-10 border-t border-surface-border/50">
   <div class="max-w-7xl mx-auto px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
     <div class="flex items-center gap-2.5">
       <%= image_tag "logo.png", class: "h-6 w-6", alt: "NutriFlow" %>
-      <span class="text-white font-semibold text-sm">NutriFlow</span>
+      <span class="text-ink-primary font-semibold text-sm">NutriFlow</span>
     </div>
 
-    <div class="flex items-center gap-6 text-sm text-slate-500">
-      <%= link_to t("views.home.footer.login"), new_user_session_path, class: "hover:text-slate-300 transition-colors" %>
-      <%= link_to t("views.home.footer.signup"), new_user_registration_path, class: "hover:text-slate-300 transition-colors" %>
+    <div class="flex items-center gap-6 text-sm text-ink-subtle">
+      <%= link_to t("views.home.footer.login"), new_user_session_path, class: "hover:text-ink-muted transition-colors" %>
+      <%= link_to t("views.home.footer.signup"), new_user_registration_path, class: "hover:text-ink-muted transition-colors" %>
     </div>
 
-    <p class="text-slate-600 text-sm">© <%= Date.current.year %> NutriFlow</p>
+    <p class="text-ink-subtle text-sm">© <%= Date.current.year %> NutriFlow</p>
   </div>
 </footer>

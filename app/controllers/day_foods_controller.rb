@@ -5,7 +5,8 @@ class DayFoodsController < ApplicationController
   before_action :set_day_food, only: [:edit, :update, :destroy]
 
   def new
-    @day_food        = @day.day_foods.build
+    group_id         = params.dig(:day_food, :day_food_group_id)
+    @day_food        = @day.day_foods.build(day_food_group_id: group_id)
     @day_food_groups = current_user.day_food_groups.order(:name)
     @foods           = current_user.foods.order(:name)
   end
@@ -36,10 +37,19 @@ class DayFoodsController < ApplicationController
 
   def update
     if @day_food.update(day_food_params)
-      redirect_to calendars_path(date: @day_food.day.date)
+      respond_to do |format|
+        format.turbo_stream do
+          load_calendar_data(@day)
+        end
+        format.html { redirect_to calendars_path(date: @day.date) }
+      end
     else
       @day_food_groups = current_user.day_food_groups.order(:name)
-      render :edit, status: :unprocessable_entity
+      @foods           = current_user.foods.order(:name)
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("item_form", partial: "day_foods/form", locals: { day: @day, day_food: @day_food, submit_text: t("shared.update") }) }
+        format.html         { render :edit, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -61,6 +71,7 @@ class DayFoodsController < ApplicationController
 
   def set_day_food
     @day_food = DayFood.joins(:day).where(days: { user_id: current_user.id }).find(params[:id])
+    @day = @day_food.day
   end
 
   def day_food_params

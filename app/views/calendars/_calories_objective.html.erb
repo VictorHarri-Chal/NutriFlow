@@ -1,46 +1,46 @@
-<div class="<%= calories_percentage > 105 ? 'bg-red-50 border-red-300 shadow-red-100' : calories_percentage >= 100 ? 'bg-green-50 border-green-300 shadow-green-100' : 'bg-white border-blue-100' %> rounded-lg p-4 shadow-sm border transition-all duration-300">
+<div class="<%= calories_percentage > 105 ? 'bg-status-danger_dim/30 border-status-danger/40' : calories_percentage >= 100 ? 'bg-status-success_dim/30 border-status-success/40' : 'bg-surface-raised border-surface-border/50' %> rounded-lg p-4 border transition-all duration-300">
   <div class="flex justify-between items-center mb-3">
     <div class="flex items-center">
-      <h4 class="font-medium text-gray-700"><%= t("views.calendars.calories") %></h4>
+      <h4 class="font-medium text-ink-muted"><%= t("views.calendars.calories") %></h4>
       <% if calories_percentage > 105 %>
         <div class="ml-2 flex items-center">
-          <i class="fas fa-exclamation-triangle text-red-500 mr-1"></i>
-          <span class="text-xs font-medium text-red-600"><%= t("views.calendars.exceeded") %></span>
+          <i class="fas fa-exclamation-triangle text-status-danger mr-1"></i>
+          <span class="text-xs font-medium text-status-danger"><%= t("views.calendars.exceeded") %></span>
         </div>
       <% elsif calories_percentage >= 100 %>
         <div class="ml-2 flex items-center">
-          <i class="fas fa-check-circle text-green-500 mr-1"></i>
-          <span class="text-xs font-medium text-green-600"><%= t("views.calendars.reached") %></span>
+          <i class="fas fa-check-circle text-status-success mr-1"></i>
+          <span class="text-xs font-medium text-status-success"><%= t("views.calendars.reached") %></span>
         </div>
       <% end %>
     </div>
-    <span class="text-sm <%= calories_percentage > 105 ? 'text-red-600 font-medium' : calories_percentage >= 100 ? 'text-green-600 font-medium' : 'text-gray-500' %>">
+    <span class="text-sm <%= calories_percentage > 105 ? 'text-status-danger font-medium' : calories_percentage >= 100 ? 'text-status-success font-medium' : 'text-ink-subtle' %>">
       <%= total_calories %> / <%= daily_calorie_goal %> kcal
     </span>
   </div>
 
-  <div class="w-full bg-gray-200 rounded-full h-4 mb-3 relative overflow-hidden">
-    <div class="h-4 rounded-full transition-all duration-500 <%= calories_percentage > 105 ? 'bg-red-500' : calories_percentage >= 100 ? 'bg-green-500' : 'bg-green-500' %>"
+  <div class="progress-track mb-3">
+    <div class="h-4 rounded-full transition-all duration-500 <%= calories_percentage > 105 ? 'bg-status-danger' : calories_percentage >= 100 ? 'bg-status-success' : 'bg-brand' %>"
          style="width: <%= [calories_percentage, 100].min %>%"></div>
     <% if calories_percentage > 105 %>
-      <div class="absolute inset-0 bg-red-300 opacity-30 animate-pulse"></div>
+      <div class="absolute inset-0 bg-status-danger opacity-20 animate-pulse"></div>
     <% end %>
   </div>
 
   <div class="flex justify-between items-center">
-    <span class="text-sm font-bold <%= calories_percentage > 105 ? 'text-red-700' : calories_percentage >= 100 ? 'text-green-700' : 'text-green-700' %>">
+    <span class="text-sm font-bold <%= calories_percentage > 105 ? 'text-status-danger' : calories_percentage >= 100 ? 'text-status-success' : 'text-brand' %>">
       <%= calories_percentage %>%
     </span>
     <% if calories_percentage > 105 %>
-      <span class="text-sm font-bold text-red-600 bg-red-100 px-2 py-1 rounded-full">
+      <span class="text-sm font-bold text-status-danger bg-status-danger_dim/30 px-2 py-1 rounded-full">
         +<%= (total_calories - daily_calorie_goal).round %> kcal
       </span>
     <% elsif calories_percentage >= 100 %>
-      <span class="text-sm font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full">
+      <span class="text-sm font-bold text-status-success bg-status-success_dim/30 px-2 py-1 rounded-full">
         <i class="fas fa-check mr-1"></i><%= t("views.calendars.goal_reached") %>
       </span>
     <% else %>
-      <span class="text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
+      <span class="text-sm text-ink-subtle bg-surface-hover px-2 py-1 rounded-full">
         -<%= (daily_calorie_goal - total_calories).round %> kcal
       </span>
     <% end %>

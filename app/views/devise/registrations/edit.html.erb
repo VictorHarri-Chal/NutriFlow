@@ -1,68 +1,55 @@
-<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-  <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-    <%= image_tag "logo.png", class: "mx-auto h-16 w-auto", alt: "Your Logo" %>
-    <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900"><%= t("views.settings.security.change_password") %></h2>
-  </div>
+<div class="max-w-lg mx-auto mt-16 card p-8">
+  <h1 class="text-2xl font-bold text-ink-primary mb-8"><%= t("views.settings.security.change_password") %></h1>
 
-  <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-    <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+  <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: "space-y-5" }) do |f| %>
 
-      <div>
-        <label for="email" class="block text-sm/6 font-medium text-gray-900"><%= t("views.settings.security.email_address") %></label>
-        <div class="mt-2">
-          <%= f.input :email,
-                label: false,
-                required: true,
-                autofocus: true %>
-        </div>
-      </div>
-
-      <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-        <p class="mt-2 text-sm text-gray-600">Currently waiting confirmation for: <%= resource.unconfirmed_email %></p>
-      <% end %>
-
-      <div class="mt-6">
-        <label for="password" class="block text-sm/6 font-medium text-gray-900"><%= t("views.settings.security.new_password") %></label>
-        <div class="mt-2">
-          <%= f.input :password,
-                label: false,
-                required: false,
-                input_html: { autocomplete: "new-password" } %>
-        </div>
-      </div>
-
-      <div class="mt-6">
-        <label for="password_confirmation" class="block text-sm/6 font-medium text-gray-900"><%= t("views.settings.security.confirm_password") %></label>
-        <div class="mt-2">
-          <%= f.input :password_confirmation,
-                label: false,
-                required: false,
-                input_html: { autocomplete: "new-password" } %>
-        </div>
-      </div>
-
-      <div class="mt-6">
-        <label for="current_password" class="block text-sm/6 font-medium text-gray-900"><%= t("views.settings.security.current_password") %></label>
-        <div class="mt-2">
-          <%= f.input :current_password,
-                label: false,
-                required: true,
-                input_html: { autocomplete: "current-password" } %>
-        </div>
-      </div>
-
-      <div class="mt-6">
-        <%= f.button :submit, t("shared.update"), class: "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" %>
-      </div>
-    <% end %>
-
-    <div class="mt-10 border-t border-gray-200 pt-6">
-      <%= delete_button_with_confirm(registration_path(resource_name),
-                                    confirm: t("views.settings.security.delete_account_warning"),
-                                    text: t("views.settings.security.delete_account_button"),
-                                    class: "mt-4 text-sm font-semibold text-red-600 hover:text-red-500") %>
+    <div>
+      <label class="label-dark"><%= t("views.settings.security.email_address") %></label>
+      <%= f.input :email,
+            label: false,
+            required: true,
+            autofocus: true,
+            input_html: { class: "input-dark" } %>
     </div>
 
-    <%= link_to t("shared.cancel"), :back, class: "mt-6 block text-center text-sm font-semibold text-indigo-600 hover:text-indigo-500" %>
+    <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+      <p class="text-sm text-ink-muted">En attente de confirmation pour : <%= resource.unconfirmed_email %></p>
+    <% end %>
+
+    <div>
+      <label class="label-dark"><%= t("views.settings.security.new_password") %></label>
+      <%= f.input :password,
+            label: false,
+            required: false,
+            input_html: { autocomplete: "new-password", class: "input-dark" } %>
+    </div>
+
+    <div>
+      <label class="label-dark"><%= t("views.settings.security.confirm_password") %></label>
+      <%= f.input :password_confirmation,
+            label: false,
+            required: false,
+            input_html: { autocomplete: "new-password", class: "input-dark" } %>
+    </div>
+
+    <div>
+      <label class="label-dark"><%= t("views.settings.security.current_password") %></label>
+      <%= f.input :current_password,
+            label: false,
+            required: true,
+            input_html: { autocomplete: "current-password", class: "input-dark" } %>
+    </div>
+
+    <div class="flex items-center gap-3 pt-2">
+      <%= f.button :submit, t("shared.update"), class: "btn-primary" %>
+      <%= link_to t("shared.cancel"), :back, class: "btn-ghost" %>
+    </div>
+  <% end %>
+
+  <div class="mt-8 pt-6 border-t border-surface-border/40">
+    <%= delete_button_with_confirm(registration_path(resource_name),
+                                  confirm: t("views.settings.security.delete_account_warning"),
+                                  text: t("views.settings.security.delete_account_button"),
+                                  class: "text-sm font-medium text-status-danger hover:text-red-400 transition-colors") %>
   </div>
 </div>
