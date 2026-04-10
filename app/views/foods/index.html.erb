@@ -4,8 +4,12 @@
     <!-- En-tête avec titre, recherche et actions -->
   <header class="mb-8">
     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-      <!-- Titre -->
-      <h1 class="text-2xl font-bold text-ink-primary flex-shrink-0"><%= t("views.foods.title") %></h1>
+      <!-- Titre + compteur -->
+      <div class="flex-shrink-0">
+        <h1 class="text-2xl font-bold text-ink-primary"><%= t("views.foods.title") %></h1>
+        <% total = @pagy ? @pagy.count : @foods.size %>
+        <p class="text-xs text-ink-subtle mt-0.5"><%= t("shared.food_count", count: total) %></p>
+      </div>
 
       <!-- Barre de recherche -->
       <div class="flex-1 max-w-md lg:mx-6">
@@ -15,6 +19,7 @@
               <%= hidden_field_tag "q[#{key}]", value %>
             <% end %>
           <% end %>
+          <%= hidden_field_tag :label_id, params[:label_id] if params[:label_id].present? %>
 
           <%= text_field_tag :query, params[:query],
               class: "input-dark pl-10 #{params[:query].present? ? 'pr-10' : ''} py-1.5 text-sm",
@@ -39,17 +44,64 @@
     </div>
   </header>
 
-  <!-- Tableau des aliments -->
-  <div class="bg-surface-base rounded-lg overflow-hidden border border-surface-border/40">
-    <div class="overflow-x-auto">
-      <table class="min-w-full table-dark">
-        <%= render "table_headers" %>
-        <tbody>
-          <%= render partial: "table_row", collection: @foods, as: :food %>
-        </tbody>
-      </table>
+  <!-- Filtre par label -->
+  <% if @food_labels.any? %>
+    <div class="flex flex-wrap items-center gap-2 mb-4">
+      <%= link_to foods_path(query: params[:query], q: params[:q]),
+            class: "inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border transition-colors #{@selected_label_id.nil? ? 'bg-brand text-zinc-900 border-brand' : 'bg-surface-hover text-ink-muted border-surface-border hover:border-brand/50'}" do %>
+        <%= t("views.foods.all_labels") %>
+      <% end %>
+      <% @food_labels.each do |label| %>
+        <%= link_to foods_path(query: params[:query], q: params[:q], label_id: label.id),
+              class: "inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border transition-colors #{@selected_label_id == label.id ? 'bg-brand text-zinc-900 border-brand' : 'bg-surface-hover text-ink-muted border-surface-border hover:border-brand/50'}" do %>
+          <i class="fas fa-tag text-xs"></i>
+          <%= label.name %>
+        <% end %>
+      <% end %>
     </div>
-  </div>
+  <% end %>
+
+  <!-- Tableau des aliments ou empty state -->
+  <% if @foods.empty? %>
+    <div class="flex flex-col items-center justify-center py-16 text-center">
+      <div class="w-16 h-16 mb-4 bg-surface-hover rounded-full flex items-center justify-center">
+        <i class="fas fa-utensils text-2xl text-ink-subtle"></i>
+      </div>
+      <% if params[:query].present? || params[:q]&.values&.any?(&:present?) || params[:label_id].present? %>
+        <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.foods.no_results.title") %></h3>
+        <% search_term = params[:query].presence || params.dig(:q, :name_cont).presence %>
+        <p class="text-ink-subtle text-sm mb-4">
+          <% if search_term %>
+            <%= t("views.foods.no_results.description", query: search_term) %>
+          <% else %>
+            <%= t("views.foods.no_results.no_match") %>
+          <% end %>
+        </p>
+        <%= link_to foods_path, class: "btn-secondary text-sm" do %>
+          <i class="fas fa-times"></i>
+          <%= t("views.foods.no_results.clear") %>
+        <% end %>
+      <% else %>
+        <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.foods.empty_state.title") %></h3>
+        <p class="text-ink-subtle text-sm mb-4"><%= t("views.foods.empty_state.description") %></p>
+        <%= link_to new_food_path, class: "btn-primary" do %>
+          <i class="fas fa-plus"></i>
+          <%= t("views.foods.empty_state.cta") %>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="bg-surface-base rounded-lg border border-surface-border/40">
+      <div class="overflow-x-auto rounded-lg">
+        <table class="min-w-full table-dark">
+          <%= render "table_headers" %>
+          <tbody>
+            <%= render partial: "table_row", collection: @foods, as: :food %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
 
   <!-- Pagination -->
   <% if @pagy&.pages&.> 1 %>

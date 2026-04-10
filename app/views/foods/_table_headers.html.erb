@@ -1,27 +1,14 @@
 <thead>
   <tr>
-    <th>
-      <%= sort_link(@q, :name, Food.human_attribute_name(:name), class: "text-ink-subtle hover:text-ink-muted cursor-pointer") %>
-    </th>
-    <th>
-      <%= sort_link(@q, :brand, Food.human_attribute_name(:brand), class: "text-ink-subtle hover:text-ink-muted cursor-pointer") %>
-    </th>
-    <th><%= t("views.foods.labels_col") %></th>
-    <th>
-      <%= sort_link(@q, :calories, Food.human_attribute_name(:calories), class: "text-ink-subtle hover:text-ink-muted cursor-pointer") %>
-    </th>
-    <th>
-      <%= sort_link(@q, :proteins, Food.human_attribute_name(:proteins), class: "text-ink-subtle hover:text-ink-muted cursor-pointer") %>
-    </th>
-    <th>
-      <%= sort_link(@q, :carbs, Food.human_attribute_name(:carbs), class: "text-ink-subtle hover:text-ink-muted cursor-pointer") %>
-    </th>
-    <th>
-      <%= sort_link(@q, :fats, Food.human_attribute_name(:fats), class: "text-ink-subtle hover:text-ink-muted cursor-pointer") %>
-    </th>
-    <th>
-      <%= sort_link(@q, :sugars, Food.human_attribute_name(:sugars), class: "text-ink-subtle hover:text-ink-muted cursor-pointer") %>
-    </th>
-    <th class="text-center"><%= t("shared.actions") %></th>
+    <th class="whitespace-nowrap"><%= food_sort_link(:name, Food.human_attribute_name(:name)) %></th>
+    <th class="whitespace-nowrap"><%= food_sort_link(:brand, Food.human_attribute_name(:brand)) %></th>
+    <th class="whitespace-nowrap"><%= t("views.foods.labels_col") %></th>
+    <th class="whitespace-nowrap"><%= food_sort_link(:calories, "#{Food.human_attribute_name(:calories)} (kcal)") %></th>
+    <th class="whitespace-nowrap"><%= food_sort_link(:proteins, "#{Food.human_attribute_name(:proteins)} (g)") %></th>
+    <th class="whitespace-nowrap"><%= food_sort_link(:carbs, "#{Food.human_attribute_name(:carbs)} (g)") %></th>
+    <th class="whitespace-nowrap"><%= food_sort_link(:fats, "#{Food.human_attribute_name(:fats)} (g)") %></th>
+    <th class="whitespace-nowrap"><%= food_sort_link(:sugars, "#{Food.human_attribute_name(:sugars)} (g)") %></th>
+    <th class="text-center whitespace-nowrap"><%= t("views.foods.usages_col") %></th>
+    <th class="text-center whitespace-nowrap table-sticky-col bg-surface-base" style="--sticky-bg: #18181B;"><%= t("shared.actions") %></th>
   </tr>
 </thead>

@@ -11,7 +11,11 @@ Rails.application.routes.draw do
       post :copy_yesterday
     end
   end
-  resources :foods, except: [:show]
+  resources :foods, except: [:show] do
+    member do
+      post :duplicate
+    end
+  end
   resource :daily_calorie_requirement, only: [:show]
 
   resource :setting, only: [:show, :update]

@@ -1,12 +1,18 @@
 class FoodsController < ApplicationController
-  before_action :set_food, only: [:edit, :update, :destroy]
+  before_action :set_food, only: [:edit, :update, :destroy, :duplicate]
 
   def index
+    @food_labels = current_user.food_labels.order(:name)
     @q = current_user.foods.includes(:food_labels).ransack(params[:q])
     @foods = @q.result
 
     if params[:query].present?
       @foods = @foods.search_by_name(params[:query])
+    end
+
+    if params[:label_id].present?
+      @foods = @foods.joins(:food_labels).where(food_labels: { id: params[:label_id] })
+      @selected_label_id = params[:label_id].to_i
     end
 
     if params[:full_result] == "true"
@@ -15,6 +21,9 @@ class FoodsController < ApplicationController
     else
       @pagy, @foods = pagy(@foods.order(created_at: :desc), items: 10)
     end
+
+    food_ids = @foods.pluck(:id)
+    @usage_counts = food_ids.any? ? DayFood.where(food_id: food_ids).group(:food_id).count : {}
   end
 
   def new
@@ -46,6 +55,16 @@ class FoodsController < ApplicationController
   def destroy
     @food.destroy
     redirect_to foods_path, notice: t("controllers.foods.destroyed")
+  end
+
+  def duplicate
+    copy = @food.dup
+    copy.name = t("controllers.foods.duplicate_name", name: @food.name)
+    if copy.save
+      redirect_to edit_food_path(copy), notice: t("controllers.foods.duplicated")
+    else
+      redirect_to foods_path, alert: t("controllers.foods.duplicate_error")
+    end
   end
 
   private

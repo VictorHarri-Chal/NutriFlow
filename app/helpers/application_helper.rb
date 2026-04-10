@@ -1,6 +1,12 @@
 module ApplicationHelper
   include Pagy::Frontend
 
+  # Formate une valeur nutritionnelle : supprime les zéros décimaux inutiles
+  # Ex : 359.0 → "359", 13.5 → "13.5"
+  def format_macro(value)
+    number_with_precision(value, precision: 1, strip_insignificant_zeros: true)
+  end
+
   def nested_dom_id(*args)
     args.map { |arg| arg.respond_to?(:to_key) ? dom_id(arg) : arg }.join("_")
   end

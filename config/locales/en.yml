@@ -7,6 +7,9 @@ en:
       created: "Food created successfully."
       updated: "Food updated successfully."
       destroyed: "Food deleted successfully."
+      duplicated: "Food duplicated. Edit it before saving."
+      duplicate_name: "Copy of %{name}"
+      duplicate_error: "Unable to duplicate this food."
     days:
       food_added: "Food added successfully."
       food_add_error: "Error adding food."
@@ -105,6 +108,22 @@ en:
       delete_confirm: "Are you sure you want to delete \"%{name}\"?"
       search_placeholder: "Search for a food..."
       labels_col: "Labels"
+      usages_col: "Uses"
+      empty_state:
+        title: "No foods yet"
+        description: "Start by adding your first food to your bank."
+        cta: "Add a food"
+      no_results:
+        title: "No results"
+        description: "No food matches \"%{query}\"."
+        no_match: "No food matches this filter."
+        clear: "Clear search"
+      filter_by_label: "Filter by label"
+      all_labels: "All labels"
+      active_filter: "Active filter:"
+      clear_filter: "Remove filter"
+      add_to_today: "Add to today"
+      duplicate: "Duplicate"
       form:
         macros_hint: "Enter the food macros per 100g"
         food_labels: "Food labels"
@@ -320,6 +339,14 @@ en:
       not_calculable: "Calorie need cannot be calculated"
       not_calculable_hint: "To calculate your daily calorie needs, please fill in your age, height and weight in your profile."
       complete_profile: "Complete profile"
+
+    pagination_component:
+      results: "Results"
+      to: "to"
+      of: "of"
+      all_results: "All results displayed"
+      full_result_option_title: "Show all results"
+      reload_with_pagination: "Back to pagination"
 
     components:
       recipe_card:

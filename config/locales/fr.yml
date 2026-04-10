@@ -7,6 +7,9 @@ fr:
       created: "Aliment créé avec succès."
       updated: "Aliment mis à jour avec succès."
       destroyed: "Aliment supprimé avec succès."
+      duplicated: "Aliment dupliqué. Modifiez-le avant de sauvegarder."
+      duplicate_name: "Copie de %{name}"
+      duplicate_error: "Impossible de dupliquer cet aliment."
     days:
       food_added: "Aliment ajouté avec succès."
       food_add_error: "Erreur lors de l'ajout de l'aliment."
@@ -105,6 +108,22 @@ fr:
       delete_confirm: "Es-tu sûr de vouloir supprimer « %{name} » ?"
       search_placeholder: "Rechercher un aliment..."
       labels_col: "Labels"
+      usages_col: "Utilisations"
+      empty_state:
+        title: "Aucun aliment enregistré"
+        description: "Commencez par ajouter votre premier aliment à votre banque."
+        cta: "Ajouter un aliment"
+      no_results:
+        title: "Aucun résultat"
+        description: "Aucun aliment ne correspond à « %{query} »."
+        no_match: "Aucun aliment ne correspond à ce filtre."
+        clear: "Effacer la recherche"
+      filter_by_label: "Filtrer par label"
+      all_labels: "Tous les labels"
+      active_filter: "Label actif :"
+      clear_filter: "Supprimer le filtre"
+      add_to_today: "Ajouter à aujourd'hui"
+      duplicate: "Dupliquer"
       form:
         macros_hint: "Renseignez les macros de l'aliment sur une base de 100g"
         food_labels: "Labels d'aliments"
@@ -320,6 +339,14 @@ fr:
       not_calculable: "Besoin calorique non calculable"
       not_calculable_hint: "Pour calculer vos besoins caloriques journaliers, veuillez renseigner votre âge, votre taille et votre poids dans votre profil."
       complete_profile: "Compléter le profil"
+
+    pagination_component:
+      results: "Résultats"
+      to: "à"
+      of: "sur"
+      all_results: "Tous les résultats affichés"
+      full_result_option_title: "Afficher tous les résultats"
+      reload_with_pagination: "Revenir à la pagination"
 
     components:
       recipe_card:

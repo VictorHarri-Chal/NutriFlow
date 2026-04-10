@@ -9,14 +9,14 @@
   <div class="flex flex-1 items-center justify-between">
     <p class="text-sm text-ink-muted">
       <% if @pagy %>
-        <%= "Résultats" %>
+        <%= t(".results") %>
         <span class="font-medium px-1"><%= @pagy.from %></span>
-        <%= "à" %>
+        <%= t(".to") %>
         <span class="font-medium px-1"><%= @pagy.to %></span>
-        <%= "sur" %>
+        <%= t(".of") %>
         <span class="font-medium px-1"><%= @pagy.count %></span>
       <% else %>
-        <span class="font-medium px-1">Tous les résultats affichés</span>
+        <span class="font-medium px-1"><%= t(".all_results") %></span>
       <% end %>
     </p>
 
