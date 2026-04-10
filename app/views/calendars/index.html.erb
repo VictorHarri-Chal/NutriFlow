@@ -44,17 +44,19 @@
 </div>
 
 <%# ── FAB ── %>
-<div class="fixed bottom-6 right-6 z-40 flex items-center gap-2">
-  <%= link_to new_day_day_recipe_path(@day),
-        class: "btn-secondary shadow-lg text-sm",
-        data: { turbo_frame: "item_form" } do %>
-    <i class="fas fa-plus"></i>
-    <span class="hidden sm:inline"><%= t("views.calendars.add_recipe") %></span>
-  <% end %>
-  <%= link_to new_day_day_food_path(@day),
-        class: "btn-primary shadow-lg shadow-brand/30 text-sm",
-        data: { turbo_frame: "item_form" } do %>
-    <i class="fas fa-plus"></i>
-    <span class="hidden sm:inline"><%= t("views.calendars.add_food") %></span>
-  <% end %>
-</div>
+<% if @all_day_items.any? %>
+  <div class="fixed bottom-6 right-6 z-40 flex items-center gap-2">
+    <%= link_to new_day_day_recipe_path(@day),
+          class: "btn-secondary shadow-lg text-sm",
+          data: { turbo_frame: "item_form" } do %>
+      <i class="fas fa-plus"></i>
+      <span class="hidden sm:inline"><%= t("views.calendars.add_recipe") %></span>
+    <% end %>
+    <%= link_to new_day_day_food_path(@day),
+          class: "btn-primary shadow-lg shadow-brand/30 text-sm",
+          data: { turbo_frame: "item_form" } do %>
+      <i class="fas fa-plus"></i>
+      <span class="hidden sm:inline"><%= t("views.calendars.add_food") %></span>
+    <% end %>
+  </div>
+<% end %>
