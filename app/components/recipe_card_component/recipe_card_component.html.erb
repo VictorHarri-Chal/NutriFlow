@@ -11,14 +11,18 @@
         </div>
       <% end %>
 
-      <h3 class="font-bold text-ink-primary text-lg leading-tight group-hover:text-brand transition-colors">
-        <%= recipe.name %>
-      </h3>
-
-      <!-- Nombre d'ingrédients -->
-      <div class="flex items-center mt-2 text-sm text-ink-muted">
-        <i class="fas fa-list-ul mr-1"></i>
-        <%= t("views.components.recipe_card.ingredient_count", count: recipe.recipe_items.size) %>
+      <div class="flex items-start justify-between gap-2 pr-10">
+        <div class="min-w-0">
+          <h3 class="font-bold text-ink-primary text-lg leading-tight group-hover:text-brand transition-colors truncate">
+            <%= recipe.name %>
+          </h3>
+          <!-- Nombre d'ingrédients -->
+          <div class="flex items-center mt-1.5 text-xs text-ink-subtle">
+            <i class="fas fa-list-ul mr-1.5"></i>
+            <%= t("views.components.recipe_card.ingredient_count", count: recipe.recipe_items.size) %>
+          </div>
+        </div>
+        <i class="fas fa-arrow-right text-ink-subtle group-hover:text-brand transition-colors flex-shrink-0 mt-1"></i>
       </div>
     </div>
 
@@ -27,14 +31,14 @@
       <!-- Calories principales -->
       <div class="flex items-center justify-between mb-4">
         <div class="text-center flex-1">
-          <div class="text-2xl font-bold text-brand mb-1">
+          <div class="text-2xl font-bold text-brand mb-0.5">
             <%= recipe.total_calories %>
           </div>
           <div class="text-xs text-ink-subtle font-medium">kcal</div>
         </div>
         <div class="w-px h-8 bg-surface-border"></div>
         <div class="text-center flex-1">
-          <div class="text-2xl font-bold text-ink-muted mb-1">
+          <div class="text-2xl font-bold text-ink-muted mb-0.5">
             <%= recipe.total_weight %>
           </div>
           <div class="text-xs text-ink-subtle font-medium"><%= t("views.components.recipe_card.total_g") %></div>
@@ -42,41 +46,23 @@
       </div>
 
       <!-- Macros détaillées -->
-      <div class="grid grid-cols-3 gap-3">
+      <div class="grid grid-cols-3 gap-2">
         <div class="text-center p-2 bg-surface-hover/60 rounded-lg">
-          <div class="flex items-center justify-center mb-1">
-            <i class="fas fa-dumbbell text-ink-subtle text-sm"></i>
-          </div>
+          <i class="fas fa-dumbbell text-ink-subtle text-xs mb-1 block"></i>
           <div class="font-bold text-ink-primary text-sm"><%= recipe.total_proteins %></div>
           <div class="text-xs text-ink-subtle"><%= t("views.components.recipe_card.proteins") %></div>
         </div>
 
         <div class="text-center p-2 bg-surface-hover/60 rounded-lg">
-          <div class="flex items-center justify-center mb-1">
-            <i class="fas fa-bread-slice text-ink-subtle text-sm"></i>
-          </div>
+          <i class="fas fa-bread-slice text-ink-subtle text-xs mb-1 block"></i>
           <div class="font-bold text-ink-primary text-sm"><%= recipe.total_carbs %></div>
           <div class="text-xs text-ink-subtle"><%= t("views.components.recipe_card.carbs") %></div>
         </div>
 
         <div class="text-center p-2 bg-surface-hover/60 rounded-lg">
-          <div class="flex items-center justify-center mb-1">
-            <i class="fas fa-oil-can text-ink-subtle text-sm"></i>
-          </div>
+          <i class="fas fa-oil-can text-ink-subtle text-xs mb-1 block"></i>
           <div class="font-bold text-ink-primary text-sm"><%= recipe.total_fats %></div>
           <div class="text-xs text-ink-subtle"><%= t("views.components.recipe_card.fats") %></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Footer avec action -->
-    <div class="px-6 py-3 bg-surface-base border-t border-surface-border/40">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center text-sm text-ink-muted">
-          <span><%= t("views.components.recipe_card.see_details") %></span>
-        </div>
-        <div class="text-brand transition-colors">
-          <i class="fas fa-arrow-right text-sm"></i>
         </div>
       </div>
     </div>

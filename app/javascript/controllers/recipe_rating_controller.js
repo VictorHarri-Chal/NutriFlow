@@ -1,12 +1,28 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["star", "ratingInput"]
+  static targets = ["star", "ratingInput", "viewMode", "editMode"]
   static values = { currentRating: Number }
 
   connect() {
     this.updateStars(this.currentRatingValue)
   }
+
+  // --- Toggle vue / édition ---
+
+  edit() {
+    this.viewModeTarget.classList.add("hidden")
+    this.editModeTarget.classList.remove("hidden")
+  }
+
+  cancel() {
+    this.editModeTarget.classList.add("hidden")
+    this.viewModeTarget.classList.remove("hidden")
+    // Remettre les étoiles à la valeur sauvegardée
+    this.updateStars(this.currentRatingValue)
+  }
+
+  // --- Étoiles ---
 
   selectRating(event) {
     const rating = parseInt(event.currentTarget.dataset.rating)
@@ -29,9 +45,9 @@ export default class extends Controller {
       const icon = star.querySelector('i')
       if (!icon) return
       if (index < rating) {
-        icon.className = 'fas fa-star text-yellow-500'
+        icon.className = 'fas fa-star text-brand'
       } else {
-        icon.className = 'fas fa-star text-gray-300'
+        icon.className = 'fas fa-star text-ink-subtle'
       }
     })
   }

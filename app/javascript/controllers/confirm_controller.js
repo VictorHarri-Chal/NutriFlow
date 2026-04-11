@@ -130,41 +130,35 @@ export default class extends Controller {
   modalTemplate() {
     return `
       <div class="fixed inset-0 z-50 flex items-center justify-center p-4" data-action="click->confirm#handleBackdropClick">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ease-in-out"
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-in-out"
              aria-hidden="true"></div>
 
-        <div class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all duration-300 ease-out scale-95 opacity-0"
+        <div class="relative w-full max-w-sm transform overflow-hidden rounded-2xl bg-surface-raised border border-surface-border/60 shadow-2xl transition-all duration-300 ease-out scale-95 opacity-0"
              data-confirm-target="modalContent">
-          <div class="flex items-center justify-center p-6 pb-4">
-            <div class="flex-shrink-0">
-              <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-                <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
-              </div>
+          <div class="flex items-center justify-center pt-6 pb-3">
+            <div class="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-status-danger_dim/40 border border-status-danger/20">
+              <i class="fas fa-exclamation-triangle text-status-danger"></i>
             </div>
           </div>
 
-          <div class="px-6 pb-6">
-            <div class="text-center">
-              <h3 class="text-lg font-semibold leading-6 text-gray-900 mb-2">
-                ${this.titleValue}
-              </h3>
-              <div class="mt-2">
-                <p class="text-sm leading-6 text-gray-600" data-confirm-target="message">
-                  ${this.defaultMessageValue}
-                </p>
-              </div>
-            </div>
+          <div class="px-6 pb-5 text-center">
+            <h3 class="text-base font-semibold text-ink-primary mb-2">
+              ${this.titleValue}
+            </h3>
+            <p class="text-sm text-ink-muted leading-relaxed" data-confirm-target="message">
+              ${this.defaultMessageValue}
+            </p>
           </div>
 
-          <div class="bg-gray-50 px-6 py-4 flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-3 gap-3">
+          <div class="px-6 pb-5 flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
             <button type="button"
-                    class="inline-flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition-all duration-200 hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
+                    class="inline-flex w-full justify-center rounded-lg border border-surface-border/60 bg-surface-hover px-4 py-2 text-sm font-medium text-ink-muted hover:text-ink-primary hover:bg-surface-border transition-colors sm:w-auto"
                     data-action="click->confirm#hide"
                     data-confirm-target="cancelButton">
               ${this.cancelLabelValue}
             </button>
             <button type="button"
-                    class="inline-flex w-full justify-center rounded-lg border border-transparent bg-red-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:w-auto"
+                    class="inline-flex w-full justify-center rounded-lg bg-status-danger px-4 py-2 text-sm font-medium text-white hover:bg-red-600 transition-colors sm:w-auto"
                     data-action="click->confirm#confirm"
                     data-confirm-target="confirmButton">
               ${this.confirmLabelValue}

@@ -10,7 +10,7 @@ class RecipeCommentsController < ApplicationController
     if @comment.save
       redirect_to @recipe
     else
-      redirect_to @recipe
+      redirect_to @recipe, alert: @comment.errors.full_messages.join(", ")
     end
   end
 

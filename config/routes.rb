@@ -28,6 +28,9 @@ Rails.application.routes.draw do
   end
 
   resources :recipes do
+    member do
+      post :duplicate
+    end
     resources :recipe_ratings, only: [:create, :update, :destroy]
     resources :recipe_comments, only: [:create, :update, :destroy]
   end
