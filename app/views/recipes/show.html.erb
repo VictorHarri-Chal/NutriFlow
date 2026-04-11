@@ -5,51 +5,51 @@
 <div class="max-w-7xl mx-auto mt-16">
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <!-- Contenu principal (2/3 de la largeur) -->
-    <div class="lg:col-span-2">
+    <div class="lg:col-span-2 space-y-6">
       <div class="card p-8">
         <!-- En-tête avec navigation -->
         <div class="flex items-center gap-4 mb-6">
           <%= link_to recipes_path, class: "text-ink-subtle hover:text-ink-muted transition" do %>
             <i class="fas fa-arrow-left text-xl"></i>
           <% end %>
-          <h1 class="text-3xl font-bold text-ink-primary"><%= @recipe.name %></h1>
+          <h1 class="text-3xl font-bold text-ink-primary flex-1"><%= @recipe.name %></h1>
         </div>
 
         <!-- Résumé nutritionnel -->
         <div class="bg-surface-base rounded-lg border border-brand/20 p-6 mb-8">
-          <h2 class="text-lg font-semibold text-ink-primary mb-4"><%= t("views.recipes.show.nutritional_values") %></h2>
-          <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+          <h2 class="text-sm font-semibold text-ink-subtle uppercase tracking-wide mb-4"><%= t("views.recipes.show.nutritional_values") %></h2>
+          <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
             <div class="text-center">
-              <div class="text-2xl font-bold text-ink-muted"><%= @recipe.total_weight %></div>
-              <div class="text-sm text-ink-subtle"><%= t("views.recipes.show.total_weight") %></div>
+              <div class="text-xl font-bold text-ink-muted"><%= @recipe.total_weight %><span class="text-xs font-normal text-ink-subtle ml-0.5">g</span></div>
+              <div class="text-xs text-ink-subtle mt-1"><%= t("views.recipes.show.total_weight_short") %></div>
             </div>
             <div class="text-center">
-              <div class="text-2xl font-bold text-brand"><%= @recipe.total_calories %></div>
-              <div class="text-sm text-ink-subtle"><%= t("views.recipes.show.calories") %></div>
+              <div class="text-xl font-bold text-brand"><%= @recipe.total_calories %><span class="text-xs font-normal text-ink-subtle ml-0.5">kcal</span></div>
+              <div class="text-xs text-ink-subtle mt-1"><%= t("views.recipes.show.calories") %></div>
             </div>
             <div class="text-center">
-              <div class="text-2xl font-bold text-ink-primary"><%= @recipe.total_proteins %></div>
-              <div class="text-sm text-ink-subtle"><%= t("views.recipes.show.proteins") %></div>
+              <div class="text-xl font-bold text-ink-primary"><%= @recipe.total_proteins %><span class="text-xs font-normal text-ink-subtle ml-0.5">g</span></div>
+              <div class="text-xs text-ink-subtle mt-1"><%= t("views.recipes.show.proteins_short") %></div>
             </div>
             <div class="text-center">
-              <div class="text-2xl font-bold text-ink-primary"><%= @recipe.total_carbs %></div>
-              <div class="text-sm text-ink-subtle"><%= t("views.recipes.show.carbs") %></div>
+              <div class="text-xl font-bold text-ink-primary"><%= @recipe.total_carbs %><span class="text-xs font-normal text-ink-subtle ml-0.5">g</span></div>
+              <div class="text-xs text-ink-subtle mt-1"><%= t("views.recipes.show.carbs_short") %></div>
             </div>
             <div class="text-center">
-              <div class="text-2xl font-bold text-ink-primary"><%= @recipe.total_fats %></div>
-              <div class="text-sm text-ink-subtle"><%= t("views.recipes.show.fats") %></div>
+              <div class="text-xl font-bold text-ink-primary"><%= @recipe.total_fats %><span class="text-xs font-normal text-ink-subtle ml-0.5">g</span></div>
+              <div class="text-xs text-ink-subtle mt-1"><%= t("views.recipes.show.fats_short") %></div>
             </div>
             <div class="text-center">
-              <div class="text-2xl font-bold text-ink-primary"><%= @recipe.total_sugars %></div>
-              <div class="text-sm text-ink-subtle"><%= t("views.recipes.show.sugars") %></div>
+              <div class="text-xl font-bold text-ink-primary"><%= @recipe.total_sugars %><span class="text-xs font-normal text-ink-subtle ml-0.5">g</span></div>
+              <div class="text-xs text-ink-subtle mt-1"><%= t("views.recipes.show.sugars_short") %></div>
             </div>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <!-- Ingrédients -->
           <div>
-            <h2 class="text-xl font-semibold text-ink-primary mb-4"><%= t("views.recipes.show.ingredients") %></h2>
+            <h2 class="text-lg font-semibold text-ink-primary mb-4"><%= t("views.recipes.show.ingredients") %></h2>
             <div class="bg-surface-base rounded-lg overflow-hidden border border-surface-border/40">
               <table class="min-w-full table-dark">
                 <thead>
@@ -80,7 +80,7 @@
 
           <!-- Instructions -->
           <div>
-            <h2 class="text-xl font-semibold text-ink-primary mb-4"><%= t("views.recipes.show.instructions") %></h2>
+            <h2 class="text-lg font-semibold text-ink-primary mb-4"><%= t("views.recipes.show.instructions") %></h2>
             <% if @recipe.instructions.present? %>
               <div class="bg-surface-base rounded-lg border border-surface-border/40 p-6">
                 <div class="prose prose-sm max-w-none">
@@ -92,28 +92,34 @@
                 <div class="w-12 h-12 mx-auto mb-3 bg-surface-hover rounded-full flex items-center justify-center">
                   <i class="fas fa-clipboard text-ink-subtle"></i>
                 </div>
-                <p class="text-ink-muted"><%= t("views.recipes.show.no_instructions") %></p>
+                <p class="text-ink-muted text-sm"><%= t("views.recipes.show.no_instructions") %></p>
               </div>
             <% end %>
           </div>
         </div>
 
-        <!-- Système de commentaires -->
-        <%= render RecipeCommentsComponent.new(recipe: @recipe, current_user: current_user) %>
-
-        <!-- Actions en bas -->
-        <div class="flex justify-center gap-4">
-          <%= link_to edit_recipe_path(@recipe), class: "btn-secondary" do %>
-            <i class="fas fa-pen"></i>
+        <!-- Actions -->
+        <div class="flex items-center justify-center gap-1 mt-8 pt-5 border-t border-surface-border/30">
+          <%= link_to duplicate_recipe_path(@recipe),
+                data: { turbo_method: :post },
+                class: "flex items-center gap-1.5 px-3 py-1.5 text-xs text-ink-subtle hover:text-ink-primary hover:bg-surface-hover rounded-lg transition-colors" do %>
+            <i class="fas fa-copy text-xs"></i>
+            <%= t("views.recipes.show.duplicate") %>
+          <% end %>
+          <div class="w-px h-4 bg-surface-border/50 mx-1"></div>
+          <%= link_to edit_recipe_path(@recipe),
+                class: "flex items-center gap-1.5 px-3 py-1.5 text-xs text-ink-subtle hover:text-ink-primary hover:bg-surface-hover rounded-lg transition-colors" do %>
+            <i class="fas fa-pen text-xs"></i>
             <%= t("views.recipes.show.edit") %>
           <% end %>
-
+          <div class="w-px h-4 bg-surface-border/50 mx-1"></div>
           <%= delete_link_with_confirm(recipe_path(@recipe),
-                                      confirm: t("views.recipes.show.delete_confirm"),
-                                      text: t("views.recipes.show.delete"),
-                                      class: "btn-danger") %>
+                confirm: t("views.recipes.show.delete_confirm"),
+                text: t("views.recipes.show.delete"),
+                class: "flex items-center gap-1.5 px-3 py-1.5 text-xs text-status-danger hover:text-red-400 hover:bg-status-danger_dim/20 rounded-lg transition-colors") %>
         </div>
       </div>
+
     </div>
 
     <!-- Sidebar (1/3 de la largeur) -->
