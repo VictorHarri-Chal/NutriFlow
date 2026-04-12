@@ -4,11 +4,13 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["buttonList"]
 
+  connect() {
+    this._boundClose = this.closeButtonList.bind(this)
+    this._buttonListOpened = false
+  }
+
   disconnect() {
-    if (this.closeButtonListOnClickOutside) {
-      window.removeEventListener("click", this.closeButtonListOnClickOutside)
-      this.closeButtonListOnClickOutside = null
-    }
+    window.removeEventListener("click", this._boundClose)
     this._buttonListOpened = false
   }
 
@@ -21,8 +23,7 @@ export default class extends Controller {
 
     this._buttonListOpened = true;
     this.buttonListTarget.classList.remove("hidden");
-    this.closeButtonListOnClickOutside = this.closeButtonList.bind(this);
-    window.addEventListener("click", this.closeButtonListOnClickOutside);
+    window.addEventListener("click", this._boundClose);
   }
 
   closeButtonList(event) {
@@ -33,7 +34,6 @@ export default class extends Controller {
     if (this.hasButtonListTarget) {
       this.buttonListTarget.classList.add("hidden");
     }
-    window.removeEventListener("click", this.closeButtonListOnClickOutside);
-    this.closeButtonListOnClickOutside = null;
+    window.removeEventListener("click", this._boundClose);
   }
 }

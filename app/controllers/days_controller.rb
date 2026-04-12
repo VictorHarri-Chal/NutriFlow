@@ -1,4 +1,5 @@
 class DaysController < ApplicationController
+  include DateParseable
   before_action :set_day, only: [:update]
 
   def update
@@ -22,7 +23,8 @@ class DaysController < ApplicationController
   public
 
   def add_food
-    @day = current_user.days.find_or_create_by(date: params[:date]) do |day|
+    date = parse_date(params[:date])
+    @day = current_user.days.find_or_create_by(date: date) do |day|
       day.user = current_user
     end
     @food = current_user.foods.find(params[:food_id])

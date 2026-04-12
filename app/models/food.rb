@@ -6,7 +6,7 @@ class Food < ApplicationRecord
   has_many :days, through: :day_foods
   has_and_belongs_to_many :food_labels, join_table: 'food_labels_foods'
 
-  validates :name, presence: true
+  validates :name, presence: true, uniqueness: { scope: :user_id, case_sensitive: false }
   validates :fats, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :carbs, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :sugars, presence: true, numericality: { greater_than_or_equal_to: 0 }

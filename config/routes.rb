@@ -31,8 +31,7 @@ Rails.application.routes.draw do
     member do
       post :duplicate
     end
-    resources :recipe_ratings, only: [:create, :update, :destroy]
-    resources :recipe_comments, only: [:create, :update, :destroy]
+    resources :recipe_ratings, only: [:create, :destroy]
   end
 
   post 'days/:date/add_food', to: 'days#add_food', as: :add_food_to_day

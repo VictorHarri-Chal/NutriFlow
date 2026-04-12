@@ -1,4 +1,12 @@
 en:
+  pagination_component:
+    results: "Results"
+    to: "to"
+    of: "of"
+    all_results: "All results displayed"
+    full_result_option_title: "Show all results"
+    reload_with_pagination: "Back to pagination"
+
   controllers:
     settings:
       locale_updated: "Language updated successfully."
@@ -171,6 +179,8 @@ en:
       sort_name: "A → Z"
       sort_newest: "Newest"
       sort_oldest: "Oldest"
+      sort_calories: "Calories ↓"
+      sort_proteins: "Proteins ↓"
       new:
         title: "New recipe"
       edit:
@@ -209,6 +219,7 @@ en:
       item_fields:
         food: "Food *"
         select_blank: "— Select —"
+        search_food: "Search for a food..."
         quantity: "Quantity (g) *"
         remove: "Remove"
 
@@ -216,6 +227,9 @@ en:
       show:
         title: "My Profile"
         edit_link: "Edit profile"
+        incomplete_hint: "Your profile is incomplete. Enter your weight, height and age to calculate your nutritional needs."
+        complete_cta: "Complete profile"
+        calorie_needs_title: "My calorie needs"
         personal_info: "Personal Information"
         name: "Name"
         email: "Email"
@@ -370,14 +384,6 @@ en:
       not_calculable_hint: "To calculate your daily calorie needs, please fill in your age, height and weight in your profile."
       complete_profile: "Complete profile"
 
-    pagination_component:
-      results: "Results"
-      to: "to"
-      of: "of"
-      all_results: "All results displayed"
-      full_result_option_title: "Show all results"
-      reload_with_pagination: "Back to pagination"
-
     components:
       recipe_card:
         ingredient_count:
@@ -395,15 +401,6 @@ en:
         ingredients_count: "Ingredients"
         total_weight: "Total weight"
         kcal_per_100g: "Kcal / 100 g"
-      recipe_comments:
-        title: "Comments"
-        add_comment: "Add a comment"
-        placeholder: "Your notes, changes, tips..."
-        add_btn: "Add"
-        you: "You"
-        delete_confirm: "Delete this comment?"
-        no_comments: "No comments yet"
-        add_first_comment: "Add your first comment above to get started"
       recipe_rating_form:
         title: "Journal"
         delete_confirm: "Clear this note?"

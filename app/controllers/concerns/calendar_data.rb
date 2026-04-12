@@ -7,7 +7,7 @@ module CalendarData
     @day = day
 
     day_foods    = day.day_foods.includes(:food, :day_food_group)
-    day_recipes  = day.day_recipes.includes(:recipe, :day_food_group)
+    day_recipes  = day.day_recipes.includes(:day_food_group, recipe: { recipe_items: :food })
     all_items    = day_foods + day_recipes
 
     @day_items_by_group      = all_items.group_by(&:day_food_group)

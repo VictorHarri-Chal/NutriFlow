@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { visit } from "@hotwired/turbo"
 
 export default class extends Controller {
   connect() {
@@ -12,6 +13,6 @@ export default class extends Controller {
 
   handleDateChange(event) {
     const selectedDate = event.target.value
-    Turbo.visit(`/calendars?date=${selectedDate}`)
+    visit(`/calendars?date=${selectedDate}`)
   }
 }

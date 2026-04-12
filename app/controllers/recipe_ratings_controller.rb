@@ -1,19 +1,11 @@
 class RecipeRatingsController < ApplicationController
   before_action :set_recipe
-  before_action :set_rating, only: [:update, :destroy]
+  before_action :set_rating, only: [:destroy]
 
   def create
     @rating = @recipe.recipe_ratings.find_or_initialize_by(user: current_user)
     if @rating.update(rating_params)
       redirect_to @recipe, notice: t("controllers.recipe_ratings.created")
-    else
-      redirect_to @recipe
-    end
-  end
-
-  def update
-    if @rating.update(rating_params)
-      redirect_to @recipe, notice: t("controllers.recipe_ratings.updated")
     else
       redirect_to @recipe
     end
