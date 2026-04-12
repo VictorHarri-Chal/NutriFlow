@@ -8,7 +8,7 @@ class DayRecipesController < ApplicationController
     group_id         = params.dig(:day_recipe, :day_food_group_id)
     @day_recipe      = @day.day_recipes.build(day_food_group_id: group_id)
     @day_food_groups = current_user.day_food_groups.order(:name)
-    @recipes         = current_user.recipes.order(:name)
+    @recipes         = current_user.recipes.includes(recipe_items: :food).order(:name)
   end
 
   def create
@@ -22,7 +22,7 @@ class DayRecipesController < ApplicationController
       end
     else
       @day_food_groups = current_user.day_food_groups.order(:name)
-      @recipes         = current_user.recipes.order(:name)
+      @recipes         = current_user.recipes.includes(recipe_items: :food).order(:name)
       respond_to do |format|
         format.turbo_stream { render turbo_stream: turbo_stream.replace("item_form", partial: "day_recipes/form", locals: { day: @day, day_recipe: @day_recipe, submit_text: t("shared.add") }) }
         format.html         { render :new, status: :unprocessable_entity }
@@ -32,7 +32,7 @@ class DayRecipesController < ApplicationController
 
   def edit
     @day_food_groups = current_user.day_food_groups.order(:name)
-    @recipes         = current_user.recipes.order(:name)
+    @recipes         = current_user.recipes.includes(recipe_items: :food).order(:name)
   end
 
   def update
@@ -45,7 +45,7 @@ class DayRecipesController < ApplicationController
       end
     else
       @day_food_groups = current_user.day_food_groups.order(:name)
-      @recipes         = current_user.recipes.order(:name)
+      @recipes         = current_user.recipes.includes(recipe_items: :food).order(:name)
       respond_to do |format|
         format.turbo_stream { render turbo_stream: turbo_stream.replace("item_form", partial: "day_recipes/form", locals: { day: @day, day_recipe: @day_recipe, submit_text: t("shared.update") }) }
         format.html         { render :edit, status: :unprocessable_entity }

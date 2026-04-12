@@ -31,6 +31,15 @@ fr:
       duplicate_error: "Impossible de dupliquer cette recette."
 
   activerecord:
+    attributes:
+      food:
+        name: "Nom"
+        brand: "Marque"
+        calories: "Calories"
+        proteins: "Protéines"
+        carbs: "Glucides"
+        fats: "Lipides"
+        sugars: "Sucres"
     errors:
       models:
         recipe:
@@ -122,6 +131,12 @@ fr:
       search_placeholder: "Rechercher un aliment..."
       labels_col: "Labels"
       usages_col: "Utilisations"
+      table:
+        name_col: "Aliment"
+        calories_col: "Kcal"
+        proteins_col: "Prot. (g)"
+        carbs_col: "Gluc. (g)"
+        fats_col: "Lip. (g)"
       empty_state:
         title: "Aucun aliment enregistré"
         description: "Commencez par ajouter votre premier aliment à votre banque."
@@ -139,9 +154,14 @@ fr:
       duplicate: "Dupliquer"
       form:
         macros_hint: "Renseignez les macros de l'aliment sur une base de 100g"
-        food_labels: "Labels d'aliments"
+        macros_section: "Valeurs nutritionnelles"
+        per_100g: "pour 100g"
+        food_labels: "Labels"
         no_labels: "Aucun label d'aliment"
         create_labels_hint: "Créez des labels d'aliments dans les paramètres"
+        preview_title: "Aperçu"
+        preview_empty_hint: "Renseignez les valeurs nutritionnelles pour voir l'aperçu."
+        of_which_sugars: "dont sucres :"
 
     day_foods:
       new:
@@ -150,6 +170,8 @@ fr:
         edit_day_food: "Modifier l'aliment"
       form:
         select_food: "Sélectionnez un aliment"
+        food_label: "Aliment"
+        search_food: "Rechercher un aliment..."
         select_group: "Sélectionnez un groupe"
         food_group: "Groupe de repas"
         cancel: "Annuler"
@@ -161,6 +183,8 @@ fr:
         title: "Modifier le plat"
       form:
         select_recipe: "Sélectionnez une recette"
+        recipe_label: "Recette"
+        search_recipe: "Rechercher une recette..."
         use_recipe_quantity: "Utiliser la quantité totale de la recette"
         food_group: "Groupe de repas"
 
@@ -211,17 +235,23 @@ fr:
       form:
         name: "Nom *"
         instructions: "Instructions"
+        instructions_optional: "optionnel"
+        instructions_placeholder: "Étapes, temps de cuisson, conseils..."
         ingredients: "Ingrédients"
         add_ingredient: "Ajouter un ingrédient"
         no_ingredients: "Aucun ingrédient"
         add_ingredient_hint: "Ajoutez au moins un ingrédient à votre recette"
         add_first_ingredient: "Ajouter le premier ingrédient"
+        live_summary: "Résumé nutritionnel"
+        summary_empty_hint: "Ajoutez des ingrédients pour voir le récapitulatif nutritionnel en temps réel"
       item_fields:
         food: "Aliment *"
+        food_col: "Aliment"
+        quantity_col: "Quantité"
         select_blank: "— Sélectionner —"
         search_food: "Rechercher un aliment..."
         quantity: "Quantité (g) *"
-        remove: "Supprimer"
+        remove: "Retirer"
 
     profiles:
       show:
@@ -230,7 +260,9 @@ fr:
         incomplete_hint: "Votre profil est incomplet. Renseignez votre poids, taille et âge pour calculer vos besoins nutritionnels."
         complete_cta: "Compléter le profil"
         calorie_needs_title: "Mes besoins caloriques"
-        personal_info: "Informations Personnelles"
+        personal_info: "Informations personnelles"
+        physical_data: "Données physiques"
+        lifestyle_section: "Mode de vie"
         name: "Nom"
         email: "Email"
         age: "Âge"
@@ -240,13 +272,21 @@ fr:
         activity_level: "Niveau d'activité"
         goal: "Objectif"
         age_years: "%{age} ans"
+        bmi: "IMC"
+        bmi_underweight: "Insuffisance pondérale"
+        bmi_normal: "Poids normal"
+        bmi_overweight: "Surpoids"
+        bmi_obese: "Obésité"
       edit:
-        title: "Modifier le Profil"
+        title: "Modifier le profil"
         name: "Nom"
         age: "Âge"
-        weight: "Poids (kg)"
-        height: "Taille (cm)"
+        weight: "Poids"
+        height: "Taille"
         gender: "Genre"
+        gender_male: "Homme"
+        gender_female: "Femme"
+        gender_other: "Autre"
         activity_level: "Niveau d'activité"
         goal: "Objectif"
 
@@ -259,11 +299,13 @@ fr:
         security: "Sécurité"
       general:
         title: "Paramètres généraux"
-        language: "Langue"
-        language_hint: "La langue sera appliquée immédiatement après la sauvegarde."
+        description: "Personnalisez votre expérience NutriFlow."
+        language: "Langue de l'interface"
+        language_hint: "La langue sera appliquée immédiatement."
         save: "Sauvegarder"
       security:
         title: "Sécurité du compte"
+        description: "Gérez votre mot de passe et les accès à votre compte."
         change_password: "Changer le mot de passe"
         current_password: "Mot de passe actuel"
         current_password_placeholder: "Entrez votre mot de passe actuel"
@@ -282,6 +324,7 @@ fr:
         delete_account_button: "Supprimer le compte"
       food_groups:
         title: "Groupes d'aliments"
+        description: "Organisez vos repas par moments de la journée."
         group_name_label: "Nom du groupe"
         group_name_placeholder: "Ex: Petit-déjeuner, Déjeuner, Dîner..."
         create: "Créer le groupe"
@@ -294,6 +337,7 @@ fr:
         delete_confirm: "Êtes-vous sûr de vouloir supprimer ce groupe ? Tous les repas associés seront déplacés vers 'Aliments sans groupe'."
       food_labels:
         title: "Labels d'aliments"
+        description: "Catégorisez vos aliments avec des tags personnalisés."
         label_name_label: "Nom du label"
         label_name_placeholder: "Ex: Protéines, Glucides, Lipides, Bio, etc."
         create: "Créer le label"

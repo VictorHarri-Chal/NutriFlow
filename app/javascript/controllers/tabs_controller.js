@@ -2,23 +2,11 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["tab", "content"]
-  static classes = ["active", "inactive"]
   static values = {
-    activeTab: String,
-    activeBorder: String,
-    activeText: String,
-    inactiveBorder: String,
-    inactiveText: String
+    activeTab: String
   }
 
   connect() {
-    // Définir les classes par défaut si elles ne sont pas spécifiées
-    this.activeBorderValue = this.activeBorderValue || "border-blue-600"
-    this.activeTextValue = this.activeTextValue || "text-blue-600"
-    this.inactiveBorderValue = this.inactiveBorderValue || "border-transparent"
-    this.inactiveTextValue = this.inactiveTextValue || "text-gray-500"
-
-    // Si un onglet actif est défini via data-tabs-active-tab-value, l'utiliser
     if (this.activeTabValue) {
       const activeTab = this.tabTargets.find(tab => tab.dataset.tab === this.activeTabValue)
       if (activeTab) {
@@ -26,8 +14,6 @@ export default class extends Controller {
         return
       }
     }
-
-    // Sinon, activer le premier onglet par défaut si aucun n'est actif
     if (this.tabTargets.length > 0) {
       this.switchToTab(this.tabTargets[0])
     }
@@ -35,37 +21,28 @@ export default class extends Controller {
 
   switchTab(event) {
     event.preventDefault()
-    const clickedTab = event.currentTarget
-    this.switchToTab(clickedTab)
+    this.switchToTab(event.currentTarget)
   }
 
   switchToTab(activeTab) {
-    // Désactiver tous les onglets
+    // Nav items: read active/inactive classes from data attributes on each tab
     this.tabTargets.forEach(tab => {
-      tab.classList.remove("active", this.activeBorderValue, this.activeTextValue)
-      tab.classList.add(this.inactiveBorderValue, this.inactiveTextValue)
+      const active   = (tab.dataset.activeClasses   || "").split(" ").filter(Boolean)
+      const inactive = (tab.dataset.inactiveClasses || "").split(" ").filter(Boolean)
+      tab.classList.remove(...active)
+      tab.classList.add(...inactive)
     })
 
-    // Activer l'onglet sélectionné
-    activeTab.classList.add("active", this.activeBorderValue, this.activeTextValue)
-    activeTab.classList.remove(this.inactiveBorderValue, this.inactiveTextValue)
+    const active   = (activeTab.dataset.activeClasses   || "").split(" ").filter(Boolean)
+    const inactive = (activeTab.dataset.inactiveClasses || "").split(" ").filter(Boolean)
+    activeTab.classList.remove(...inactive)
+    activeTab.classList.add(...active)
 
-    // Cacher tous les contenus
-    this.contentTargets.forEach(content => {
-      content.classList.add("hidden")
-    })
+    // Content panels
+    this.contentTargets.forEach(content => content.classList.add("hidden"))
+    const activeContent = this.contentTargets.find(c => c.id === `${activeTab.dataset.tab}-tab`)
+    if (activeContent) activeContent.classList.remove("hidden")
 
-    // Afficher le contenu correspondant
-    const tabId = activeTab.dataset.tab
-    const activeContent = this.contentTargets.find(content =>
-      content.id === `${tabId}-tab`
-    )
-
-    if (activeContent) {
-      activeContent.classList.remove("hidden")
-    }
-
-    // Mettre à jour la valeur de l'onglet actif
-    this.activeTabValue = tabId
+    this.activeTabValue = activeTab.dataset.tab
   }
 }

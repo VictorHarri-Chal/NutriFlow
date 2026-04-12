@@ -131,35 +131,27 @@ export default class extends Controller {
   modalTemplate() {
     return `
       <div class="fixed inset-0 z-50 flex items-center justify-center p-4" data-action="click->confirm#handleBackdropClick">
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-in-out"
-             aria-hidden="true"></div>
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
 
-        <div class="relative w-full max-w-sm transform overflow-hidden rounded-2xl bg-surface-raised border border-surface-border/60 shadow-2xl transition-all duration-300 ease-out scale-95 opacity-0"
+        <div class="relative w-full max-w-xs bg-surface-raised border border-surface-border/50 rounded-2xl shadow-2xl transition-all duration-200 ease-out scale-95 opacity-0 p-6"
              data-confirm-target="modalContent">
-          <div class="flex items-center justify-center pt-6 pb-3">
-            <div class="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-status-danger_dim/40 border border-status-danger/20">
-              <i class="fas fa-exclamation-triangle text-status-danger"></i>
-            </div>
-          </div>
 
-          <div class="px-6 pb-5 text-center">
-            <h3 class="text-base font-semibold text-ink-primary mb-2">
-              ${this.titleValue}
-            </h3>
-            <p class="text-sm text-ink-muted leading-relaxed" data-confirm-target="message">
+          <div class="mb-4">
+            <h3 class="text-sm font-semibold text-ink-primary">${this.titleValue}</h3>
+            <p class="text-sm text-ink-subtle mt-1 leading-relaxed" data-confirm-target="message">
               ${this.defaultMessageValue}
             </p>
           </div>
 
-          <div class="px-6 pb-5 flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
+          <div class="flex items-center justify-end gap-2 pt-3 border-t border-surface-border/40">
             <button type="button"
-                    class="inline-flex w-full justify-center rounded-lg border border-surface-border/60 bg-surface-hover px-4 py-2 text-sm font-medium text-ink-muted hover:text-ink-primary hover:bg-surface-border transition-colors sm:w-auto"
+                    class="btn-ghost text-sm"
                     data-action="click->confirm#hide"
                     data-confirm-target="cancelButton">
               ${this.cancelLabelValue}
             </button>
             <button type="button"
-                    class="inline-flex w-full justify-center rounded-lg bg-status-danger px-4 py-2 text-sm font-medium text-white hover:bg-red-600 transition-colors sm:w-auto"
+                    class="btn-danger text-sm"
                     data-action="click->confirm#confirm"
                     data-confirm-target="confirmButton">
               ${this.confirmLabelValue}

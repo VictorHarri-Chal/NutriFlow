@@ -1,70 +1,56 @@
 <%= link_to recipe_path(recipe), class: "group block" do %>
   <div class="bg-surface-raised rounded-xl border border-surface-border/50 overflow-hidden hover:shadow-xl hover:border-brand/40 transition-all duration-300 transform hover:scale-[1.02]">
 
-    <!-- En-tête avec accent ambre et titre -->
-    <div class="relative bg-surface-base border-t-2 border-brand px-6 py-5">
-      <!-- Badge de notation si disponible -->
-      <% if user_rating > 0 %>
-        <div class="absolute top-3 right-3 flex items-center bg-surface-raised/80 backdrop-blur-sm rounded-full px-2 py-1 text-xs font-medium text-ink-muted border border-surface-border/40">
-          <i class="fas fa-star text-brand mr-1"></i>
-          <%= user_rating %>
-        </div>
-      <% end %>
-
-      <div class="flex items-start justify-between gap-2 pr-10">
+    <%# ── En-tête ── %>
+    <div class="bg-surface-base border-t-2 border-brand px-5 py-4">
+      <div class="flex items-start justify-between gap-3">
         <div class="min-w-0">
-          <h3 class="font-bold text-ink-primary text-lg leading-tight group-hover:text-brand transition-colors truncate">
+          <h3 class="font-bold text-ink-primary text-base leading-tight group-hover:text-brand transition-colors truncate">
             <%= recipe.name %>
           </h3>
-          <!-- Nombre d'ingrédients -->
-          <div class="flex items-center mt-1.5 text-xs text-ink-subtle">
-            <i class="fas fa-list-ul mr-1.5"></i>
+          <div class="flex items-center gap-1.5 mt-1.5 text-xs text-ink-subtle">
+            <i class="fas fa-list-ul"></i>
             <%= t("views.components.recipe_card.ingredient_count", count: recipe.recipe_items.size) %>
           </div>
         </div>
-        <i class="fas fa-arrow-right text-ink-subtle group-hover:text-brand transition-colors flex-shrink-0 mt-1"></i>
+        <% if user_rating > 0 %>
+          <div class="flex items-center gap-1 shrink-0 text-xs text-brand/80 mt-0.5">
+            <i class="fas fa-star text-xs"></i>
+            <span class="font-medium"><%= user_rating %>/5</span>
+          </div>
+        <% end %>
       </div>
     </div>
 
-    <!-- Section nutritionnelle -->
-    <div class="px-6 py-4">
-      <!-- Calories principales -->
-      <div class="flex items-center justify-between mb-4">
-        <div class="text-center flex-1">
-          <div class="text-2xl font-bold text-brand mb-0.5">
-            <%= recipe.total_calories %>
-          </div>
-          <div class="text-xs text-ink-subtle font-medium">kcal</div>
+    <%# ── Nutrition ── %>
+    <div class="px-5 py-4">
+      <div class="flex items-center justify-center gap-6 mb-4">
+        <div class="text-center">
+          <div class="text-2xl font-bold text-brand leading-tight"><%= recipe.total_calories %></div>
+          <div class="text-xs text-ink-subtle">kcal</div>
         </div>
-        <div class="w-px h-8 bg-surface-border"></div>
-        <div class="text-center flex-1">
-          <div class="text-2xl font-bold text-ink-muted mb-0.5">
-            <%= recipe.total_weight %>
-          </div>
-          <div class="text-xs text-ink-subtle font-medium"><%= t("views.components.recipe_card.total_g") %></div>
+        <div class="w-px h-8 bg-surface-border/60 shrink-0"></div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-ink-muted leading-tight"><%= recipe.total_weight %></div>
+          <div class="text-xs text-ink-subtle"><%= t("views.components.recipe_card.total_g") %></div>
         </div>
       </div>
 
-      <!-- Macros détaillées -->
       <div class="grid grid-cols-3 gap-2">
         <div class="text-center p-2 bg-surface-hover/60 rounded-lg">
-          <i class="fas fa-dumbbell text-ink-subtle text-xs mb-1 block"></i>
           <div class="font-bold text-ink-primary text-sm"><%= recipe.total_proteins %></div>
-          <div class="text-xs text-ink-subtle"><%= t("views.components.recipe_card.proteins") %></div>
+          <div class="text-xs text-ink-subtle mt-0.5"><%= t("views.components.recipe_card.proteins") %></div>
         </div>
-
         <div class="text-center p-2 bg-surface-hover/60 rounded-lg">
-          <i class="fas fa-bread-slice text-ink-subtle text-xs mb-1 block"></i>
           <div class="font-bold text-ink-primary text-sm"><%= recipe.total_carbs %></div>
-          <div class="text-xs text-ink-subtle"><%= t("views.components.recipe_card.carbs") %></div>
+          <div class="text-xs text-ink-subtle mt-0.5"><%= t("views.components.recipe_card.carbs") %></div>
         </div>
-
         <div class="text-center p-2 bg-surface-hover/60 rounded-lg">
-          <i class="fas fa-oil-can text-ink-subtle text-xs mb-1 block"></i>
           <div class="font-bold text-ink-primary text-sm"><%= recipe.total_fats %></div>
-          <div class="text-xs text-ink-subtle"><%= t("views.components.recipe_card.fats") %></div>
+          <div class="text-xs text-ink-subtle mt-0.5"><%= t("views.components.recipe_card.fats") %></div>
         </div>
       </div>
     </div>
+
   </div>
 <% end %>

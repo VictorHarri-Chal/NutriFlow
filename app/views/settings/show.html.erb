@@ -1,41 +1,48 @@
 <% content_for :page_title, t("views.settings.show.page_title") %>
 
-<div class="max-w-6xl mx-auto mt-16 card overflow-hidden" data-controller="tabs" data-tabs-active-tab-value="<%= @active_tab %>">
-  <!-- Navigation par onglets -->
-  <div class="border-b border-surface-border/50">
-    <nav class="flex space-x-8 px-8 pt-6" aria-label="Onglets">
-      <a href="#general" class="<%= @active_tab == 'general' ? 'border-b-2 border-brand text-brand' : 'border-b-2 border-transparent text-ink-muted' %> py-4 px-1 text-sm font-medium hover:text-ink-primary hover:border-surface-border transition-colors" data-tab="general" data-tabs-target="tab" data-action="click->tabs#switchTab">
-        <i class="fas fa-cog mr-2"></i>
-        <%= t("views.settings.show.general") %>
-      </a>
-      <a href="#day_food_groups" class="<%= @active_tab == 'day_food_groups' ? 'border-b-2 border-brand text-brand' : 'border-b-2 border-transparent text-ink-muted' %> py-4 px-1 text-sm font-medium hover:text-ink-primary hover:border-surface-border transition-colors" data-tab="day_food_groups" data-tabs-target="tab" data-action="click->tabs#switchTab">
-        <i class="fas fa-utensils mr-2"></i>
-        <%= t("views.settings.show.food_groups") %>
-      </a>
-      <a href="#food_labels" class="<%= @active_tab == 'food_labels' ? 'border-b-2 border-brand text-brand' : 'border-b-2 border-transparent text-ink-muted' %> py-4 px-1 text-sm font-medium hover:text-ink-primary hover:border-surface-border transition-colors" data-tab="food_labels" data-tabs-target="tab" data-action="click->tabs#switchTab">
-        <i class="fas fa-tag mr-2"></i>
-        <%= t("views.settings.show.food_labels") %>
-      </a>
-      <a href="#security" class="<%= @active_tab == 'security' ? 'border-b-2 border-brand text-brand' : 'border-b-2 border-transparent text-ink-muted' %> py-4 px-1 text-sm font-medium hover:text-ink-primary hover:border-surface-border transition-colors" data-tab="security" data-tabs-target="tab" data-action="click->tabs#switchTab">
-        <i class="fas fa-shield-alt mr-2"></i>
-        <%= t("views.settings.show.security") %>
-      </a>
-    </nav>
-  </div>
+<div class="max-w-5xl mx-auto mt-16" data-controller="tabs" data-tabs-active-tab-value="<%= @active_tab %>">
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
 
-  <!-- Contenu des onglets -->
-  <div class="p-8">
-    <div id="general-tab" data-tabs-target="content" class="<%= @active_tab == 'general' ? '' : 'hidden' %>">
-      <%= render 'settings/general' %>
+    <%# ── Nav latérale ── %>
+    <div class="lg:col-span-1">
+      <div class="card p-2 space-y-0.5">
+        <% [
+          { key: "general",         icon: "fa-sliders",       label: t("views.settings.show.general") },
+          { key: "day_food_groups", icon: "fa-utensils",      label: t("views.settings.show.food_groups") },
+          { key: "food_labels",     icon: "fa-tag",           label: t("views.settings.show.food_labels") },
+          { key: "security",        icon: "fa-shield-halved", label: t("views.settings.show.security") }
+        ].each do |item| %>
+          <a href="#<%= item[:key] %>"
+             data-tab="<%= item[:key] %>"
+             data-tabs-target="tab"
+             data-action="click->tabs#switchTab"
+             data-active-classes="bg-brand/10 text-brand"
+             data-inactive-classes="text-ink-muted"
+             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors cursor-pointer hover:bg-surface-hover hover:text-ink-primary text-ink-muted">
+            <i class="fas <%= item[:icon] %> w-4 text-center text-sm"></i>
+            <%= item[:label] %>
+          </a>
+        <% end %>
+      </div>
     </div>
-    <div id="day_food_groups-tab" data-tabs-target="content" class="<%= @active_tab == 'day_food_groups' ? '' : 'hidden' %>">
-      <%= render 'settings/day_food_groups' %>
+
+    <%# ── Contenu ── %>
+    <div class="lg:col-span-3">
+      <div class="card p-8">
+        <div id="general-tab" data-tabs-target="content" class="<%= @active_tab == 'general' ? '' : 'hidden' %>">
+          <%= render 'settings/general' %>
+        </div>
+        <div id="day_food_groups-tab" data-tabs-target="content" class="<%= @active_tab == 'day_food_groups' ? '' : 'hidden' %>">
+          <%= render 'settings/day_food_groups' %>
+        </div>
+        <div id="food_labels-tab" data-tabs-target="content" class="<%= @active_tab == 'food_labels' ? '' : 'hidden' %>">
+          <%= render 'settings/food_labels' %>
+        </div>
+        <div id="security-tab" data-tabs-target="content" class="<%= @active_tab == 'security' ? '' : 'hidden' %>">
+          <%= render 'settings/security' %>
+        </div>
+      </div>
     </div>
-    <div id="food_labels-tab" data-tabs-target="content" class="<%= @active_tab == 'food_labels' ? '' : 'hidden' %>">
-      <%= render 'settings/food_labels' %>
-    </div>
-    <div id="security-tab" data-tabs-target="content" class="<%= @active_tab == 'security' ? '' : 'hidden' %>">
-      <%= render 'settings/security' %>
-    </div>
+
   </div>
 </div>

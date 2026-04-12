@@ -1,66 +1,173 @@
 <%= simple_form_for(recipe) do |f| %>
-  <div class="grid grid-cols-1 gap-4">
-    <%= f.input :name,
-                label: t("views.recipes.form.name"),
-                input_html: { class: "input-dark" },
-                label_html: { class: "label-dark" } %>
 
-    <%= f.input :instructions,
-                as: :text,
-                label: t("views.recipes.form.instructions"),
-                input_html: { rows: 4, class: "input-dark" },
-                label_html: { class: "label-dark" } %>
+  <%# ── Données aliments pour les combobox (lues par food_combobox_controller.js) ── %>
+  <script id="foods-data" type="application/json">
+    <%= current_user.foods.order(:name).select(:id, :name, :calories, :proteins, :carbs, :fats, :sugars).to_json.html_safe %>
+  </script>
 
-    <div class="mb-4" data-controller="nested-form" data-nested-form-wrapper-selector-value=".ingredients-container">
-      <div class="flex items-center justify-between mb-4">
-        <div>
-          <h2 class="text-lg font-semibold text-ink-primary"><%= t("views.recipes.form.ingredients") %></h2>
-        </div>
-        <button type="button"
-                class="btn-primary text-sm"
-                data-action="nested-form#add">
-          <i class="fas fa-plus"></i>
-          <%= t("views.recipes.form.add_ingredient") %>
-        </button>
-      </div>
+  <div data-controller="recipe-builder" data-action="input->recipe-builder#update">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
 
-      <!-- Container scrollable pour les ingrédients -->
-      <div class="ingredients-container max-h-96 overflow-y-auto bg-surface-base rounded-xl border border-surface-border/40 p-6 space-y-4">
-        <%= f.simple_fields_for :recipe_items do |item_fields| %>
-          <%= render "item_fields", f: item_fields %>
-        <% end %>
+      <%# ══════════════════ COLONNE GAUCHE ══════════════════ %>
+      <div class="lg:col-span-3 space-y-6">
 
-        <!-- Placeholder quand aucun ingrédient -->
-        <div class="empty-state text-center py-8" data-nested-form-target="emptyState">
-          <div class="w-16 h-16 mx-auto mb-4 bg-surface-hover rounded-full flex items-center justify-center">
-            <i class="fas fa-bowl-food text-ink-subtle text-xl"></i>
-          </div>
-          <h3 class="text-lg font-medium text-ink-primary mb-2"><%= t("views.recipes.form.no_ingredients") %></h3>
-          <p class="text-ink-muted mb-4"><%= t("views.recipes.form.add_ingredient_hint") %></p>
+        <%# Nom %>
+        <%= f.input :name,
+                    label: t("views.recipes.form.name"),
+                    input_html: { class: "input-dark", autofocus: true, autocomplete: "off" },
+                    label_html: { class: "label-dark" } %>
+
+        <%# Instructions — accordéon collapsible %>
+        <div data-controller="collapsible">
           <button type="button"
-                  class="btn-primary text-sm"
-                  data-action="nested-form#add">
-            <i class="fas fa-plus"></i>
-            <%= t("views.recipes.form.add_first_ingredient") %>
+                  class="flex items-center justify-between w-full group"
+                  data-action="click->collapsible#toggle">
+            <span class="label-dark mb-0 group-hover:text-ink-primary transition-colors">
+              <%= t("views.recipes.form.instructions") %>
+              <span class="text-ink-subtle font-normal ml-1 text-xs">(<%= t("views.recipes.form.instructions_optional") %>)</span>
+            </span>
+            <i class="fas fa-chevron-down text-xs text-ink-subtle transition-transform duration-200 group-hover:text-ink-muted"
+               data-collapsible-target="icon"></i>
           </button>
+
+          <div class="hidden mt-2" data-collapsible-target="content">
+            <%= f.input :instructions,
+                        as: :text,
+                        label: false,
+                        input_html: {
+                          rows: 4,
+                          class: "input-dark resize-none text-sm",
+                          placeholder: t("views.recipes.form.instructions_placeholder")
+                        } %>
+          </div>
         </div>
 
-        <!-- Template pour les nouveaux ingrédients -->
-        <template data-nested-form-target="template">
-          <%= f.simple_fields_for :recipe_items, recipe.recipe_items.build, child_index: "NEW_RECORD" do |item_fields| %>
-            <%= render "item_fields", f: item_fields %>
-          <% end %>
-        </template>
-      </div>
-    </div>
-  </div>
+        <%# ── Ingrédients ── %>
+        <div data-controller="nested-form" data-nested-form-wrapper-selector-value=".ingredients-container">
 
-  <div class="flex justify-center gap-4 mt-8">
-    <% if recipe.persisted? %>
-      <%= link_to t("shared.cancel"), recipe_path(recipe), class: "btn-ghost" %>
-    <% else %>
-      <%= link_to t("shared.cancel"), recipes_path, class: "btn-ghost" %>
-    <% end %>
-    <%= f.button :submit, t("shared.save"), class: "btn-primary" %>
-  </div>
+          <h2 class="text-base font-semibold text-ink-primary mb-3"><%= t("views.recipes.form.ingredients") %></h2>
+
+          <%# En-têtes colonnes — masqués si liste vide %>
+          <div class="flex items-center gap-3 px-1 pb-2 border-b border-surface-border/40 mb-1"
+               data-nested-form-target="headerRow">
+            <div class="flex-1 text-xs text-ink-subtle font-medium uppercase tracking-wider"><%= t("views.recipes.item_fields.food_col") %></div>
+            <div class="w-28 shrink-0 text-xs text-ink-subtle font-medium uppercase tracking-wider text-center"><%= t("views.recipes.item_fields.quantity_col") %></div>
+            <div class="w-8 shrink-0"></div>
+          </div>
+
+          <%# Liste des ingrédients %>
+          <div class="ingredients-container divide-y divide-surface-border/30">
+            <%= f.simple_fields_for :recipe_items do |item_fields| %>
+              <%= render "item_fields", f: item_fields %>
+            <% end %>
+
+            <%# Empty state %>
+            <div class="text-center py-10" data-nested-form-target="emptyState">
+              <div class="w-12 h-12 mx-auto mb-3 bg-surface-hover rounded-full flex items-center justify-center">
+                <i class="fas fa-bowl-food text-ink-subtle"></i>
+              </div>
+              <p class="text-sm text-ink-muted mb-3"><%= t("views.recipes.form.add_ingredient_hint") %></p>
+              <button type="button"
+                      class="btn-primary text-sm"
+                      data-action="nested-form#add">
+                <i class="fas fa-plus"></i>
+                <%= t("views.recipes.form.add_first_ingredient") %>
+              </button>
+            </div>
+          </div>
+
+          <%# Bouton ajouter — discret, en bas de liste %>
+          <button type="button"
+                  class="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm text-ink-subtle hover:text-brand border border-dashed border-surface-border/50 hover:border-brand/50 rounded-lg hover:bg-brand/5 transition-colors"
+                  data-action="nested-form#add"
+                  data-nested-form-target="addButton">
+            <i class="fas fa-plus text-xs"></i>
+            <%= t("views.recipes.form.add_ingredient") %>
+          </button>
+
+          <%# Template pour les nouveaux ingrédients %>
+          <template data-nested-form-target="template">
+            <%= f.simple_fields_for :recipe_items, recipe.recipe_items.build, child_index: "NEW_RECORD" do |item_fields| %>
+              <%= render "item_fields", f: item_fields %>
+            <% end %>
+          </template>
+        </div>
+
+      </div><%# fin col gauche %>
+
+      <%# ══════════════════ COLONNE DROITE — Récap live ══════════════════ %>
+      <div class="lg:col-span-2">
+        <div class="sticky top-8 card p-5 space-y-4">
+
+          <h3 class="text-sm font-semibold text-ink-subtle uppercase tracking-wide flex items-center gap-2">
+            <i class="fas fa-chart-pie text-brand text-xs"></i>
+            <%= t("views.recipes.form.live_summary") %>
+          </h3>
+
+          <%# État vide %>
+          <div data-recipe-builder-target="emptyPanel" class="text-center py-6">
+            <i class="fas fa-chart-pie text-surface-border text-3xl mb-3 block"></i>
+            <p class="text-xs text-ink-subtle leading-relaxed"><%= t("views.recipes.form.summary_empty_hint") %></p>
+          </div>
+
+          <%# Stats (cachées au départ) %>
+          <div data-recipe-builder-target="statsPanel" class="hidden space-y-4">
+
+            <%# Calories principale %>
+            <div class="text-center py-2 bg-surface-base rounded-lg border border-surface-border/40">
+              <div class="text-3xl font-bold text-brand" data-recipe-builder-target="totalCalories">0</div>
+              <div class="text-xs text-ink-subtle mt-0.5">kcal</div>
+            </div>
+
+            <%# Macros %>
+            <div class="grid grid-cols-3 gap-2">
+              <div class="text-center p-2 bg-surface-base rounded-lg border border-surface-border/30">
+                <div class="text-sm font-bold text-ink-primary" data-recipe-builder-target="totalProteins">0</div>
+                <div class="text-xs text-ink-subtle mt-0.5"><%= t("views.recipes.show.proteins_short") %></div>
+              </div>
+              <div class="text-center p-2 bg-surface-base rounded-lg border border-surface-border/30">
+                <div class="text-sm font-bold text-ink-primary" data-recipe-builder-target="totalCarbs">0</div>
+                <div class="text-xs text-ink-subtle mt-0.5"><%= t("views.recipes.show.carbs_short") %></div>
+              </div>
+              <div class="text-center p-2 bg-surface-base rounded-lg border border-surface-border/30">
+                <div class="text-sm font-bold text-ink-primary" data-recipe-builder-target="totalFats">0</div>
+                <div class="text-xs text-ink-subtle mt-0.5"><%= t("views.recipes.show.fats_short") %></div>
+              </div>
+            </div>
+
+            <%# Poids total %>
+            <div class="flex items-center justify-between text-sm border-t border-surface-border/40 pt-3">
+              <span class="text-ink-subtle"><%= t("views.recipes.show.total_weight_short") %></span>
+              <span class="font-semibold text-ink-primary">
+                <span data-recipe-builder-target="totalWeight">0</span> g
+              </span>
+            </div>
+
+            <%# Détail par ingrédient %>
+            <div class="border-t border-surface-border/40 pt-3">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs text-ink-subtle font-medium uppercase tracking-wide"><%= t("views.recipes.form.ingredients") %></span>
+                <span class="text-xs font-semibold text-ink-muted" data-recipe-builder-target="ingredientCount">0</span>
+              </div>
+              <div data-recipe-builder-target="ingredientList" class="space-y-0"></div>
+            </div>
+
+          </div><%# fin statsPanel %>
+
+        </div>
+      </div><%# fin col droite %>
+
+    </div>
+
+    <%# ── Actions ── %>
+    <div class="flex justify-center gap-4 mt-10 pt-6 border-t border-surface-border/40">
+      <% if recipe.persisted? %>
+        <%= link_to t("shared.cancel"), recipe_path(recipe), class: "btn-ghost" %>
+      <% else %>
+        <%= link_to t("shared.cancel"), recipes_path, class: "btn-ghost" %>
+      <% end %>
+      <%= f.button :submit, t("shared.save"), class: "btn-primary px-8" %>
+    </div>
+
+  </div><%# fin recipe-builder %>
 <% end %>
