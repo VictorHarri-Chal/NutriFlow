@@ -1,4 +1,12 @@
 fr:
+  pagination_component:
+    results: "Résultats"
+    to: "à"
+    of: "sur"
+    all_results: "Tous les résultats affichés"
+    full_result_option_title: "Afficher tous les résultats"
+    reload_with_pagination: "Retour à la pagination"
+
   controllers:
     settings:
       locale_updated: "Langue mise à jour avec succès."
@@ -171,6 +179,8 @@ fr:
       sort_name: "A → Z"
       sort_newest: "Plus récent"
       sort_oldest: "Plus ancien"
+      sort_calories: "Calories ↓"
+      sort_proteins: "Protéines ↓"
       new:
         title: "Nouvelle recette"
       edit:
@@ -209,6 +219,7 @@ fr:
       item_fields:
         food: "Aliment *"
         select_blank: "— Sélectionner —"
+        search_food: "Rechercher un aliment..."
         quantity: "Quantité (g) *"
         remove: "Supprimer"
 
@@ -216,6 +227,9 @@ fr:
       show:
         title: "Mon Profil"
         edit_link: "Modifier le profil"
+        incomplete_hint: "Votre profil est incomplet. Renseignez votre poids, taille et âge pour calculer vos besoins nutritionnels."
+        complete_cta: "Compléter le profil"
+        calorie_needs_title: "Mes besoins caloriques"
         personal_info: "Informations Personnelles"
         name: "Nom"
         email: "Email"
@@ -370,14 +384,6 @@ fr:
       not_calculable_hint: "Pour calculer vos besoins caloriques journaliers, veuillez renseigner votre âge, votre taille et votre poids dans votre profil."
       complete_profile: "Compléter le profil"
 
-    pagination_component:
-      results: "Résultats"
-      to: "à"
-      of: "sur"
-      all_results: "Tous les résultats affichés"
-      full_result_option_title: "Afficher tous les résultats"
-      reload_with_pagination: "Revenir à la pagination"
-
     components:
       recipe_card:
         ingredient_count:
@@ -395,15 +401,6 @@ fr:
         ingredients_count: "Ingrédients"
         total_weight: "Poids total"
         kcal_per_100g: "Kcal / 100 g"
-      recipe_comments:
-        title: "Commentaires"
-        add_comment: "Ajouter un commentaire"
-        placeholder: "Vos notes, modifications, conseils..."
-        add_btn: "Ajouter"
-        you: "Vous"
-        delete_confirm: "Supprimer ce commentaire ?"
-        no_comments: "Aucun commentaire pour le moment"
-        add_first_comment: "Ajoutez votre premier commentaire ci-dessus pour commencer"
       recipe_rating_form:
         title: "Journal"
         delete_confirm: "Effacer cette note ?"

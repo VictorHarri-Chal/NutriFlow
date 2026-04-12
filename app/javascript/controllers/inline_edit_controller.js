@@ -23,7 +23,7 @@ export default class extends Controller {
   blur() {
     // Delay allows requestSubmit() to fire before blur hides the form
     setTimeout(() => {
-      if (!this.formTarget.classList.contains("hidden")) {
+      if (this.hasFormTarget && !this.formTarget.classList.contains("hidden")) {
         this._submit()
       }
     }, 200)

@@ -17,7 +17,7 @@
 
     <div class="form-group">
       <label class="label-dark block mb-3"><%= t("views.foods.form.food_labels") %></label>
-      <div class="grid grid-cols-2 gap-3 p-4 border border-surface-border rounded-lg bg-surface-base">
+      <div class="card-section grid grid-cols-2 gap-3 p-4">
         <% @food_labels.each do |label| %>
           <label class="flex items-center space-x-2 cursor-pointer hover:bg-surface-hover p-2 rounded transition">
             <%= check_box_tag "food[food_label_ids][]", label.id, food.food_labels.include?(label),

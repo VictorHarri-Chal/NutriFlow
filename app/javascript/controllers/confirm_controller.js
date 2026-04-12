@@ -49,7 +49,8 @@ export default class extends Controller {
       }
     })
 
-    // Ajouter l'écouteur pour Escape
+    // Ajouter l'écouteur pour Escape (supprimer d'abord pour éviter les doublons)
+    document.removeEventListener('keydown', this.handleEscape)
     document.addEventListener('keydown', this.handleEscape)
   }
 

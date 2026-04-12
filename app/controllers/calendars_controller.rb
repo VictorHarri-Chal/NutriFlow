@@ -1,5 +1,6 @@
 class CalendarsController < ApplicationController
   include CalendarData
+  include DateParseable
 
   def index
     selected_date = parse_date(params[:date])
@@ -12,7 +13,10 @@ class CalendarsController < ApplicationController
     target_date = parse_date(params[:date])
     yesterday   = target_date - 1.day
 
-    yesterday_day = current_user.days.find_by(date: yesterday)
+    yesterday_day = current_user.days
+                                .includes(day_foods: :food,
+                                          day_recipes: { recipe: { recipe_items: :food } })
+                                .find_by(date: yesterday)
     unless yesterday_day
       return redirect_to calendars_path(date: target_date.to_s),
                          alert: t("views.calendars.copy_nothing_to_copy")
@@ -46,10 +50,4 @@ class CalendarsController < ApplicationController
   end
 
   private
-
-  def parse_date(date_param)
-    date_param.present? ? Date.parse(date_param) : Date.current
-  rescue ArgumentError, Date::Error
-    Date.current
-  end
 end

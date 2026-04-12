@@ -6,11 +6,14 @@ class RecipesController < ApplicationController
 
     if params[:query].present?
       @recipes = @recipes.search_by_name(params[:query])
+      @pagy, @recipes = pagy(@recipes, items: 12)
+    elsif %w[calories proteins].include?(params[:sort])
+      sorted = @recipes.to_a.sort_by { |r| r.public_send(:"total_#{params[:sort]}") }.reverse
+      @pagy, @recipes = pagy_array(sorted, items: 12)
     else
       @recipes = @recipes.order(sort_order)
+      @pagy, @recipes = pagy(@recipes, items: 12)
     end
-
-    @pagy, @recipes = pagy(@recipes, items: 12)
   end
 
   def show
@@ -69,7 +72,7 @@ class RecipesController < ApplicationController
   private
 
   def set_recipe
-    @recipe = current_user.recipes.includes(recipe_items: :food, recipe_ratings: [], recipe_comments: []).find(params[:id])
+    @recipe = current_user.recipes.includes(recipe_items: :food, recipe_ratings: []).find(params[:id])
   end
 
   def sort_order

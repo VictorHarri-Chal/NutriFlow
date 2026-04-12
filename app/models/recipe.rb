@@ -5,7 +5,6 @@ class Recipe < ApplicationRecord
   has_many :recipe_items, dependent: :destroy
   has_many :foods, through: :recipe_items
   has_many :recipe_ratings, dependent: :destroy
-  has_many :recipe_comments, dependent: :destroy
 
   accepts_nested_attributes_for :recipe_items, allow_destroy: true, reject_if: :all_blank
 

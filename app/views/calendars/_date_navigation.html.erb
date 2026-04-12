@@ -31,7 +31,7 @@
 
     <% unless selected_date == Date.current %>
       <%= link_to calendars_path(date: Date.current.strftime('%Y-%m-%d')),
-                  class: "w-8 h-8 flex items-center justify-center rounded-xl text-ink-primary bg-surface-raised border border-surface-border/50 hover:bg-white/10 transition-all",
+                  class: "w-8 h-8 flex items-center justify-center rounded-xl text-ink-primary bg-surface-raised border border-surface-border/50 hover:bg-surface-hover transition-all",
                   data: { turbo: false },
                   title: t("views.calendars.today") do %>
         <i class="fas fa-calendar-day text-xs"></i>
@@ -41,7 +41,7 @@
     <%= button_to copy_yesterday_calendars_path,
           params: { date: selected_date.to_s },
           method: :post,
-          class: "w-8 h-8 flex items-center justify-center rounded-xl text-ink-primary bg-surface-raised border border-surface-border/50 hover:bg-white/10 transition-all",
+          class: "w-8 h-8 flex items-center justify-center rounded-xl text-ink-primary bg-surface-raised border border-surface-border/50 hover:bg-surface-hover transition-all",
           form: { class: "contents" },
           title: t("views.calendars.copy_yesterday_title") do %>
       <i class="fas fa-copy text-xs"></i>

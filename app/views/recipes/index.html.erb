@@ -43,7 +43,7 @@
   <% unless params[:query].present? %>
     <div class="flex items-center gap-2 mb-6">
       <span class="text-xs text-ink-subtle font-medium mr-1"><%= t("views.recipes.sort_label") %></span>
-      <% [["name", t("views.recipes.sort_name")], ["newest", t("views.recipes.sort_newest")], ["oldest", t("views.recipes.sort_oldest")]].each do |key, label| %>
+      <% [["name", t("views.recipes.sort_name")], ["newest", t("views.recipes.sort_newest")], ["oldest", t("views.recipes.sort_oldest")], ["calories", t("views.recipes.sort_calories")], ["proteins", t("views.recipes.sort_proteins")]].each do |key, label| %>
         <% active = (params[:sort] || "name") == key %>
         <%= link_to recipes_path(sort: key, query: params[:query]),
               class: "inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border transition-colors #{active ? 'bg-brand text-zinc-900 border-brand' : 'bg-surface-hover text-ink-muted border-surface-border hover:border-brand/50'}" do %>

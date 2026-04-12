@@ -9,6 +9,19 @@
     <% end %>
   </div>
 
+  <% unless @profile.weight.present? && @profile.height.present? && @profile.age.present? %>
+    <div class="bg-status-warning_dim/20 border border-status-warning/30 rounded-lg p-4 mb-6 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <i class="fas fa-circle-info text-status-warning"></i>
+        <p class="text-sm text-ink-muted"><%= t("views.profiles.show.incomplete_hint") %></p>
+      </div>
+      <%= link_to edit_profile_path, class: "btn-primary shrink-0 text-sm" do %>
+        <i class="fas fa-pen"></i>
+        <%= t("views.profiles.show.complete_cta") %>
+      <% end %>
+    </div>
+  <% end %>
+
   <!-- Section Informations Personnelles -->
   <div class="bg-surface-base rounded-lg border border-surface-border/40 p-6 mb-6">
     <div class="flex items-center mb-4">
@@ -89,4 +102,51 @@
       </div>
     </div>
   </div>
+
+  <% if @profile.weight.present? && @profile.height.present? && @profile.age.present? %>
+    <div class="bg-surface-base rounded-lg border border-surface-border/40 p-6 mt-6">
+      <h2 class="text-xl font-semibold text-ink-primary mb-4"><%= t("views.profiles.show.calorie_needs_title") %></h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="<%= @profile.goal&.weight_loss? ? 'bg-brand/10 border-2 border-brand' : 'bg-surface-raised border border-surface-border/50' %> p-4 rounded-lg transition-all duration-200">
+          <% if @profile.goal&.weight_loss? %>
+            <div class="mb-2"><span class="bg-brand text-zinc-900 text-xs font-bold px-2 py-0.5 rounded-full"><%= t("views.daily_calorie_requirements.your_goal") %></span></div>
+          <% end %>
+          <div class="text-sm text-ink-subtle font-medium"><%= t("views.daily_calorie_requirements.weight_loss") %></div>
+          <div class="text-2xl font-bold text-ink-primary mt-1"><%= @calories_weight_loss %> <span class="text-sm font-normal text-ink-subtle">kcal</span></div>
+        </div>
+        <div class="<%= @profile.goal&.maintenance? ? 'bg-brand/10 border-2 border-brand' : 'bg-surface-raised border border-surface-border/50' %> p-4 rounded-lg transition-all duration-200">
+          <% if @profile.goal&.maintenance? %>
+            <div class="mb-2"><span class="bg-brand text-zinc-900 text-xs font-bold px-2 py-0.5 rounded-full"><%= t("views.daily_calorie_requirements.your_goal") %></span></div>
+          <% end %>
+          <div class="text-sm text-ink-subtle font-medium"><%= t("views.daily_calorie_requirements.maintenance") %></div>
+          <div class="text-2xl font-bold text-ink-primary mt-1"><%= @calories_maintenance %> <span class="text-sm font-normal text-ink-subtle">kcal</span></div>
+        </div>
+        <div class="<%= @profile.goal&.muscle_gain? ? 'bg-brand/10 border-2 border-brand' : 'bg-surface-raised border border-surface-border/50' %> p-4 rounded-lg transition-all duration-200">
+          <% if @profile.goal&.muscle_gain? %>
+            <div class="mb-2"><span class="bg-brand text-zinc-900 text-xs font-bold px-2 py-0.5 rounded-full"><%= t("views.daily_calorie_requirements.your_goal") %></span></div>
+          <% end %>
+          <div class="text-sm text-ink-subtle font-medium"><%= t("views.daily_calorie_requirements.muscle_gain") %></div>
+          <div class="text-2xl font-bold text-ink-primary mt-1"><%= @calories_muscle_gain %> <span class="text-sm font-normal text-ink-subtle">kcal</span></div>
+        </div>
+      </div>
+
+      <% if @protein_goal && @fats_goal && @carbs_goal %>
+        <h3 class="text-sm font-semibold text-ink-subtle uppercase tracking-wide mb-3"><%= t("views.daily_calorie_requirements.macro_goals_title") %></h3>
+        <div class="grid grid-cols-3 gap-4">
+          <div class="macro-card">
+            <div class="text-sm text-ink-subtle font-medium mb-1"><%= t("views.daily_calorie_requirements.proteins") %></div>
+            <div class="text-xl font-bold text-ink-primary"><%= @protein_goal.round %> <span class="text-xs font-normal text-ink-subtle">g</span></div>
+          </div>
+          <div class="macro-card">
+            <div class="text-sm text-ink-subtle font-medium mb-1"><%= t("views.daily_calorie_requirements.fats") %></div>
+            <div class="text-xl font-bold text-ink-primary"><%= @fats_goal.round %> <span class="text-xs font-normal text-ink-subtle">g</span></div>
+          </div>
+          <div class="macro-card">
+            <div class="text-sm text-ink-subtle font-medium mb-1"><%= t("views.daily_calorie_requirements.carbs") %></div>
+            <div class="text-xl font-bold text-ink-primary"><%= @carbs_goal %> <span class="text-xs font-normal text-ink-subtle">g</span></div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
 </div>
