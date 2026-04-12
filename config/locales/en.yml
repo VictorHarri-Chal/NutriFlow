@@ -31,6 +31,15 @@ en:
       duplicate_error: "Unable to duplicate this recipe."
 
   activerecord:
+    attributes:
+      food:
+        name: "Name"
+        brand: "Brand"
+        calories: "Calories"
+        proteins: "Proteins"
+        carbs: "Carbohydrates"
+        fats: "Fats"
+        sugars: "Sugars"
     errors:
       models:
         recipe:
@@ -122,6 +131,12 @@ en:
       search_placeholder: "Search for a food..."
       labels_col: "Labels"
       usages_col: "Uses"
+      table:
+        name_col: "Food"
+        calories_col: "Kcal"
+        proteins_col: "Prot. (g)"
+        carbs_col: "Carbs (g)"
+        fats_col: "Fats (g)"
       empty_state:
         title: "No foods yet"
         description: "Start by adding your first food to your bank."
@@ -139,8 +154,13 @@ en:
       duplicate: "Duplicate"
       form:
         macros_hint: "Enter the food macros per 100g"
-        food_labels: "Food labels"
+        macros_section: "Nutritional values"
+        per_100g: "per 100g"
+        food_labels: "Labels"
         no_labels: "No food labels"
+        preview_title: "Preview"
+        preview_empty_hint: "Fill in the nutritional values to see the preview."
+        of_which_sugars: "of which sugars:"
         create_labels_hint: "Create food labels in settings"
 
     day_foods:
@@ -150,6 +170,8 @@ en:
         edit_day_food: "Edit food"
       form:
         select_food: "Select a food"
+        food_label: "Food"
+        search_food: "Search a food..."
         select_group: "Select a group"
         food_group: "Meal group"
         cancel: "Cancel"
@@ -161,6 +183,8 @@ en:
         title: "Edit dish"
       form:
         select_recipe: "Select a recipe"
+        recipe_label: "Recipe"
+        search_recipe: "Search a recipe..."
         use_recipe_quantity: "Use the total recipe quantity"
         food_group: "Meal group"
 
@@ -211,13 +235,19 @@ en:
       form:
         name: "Name *"
         instructions: "Instructions"
+        instructions_optional: "optional"
+        instructions_placeholder: "Steps, cooking time, tips..."
         ingredients: "Ingredients"
         add_ingredient: "Add an ingredient"
         no_ingredients: "No ingredients"
         add_ingredient_hint: "Add at least one ingredient to your recipe"
         add_first_ingredient: "Add the first ingredient"
+        live_summary: "Nutritional summary"
+        summary_empty_hint: "Add ingredients to see the nutritional breakdown in real time"
       item_fields:
         food: "Food *"
+        food_col: "Food"
+        quantity_col: "Quantity"
         select_blank: "— Select —"
         search_food: "Search for a food..."
         quantity: "Quantity (g) *"
@@ -230,7 +260,9 @@ en:
         incomplete_hint: "Your profile is incomplete. Enter your weight, height and age to calculate your nutritional needs."
         complete_cta: "Complete profile"
         calorie_needs_title: "My calorie needs"
-        personal_info: "Personal Information"
+        personal_info: "Personal information"
+        physical_data: "Physical data"
+        lifestyle_section: "Lifestyle"
         name: "Name"
         email: "Email"
         age: "Age"
@@ -240,13 +272,21 @@ en:
         activity_level: "Activity level"
         goal: "Goal"
         age_years: "%{age} years old"
+        bmi: "BMI"
+        bmi_underweight: "Underweight"
+        bmi_normal: "Normal weight"
+        bmi_overweight: "Overweight"
+        bmi_obese: "Obese"
       edit:
-        title: "Edit Profile"
+        title: "Edit profile"
         name: "Name"
         age: "Age"
-        weight: "Weight (kg)"
-        height: "Height (cm)"
+        weight: "Weight"
+        height: "Height"
         gender: "Gender"
+        gender_male: "Male"
+        gender_female: "Female"
+        gender_other: "Other"
         activity_level: "Activity level"
         goal: "Goal"
 
@@ -259,11 +299,13 @@ en:
         security: "Security"
       general:
         title: "General settings"
-        language: "Language"
-        language_hint: "The language will be applied immediately after saving."
+        description: "Customize your NutriFlow experience."
+        language: "Interface language"
+        language_hint: "The language will be applied immediately."
         save: "Save"
       security:
         title: "Account security"
+        description: "Manage your password and account access."
         change_password: "Change password"
         current_password: "Current password"
         current_password_placeholder: "Enter your current password"
@@ -282,6 +324,7 @@ en:
         delete_account_button: "Delete account"
       food_groups:
         title: "Food groups"
+        description: "Organize your meals by time of day."
         group_name_label: "Group name"
         group_name_placeholder: "E.g.: Breakfast, Lunch, Dinner..."
         create: "Create group"
@@ -294,6 +337,7 @@ en:
         delete_confirm: "Are you sure you want to delete this group? All associated meals will be moved to 'Ungrouped foods'."
       food_labels:
         title: "Food labels"
+        description: "Categorize your foods with custom tags."
         label_name_label: "Label name"
         label_name_placeholder: "E.g.: Proteins, Carbs, Fats, Organic, etc."
         create: "Create label"

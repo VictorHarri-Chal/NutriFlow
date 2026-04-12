@@ -1,85 +1,75 @@
-<h2 class="text-xl font-semibold text-ink-primary mb-6"><%= t("views.settings.food_labels.title") %></h2>
+<div class="space-y-6">
 
-<!-- Formulaire pour créer un nouveau label -->
-<div class="bg-surface-base border border-surface-border/40 p-6 rounded-lg mb-6" data-controller="form-validation">
-  <%= simple_form_for @food_label, url: food_labels_path, html: { class: "flex items-end gap-4" } do |f| %>
-    <div class="flex-1">
-      <%= f.input :name,
-          label: t("views.settings.food_labels.label_name_label"),
-          placeholder: t("views.settings.food_labels.label_name_placeholder"),
-          wrapper_html: { class: "mb-0" },
-          input_html: {
-            class: "input-dark",
-            data: {
-              form_validation_target: "input",
-              action: "input->form-validation#input keyup->form-validation#keyup"
-            }
-          } %>
-    </div>
-    <div>
+  <div>
+    <h2 class="text-base font-semibold text-ink-primary flex items-center gap-2">
+      <i class="fas fa-tag text-brand text-sm"></i>
+      <%= t("views.settings.food_labels.title") %>
+    </h2>
+    <p class="text-sm text-ink-subtle mt-1"><%= t("views.settings.food_labels.description") %></p>
+  </div>
+
+  <%# ── Formulaire d'ajout ── %>
+  <div class="border-t border-surface-border/40 pt-6" data-controller="form-validation">
+    <%= simple_form_for @food_label, url: food_labels_path, html: { class: "flex items-end gap-3" } do |f| %>
+      <div class="flex-1">
+        <%= f.input :name,
+            label: t("views.settings.food_labels.label_name_label"),
+            placeholder: t("views.settings.food_labels.label_name_placeholder"),
+            wrapper_html: { class: "mb-0" },
+            label_html: { class: "label-dark" },
+            input_html: {
+              class: "input-dark",
+              data: {
+                form_validation_target: "input",
+                action: "input->form-validation#input keyup->form-validation#keyup"
+              }
+            } %>
+      </div>
       <%= f.submit t("views.settings.food_labels.create"),
-          class: "btn-primary cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
+          class: "btn-primary cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shrink-0",
           data: { form_validation_target: "submit" },
           disabled: true %>
-    </div>
-  <% end %>
-</div>
+    <% end %>
+  </div>
 
-<!-- Tableau des labels existants -->
-<div class="bg-surface-raised border border-surface-border/50 rounded-lg overflow-hidden">
-  <% if @food_labels.any? %>
-    <table class="min-w-full table-dark">
-      <thead>
-        <tr>
-          <th class="text-left"><%= t("views.settings.food_labels.name_col") %></th>
-          <th class="text-center"><%= t("views.settings.food_labels.foods_col") %></th>
-          <th class="text-right"><%= t("shared.actions") %></th>
-        </tr>
-      </thead>
-      <tbody>
+  <%# ── Liste ── %>
+  <div>
+    <% if @food_labels.any? %>
+      <div class="divide-y divide-surface-border/30">
         <% @food_labels.each do |label| %>
-          <tr>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="flex items-center">
-                <i class="fas fa-tag text-brand mr-3"></i>
+          <div class="flex items-center justify-between py-3 group">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-surface-hover flex items-center justify-center shrink-0">
+                <i class="fas fa-tag text-xs text-ink-subtle"></i>
+              </div>
+              <div>
                 <div class="text-sm font-medium text-ink-primary"><%= label.name %></div>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="flex items-center justify-center">
                 <% food_count = label.foods.count %>
-                <% if food_count == 0 %>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-hover text-ink-subtle">
-                    <i class="fas fa-circle mr-1 text-xs"></i>
-                    <%= t("views.settings.food_groups.no_food") %>
-                  </span>
-                <% else %>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-status-success_dim/30 text-status-success border border-status-success/20">
-                    <i class="fas fa-check-circle mr-1 text-xs"></i>
-                    <%= t("shared.food_count", count: food_count) %>
-                  </span>
-                <% end %>
+                <div class="text-xs text-ink-subtle mt-0.5">
+                  <%= food_count > 0 ? t("shared.food_count", count: food_count) : t("views.settings.food_groups.no_food") %>
+                </div>
               </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <%= delete_link_with_confirm(food_label_path(label),
-                                          confirm: t("views.settings.food_labels.delete_confirm"),
-                                          icon_class: "fas fa-trash mr-2",
-                                          class: "text-status-danger hover:text-red-400 inline-flex items-center transition-colors",
-                                          title: t("shared.delete")) %>
-            </td>
-          </tr>
+            </div>
+            <div class="opacity-0 group-hover:opacity-100 transition-opacity">
+              <%= delete_link_with_confirm(
+                    food_label_path(label),
+                    confirm: t("views.settings.food_labels.delete_confirm"),
+                    icon_class: "fas fa-trash text-sm",
+                    title: t("shared.delete"),
+                    class: "inline-flex items-center justify-center w-8 h-8 rounded-lg text-ink-subtle hover:text-status-danger hover:bg-status-danger_dim/20 transition-colors") %>
+            </div>
+          </div>
         <% end %>
-      </tbody>
-    </table>
-  <% else %>
-    <div class="text-center py-12">
-      <i class="fas fa-tag text-ink-subtle text-4xl mb-4"></i>
-      <h3 class="text-lg font-medium text-ink-primary mb-2"><%= t("views.settings.food_labels.no_labels") %></h3>
-      <p class="text-ink-muted mb-4"><%= t("views.settings.food_labels.no_labels_hint") %></p>
-      <p class="text-sm text-ink-subtle">
-        <%= t("views.settings.food_labels.explanation") %>
-      </p>
-    </div>
-  <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-12 border border-dashed border-surface-border/50 rounded-xl">
+        <div class="w-12 h-12 mx-auto mb-3 bg-surface-hover rounded-full flex items-center justify-center">
+          <i class="fas fa-tag text-ink-subtle"></i>
+        </div>
+        <p class="text-sm font-medium text-ink-primary mb-1"><%= t("views.settings.food_labels.no_labels") %></p>
+        <p class="text-xs text-ink-subtle"><%= t("views.settings.food_labels.no_labels_hint") %></p>
+      </div>
+    <% end %>
+  </div>
+
 </div>

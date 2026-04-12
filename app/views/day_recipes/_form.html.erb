@@ -1,58 +1,98 @@
-<%= simple_form_for([day, day_recipe]) do |f| %>
-  <div class="grid grid-cols-1 gap-4">
-    <%= f.association :recipe,
-        collection: @recipes,
-        prompt: t("views.day_recipes.form.select_recipe"),
-        disabled: !day_recipe.new_record?,
-        input_html: {
-          class: "input-dark select-chevron appearance-none pr-10"
-        },
-        label_html: { class: "label-dark" } %>
+<script id="recipes-data" type="application/json">
+  <%= @recipes.map { |r|
+    { id: r.id, name: r.name, calories: r.total_calories.round,
+      proteins: r.total_proteins.round(1), carbs: r.total_carbs.round(1), fats: r.total_fats.round(1) }
+  }.to_json.html_safe %>
+</script>
 
-    <% if @day_food_groups.any? %>
-      <%= f.association :day_food_group,
-          collection: @day_food_groups,
-          prompt: t("views.day_foods.form.select_group"),
-          input_html: {
-            class: "input-dark select-chevron appearance-none pr-10"
-          },
-          label_html: { class: "label-dark" },
-          label: t("views.day_recipes.form.food_group") %>
-    <% else %>
-      <div class="form-group">
-        <label class="label-dark block mb-3"><%= t("views.day_recipes.form.food_group") %></label>
-        <div class="text-center py-6 px-4 border border-surface-border rounded-lg bg-surface-base">
-          <div class="w-12 h-12 mx-auto mb-3 bg-surface-hover rounded-full flex items-center justify-center">
-            <i class="fas fa-utensils text-ink-subtle"></i>
+<%= simple_form_for([day, day_recipe]) do |f| %>
+  <div class="space-y-4">
+
+    <%# ── Recette ── %>
+    <div>
+      <label class="label-dark block mb-1.5"><%= t("views.day_recipes.form.recipe_label") %></label>
+      <% if day_recipe.new_record? %>
+        <div data-controller="food-combobox"
+             data-food-combobox-selected-id-value="0"
+             data-food-combobox-source-value="recipes-data"
+             data-food-combobox-suffix-value="kcal">
+          <%= f.hidden_field :recipe_id, data: { "food-combobox-target": "hiddenId" } %>
+          <div class="relative">
+            <input type="text"
+                   class="input-dark pl-8 text-sm"
+                   placeholder="<%= t("views.day_recipes.form.search_recipe") %>"
+                   autocomplete="off"
+                   data-food-combobox-target="input"
+                   data-action="focus->food-combobox#open input->food-combobox#filter keydown->food-combobox#keydown">
+            <i class="fas fa-search absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-subtle text-xs pointer-events-none"></i>
           </div>
-          <h3 class="text-sm font-medium text-ink-primary mb-1"><%= t("shared.no_food_groups") %></h3>
-          <p class="text-ink-subtle text-xs mb-3"><%= t("shared.create_groups_in_settings") %></p>
+          <div class="hidden max-h-52 overflow-y-auto bg-surface-raised border border-surface-border/60 rounded-lg shadow-2xl"
+               data-food-combobox-target="dropdown"></div>
+        </div>
+      <% else %>
+        <%# Édition — recette non modifiable %>
+        <div class="flex items-center gap-2 px-3 py-2.5 bg-surface-base border border-surface-border/50 rounded-lg">
+          <i class="fas fa-lock text-xs text-ink-subtle shrink-0"></i>
+          <span class="text-sm text-ink-primary"><%= day_recipe.recipe&.name %></span>
+        </div>
+        <%= f.hidden_field :recipe_id %>
+      <% end %>
+    </div>
+
+    <%# ── Quantité + Groupe ── %>
+    <div class="grid grid-cols-2 gap-3">
+
+      <%# Quantité %>
+      <div>
+        <label class="label-dark block mb-1.5"><%= t("shared.quantity") %></label>
+        <div class="relative">
+          <%= f.number_field :quantity,
+                min: 1, step: 1,
+                value: day_recipe.new_record? ? 100 : day_recipe.quantity.to_i,
+                class: "input-dark text-sm pr-8" %>
+          <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">g</span>
         </div>
       </div>
-    <% end %>
 
-    <%= f.input :quantity,
-        as: :numeric,
-        min: 0.1,
-        input_html: {
-          class: "input-dark",
-          value: day_recipe.new_record? ? 100 : day_recipe.quantity
-        },
-        label_html: { class: "label-dark" },
-        append: "g" %>
+      <%# Groupe de repas %>
+      <% if @day_food_groups.any? %>
+        <div>
+          <label class="label-dark block mb-1.5"><%= t("views.day_recipes.form.food_group") %></label>
+          <%= f.association :day_food_group,
+              collection: @day_food_groups,
+              prompt: t("views.day_foods.form.select_group"),
+              label: false,
+              input_html: { class: "input-dark select-chevron appearance-none pr-10 text-sm" } %>
+        </div>
+      <% else %>
+        <div>
+          <label class="label-dark block mb-1.5"><%= t("views.day_recipes.form.food_group") %></label>
+          <div class="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-surface-base border border-surface-border/50 text-xs text-ink-subtle">
+            <i class="fas fa-utensils shrink-0"></i>
+            <span><%= t("shared.no_food_groups") %></span>
+          </div>
+        </div>
+      <% end %>
 
-    <%= f.input :use_recipe_quantity,
-        as: :boolean,
-        input_html: { class: "h-4 w-4 text-brand focus:ring-brand/50 border-surface-border rounded" },
-        label_html: { class: "label-dark" },
-        label: t("views.day_recipes.form.use_recipe_quantity") %>
+    </div>
+
+    <%# ── Utiliser la quantité totale ── %>
+    <label class="flex items-center gap-3 cursor-pointer select-none">
+      <%= f.check_box :use_recipe_quantity, label: false,
+            class: "sr-only peer",
+            checked: day_recipe.use_recipe_quantity? %>
+      <div class="relative w-9 h-5 rounded-full shrink-0 transition-colors bg-surface-border peer-checked:bg-brand
+                  after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4"></div>
+      <span class="text-sm text-ink-muted"><%= t("views.day_recipes.form.use_recipe_quantity") %></span>
+    </label>
+
   </div>
 
-  <div class="flex justify-center gap-4 mt-8">
+  <div class="flex justify-end gap-3 mt-5 pt-4 border-t border-surface-border/40">
     <button type="button"
             data-controller="close-frame"
             data-action="click->close-frame#close"
-            class="btn-ghost">
+            class="btn-ghost text-sm">
       <%= t("shared.cancel") %>
     </button>
     <%= f.button :submit, submit_text, class: "btn-primary" %>

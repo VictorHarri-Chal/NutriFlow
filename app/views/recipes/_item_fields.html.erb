@@ -1,41 +1,50 @@
-<div class="bg-surface-raised rounded-lg border border-surface-border/50 p-4" data-nested-form-target="item">
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-    <div data-controller="select-filter">
-      <label class="label-dark"><%= t("views.recipes.item_fields.food") %></label>
-      <div class="relative mb-1">
-        <input type="text"
-               class="input-dark pl-8 py-1.5 text-sm"
-               placeholder="<%= t("views.recipes.item_fields.search_food") %>"
-               autocomplete="off"
-               data-select-filter-target="input"
-               data-action="input->select-filter#filter">
-        <i class="fas fa-search absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-subtle text-xs pointer-events-none"></i>
-      </div>
-      <%= f.input :food_id,
-                  label: false,
-                  collection: current_user.foods.order(:name),
-                  label_method: :name,
-                  value_method: :id,
-                  include_blank: t("views.recipes.item_fields.select_blank"),
-                  input_html: { class: "input-dark", data: { select_filter_target: "select" } } %>
+<div class="flex items-center gap-3 py-2 px-1 rounded-lg hover:bg-surface-base/50 transition-colors group"
+     data-nested-form-target="item">
+
+  <%# ── Combobox aliment ── %>
+  <div class="flex-1 min-w-0"
+       data-controller="food-combobox"
+       data-food-combobox-selected-id-value="<%= f.object.food_id.to_i %>">
+
+    <%= f.hidden_field :food_id, data: { "food-combobox-target": "hiddenId" } %>
+
+    <div class="relative">
+      <input type="text"
+             class="input-dark pl-8 text-sm"
+             placeholder="<%= t("views.recipes.item_fields.search_food") %>"
+             autocomplete="off"
+             data-food-combobox-target="input"
+             data-action="focus->food-combobox#open input->food-combobox#filter keydown->food-combobox#keydown">
+      <i class="fas fa-search absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-subtle text-xs pointer-events-none"></i>
     </div>
 
-    <div>
-      <%= f.input :quantity,
-                  label: t("views.recipes.item_fields.quantity"),
-                  as: :decimal,
-                  input_html: { step: 1, min: 1, class: "input-dark" },
-                  label_html: { class: "label-dark" } %>
-    </div>
-
-    <div class="flex items-end">
-      <button type="button"
-              class="btn-danger w-full"
-              data-action="nested-form#remove">
-        <i class="fas fa-trash mr-2"></i>
-        <%= t("views.recipes.item_fields.remove") %>
-      </button>
-      <%= f.hidden_field :_destroy, value: "false", data: { nested_form_target: "destroyField" } %>
+    <%# Dropdown (positionné en fixed par le controller JS) %>
+    <div class="hidden max-h-52 overflow-y-auto bg-surface-raised border border-surface-border/60 rounded-lg shadow-2xl"
+         data-food-combobox-target="dropdown">
     </div>
   </div>
+
+  <%# ── Quantité ── %>
+  <div class="w-28 shrink-0">
+    <div class="relative">
+      <%= f.number_field :quantity,
+            min: 1, step: 1,
+            value: f.object.quantity.present? ? f.object.quantity.to_i : 100,
+            class: "input-dark text-sm text-center pr-8",
+            placeholder: "100" %>
+      <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">g</span>
+    </div>
+  </div>
+
+  <%# ── Supprimer ── %>
+  <div class="shrink-0">
+    <button type="button"
+            class="w-8 h-8 flex items-center justify-center rounded-lg text-ink-subtle opacity-0 group-hover:opacity-100 hover:text-status-danger hover:bg-status-danger_dim/20 transition-all"
+            title="<%= t("views.recipes.item_fields.remove") %>"
+            data-action="nested-form#remove">
+      <i class="fas fa-times text-sm"></i>
+    </button>
+    <%= f.hidden_field :_destroy, value: "false", data: { nested_form_target: "destroyField" } %>
+  </div>
+
 </div>

@@ -21,7 +21,6 @@ class RecipesController < ApplicationController
 
   def new
     @recipe = current_user.recipes.new
-    @recipe.recipe_items.build
   end
 
   def create

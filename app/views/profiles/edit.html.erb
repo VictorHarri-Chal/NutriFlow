@@ -1,62 +1,127 @@
 <% content_for :page_title, t("views.profiles.edit.title") %>
 
-<div class="max-w-4xl mx-auto mt-16 card p-8">
-  <div class="flex justify-between items-center rounded-lg p-4">
-    <h1 class="text-2xl font-bold text-ink-primary"><%= t("views.profiles.edit.title") %></h1>
+<div class="max-w-4xl mx-auto mt-16">
+
+  <div class="card p-8">
+    <h1 class="text-2xl font-bold text-ink-primary mb-8"><%= t("views.profiles.edit.title") %></h1>
+
+    <%= simple_form_for @profile, url: profile_path, method: :patch do |f| %>
+      <div class="space-y-8">
+
+        <%# ── Informations personnelles ── %>
+        <div>
+          <h2 class="text-sm font-semibold text-ink-subtle uppercase tracking-wide mb-4 flex items-center gap-2">
+            <i class="fas fa-user text-brand text-xs"></i>
+            <%= t("views.profiles.show.personal_info") %>
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <%= f.input :name,
+                label: t("views.profiles.edit.name"),
+                input_html: { class: "input-dark", autocomplete: "off" },
+                label_html: { class: "label-dark" } %>
+            <%= f.input :age,
+                label: t("views.profiles.edit.age"),
+                input_html: { class: "input-dark" },
+                label_html: { class: "label-dark" } %>
+          </div>
+        </div>
+
+        <%# ── Données physiques ── %>
+        <div class="border-t border-surface-border/40 pt-6">
+          <h2 class="text-sm font-semibold text-ink-subtle uppercase tracking-wide mb-4 flex items-center gap-2">
+            <i class="fas fa-ruler text-brand text-xs"></i>
+            <%= t("views.profiles.show.physical_data") %>
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <%= f.label :weight, t("views.profiles.edit.weight"), class: "label-dark block mb-1.5" %>
+              <div class="relative">
+                <%= f.number_field :weight, step: 0.1, class: "input-dark pr-10" %>
+                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">kg</span>
+              </div>
+            </div>
+            <div>
+              <%= f.label :height, t("views.profiles.edit.height"), class: "label-dark block mb-1.5" %>
+              <div class="relative">
+                <%= f.number_field :height, step: 0.1, class: "input-dark pr-10" %>
+                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">cm</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <%# ── Genre ── %>
+        <div class="border-t border-surface-border/40 pt-6">
+          <h2 class="text-sm font-semibold text-ink-subtle uppercase tracking-wide mb-4 flex items-center gap-2">
+            <i class="fas fa-venus-mars text-brand text-xs"></i>
+            <%= t("views.profiles.edit.gender") %>
+          </h2>
+          <div class="grid grid-cols-3 gap-3">
+            <% [
+              { value: "male",   icon: "fa-mars",        label: t("views.profiles.edit.gender_male") },
+              { value: "female", icon: "fa-venus",       label: t("views.profiles.edit.gender_female") },
+              { value: "other",  icon: "fa-genderless",  label: t("views.profiles.edit.gender_other") }
+            ].each do |opt| %>
+              <label class="cursor-pointer">
+                <%= f.radio_button :gender, opt[:value], class: "sr-only peer" %>
+                <span class="flex flex-col items-center gap-2 p-4 rounded-xl border text-center transition-colors
+                             bg-surface-hover border-surface-border/50 text-ink-muted
+                             hover:border-brand/30 hover:text-ink-primary
+                             peer-checked:bg-brand/10 peer-checked:border-brand peer-checked:text-brand">
+                  <i class="fas <%= opt[:icon] %> text-lg"></i>
+                  <span class="text-xs font-semibold"><%= opt[:label] %></span>
+                </span>
+              </label>
+            <% end %>
+          </div>
+        </div>
+
+        <%# ── Niveau d'activité ── %>
+        <div class="border-t border-surface-border/40 pt-6">
+          <h2 class="text-sm font-semibold text-ink-subtle uppercase tracking-wide mb-4 flex items-center gap-2">
+            <i class="fas fa-bolt text-brand text-xs"></i>
+            <%= t("views.profiles.edit.activity_level") %>
+          </h2>
+          <%= f.input :activity_level,
+              label: false,
+              collection: Profile.activity_level.values.map { |al| [al.text, al] },
+              input_html: { class: "input-dark select-chevron appearance-none pr-10" },
+              label_html: { class: "label-dark" } %>
+        </div>
+
+        <%# ── Objectif ── %>
+        <div class="border-t border-surface-border/40 pt-6">
+          <h2 class="text-sm font-semibold text-ink-subtle uppercase tracking-wide mb-4 flex items-center gap-2">
+            <i class="fas fa-bullseye text-brand text-xs"></i>
+            <%= t("views.profiles.edit.goal") %>
+          </h2>
+          <div class="grid grid-cols-3 gap-3">
+            <% [
+              { value: "weight_loss", icon: "fa-arrow-trend-down", label: t("views.daily_calorie_requirements.weight_loss") },
+              { value: "maintenance", icon: "fa-equals",            label: t("views.daily_calorie_requirements.maintenance") },
+              { value: "muscle_gain", icon: "fa-dumbbell",          label: t("views.daily_calorie_requirements.muscle_gain") }
+            ].each do |opt| %>
+              <label class="cursor-pointer">
+                <%= f.radio_button :goal, opt[:value], class: "sr-only peer" %>
+                <span class="flex flex-col items-center gap-3 p-5 rounded-xl border text-center transition-colors
+                             bg-surface-hover border-surface-border/50 text-ink-muted
+                             hover:border-brand/30 hover:text-ink-primary
+                             peer-checked:bg-brand/10 peer-checked:border-brand peer-checked:text-brand">
+                  <i class="fas <%= opt[:icon] %> text-2xl"></i>
+                  <span class="text-xs font-semibold leading-tight"><%= opt[:label] %></span>
+                </span>
+              </label>
+            <% end %>
+          </div>
+        </div>
+
+      </div>
+
+      <%# ── Actions ── %>
+      <div class="flex justify-center gap-4 mt-10 pt-6 border-t border-surface-border/40">
+        <%= link_to t("shared.cancel"), profile_path, class: "btn-ghost" %>
+        <%= f.button :submit, t("shared.save"), class: "btn-primary px-8" %>
+      </div>
+    <% end %>
   </div>
-
-  <%= simple_form_for @profile, url: profile_path, method: :patch, html: { class: "bg-surface-base rounded-lg border border-surface-border/40 p-6" } do |f| %>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-      <div class="space-y-6">
-        <%= f.input :name,
-            label: t("views.profiles.edit.name"),
-            wrapper_html: { class: "mb-4" },
-            input_html: { class: "input-dark" } %>
-
-        <%= f.input :age,
-            label: t("views.profiles.edit.age"),
-            wrapper_html: { class: "mb-4" },
-            input_html: { class: "input-dark" } %>
-
-        <%= f.input :weight,
-            label: t("views.profiles.edit.weight"),
-            as: :numeric,
-            input_html: { class: "input-dark" },
-            wrapper_html: { class: "mb-4" } %>
-      </div>
-
-      <div class="space-y-6">
-        <%= f.input :height,
-            label: t("views.profiles.edit.height"),
-            as: :numeric,
-            input_html: { class: "input-dark" },
-            wrapper_html: { class: "mb-4" } %>
-
-        <%= f.input :gender,
-            label: t("views.profiles.edit.gender"),
-            collection: Profile.gender.values.map { |g| [g.text, g] },
-            wrapper_html: { class: "mb-4 relative" },
-            input_html: { class: "input-dark select-chevron appearance-none pr-10" } %>
-
-        <%= f.input :activity_level,
-            label: t("views.profiles.edit.activity_level"),
-            collection: Profile.activity_level.values.map { |al| [al.text, al] },
-            wrapper_html: { class: "mb-4 relative" },
-            input_html: { class: "input-dark select-chevron appearance-none pr-10" } %>
-      </div>
-    </div>
-
-    <div class="mt-6">
-      <%= f.input :goal,
-          label: t("views.profiles.edit.goal"),
-          collection: Profile.goal.values.map { |g| [g.text, g] },
-          wrapper_html: { class: "mb-6 relative" },
-          input_html: { class: "input-dark select-chevron appearance-none pr-10" } %>
-    </div>
-
-    <div class="flex justify-center space-x-4 pt-8 mt-8">
-      <%= link_to t("shared.cancel"), profile_path, class: "btn-ghost" %>
-      <%= f.button :submit, t("shared.save"), class: "btn-primary" %>
-    </div>
-  <% end %>
 </div>

@@ -1,14 +1,12 @@
 <thead>
   <tr>
-    <th class="whitespace-nowrap"><%= food_sort_link(:name, Food.human_attribute_name(:name)) %></th>
-    <th class="whitespace-nowrap"><%= food_sort_link(:brand, Food.human_attribute_name(:brand)) %></th>
+    <th class="whitespace-nowrap"><%= food_sort_link(:name, t("views.foods.table.name_col")) %></th>
     <th class="whitespace-nowrap"><%= t("views.foods.labels_col") %></th>
-    <th class="whitespace-nowrap"><%= food_sort_link(:calories, "#{Food.human_attribute_name(:calories)} (kcal)") %></th>
-    <th class="whitespace-nowrap"><%= food_sort_link(:proteins, "#{Food.human_attribute_name(:proteins)} (g)") %></th>
-    <th class="whitespace-nowrap"><%= food_sort_link(:carbs, "#{Food.human_attribute_name(:carbs)} (g)") %></th>
-    <th class="whitespace-nowrap"><%= food_sort_link(:fats, "#{Food.human_attribute_name(:fats)} (g)") %></th>
-    <th class="whitespace-nowrap"><%= food_sort_link(:sugars, "#{Food.human_attribute_name(:sugars)} (g)") %></th>
+    <th class="whitespace-nowrap text-right"><%= food_sort_link(:calories, t("views.foods.table.calories_col")) %></th>
+    <th class="whitespace-nowrap text-right"><%= food_sort_link(:proteins, t("views.foods.table.proteins_col")) %></th>
+    <th class="whitespace-nowrap text-right"><%= food_sort_link(:carbs, t("views.foods.table.carbs_col")) %></th>
+    <th class="whitespace-nowrap text-right"><%= food_sort_link(:fats, t("views.foods.table.fats_col")) %></th>
     <th class="text-center whitespace-nowrap"><%= t("views.foods.usages_col") %></th>
-    <th class="text-center whitespace-nowrap table-sticky-col bg-surface-base" style="--sticky-bg: #18181B;"><%= t("shared.actions") %></th>
+    <th></th>
   </tr>
 </thead>

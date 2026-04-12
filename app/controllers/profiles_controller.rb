@@ -11,6 +11,9 @@ class ProfilesController < ApplicationController
     @protein_goal         = @profile.daily_protein_goal
     @fats_goal            = @profile.daily_fats_goal
     @carbs_goal           = @profile.daily_carbs_goal
+    if @profile.weight.present? && @profile.height.present?
+      @bmi = (@profile.weight.to_f / ((@profile.height.to_f / 100) ** 2)).round(1)
+    end
   end
 
   def edit
