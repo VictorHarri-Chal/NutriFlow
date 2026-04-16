@@ -1,4 +1,4 @@
-<tr class="group">
+<tr class="group" id="food_<%= food.id %>">
 
   <%# Aliment + Marque %>
   <td>
@@ -48,6 +48,14 @@
   <%# Actions — apparaissent au survol de la ligne %>
   <td class="text-right">
     <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+      <%# Favori %>
+      <%= link_to toggle_favorite_food_path(food),
+            class: "inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors #{food.favorite? ? 'text-amber-400 hover:text-amber-300 hover:bg-amber-400/10' : 'text-ink-subtle hover:text-amber-400 hover:bg-amber-400/10'}",
+            title: food.favorite? ? t("views.foods.remove_favorite") : t("views.foods.add_favorite"),
+            data: { turbo_method: :patch } do %>
+        <i class="<%= food.favorite? ? 'fas' : 'far' %> fa-star text-sm"></i>
+      <% end %>
+
       <%= link_to duplicate_food_path(food),
             class: "inline-flex items-center justify-center w-8 h-8 rounded-lg text-ink-subtle hover:text-ink-muted hover:bg-surface-hover transition-colors",
             title: t("views.foods.duplicate"),

@@ -20,5 +20,17 @@ class SettingsController < ApplicationController
     end
   end
 
+  def update_preferences
+    if current_user.update(preferences_params)
+      redirect_to setting_path(tab: 'preferences'), notice: t("controllers.settings.preferences_updated")
+    else
+      redirect_to setting_path(tab: 'preferences'), alert: t("controllers.settings.preferences_error")
+    end
+  end
+
   private
+
+  def preferences_params
+    params.require(:user).permit(:show_day_note)
+  end
 end

@@ -5,10 +5,15 @@ class DayRecipesController < ApplicationController
   before_action :set_day_recipe, only: [:edit, :update, :destroy]
 
   def new
-    group_id         = params.dig(:day_recipe, :day_food_group_id)
-    @day_recipe      = @day.day_recipes.build(day_food_group_id: group_id)
-    @day_food_groups = current_user.day_food_groups.order(:name)
-    @recipes         = current_user.recipes.includes(recipe_items: :food).order(:name)
+    group_id            = params.dig(:day_recipe, :day_food_group_id)
+    @day_recipe         = @day.day_recipes.build(day_food_group_id: group_id)
+    @day_food_groups    = current_user.day_food_groups.order(:name)
+    @recipes            = current_user.recipes.includes(recipe_items: :food).order(:name)
+    @recent_recipe_ids  = DayRecipe.joins(:day)
+                            .where(days: { user_id: current_user.id })
+                            .where("day_recipes.created_at > ?", 14.days.ago)
+                            .order(created_at: :desc)
+                            .pluck(:recipe_id).uniq.first(8)
   end
 
   def create
@@ -16,6 +21,8 @@ class DayRecipesController < ApplicationController
 
     if @day_recipe.save
       load_calendar_data(@day)
+      @selected_date = @day.date
+      load_month_heatmap(@day.date)
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to calendars_path(date: @day.date) }
@@ -40,6 +47,8 @@ class DayRecipesController < ApplicationController
       respond_to do |format|
         format.turbo_stream do
           load_calendar_data(@day)
+          @selected_date = @day.date
+          load_month_heatmap(@day.date)
         end
         format.html { redirect_to calendars_path(date: @day.date) }
       end
@@ -57,6 +66,8 @@ class DayRecipesController < ApplicationController
     day = @day_recipe.day
     @day_recipe.destroy
     load_calendar_data(day)
+    @selected_date = day.date
+    load_month_heatmap(day.date)
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to calendars_path(date: day.date) }

@@ -1,5 +1,15 @@
-<div class="max-w-lg mx-auto mt-16 card p-8">
-  <h1 class="text-2xl font-bold text-ink-primary mb-6"><%= t(".edit_day_food") %></h1>
+<%= turbo_frame_tag "item_form" do %>
+  <div class="bg-surface-raised border border-surface-border/50 rounded-xl shadow-sm p-6 mt-4 mb-2">
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="text-lg font-semibold text-ink-primary"><%= t("views.day_foods.edit.title") %></h2>
+      <button type="button"
+              data-controller="close-frame"
+              data-action="click->close-frame#close"
+              class="text-ink-subtle hover:text-ink-muted transition-colors">
+        <i class="fas fa-times text-lg"></i>
+      </button>
+    </div>
 
-  <%= render "form", day: @day_food.day, day_food: @day_food, submit_text: t("shared.update") %>
-</div>
+    <%= render "form", day: @day_food.day, day_food: @day_food, submit_text: t("shared.update") %>
+  </div>
+<% end %>

@@ -5,10 +5,15 @@ class DayFoodsController < ApplicationController
   before_action :set_day_food, only: [:edit, :update, :destroy]
 
   def new
-    group_id         = params.dig(:day_food, :day_food_group_id)
-    @day_food        = @day.day_foods.build(day_food_group_id: group_id)
-    @day_food_groups = current_user.day_food_groups.order(:name)
-    @foods           = current_user.foods.order(:name)
+    group_id          = params.dig(:day_food, :day_food_group_id)
+    @day_food         = @day.day_foods.build(day_food_group_id: group_id)
+    @day_food_groups  = current_user.day_food_groups.order(:name)
+    @foods            = current_user.foods.order(:name)
+    @recent_food_ids  = DayFood.joins(:day)
+                          .where(days: { user_id: current_user.id })
+                          .where("day_foods.created_at > ?", 14.days.ago)
+                          .order(created_at: :desc)
+                          .pluck(:food_id).uniq.first(8)
   end
 
   def create
@@ -16,6 +21,8 @@ class DayFoodsController < ApplicationController
 
     if @day_food.save
       load_calendar_data(@day)
+      @selected_date = @day.date
+      load_month_heatmap(@day.date)
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to calendars_path(date: @day.date) }
@@ -40,6 +47,8 @@ class DayFoodsController < ApplicationController
       respond_to do |format|
         format.turbo_stream do
           load_calendar_data(@day)
+          @selected_date = @day.date
+          load_month_heatmap(@day.date)
         end
         format.html { redirect_to calendars_path(date: @day.date) }
       end
@@ -57,6 +66,8 @@ class DayFoodsController < ApplicationController
     day = @day_food.day
     @day_food.destroy
     load_calendar_data(day)
+    @selected_date = day.date
+    load_month_heatmap(day.date)
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to calendars_path(date: day.date) }

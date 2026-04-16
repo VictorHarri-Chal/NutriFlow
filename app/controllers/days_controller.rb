@@ -17,7 +17,7 @@ class DaysController < ApplicationController
   end
 
   def day_params
-    params.require(:day).permit(:note)
+    params.require(:day).permit(:note, :energy_level, :mood, :sleep_quality)
   end
 
   public

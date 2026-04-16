@@ -15,7 +15,9 @@
              daily_fats_goal:     @daily_fats_goal,
              calories_percentage: @calories_percentage,
              proteins_percentage: @proteins_percentage,
-             fats_percentage:     @fats_percentage %>
+             fats_percentage:     @fats_percentage,
+             daily_carbs_goal:    @daily_carbs_goal,
+             carbs_percentage:    @carbs_percentage %>
 <% end %>
 
 <%= turbo_stream.replace "day_items" do %>
@@ -28,4 +30,15 @@
 
 <%= turbo_stream.replace "day_fab" do %>
   <%= render "calendars/day_fab", all_day_items: @all_day_items, day: @day %>
+<% end %>
+
+<%= turbo_stream.replace "month_heatmap" do %>
+  <div id="month_heatmap">
+    <%= render "calendars/month_heatmap",
+               month_heatmap:      @month_heatmap,
+               heatmap_start:      @heatmap_start,
+               heatmap_end:        @heatmap_end,
+               selected_date:      @selected_date,
+               daily_calorie_goal: @daily_calorie_goal %>
+  </div>
 <% end %>

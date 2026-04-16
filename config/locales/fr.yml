@@ -11,6 +11,8 @@ fr:
     settings:
       locale_updated: "Langue mise à jour avec succès."
       locale_error: "Erreur lors de la mise à jour de la langue."
+      preferences_updated: "Préférences mises à jour."
+      preferences_error: "Erreur lors de la mise à jour des préférences."
     foods:
       created: "Aliment créé avec succès."
       updated: "Aliment mis à jour avec succès."
@@ -123,11 +125,26 @@ fr:
       complete_profile_hint: "Complétez votre profil pour afficher vos objectifs"
       copy_yesterday: "Copier hier"
       copy_yesterday_title: "Copier les aliments du jour précédent"
+      heatmap:
+        title: "%{month}"
+        open_button: "Vue mensuelle"
+        legend_goal: "≥ 95%"
+        legend_partial: "70–95%"
+        legend_low: "< 70%"
+        goal_hint: "Objectif : %{goal} kcal / jour"
+        stats_logged: "jours loggés"
+        stats_goal_reached: "objectif atteint"
+        stats_avg_kcal: "kcal moy."
+        stats_days: "jours ce mois"
       copy_success: "Les aliments d'hier ont été copiés avec succès."
       copy_error: "Impossible de copier certains aliments."
       copy_nothing_to_copy: "Aucun aliment enregistré hier."
       note_title: "Note du jour"
       note_placeholder: "Repas de fête, jour de sport, ressenti..."
+      wellbeing:
+        energy: "Énergie"
+        mood: "Humeur"
+        sleep: "Sommeil"
       empty_state:
         title: "Aucun aliment consommé"
         description: "Vous n'avez pas encore ajouté d'aliments pour cette journée."
@@ -163,6 +180,16 @@ fr:
       clear_filter: "Supprimer le filtre"
       add_to_today: "Ajouter à aujourd'hui"
       duplicate: "Dupliquer"
+      add_favorite: "Ajouter aux favoris"
+      remove_favorite: "Retirer des favoris"
+      favorites_section: "Favoris"
+      favorites_filter: "Favoris"
+      recents_section: "Récents"
+      all_section: "Tous les aliments"
+      no_favorites:
+        title: "Aucun favori"
+        description: "Marquez des aliments comme favoris pour les retrouver rapidement ici."
+        see_all: "Voir tous les aliments"
       form:
         macros_hint: "Renseignez les macros de l'aliment sur une base de 100g"
         macros_section: "Valeurs nutritionnelles"
@@ -178,6 +205,7 @@ fr:
       new:
         title: "Ajouter un aliment"
       edit:
+        title: "Modifier la quantité"
         edit_day_food: "Modifier l'aliment"
       form:
         select_food: "Sélectionnez un aliment"
@@ -193,6 +221,7 @@ fr:
         title: "Ajouter un plat"
       edit:
         title: "Modifier le plat"
+      all_section: "Toutes les recettes"
       form:
         select_recipe: "Sélectionnez une recette"
         recipe_label: "Recette"
@@ -307,9 +336,16 @@ fr:
       show:
         page_title: "Paramètres"
         general: "Général"
+        preferences: "Préférences"
         food_groups: "Groupes d'aliments"
         food_labels: "Labels d'aliments"
         security: "Sécurité"
+      preferences:
+        title: "Préférences"
+        description: "Personnalisez l'affichage et le comportement de l'application."
+        journal_section: "Journal quotidien"
+        show_day_note: "Section notes du jour"
+        show_day_note_hint: "Affiche la zone de texte libre, ainsi que les indicateurs d'énergie, d'humeur et de sommeil en bas de chaque journée."
       general:
         title: "Paramètres généraux"
         description: "Personnalisez votre expérience NutriFlow."
@@ -359,7 +395,8 @@ fr:
         no_labels: "Aucun label d'aliment"
         no_labels_hint: "Commencez par créer votre premier label d'aliment."
         explanation: "Les labels vous permettent de catégoriser vos aliments avec des tags comme \"Protéines\", \"Glucides\", \"Lipides\", \"Bio\", etc."
-        delete_confirm: "Êtes-vous sûr de vouloir supprimer ce label ?"
+        color_label: "Couleur"
+        delete_confirm: "Supprimer ce label ?"
 
     confirm:
       title: "Confirmation requise"
@@ -450,6 +487,10 @@ fr:
         proteins: "Protéines"
         carbs: "Glucides"
         fats: "Lipides"
+        high_protein: "Riche en protéines"
+        high_fat: "Riche en lipides"
+        high_carb: "Riche en glucides"
+        balanced: "Équilibré"
       recipe_sidebar:
         add_to_calendar: "Ajouter au calendrier"
         add_to_calendar_hint: "Va sur le calendrier du jour pour logger cette recette."

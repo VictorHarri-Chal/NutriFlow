@@ -7,7 +7,10 @@ class FoodLabelsController < ApplicationController
     if @food_label.save
       redirect_to setting_path(tab: 'food_labels')
     else
-      @food_labels = current_user.food_labels.includes(:foods)
+      @food_labels    = current_user.food_labels.includes(:foods)
+      @day_food_groups = current_user.day_food_groups.includes(:day_foods)
+      @day_food_group  = DayFoodGroup.new
+      @minimum_password_length = User.password_length.min
       @active_tab = 'food_labels'
       render 'settings/show', status: :unprocessable_entity
     end
@@ -25,6 +28,6 @@ class FoodLabelsController < ApplicationController
   end
 
   def food_label_params
-    params.require(:food_label).permit(:name)
+    params.require(:food_label).permit(:name, :color)
   end
 end

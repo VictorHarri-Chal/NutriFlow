@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "food_#{@food.id}" do %>
+  <%= render "foods/table_row", food: @food %>
+<% end %>
