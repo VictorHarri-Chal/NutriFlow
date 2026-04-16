@@ -16,7 +16,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
       bypass_sign_in resource, scope: resource_name if sign_in_after_change_password?
 
       # Redirection personnalisée vers la page des paramètres
-      redirect_to setting_path, notice: 'Votre mot de passe a été mis à jour avec succès.'
+      redirect_to setting_path, notice: t("controllers.users.registrations.password_updated")
     else
       clean_up_passwords resource
       set_minimum_password_length

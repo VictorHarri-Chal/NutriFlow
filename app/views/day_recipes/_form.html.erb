@@ -15,7 +15,8 @@
         <div data-controller="food-combobox"
              data-food-combobox-selected-id-value="0"
              data-food-combobox-source-value="recipes-data"
-             data-food-combobox-suffix-value="kcal">
+             data-food-combobox-suffix-value="kcal"
+             data-food-combobox-no-results-value="<%= t('views.day_recipes.form.no_recipe_found') %>">
           <%= f.hidden_field :recipe_id, data: { "food-combobox-target": "hiddenId" } %>
           <div class="relative">
             <input type="text"

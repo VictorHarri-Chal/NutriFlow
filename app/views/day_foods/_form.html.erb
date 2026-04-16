@@ -12,7 +12,8 @@
       <label class="label-dark block mb-1.5"><%= t("views.day_foods.form.food_label") %></label>
       <% if day_food.new_record? %>
         <div data-controller="food-combobox"
-             data-food-combobox-selected-id-value="0">
+             data-food-combobox-selected-id-value="0"
+             data-food-combobox-no-results-value="<%= t('views.day_foods.form.no_food_found') %>">
           <%= f.hidden_field :food_id, data: {
                 "food-combobox-target": "hiddenId",
                 "day-food-preview-target": "foodId"

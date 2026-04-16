@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = [
     "emptyPanel", "statsPanel",
-    "totalCalories", "totalProteins", "totalCarbs", "totalFats", "totalWeight",
+    "totalCalories", "totalProteins", "totalCarbs", "totalFats", "totalSugars", "totalWeight",
     "ingredientList", "ingredientCount",
     "instructionsPanel", "instructionsChevron"
   ]
@@ -25,7 +25,7 @@ export default class extends Controller {
       return
     }
 
-    let calories = 0, proteins = 0, carbs = 0, fats = 0, weight = 0
+    let calories = 0, proteins = 0, carbs = 0, fats = 0, sugars = 0, weight = 0
 
     items.forEach(({ food, quantity }) => {
       const factor = quantity / 100
@@ -33,6 +33,7 @@ export default class extends Controller {
       proteins += food.proteins * factor
       carbs += food.carbs * factor
       fats += food.fats * factor
+      sugars += (food.sugars || 0) * factor
       weight += quantity
     })
 
@@ -40,6 +41,7 @@ export default class extends Controller {
     this.totalProteinsTarget.textContent = proteins.toFixed(1)
     this.totalCarbsTarget.textContent = carbs.toFixed(1)
     this.totalFatsTarget.textContent = fats.toFixed(1)
+    if (this.hasTotalSugarsTarget) this.totalSugarsTarget.textContent = sugars.toFixed(1)
     this.totalWeightTarget.textContent = Math.round(weight)
     this.ingredientCountTarget.textContent = items.length
 

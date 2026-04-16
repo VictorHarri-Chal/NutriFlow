@@ -7,9 +7,9 @@ class Users::PasswordsController < Devise::PasswordsController
     yield resource if block_given?
 
     if successfully_sent?(resource)
-      redirect_to setting_path, notice: 'Un email de réinitialisation de mot de passe a été envoyé à votre adresse email.'
+      redirect_to setting_path, notice: t("controllers.users.passwords.reset_sent")
     else
-      redirect_to setting_path, alert: 'Une erreur est survenue lors de l\'envoi de l\'email de réinitialisation.'
+      redirect_to setting_path, alert: t("controllers.users.passwords.reset_error")
     end
   end
 
