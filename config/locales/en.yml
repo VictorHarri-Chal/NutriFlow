@@ -23,6 +23,9 @@ en:
     days:
       food_added: "Food added successfully."
       food_add_error: "Error adding food."
+    weight_entries:
+      saved: "Weight saved."
+      deleted: "Entry deleted."
     recipe_ratings:
       created: "Rating saved successfully."
       updated: "Rating updated successfully."
@@ -99,6 +102,8 @@ en:
         logout: "Log out"
         logout_confirm: "Are you sure you want to log out?"
         profile: "My profile"
+        collapse: "Collapse"
+        weight: "Weight tracking"
 
     calendars:
       page_title: "Calendar"
@@ -136,6 +141,12 @@ en:
         stats_goal_reached: "goal reached"
         stats_avg_kcal: "avg kcal"
         stats_days: "days this month"
+      water:
+        title: "Hydration"
+        glasses:
+          one: "%{count} glass"
+          other: "%{count} glasses"
+        reset: "Reset"
       copy_success: "Yesterday's foods have been copied successfully."
       copy_error: "Some foods could not be copied."
       copy_nothing_to_copy: "No foods logged yesterday."
@@ -315,6 +326,7 @@ en:
         goal: "Goal"
         age_years: "%{age} years old"
         bmi: "BMI"
+        goal_weight: "Target weight"
         bmi_underweight: "Underweight"
         bmi_normal: "Normal weight"
         bmi_overweight: "Overweight"
@@ -325,6 +337,8 @@ en:
         age: "Age"
         weight: "Weight"
         height: "Height"
+        water_goal_ml: "Daily water goal"
+        goal_weight: "Target weight"
         gender: "Gender"
         gender_male: "Male"
         gender_female: "Female"
@@ -524,3 +538,30 @@ en:
         delete_food_confirm: "Are you sure you want to delete this food?"
       food_labels:
         no_labels: "No labels"
+    weight_entries:
+      page_title: "Weight tracking"
+      stats:
+        current: "Current weight"
+        delta_30d: "Last 30 days"
+        delta_90d: "Last 90 days"
+        goal: "Goal"
+        not_enough_data: "Not enough data"
+        set_goal: "Set in profile"
+        bmi: "BMI %{value}"
+        to_lose: "%{kg} kg to lose"
+        to_gain: "%{kg} kg to gain"
+        goal_reached: "Goal reached!"
+      chart:
+        title: "Weight curve"
+        last_n: "%{count} last measurements"
+        not_enough_data: "Add at least 2 measurements to display the chart"
+      form:
+        title: "Log my weight"
+        weight_label: "Weight"
+        date_label: "Date"
+        submit: "Save"
+        existing_entry: "Existing entry · %{weight} kg — value will be updated"
+      history:
+        title: "History"
+        empty: "No measurements recorded"
+        delete_confirm: "Delete this entry?"

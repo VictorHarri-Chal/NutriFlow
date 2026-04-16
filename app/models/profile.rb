@@ -11,10 +11,12 @@ class Profile < ApplicationRecord
 
   belongs_to :user
 
-  validates :name, length: { maximum: 30 }
-  validates :weight, numericality: { greater_than: 0, less_than: 500 }, allow_blank: true
-  validates :height, numericality: { greater_than: 0, less_than: 300 }, allow_blank: true
-  validates :age, numericality: { greater_than: 0, less_than: 120 }, allow_blank: true
+  validates :name,          length: { maximum: 30 }
+  validates :weight,        numericality: { greater_than: 0, less_than: 500 }, allow_blank: true
+  validates :height,        numericality: { greater_than: 0, less_than: 300 }, allow_blank: true
+  validates :age,           numericality: { greater_than: 0, less_than: 120 }, allow_blank: true
+  validates :goal_weight,   numericality: { greater_than: 20, less_than: 400 }, allow_blank: true
+  validates :water_goal_ml, numericality: { greater_than: 0, less_than: 10_000 }, allow_blank: true
 
 
   def activity_level_multiplier

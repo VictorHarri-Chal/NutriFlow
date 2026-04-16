@@ -13,9 +13,8 @@
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+    <link rel="icon" href="<%= asset_path('logo.png') %>" type="image/png">
+    <link rel="apple-touch-icon" href="<%= asset_path('logo.png') %>">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,6 +24,7 @@
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" data-turbo-track="reload"></script>
   </head>
 
   <body class="bg-surface-base min-h-screen"
@@ -40,7 +40,7 @@
     <%= render 'shared/sidebar' %>
 
     <!-- Main Content -->
-    <div data-sidebar-target="topMenu" class="md:pl-64">
+    <div data-sidebar-target="topMenu" class="md:pl-64 transition-[padding-left] duration-300 ease-in-out">
       <main class="p-6">
         <%= yield %>
       </main>

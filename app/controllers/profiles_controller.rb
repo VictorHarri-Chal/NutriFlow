@@ -42,7 +42,9 @@ class ProfilesController < ApplicationController
       :age,
       :gender,
       :activity_level,
-      :goal
+      :goal,
+      :goal_weight,
+      :water_goal_ml
     )
   end
 end

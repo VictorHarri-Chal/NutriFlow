@@ -12,7 +12,7 @@
       <%= render 'calendars/date_navigation', selected_date: @selected_date, day: @day %>
     </div>
 
-    <%# ── Daily nutrition panel ── %>
+    <%# ── Daily nutrition panel + hydration ── %>
     <%= render 'calendars/daily_panel',
                total_calories:      @total_calories,
                total_proteins:      @total_proteins,
@@ -28,6 +28,9 @@
                proteins_percentage: @proteins_percentage,
                fats_percentage:     @fats_percentage,
                carbs_percentage:    @carbs_percentage %>
+
+    <%# ── Hydration widget ── %>
+    <%= render 'calendars/water_widget', day: @day, profile: @profile %>
 
     <%# ── Inline form (turbo frame) ── %>
     <%= turbo_frame_tag "item_form" %>

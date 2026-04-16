@@ -1,0 +1,238 @@
+<% content_for :page_title, t("views.weight_entries.page_title") %>
+
+<div class="max-w-4xl mx-auto mt-16 space-y-5 pb-12">
+
+  <%# ── Stat cards ── %>
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+
+    <%# Poids actuel %>
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+      <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1">
+        <%= t("views.weight_entries.stats.current") %>
+      </p>
+      <% if @current_weight %>
+        <p class="text-2xl font-bold text-ink-primary">
+          <%= @current_weight %><span class="text-sm font-normal text-ink-subtle ml-1">kg</span>
+        </p>
+      <% else %>
+        <p class="text-2xl font-bold text-ink-subtle">—</p>
+      <% end %>
+    </div>
+
+    <%# Delta 30j %>
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+      <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1">
+        <%= t("views.weight_entries.stats.delta_30d") %>
+      </p>
+      <% if @delta_30d %>
+        <%
+          delta_color = @delta_30d < 0 ? "text-status-success" : @delta_30d > 0 ? "text-status-danger" : "text-ink-primary"
+          delta_icon  = @delta_30d < 0 ? "fa-arrow-down" : @delta_30d > 0 ? "fa-arrow-up" : "fa-minus"
+        %>
+        <p class="text-2xl font-bold <%= delta_color %>">
+          <i class="fas <%= delta_icon %> text-lg mr-0.5"></i>
+          <%= @delta_30d.abs %><span class="text-sm font-normal ml-1">kg</span>
+        </p>
+      <% else %>
+        <p class="text-2xl font-bold text-ink-subtle">—</p>
+        <p class="text-xs text-ink-subtle mt-1"><%= t("views.weight_entries.stats.not_enough_data") %></p>
+      <% end %>
+    </div>
+
+    <%# Delta 90j %>
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+      <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1">
+        <%= t("views.weight_entries.stats.delta_90d") %>
+      </p>
+      <% if @delta_90d %>
+        <%
+          d_color = @delta_90d < 0 ? "text-status-success" : @delta_90d > 0 ? "text-status-danger" : "text-ink-primary"
+          d_icon  = @delta_90d < 0 ? "fa-arrow-down" : @delta_90d > 0 ? "fa-arrow-up" : "fa-minus"
+        %>
+        <p class="text-2xl font-bold <%= d_color %>">
+          <i class="fas <%= d_icon %> text-lg mr-0.5"></i>
+          <%= @delta_90d.abs %><span class="text-sm font-normal ml-1">kg</span>
+        </p>
+      <% else %>
+        <p class="text-2xl font-bold text-ink-subtle">—</p>
+        <p class="text-xs text-ink-subtle mt-1"><%= t("views.weight_entries.stats.not_enough_data") %></p>
+      <% end %>
+    </div>
+
+    <%# Objectif %>
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+      <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1">
+        <%= t("views.weight_entries.stats.goal") %>
+      </p>
+      <% if @profile&.goal_weight %>
+        <p class="text-2xl font-bold text-ink-primary">
+          <%= @profile.goal_weight %><span class="text-sm font-normal text-ink-subtle ml-1">kg</span>
+        </p>
+        <% if @goal_delta %>
+          <%
+            remaining_color = @goal_delta.abs < 1 ? "text-status-success" : "text-ink-subtle"
+          %>
+          <p class="text-xs <%= remaining_color %> mt-1">
+            <% if @goal_delta > 0 %>
+              <%= t("views.weight_entries.stats.to_lose", kg: @goal_delta) %>
+            <% elsif @goal_delta < 0 %>
+              <%= t("views.weight_entries.stats.to_gain", kg: @goal_delta.abs) %>
+            <% else %>
+              <%= t("views.weight_entries.stats.goal_reached") %>
+            <% end %>
+          </p>
+        <% end %>
+      <% else %>
+        <p class="text-2xl font-bold text-ink-subtle">—</p>
+        <p class="text-xs text-ink-subtle mt-1">
+          <%= link_to t("views.weight_entries.stats.set_goal"), edit_profile_path, class: "text-brand hover:text-brand-hover" %>
+        </p>
+      <% end %>
+    </div>
+
+  </div>
+
+  <%# ── Graphique ── %>
+  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-sm font-semibold text-ink-primary flex items-center gap-2">
+        <i class="fas fa-chart-line text-brand text-sm"></i>
+        <%= t("views.weight_entries.chart.title") %>
+      </h2>
+      <span class="text-xs text-ink-subtle">
+        <%= t("views.weight_entries.chart.last_n", count: [@chart_data.size, 90].min) %>
+      </span>
+    </div>
+
+    <% if @chart_data.size >= 2 %>
+      <div class="relative h-56">
+        <canvas data-controller="weight-chart"
+                data-weight-chart-labels-value="<%= @chart_labels.to_json %>"
+                data-weight-chart-data-value="<%= @chart_data.to_json %>"
+                data-weight-chart-goal-value="<%= @chart_goal %>">
+        </canvas>
+      </div>
+    <% else %>
+      <div class="flex flex-col items-center justify-center h-48 border border-dashed border-surface-border/50 rounded-xl">
+        <i class="fas fa-chart-line text-2xl text-ink-subtle mb-2"></i>
+        <p class="text-sm text-ink-subtle"><%= t("views.weight_entries.chart.not_enough_data") %></p>
+      </div>
+    <% end %>
+  </div>
+
+  <%# ── Saisie + historique ── %>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+    <%# Formulaire de saisie %>
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl p-6">
+      <h2 class="text-sm font-semibold text-ink-primary mb-4">
+        <%= t("views.weight_entries.form.title") %>
+      </h2>
+
+      <%
+        entries_json = @entries.map { |e| { date: e.date.to_s, weight: e.weight_kg.to_f } }.to_json
+      %>
+      <%= form_with model: @today_entry, url: weight_entries_path, method: :post, local: true,
+          data: {
+            controller: "weight-entry-form",
+            weight_entry_form_entries_value: entries_json
+          },
+          class: "space-y-4" do |f| %>
+        <% if @today_entry.errors.any? %>
+          <div class="text-xs text-status-danger bg-status-danger_dim/20 rounded-lg px-3 py-2">
+            <%= @today_entry.errors.full_messages.first %>
+          </div>
+        <% end %>
+
+        <div>
+          <label class="label-dark"><%= t("views.weight_entries.form.weight_label") %></label>
+          <div class="relative mt-1">
+            <%= f.number_field :weight_kg,
+                step: 0.1, min: 20, max: 400,
+                value: @today_entry.weight_kg,
+                class: "input-dark pr-10",
+                data: { "weight-entry-form-target": "weightField" } %>
+            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-subtle">kg</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="label-dark"><%= t("views.weight_entries.form.date_label") %></label>
+          <%= f.date_field :date,
+              value: @today_entry.date || Date.today,
+              max: Date.today,
+              class: "input-dark mt-1",
+              data: {
+                "weight-entry-form-target": "dateField",
+                action: "change->weight-entry-form#checkDate"
+              } %>
+        </div>
+
+        <p class="hidden text-xs text-status-warning bg-status-warning/10 rounded-lg px-3 py-2"
+           data-weight-entry-form-target="hint"
+           data-existing-message="<%= t("views.weight_entries.form.existing_entry", weight: "%{weight}") %>">
+        </p>
+
+        <%= f.submit t("views.weight_entries.form.submit"), class: "btn-primary w-full cursor-pointer" %>
+      <% end %>
+    </div>
+
+    <%# Historique %>
+    <div class="md:col-span-2 bg-surface-raised border border-surface-border/40 rounded-2xl p-6">
+      <h2 class="text-sm font-semibold text-ink-primary mb-4">
+        <%= t("views.weight_entries.history.title") %>
+      </h2>
+
+      <% recent = @entries.last(20).reverse %>
+
+      <% if recent.any? %>
+        <div class="overflow-y-auto max-h-[15.5rem] divide-y divide-surface-border/30 pr-1 scrollbar-thin">
+          <% recent.each_with_index do |entry, idx| %>
+            <div class="flex items-center justify-between py-2.5 group">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-surface-hover flex items-center justify-center shrink-0">
+                  <i class="fas fa-weight-scale text-xs text-ink-subtle"></i>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-ink-primary">
+                    <%= entry.weight_kg %> kg
+                  </p>
+                  <p class="text-xs text-ink-subtle"><%= l(entry.date, format: :long) %></p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <% if idx < recent.size - 1 %>
+                  <% prev_entry = recent[idx + 1] %>
+                  <% diff = (entry.weight_kg - prev_entry.weight_kg).round(1) %>
+                  <% if diff != 0 %>
+                    <span class="text-xs <%= diff < 0 ? 'text-status-success' : 'text-status-danger' %>">
+                      <%= diff > 0 ? "+#{diff}" : diff %> kg
+                    </span>
+                  <% end %>
+                <% end %>
+                <div class="opacity-0 group-hover:opacity-100 transition-opacity">
+                  <%= link_to weight_entry_path(entry),
+                      data: {
+                        turbo_method: :delete,
+                        action: "click->confirm#show",
+                        confirm_message: t("views.weight_entries.history.delete_confirm")
+                      },
+                      class: "inline-flex items-center justify-center w-7 h-7 rounded-lg text-ink-subtle hover:text-status-danger hover:bg-status-danger_dim/20 transition-colors" do %>
+                    <i class="fas fa-trash text-xs"></i>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="flex flex-col items-center justify-center py-12 border border-dashed border-surface-border/50 rounded-xl">
+          <i class="fas fa-weight-scale text-2xl text-ink-subtle mb-2"></i>
+          <p class="text-sm text-ink-subtle"><%= t("views.weight_entries.history.empty") %></p>
+        </div>
+      <% end %>
+    </div>
+
+  </div>
+
+</div>

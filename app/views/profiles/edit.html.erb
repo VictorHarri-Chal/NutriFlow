@@ -32,7 +32,7 @@
             <i class="fas fa-ruler text-brand text-xs"></i>
             <%= t("views.profiles.show.physical_data") %>
           </h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <%= f.label :weight, t("views.profiles.edit.weight"), class: "label-dark block mb-1.5" %>
               <div class="relative">
@@ -45,6 +45,13 @@
               <div class="relative">
                 <%= f.number_field :height, step: 0.1, class: "input-dark pr-10" %>
                 <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">cm</span>
+              </div>
+            </div>
+            <div>
+              <%= f.label :water_goal_ml, t("views.profiles.edit.water_goal_ml"), class: "label-dark block mb-1.5" %>
+              <div class="relative">
+                <%= f.number_field :water_goal_ml, step: 50, min: 0, max: 10000, class: "input-dark pr-10" %>
+                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">ml</span>
               </div>
             </div>
           </div>
@@ -112,6 +119,14 @@
                 </span>
               </label>
             <% end %>
+          </div>
+
+          <div class="mt-4">
+            <%= f.label :goal_weight, t("views.profiles.edit.goal_weight"), class: "label-dark block mb-1.5" %>
+            <div class="relative">
+              <%= f.number_field :goal_weight, step: 0.1, min: 20, max: 400, class: "input-dark pr-10" %>
+              <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">kg</span>
+            </div>
           </div>
         </div>
 
