@@ -26,9 +26,20 @@ en:
       updated: "Rating updated successfully."
       destroyed: "Rating deleted successfully."
     recipes:
+      created: "Recipe created successfully."
+      updated: "Recipe updated successfully."
+      destroyed: "Recipe deleted successfully."
       duplicated: "Recipe duplicated. Edit it before saving."
       duplicate_name: "Copy of %{name}"
       duplicate_error: "Unable to duplicate this recipe."
+    profiles:
+      updated: "Profile updated successfully."
+    users:
+      passwords:
+        reset_sent: "A password reset email has been sent to your email address."
+        reset_error: "An error occurred while sending the reset email."
+      registrations:
+        password_updated: "Your password has been updated successfully."
 
   activerecord:
     attributes:
@@ -172,6 +183,7 @@ en:
         select_food: "Select a food"
         food_label: "Food"
         search_food: "Search a food..."
+        no_food_found: "No food found"
         select_group: "Select a group"
         food_group: "Meal group"
         cancel: "Cancel"
@@ -185,6 +197,7 @@ en:
         select_recipe: "Select a recipe"
         recipe_label: "Recipe"
         search_recipe: "Search a recipe..."
+        no_recipe_found: "No recipe found"
         use_recipe_quantity: "Use the total recipe quantity"
         food_group: "Meal group"
 

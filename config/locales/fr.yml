@@ -26,9 +26,20 @@ fr:
       updated: "Notation mise à jour avec succès."
       destroyed: "Notation supprimée avec succès."
     recipes:
+      created: "Recette créée avec succès."
+      updated: "Recette mise à jour avec succès."
+      destroyed: "Recette supprimée avec succès."
       duplicated: "Recette dupliquée. Modifiez-la avant de sauvegarder."
       duplicate_name: "Copie de %{name}"
       duplicate_error: "Impossible de dupliquer cette recette."
+    profiles:
+      updated: "Profil mis à jour avec succès."
+    users:
+      passwords:
+        reset_sent: "Un email de réinitialisation de mot de passe a été envoyé à votre adresse email."
+        reset_error: "Une erreur est survenue lors de l'envoi de l'email de réinitialisation."
+      registrations:
+        password_updated: "Votre mot de passe a été mis à jour avec succès."
 
   activerecord:
     attributes:
@@ -172,6 +183,7 @@ fr:
         select_food: "Sélectionnez un aliment"
         food_label: "Aliment"
         search_food: "Rechercher un aliment..."
+        no_food_found: "Aucun aliment trouvé"
         select_group: "Sélectionnez un groupe"
         food_group: "Groupe de repas"
         cancel: "Annuler"
@@ -185,6 +197,7 @@ fr:
         select_recipe: "Sélectionnez une recette"
         recipe_label: "Recette"
         search_recipe: "Rechercher une recette..."
+        no_recipe_found: "Aucune recette trouvée"
         use_recipe_quantity: "Utiliser la quantité totale de la recette"
         food_group: "Groupe de repas"
 

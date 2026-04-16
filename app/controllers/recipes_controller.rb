@@ -27,7 +27,7 @@ class RecipesController < ApplicationController
     @recipe = current_user.recipes.new(recipe_params)
 
     if @recipe.save
-      redirect_to recipes_path
+      redirect_to recipes_path, notice: t("controllers.recipes.created")
     else
       @recipe.recipe_items.build if @recipe.recipe_items.empty?
       render :new, status: :unprocessable_entity
@@ -39,7 +39,7 @@ class RecipesController < ApplicationController
 
   def update
     if @recipe.update(recipe_params)
-      redirect_to recipe_path(@recipe)
+      redirect_to recipe_path(@recipe), notice: t("controllers.recipes.updated")
     else
       @recipe.recipe_items.build if @recipe.recipe_items.empty?
       render :edit, status: :unprocessable_entity
@@ -48,7 +48,7 @@ class RecipesController < ApplicationController
 
   def destroy
     @recipe.destroy
-    redirect_to recipes_path
+    redirect_to recipes_path, notice: t("controllers.recipes.destroyed")
   end
 
   def duplicate

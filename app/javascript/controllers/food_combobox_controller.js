@@ -5,7 +5,8 @@ export default class extends Controller {
   static values = {
     selectedId: Number,
     source: { type: String, default: "foods-data" },
-    suffix: { type: String, default: "kcal/100g" }
+    suffix: { type: String, default: "kcal/100g" },
+    noResults: { type: String, default: "Aucun résultat" }
   }
 
   connect() {
@@ -130,7 +131,7 @@ export default class extends Controller {
     const empty = document.createElement("div")
     empty.setAttribute("data-combobox-empty", "")
     empty.className = "px-3 py-4 text-sm text-ink-subtle text-center hidden"
-    empty.textContent = "Aucun aliment trouvé"
+    empty.textContent = this.noResultsValue
     dropdown.appendChild(empty)
   }
 

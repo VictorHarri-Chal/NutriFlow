@@ -4,7 +4,8 @@
   <%# ── Combobox aliment ── %>
   <div class="flex-1 min-w-0"
        data-controller="food-combobox"
-       data-food-combobox-selected-id-value="<%= f.object.food_id.to_i %>">
+       data-food-combobox-selected-id-value="<%= f.object.food_id.to_i %>"
+       data-food-combobox-no-results-value="<%= t('views.day_foods.form.no_food_found') %>">
 
     <%= f.hidden_field :food_id, data: { "food-combobox-target": "hiddenId" } %>
 

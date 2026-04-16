@@ -21,7 +21,7 @@ class ProfilesController < ApplicationController
 
   def update
     if @profile.update(profile_params)
-      redirect_to profile_path
+      redirect_to profile_path, notice: t("controllers.profiles.updated")
     else
       render :edit, status: :unprocessable_entity
     end

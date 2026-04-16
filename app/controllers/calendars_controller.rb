@@ -4,7 +4,7 @@ class CalendarsController < ApplicationController
 
   def index
     selected_date = parse_date(params[:date])
-    day = current_user.days.find_or_create_by(date: selected_date) { |d| d.user = current_user }
+    day = find_or_create_day(selected_date)
     load_calendar_data(day)
     @selected_date = selected_date
   end
@@ -22,7 +22,7 @@ class CalendarsController < ApplicationController
                          alert: t("views.calendars.copy_nothing_to_copy")
     end
 
-    today_day = current_user.days.find_or_create_by(date: target_date) { |d| d.user = current_user }
+    today_day = find_or_create_day(target_date)
 
     ActiveRecord::Base.transaction do
       yesterday_day.day_foods.each do |df|
@@ -50,4 +50,10 @@ class CalendarsController < ApplicationController
   end
 
   private
+
+  def find_or_create_day(date)
+    current_user.days.find_or_create_by(date: date)
+  rescue ActiveRecord::RecordNotUnique
+    current_user.days.find_by!(date: date)
+  end
 end

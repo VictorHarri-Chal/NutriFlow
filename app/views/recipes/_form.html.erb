@@ -135,12 +135,16 @@
               </div>
             </div>
 
-            <%# Poids total %>
+            <%# Poids total + sucres %>
             <div class="flex items-center justify-between text-sm border-t border-surface-border/40 pt-3">
               <span class="text-ink-subtle"><%= t("views.recipes.show.total_weight_short") %></span>
               <span class="font-semibold text-ink-primary">
                 <span data-recipe-builder-target="totalWeight">0</span> g
               </span>
+            </div>
+            <div class="flex items-center justify-between text-xs text-ink-subtle">
+              <span><%= t("views.foods.form.of_which_sugars") %></span>
+              <span><span data-recipe-builder-target="totalSugars">0</span> g</span>
             </div>
 
             <%# Détail par ingrédient %>

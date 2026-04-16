@@ -21,3 +21,7 @@
              day_items_without_group: @day_items_without_group,
              day:                     @day %>
 <% end %>
+
+<%= turbo_stream.replace "day_fab" do %>
+  <%= render "calendars/day_fab", all_day_items: @all_day_items, day: @day %>
+<% end %>
