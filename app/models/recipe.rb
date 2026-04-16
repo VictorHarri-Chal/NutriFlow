@@ -32,6 +32,7 @@ class Recipe < ApplicationRecord
   def total_sugars   = computed_totals[:sugars]
   def total_weight   = computed_totals[:weight]
 
+
   private
 
   def computed_totals

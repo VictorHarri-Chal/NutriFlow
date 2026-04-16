@@ -7,6 +7,7 @@ class CalendarsController < ApplicationController
     day = find_or_create_day(selected_date)
     load_calendar_data(day)
     @selected_date = selected_date
+    load_month_heatmap(selected_date)
   end
 
   def copy_yesterday

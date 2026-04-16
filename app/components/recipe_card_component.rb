@@ -13,4 +13,5 @@ class RecipeCardComponent < ApplicationComponent
   def user_rating
     recipe.rating_for(current_user)
   end
+
 end

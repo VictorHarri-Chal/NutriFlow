@@ -1,5 +1,5 @@
 <script id="foods-data" type="application/json">
-  <%= @foods.to_json(only: [:id, :name, :calories, :proteins, :carbs, :fats, :sugars]).html_safe %>
+  <%= @foods.to_json(only: [:id, :name, :calories, :proteins, :carbs, :fats, :sugars, :favorite]).html_safe %>
 </script>
 
 <%= simple_form_for([day, day_food]) do |f| %>
@@ -13,7 +13,11 @@
       <% if day_food.new_record? %>
         <div data-controller="food-combobox"
              data-food-combobox-selected-id-value="0"
-             data-food-combobox-no-results-value="<%= t('views.day_foods.form.no_food_found') %>">
+             data-food-combobox-no-results-value="<%= t('views.day_foods.form.no_food_found') %>"
+             data-food-combobox-recent-ids-value="<%= (@recent_food_ids || []).to_json %>"
+             data-food-combobox-favorites-label-value="<%= t('views.foods.favorites_section') %>"
+             data-food-combobox-recents-label-value="<%= t('views.foods.recents_section') %>"
+             data-food-combobox-all-label-value="<%= t('views.foods.all_section') %>">
           <%= f.hidden_field :food_id, data: {
                 "food-combobox-target": "hiddenId",
                 "day-food-preview-target": "foodId"

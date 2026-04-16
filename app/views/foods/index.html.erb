@@ -44,22 +44,35 @@
     </div>
   </header>
 
-  <!-- Filtre par label -->
-  <% if @food_labels.any? %>
-    <div class="flex flex-wrap items-center gap-2 mb-4">
-      <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h),
-            class: "inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border transition-colors #{@selected_label_id.nil? ? 'bg-brand/20 text-brand border-brand/50' : 'bg-surface-hover text-ink-muted border-surface-border hover:border-brand/30 hover:text-ink-primary'}" do %>
-        <%= t("views.foods.all_labels") %>
-      <% end %>
+  <!-- Filtres -->
+  <div class="flex flex-wrap items-center gap-2 mb-4">
+    <%# Tout %>
+    <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h),
+          class: "inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border transition-colors #{!@filtering_favorites && @selected_label_id.nil? ? 'bg-brand/20 text-brand border-brand/50' : 'bg-surface-hover text-ink-muted border-surface-border hover:border-brand/30 hover:text-ink-primary'}" do %>
+      <%= t("views.foods.all_labels") %>
+    <% end %>
+
+    <%# Favoris %>
+    <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, favorites: "true"),
+          class: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors #{@filtering_favorites ? 'bg-amber-400/15 text-amber-400 border-amber-400/40' : 'bg-surface-hover text-ink-muted border-surface-border hover:border-amber-400/30 hover:text-amber-400'}" do %>
+      <i class="fas fa-star text-xs"></i>
+      <%= t("views.foods.favorites_filter") %>
+    <% end %>
+
+    <%# Séparateur si des labels existent %>
+    <% if @food_labels.any? %>
+      <span class="w-px h-4 bg-surface-border/60 mx-0.5"></span>
       <% @food_labels.each do |label| %>
+        <% style = label.color_style %>
+        <% active = @selected_label_id == label.id %>
         <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, label_id: label.id),
-              class: "inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border transition-colors #{@selected_label_id == label.id ? 'bg-brand/20 text-brand border-brand/50' : 'bg-surface-hover text-ink-muted border-surface-border hover:border-brand/30 hover:text-ink-primary'}" do %>
-          <i class="fas fa-tag text-xs"></i>
+              class: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors #{active ? "#{style[:bg]} #{style[:text]} #{style[:border]}" : 'bg-surface-hover text-ink-muted border-surface-border hover:text-ink-primary'}" do %>
+          <span class="w-1.5 h-1.5 rounded-full <%= style[:dot] %> shrink-0"></span>
           <%= label.name %>
         <% end %>
       <% end %>
-    </div>
-  <% end %>
+    <% end %>
+  </div>
 
   <!-- Tableau des aliments ou empty state -->
   <% if @foods.empty? %>
@@ -67,7 +80,14 @@
       <div class="w-16 h-16 mb-4 bg-surface-hover rounded-full flex items-center justify-center">
         <i class="fas fa-utensils text-2xl text-ink-subtle"></i>
       </div>
-      <% if params[:query].present? || params[:q]&.values&.any?(&:present?) || params[:label_id].present? %>
+      <% if @filtering_favorites && params[:query].blank? && params[:label_id].blank? %>
+        <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.foods.no_favorites.title") %></h3>
+        <p class="text-ink-subtle text-sm mb-4"><%= t("views.foods.no_favorites.description") %></p>
+        <%= link_to foods_path, class: "btn-secondary text-sm" do %>
+          <i class="fas fa-list"></i>
+          <%= t("views.foods.no_favorites.see_all") %>
+        <% end %>
+      <% elsif params[:query].present? || params[:q]&.values&.any?(&:present?) || params[:label_id].present? || @filtering_favorites %>
         <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.foods.no_results.title") %></h3>
         <% search_term = params[:query].presence || params.dig(:q, :name_cont).presence %>
         <p class="text-ink-subtle text-sm mb-4">

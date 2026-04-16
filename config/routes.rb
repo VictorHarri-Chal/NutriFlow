@@ -14,11 +14,14 @@ Rails.application.routes.draw do
   resources :foods, except: [:show] do
     member do
       post :duplicate
+      patch :toggle_favorite
     end
   end
   resource :daily_calorie_requirement, only: [:show]
 
-  resource :setting, only: [:show, :update]
+  resource :setting, only: [:show, :update] do
+    patch :update_preferences
+  end
   resources :day_food_groups, only: [:create, :destroy]
   resources :food_labels, only: [:create, :destroy]
 

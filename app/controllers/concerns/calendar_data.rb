@@ -3,6 +3,24 @@ module CalendarData
 
   private
 
+  def load_month_heatmap(date)
+    start_of_month = date.beginning_of_month
+    end_of_month   = date.end_of_month
+
+    month_days = current_user.days
+                   .where(date: start_of_month..end_of_month)
+                   .includes(day_foods: :food, day_recipes: { recipe: { recipe_items: :food } })
+
+    @month_heatmap = month_days.each_with_object({}) do |d, h|
+      foods_cals   = d.day_foods.sum(&:total_calories)
+      recipes_cals = d.day_recipes.sum(&:total_calories)
+      h[d.date] = (foods_cals + recipes_cals).round
+    end
+
+    @heatmap_start = start_of_month
+    @heatmap_end   = end_of_month
+  end
+
   def load_calendar_data(day)
     @day = day
 
@@ -39,11 +57,13 @@ module CalendarData
     @daily_calorie_goal = @profile.calories_needed_for_goal
     @daily_protein_goal = @profile.daily_protein_goal
     @daily_fats_goal    = @profile.daily_fats_goal
+    @daily_carbs_goal   = @profile.daily_carbs_goal
 
     return unless @daily_calorie_goal
 
     @calories_percentage = @daily_calorie_goal > 0 ? (@total_calories / @daily_calorie_goal.to_f * 100).round(1) : 0
     @proteins_percentage = @daily_protein_goal > 0 ? (@total_proteins / @daily_protein_goal.to_f * 100).round(1) : 0
     @fats_percentage     = @daily_fats_goal    > 0 ? (@total_fats     / @daily_fats_goal.to_f    * 100).round(1) : 0
+    @carbs_percentage    = @daily_carbs_goal && @daily_carbs_goal > 0 ? (@total_carbs / @daily_carbs_goal.to_f * 100).round(1) : 0
   end
 end

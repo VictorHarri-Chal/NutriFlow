@@ -3,10 +3,14 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["input", "dropdown", "hiddenId"]
   static values = {
-    selectedId: Number,
-    source: { type: String, default: "foods-data" },
-    suffix: { type: String, default: "kcal/100g" },
-    noResults: { type: String, default: "Aucun résultat" }
+    selectedId:     Number,
+    source:         { type: String, default: "foods-data" },
+    suffix:         { type: String, default: "kcal/100g" },
+    noResults:      { type: String, default: "Aucun résultat" },
+    recentIds:      { type: Array,  default: [] },
+    favoritesLabel: { type: String, default: "Favoris" },
+    recentsLabel:   { type: String, default: "Récents" },
+    allLabel:       { type: String, default: "Tous" }
   }
 
   connect() {
@@ -35,16 +39,28 @@ export default class extends Controller {
 
   filter() {
     const query = this.inputTarget.value.toLowerCase().trim()
-    let visibleCount = 0
+    const allOptions = this.dropdownTarget.querySelectorAll("[data-combobox-option]")
+    const allHeaders = this.dropdownTarget.querySelectorAll("[data-combobox-header]")
+    const empty      = this.dropdownTarget.querySelector("[data-combobox-empty]")
 
-    this.dropdownTarget.querySelectorAll("[data-combobox-option]").forEach(opt => {
+    if (query === "") {
+      // Restore sectioned view
+      allOptions.forEach(opt => opt.classList.remove("hidden"))
+      allHeaders.forEach(h   => h.classList.remove("hidden"))
+      if (empty) empty.classList.add("hidden")
+      return
+    }
+
+    // Searching: collapse section headers, show only matching options
+    allHeaders.forEach(h => h.classList.add("hidden"))
+
+    let visibleCount = 0
+    allOptions.forEach(opt => {
       const match = opt.dataset.name.toLowerCase().includes(query)
       opt.classList.toggle("hidden", !match)
       if (match) visibleCount++
     })
 
-    // Show/hide empty state
-    const empty = this.dropdownTarget.querySelector("[data-combobox-empty]")
     if (empty) empty.classList.toggle("hidden", visibleCount > 0)
   }
 
@@ -83,7 +99,7 @@ export default class extends Controller {
 
   optionKeydown(event) {
     const opts = this._visibleOptions()
-    const idx = opts.indexOf(event.currentTarget)
+    const idx  = opts.indexOf(event.currentTarget)
 
     if (event.key === "ArrowDown") {
       event.preventDefault()
@@ -107,25 +123,63 @@ export default class extends Controller {
     const dataEl = document.getElementById(this.sourceValue)
     if (!dataEl) return
 
-    this._foods = JSON.parse(dataEl.textContent)
-    const dropdown = this.dropdownTarget
-    const suffix = this.suffixValue
+    this._foods      = JSON.parse(dataEl.textContent)
+    const dropdown   = this.dropdownTarget
+    const suffix     = this.suffixValue
+    const recentIds  = this.recentIdsValue || []
 
-    this._foods.forEach(food => {
+    // Partition into: favorites / recents (non-favorite) / everything else
+    const favorites = this._foods.filter(f => f.favorite === true)
+    const recents   = this._foods
+                        .filter(f => !f.favorite && recentIds.includes(f.id))
+                        .sort((a, b) => recentIds.indexOf(a.id) - recentIds.indexOf(b.id))
+    const allItems  = this._foods.filter(f => !f.favorite && !recentIds.includes(f.id))
+
+    const hasSections = favorites.length > 0 || recents.length > 0
+
+    const makeOption = (food) => {
       const btn = document.createElement("button")
       btn.type = "button"
       btn.setAttribute("data-combobox-option", "")
-      btn.dataset.id = food.id
+      btn.dataset.id   = food.id
       btn.dataset.name = food.name
       btn.className = "w-full text-left px-3 py-2 text-sm text-ink-primary hover:bg-surface-hover transition-colors flex items-center justify-between gap-2"
+
+      const starHtml = food.favorite
+        ? `<i class="fas fa-star text-amber-400 text-xs shrink-0"></i>`
+        : ""
+
       btn.innerHTML = `
-        <span class="truncate">${food.name}</span>
+        <span class="flex items-center gap-1.5 min-w-0">
+          ${starHtml}<span class="truncate">${food.name}</span>
+        </span>
         <span class="text-xs text-ink-subtle shrink-0">${Math.round(food.calories)} ${suffix}</span>
       `
-      btn.addEventListener("click", this.select.bind(this))
+      btn.addEventListener("click",   this.select.bind(this))
       btn.addEventListener("keydown", this.optionKeydown.bind(this))
-      dropdown.appendChild(btn)
-    })
+      return btn
+    }
+
+    const appendSection = (labelText, items) => {
+      if (items.length === 0) return
+
+      const header = document.createElement("div")
+      header.setAttribute("data-combobox-header", labelText)
+      header.className = "px-3 pt-2.5 pb-1 text-[10px] font-semibold tracking-widest uppercase text-ink-subtle/60 select-none"
+      header.textContent = labelText
+      dropdown.appendChild(header)
+
+      items.forEach(food => dropdown.appendChild(makeOption(food)))
+    }
+
+    if (hasSections) {
+      appendSection(this.favoritesLabelValue, favorites)
+      appendSection(this.recentsLabelValue,   recents)
+      appendSection(this.allLabelValue,       allItems)
+    } else {
+      // No sections — flat list (original behavior, e.g. recipe builder)
+      allItems.forEach(food => dropdown.appendChild(makeOption(food)))
+    }
 
     // Empty state
     const empty = document.createElement("div")
@@ -136,13 +190,13 @@ export default class extends Controller {
   }
 
   _positionDropdown() {
-    const rect = this.inputTarget.getBoundingClientRect()
+    const rect     = this.inputTarget.getBoundingClientRect()
     const dropdown = this.dropdownTarget
     dropdown.style.position = "fixed"
-    dropdown.style.top = `${rect.bottom + 4}px`
-    dropdown.style.left = `${rect.left}px`
-    dropdown.style.width = `${rect.width}px`
-    dropdown.style.zIndex = "9999"
+    dropdown.style.top      = `${rect.bottom + 4}px`
+    dropdown.style.left     = `${rect.left}px`
+    dropdown.style.width    = `${rect.width}px`
+    dropdown.style.zIndex   = "9999"
   }
 
   _close() {
@@ -151,8 +205,8 @@ export default class extends Controller {
   }
 
   _onOutsideClick(event) {
-    if (this.element.contains(event.target)) return
-    if (this.dropdownTarget.contains(event.target)) return
+    if (this.element.contains(event.target))         return
+    if (this.dropdownTarget.contains(event.target))  return
 
     // If input doesn't match a valid selection, reset
     if (!this.selectedIdValue) {

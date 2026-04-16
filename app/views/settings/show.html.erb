@@ -8,6 +8,7 @@
       <div class="card p-2 space-y-0.5">
         <% [
           { key: "general",         icon: "fa-sliders",       label: t("views.settings.show.general") },
+          { key: "preferences",     icon: "fa-toggle-on",     label: t("views.settings.show.preferences") },
           { key: "day_food_groups", icon: "fa-utensils",      label: t("views.settings.show.food_groups") },
           { key: "food_labels",     icon: "fa-tag",           label: t("views.settings.show.food_labels") },
           { key: "security",        icon: "fa-shield-halved", label: t("views.settings.show.security") }
@@ -31,6 +32,9 @@
       <div class="card p-8">
         <div id="general-tab" data-tabs-target="content" class="<%= @active_tab == 'general' ? '' : 'hidden' %>">
           <%= render 'settings/general' %>
+        </div>
+        <div id="preferences-tab" data-tabs-target="content" class="<%= @active_tab == 'preferences' ? '' : 'hidden' %>">
+          <%= render 'settings/preferences' %>
         </div>
         <div id="day_food_groups-tab" data-tabs-target="content" class="<%= @active_tab == 'day_food_groups' ? '' : 'hidden' %>">
           <%= render 'settings/day_food_groups' %>

@@ -51,6 +51,28 @@ module.exports = {
       },
     },
   },
+  safelist: [
+    // wellbeing_rating_controller.js — dynamic class strings not statically analysable
+    // active state
+    'bg-amber-400/70', 'border-amber-400/90', 'text-amber-300',
+    'bg-green-500/65', 'border-green-500/85', 'text-green-300',
+    'bg-blue-500/65',  'border-blue-500/85',  'text-blue-300',
+    // filled state
+    'bg-amber-400/25', 'border-amber-400/35', 'text-amber-400/60',
+    'bg-green-500/20', 'border-green-500/30', 'text-green-400/60',
+    'bg-blue-500/20',  'border-blue-500/30',  'text-blue-400/60',
+    // empty state
+    'bg-surface-hover/30', 'border-surface-border/30', 'text-ink-subtle/30',
+    // FoodLabel::COLOR_STYLES — defined in app/models/food_label.rb (not scanned by Tailwind)
+    'bg-red-500/20',    'text-red-400',    'border-red-500/30',    'bg-red-400',
+    'bg-orange-500/20', 'text-orange-400', 'border-orange-500/30', 'bg-orange-400',
+    'bg-amber-400/20',  'text-amber-400',  'border-amber-400/30',  'bg-amber-400',
+    'bg-yellow-400/20', 'text-yellow-400', 'border-yellow-400/30', 'bg-yellow-400',
+    'bg-green-500/20',  'text-green-400',  'border-green-500/30',  'bg-green-400',
+    'bg-teal-500/20',   'text-teal-400',   'border-teal-500/30',   'bg-teal-400',
+    'bg-blue-500/20',   'text-blue-400',   'border-blue-500/30',   'bg-blue-400',
+    'bg-violet-500/20', 'text-violet-400', 'border-violet-500/30', 'bg-violet-400',
+  ],
   plugins: [
     // require('@tailwindcss/forms'),
     // require('@tailwindcss/typography'),

@@ -110,6 +110,7 @@
                 <div class="flex items-center justify-end gap-3">
                   <%= link_to edit_path(item),
                         class: "w-8 h-8 inline-flex items-center justify-center rounded-lg text-ink-subtle hover:text-brand hover:bg-surface-hover transition-colors",
+                        data: { turbo_frame: "item_form" },
                         title: t("shared.edit") do %>
                     <i class="fas fa-pen text-xs"></i>
                   <% end %>

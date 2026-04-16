@@ -1,6 +1,8 @@
 <% content_for :page_title, t("views.calendars.page_title") %>
 
-<div class="mt-16 pb-28">
+<div class="mt-16 pb-28"
+     data-controller="heatmap-panel"
+     data-action="keydown@window->heatmap-panel#keydown">
 
   <div class="max-w-6xl mx-auto px-4 lg:px-0" id="calendar-content">
 
@@ -21,9 +23,11 @@
                daily_calorie_goal:  @daily_calorie_goal,
                daily_protein_goal:  @daily_protein_goal,
                daily_fats_goal:     @daily_fats_goal,
+               daily_carbs_goal:    @daily_carbs_goal,
                calories_percentage: @calories_percentage,
                proteins_percentage: @proteins_percentage,
-               fats_percentage:     @fats_percentage %>
+               fats_percentage:     @fats_percentage,
+               carbs_percentage:    @carbs_percentage %>
 
     <%# ── Inline form (turbo frame) ── %>
     <%= turbo_frame_tag "item_form" %>
@@ -38,9 +42,44 @@
     </div>
 
     <%# ── Daily note ── %>
-    <%= render 'calendars/day_note', day: @day %>
+    <% if current_user.show_day_note? %>
+      <%= render 'calendars/day_note', day: @day %>
+    <% end %>
 
   </div>
+
+  <%# ── Heatmap bottom-sheet ── %>
+  <div data-heatmap-panel-target="overlay"
+       class="fixed inset-0 z-50 flex items-end justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+
+    <%# Backdrop %>
+    <div class="absolute inset-0 bg-black/60"
+         data-action="click->heatmap-panel#close"></div>
+
+    <%# Sheet %>
+    <div data-heatmap-panel-target="sheet"
+         class="relative w-full max-w-3xl translate-y-full transition-transform duration-300 ease-out
+                bg-surface-raised rounded-t-2xl border-t border-surface-border/50 shadow-2xl
+                max-h-[80vh] overflow-y-auto">
+
+      <%# Drag handle %>
+      <div class="flex justify-center pt-3 pb-1">
+        <div class="w-10 h-1 rounded-full bg-surface-border/60"></div>
+      </div>
+
+      <%# Contenu heatmap %>
+      <div id="month_heatmap">
+        <%= render 'calendars/month_heatmap',
+                   month_heatmap:      @month_heatmap,
+                   heatmap_start:      @heatmap_start,
+                   heatmap_end:        @heatmap_end,
+                   selected_date:      @selected_date,
+                   daily_calorie_goal: @daily_calorie_goal %>
+      </div>
+
+    </div>
+  </div>
+
 </div>
 
 <%# ── FAB ── %>

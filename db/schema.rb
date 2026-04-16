@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_12_005533) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_16_203010) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -54,6 +54,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_12_005533) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.text "note"
+    t.integer "energy_level"
+    t.integer "mood"
+    t.integer "sleep_quality"
     t.index ["date", "user_id"], name: "index_days_on_date_and_user_id", unique: true
     t.index ["user_id"], name: "index_days_on_user_id"
   end
@@ -63,6 +66,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_12_005533) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "color"
     t.index ["name", "user_id"], name: "index_food_labels_on_name_and_user_id", unique: true
     t.index ["user_id"], name: "index_food_labels_on_user_id"
   end
@@ -86,6 +90,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_12_005533) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.boolean "favorite", default: false, null: false
     t.index ["brand"], name: "index_foods_on_brand"
     t.index ["name"], name: "index_foods_on_name"
     t.index ["user_id"], name: "index_foods_on_user_id"
@@ -148,6 +153,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_12_005533) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "locale", default: "fr", null: false
+    t.boolean "show_day_note", default: true, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

@@ -1,15 +1,109 @@
 <div class="mt-6">
   <%= form_with model: day, url: day_path(day), method: :patch, data: { turbo: true } do |f| %>
-    <div class="flex items-start gap-3 bg-surface-raised/60 border border-surface-border/30 rounded-xl px-4 py-3 hover:border-surface-border/50 transition-colors">
-      <i class="fas fa-pencil-alt text-ink-subtle/50 text-xs mt-2 flex-shrink-0"></i>
-      <%= f.text_area :note,
-            rows: 1,
-            placeholder: t("views.calendars.note_placeholder"),
-            class: "flex-1 bg-transparent border-none text-sm text-ink-muted placeholder-ink-subtle/40 focus:outline-none resize-none leading-relaxed",
-            data: {
-              controller: "auto-save",
-              action: "input->auto-save#save"
-            } %>
+    <div class="bg-surface-raised/40 border border-surface-border/30 rounded-xl p-4 space-y-4">
+
+      <%# ── Note libre ── %>
+      <div class="flex items-start gap-3">
+        <i class="fas fa-pencil-alt text-ink-subtle/40 text-xs mt-2.5 flex-shrink-0"></i>
+        <%= f.text_area :note,
+              rows: 1,
+              placeholder: t("views.calendars.note_placeholder"),
+              class: "flex-1 bg-transparent border-none text-sm text-ink-muted placeholder-ink-subtle/40 focus:outline-none resize-none leading-relaxed",
+              data: {
+                controller: "auto-save",
+                action: "input->auto-save#save"
+              } %>
+      </div>
+
+      <%# ── Séparateur ── %>
+      <div class="border-t border-surface-border/25"></div>
+
+      <%# ── Sélecteurs bien-être ── %>
+      <div class="grid grid-cols-3 gap-4">
+
+        <%# Énergie %>
+        <div>
+          <div class="text-[10px] font-semibold uppercase tracking-wider text-ink-subtle/50 mb-2 flex items-center gap-1.5">
+            <i class="fas fa-bolt text-amber-400/60 text-[10px]"></i>
+            <%= t("views.calendars.wellbeing.energy") %>
+          </div>
+          <div class="flex gap-1"
+               data-controller="wellbeing-rating auto-save"
+               data-wellbeing-rating-selected-value="<%= day.energy_level || 0 %>"
+               data-wellbeing-rating-color-value="amber"
+               data-action="change->wellbeing-rating#select change->auto-save#save mouseleave->wellbeing-rating#reset">
+            <% 5.times do |i| %>
+              <% val = i + 1 %>
+              <label class="flex-1 cursor-pointer"
+                     data-value="<%= val %>"
+                     data-action="mouseenter->wellbeing-rating#preview">
+                <%= f.radio_button :energy_level, val, class: "sr-only", id: "day_energy_level_#{val}" %>
+                <div class="w-full py-1.5 rounded text-center text-xs font-medium border transition-all duration-150 bg-surface-hover/30 border-surface-border/30 text-ink-subtle/30"
+                     data-wellbeing-rating-target="cell"
+                     data-value="<%= val %>">
+                  <%= val %>
+                </div>
+              </label>
+            <% end %>
+          </div>
+        </div>
+
+        <%# Humeur %>
+        <div>
+          <div class="text-[10px] font-semibold uppercase tracking-wider text-ink-subtle/50 mb-2 flex items-center gap-1.5">
+            <i class="fas fa-smile text-green-400/60 text-[10px]"></i>
+            <%= t("views.calendars.wellbeing.mood") %>
+          </div>
+          <div class="flex gap-1"
+               data-controller="wellbeing-rating auto-save"
+               data-wellbeing-rating-selected-value="<%= day.mood || 0 %>"
+               data-wellbeing-rating-color-value="green"
+               data-action="change->wellbeing-rating#select change->auto-save#save mouseleave->wellbeing-rating#reset">
+            <% 5.times do |i| %>
+              <% val = i + 1 %>
+              <label class="flex-1 cursor-pointer"
+                     data-value="<%= val %>"
+                     data-action="mouseenter->wellbeing-rating#preview">
+                <%= f.radio_button :mood, val, class: "sr-only", id: "day_mood_#{val}" %>
+                <div class="w-full py-1.5 rounded text-center text-xs font-medium border transition-all duration-150 bg-surface-hover/30 border-surface-border/30 text-ink-subtle/30"
+                     data-wellbeing-rating-target="cell"
+                     data-value="<%= val %>">
+                  <%= val %>
+                </div>
+              </label>
+            <% end %>
+          </div>
+        </div>
+
+        <%# Sommeil %>
+        <div>
+          <div class="text-[10px] font-semibold uppercase tracking-wider text-ink-subtle/50 mb-2 flex items-center gap-1.5">
+            <i class="fas fa-moon text-blue-400/60 text-[10px]"></i>
+            <%= t("views.calendars.wellbeing.sleep") %>
+          </div>
+          <div class="flex gap-1"
+               data-controller="wellbeing-rating auto-save"
+               data-wellbeing-rating-selected-value="<%= day.sleep_quality || 0 %>"
+               data-wellbeing-rating-color-value="blue"
+               data-action="change->wellbeing-rating#select change->auto-save#save mouseleave->wellbeing-rating#reset">
+            <% 5.times do |i| %>
+              <% val = i + 1 %>
+              <label class="flex-1 cursor-pointer"
+                     data-value="<%= val %>"
+                     data-action="mouseenter->wellbeing-rating#preview">
+                <%= f.radio_button :sleep_quality, val, class: "sr-only", id: "day_sleep_quality_#{val}" %>
+                <div class="w-full py-1.5 rounded text-center text-xs font-medium border transition-all duration-150 bg-surface-hover/30 border-surface-border/30 text-ink-subtle/30"
+                     data-wellbeing-rating-target="cell"
+                     data-value="<%= val %>">
+                  <%= val %>
+                </div>
+              </label>
+            <% end %>
+          </div>
+        </div>
+
+      </div>
+
     </div>
   <% end %>
 </div>

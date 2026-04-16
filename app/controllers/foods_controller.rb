@@ -1,5 +1,5 @@
 class FoodsController < ApplicationController
-  before_action :set_food, only: [:edit, :update, :destroy, :duplicate]
+  before_action :set_food, only: [:edit, :update, :destroy, :duplicate, :toggle_favorite]
 
   def index
     @food_labels = current_user.food_labels.order(:name)
@@ -8,6 +8,11 @@ class FoodsController < ApplicationController
 
     if params[:query].present?
       @foods = @foods.search_by_name(params[:query])
+    end
+
+    if params[:favorites] == "true"
+      @foods = @foods.where(favorite: true)
+      @filtering_favorites = true
     end
 
     if params[:label_id].present?
@@ -36,6 +41,7 @@ class FoodsController < ApplicationController
     if @food.save
       redirect_to foods_path, notice: t("controllers.foods.created")
     else
+      @food_labels = current_user.food_labels
       render :new, status: :unprocessable_entity
     end
   end
@@ -55,6 +61,15 @@ class FoodsController < ApplicationController
   def destroy
     @food.destroy
     redirect_to foods_path, notice: t("controllers.foods.destroyed")
+  end
+
+  def toggle_favorite
+    @food.update!(favorite: !@food.favorite)
+    @usage_counts = DayFood.where(food_id: @food.id).group(:food_id).count
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to foods_path }
+    end
   end
 
   def duplicate
