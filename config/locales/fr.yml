@@ -23,6 +23,9 @@ fr:
     days:
       food_added: "Aliment ajouté avec succès."
       food_add_error: "Erreur lors de l'ajout de l'aliment."
+    weight_entries:
+      saved: "Poids enregistré."
+      deleted: "Entrée supprimée."
     recipe_ratings:
       created: "Notation enregistrée avec succès."
       updated: "Notation mise à jour avec succès."
@@ -99,6 +102,8 @@ fr:
         logout: "Déconnexion"
         logout_confirm: "Es-tu sûr de vouloir te déconnecter ?"
         profile: "Mon profil"
+        collapse: "Réduire"
+        weight: "Suivi poids"
 
     calendars:
       page_title: "Calendrier"
@@ -136,6 +141,12 @@ fr:
         stats_goal_reached: "objectif atteint"
         stats_avg_kcal: "kcal moy."
         stats_days: "jours ce mois"
+      water:
+        title: "Hydratation"
+        glasses:
+          one: "%{count} verre"
+          other: "%{count} verres"
+        reset: "Réinitialiser"
       copy_success: "Les aliments d'hier ont été copiés avec succès."
       copy_error: "Impossible de copier certains aliments."
       copy_nothing_to_copy: "Aucun aliment enregistré hier."
@@ -315,6 +326,7 @@ fr:
         goal: "Objectif"
         age_years: "%{age} ans"
         bmi: "IMC"
+        goal_weight: "Poids cible"
         bmi_underweight: "Insuffisance pondérale"
         bmi_normal: "Poids normal"
         bmi_overweight: "Surpoids"
@@ -325,6 +337,8 @@ fr:
         age: "Âge"
         weight: "Poids"
         height: "Taille"
+        water_goal_ml: "Objectif eau quotidien"
+        goal_weight: "Poids cible"
         gender: "Genre"
         gender_male: "Homme"
         gender_female: "Femme"
@@ -524,3 +538,30 @@ fr:
         delete_food_confirm: "Es-tu sûr de vouloir supprimer cet aliment ?"
       food_labels:
         no_labels: "Aucun label"
+    weight_entries:
+      page_title: "Suivi poids"
+      stats:
+        current: "Poids actuel"
+        delta_30d: "Sur 30 jours"
+        delta_90d: "Sur 90 jours"
+        goal: "Objectif"
+        not_enough_data: "Pas assez de données"
+        set_goal: "Définir dans le profil"
+        bmi: "IMC %{value}"
+        to_lose: "%{kg} kg à perdre"
+        to_gain: "%{kg} kg à prendre"
+        goal_reached: "Objectif atteint !"
+      chart:
+        title: "Courbe de poids"
+        last_n: "%{count} dernières mesures"
+        not_enough_data: "Ajoutez au moins 2 mesures pour afficher la courbe"
+      form:
+        title: "Enregistrer mon poids"
+        weight_label: "Poids"
+        date_label: "Date"
+        submit: "Enregistrer"
+        existing_entry: "Mesure existante · %{weight} kg — la valeur sera mise à jour"
+      history:
+        title: "Historique"
+        empty: "Aucune mesure enregistrée"
+        delete_confirm: "Supprimer cette entrée ?"

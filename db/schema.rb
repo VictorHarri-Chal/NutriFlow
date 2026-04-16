@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_16_203010) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_17_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -57,6 +57,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_16_203010) do
     t.integer "energy_level"
     t.integer "mood"
     t.integer "sleep_quality"
+    t.integer "water_ml", default: 0, null: false
     t.index ["date", "user_id"], name: "index_days_on_date_and_user_id", unique: true
     t.index ["user_id"], name: "index_days_on_user_id"
   end
@@ -107,6 +108,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_16_203010) do
     t.string "goal"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "water_goal_ml", default: 2000, null: false
+    t.decimal "goal_weight", precision: 5, scale: 2
     t.index ["user_id"], name: "index_profiles_on_user_id"
   end
 
@@ -158,6 +161,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_16_203010) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "weight_entries", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.date "date", null: false
+    t.decimal "weight_kg", precision: 5, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "date"], name: "index_weight_entries_on_user_id_and_date", unique: true
+    t.index ["user_id"], name: "index_weight_entries_on_user_id"
+  end
+
   add_foreign_key "day_food_groups", "users"
   add_foreign_key "day_foods", "day_food_groups"
   add_foreign_key "day_foods", "days"
@@ -176,4 +189,5 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_16_203010) do
   add_foreign_key "recipe_ratings", "recipes"
   add_foreign_key "recipe_ratings", "users"
   add_foreign_key "recipes", "users"
+  add_foreign_key "weight_entries", "users"
 end

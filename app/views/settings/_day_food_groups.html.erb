@@ -44,10 +44,6 @@
               </div>
               <div>
                 <div class="text-sm font-medium text-ink-primary"><%= group.name %></div>
-                <% food_count = group.day_foods.count %>
-                <div class="text-xs text-ink-subtle mt-0.5">
-                  <%= food_count > 0 ? t("shared.food_count", count: food_count) : t("views.settings.food_groups.no_food") %>
-                </div>
               </div>
             </div>
             <div class="opacity-0 group-hover:opacity-100 transition-opacity">
