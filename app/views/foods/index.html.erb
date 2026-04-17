@@ -37,7 +37,7 @@
       </div>
 
       <!-- Bouton d'ajout -->
-      <%= link_to new_food_path, class: "btn-primary flex-shrink-0" do %>
+      <%= link_to new_food_path, class: "btn-primary flex-shrink-0 #{@foods.empty? ? 'invisible pointer-events-none' : ''}" do %>
         <i class="fas fa-plus"></i>
         <%= t("views.foods.add_food") %>
       <% end %>

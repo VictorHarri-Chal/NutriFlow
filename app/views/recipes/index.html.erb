@@ -32,7 +32,8 @@
       </div>
 
       <!-- Bouton d'ajout -->
-      <%= link_to new_recipe_path, class: "btn-primary flex-shrink-0" do %>
+      <% truly_empty = (@pagy ? @pagy.count : @recipes.size) == 0 && params[:query].blank? %>
+      <%= link_to new_recipe_path, class: "btn-primary flex-shrink-0 #{truly_empty ? 'invisible pointer-events-none' : ''}" do %>
         <i class="fas fa-plus"></i>
         <%= t("views.recipes.new_recipe") %>
       <% end %>

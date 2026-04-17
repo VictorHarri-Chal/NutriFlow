@@ -44,12 +44,6 @@
     <div class="flex items-center gap-1 text-sm">
       <span class="font-bold <%= text_color %>"><%= water_ml %></span>
       <span class="text-ink-subtle text-xs">/ <%= water_goal %> ml</span>
-      <% glasses = (water_ml / 250.0).floor %>
-      <% if glasses > 0 %>
-        <span class="text-ink-subtle/50 text-xs ml-0.5">
-          · <%= t("views.calendars.water.glasses", count: glasses) %>
-        </span>
-      <% end %>
     </div>
   </div>
 

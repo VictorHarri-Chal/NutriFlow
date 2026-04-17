@@ -116,19 +116,6 @@
             </div>
             <span class="text-sm font-medium text-ink-primary"><%= @profile.activity_level.present? ? @profile.activity_level_text : "—" %></span>
           </div>
-          <div class="flex items-center justify-between py-3">
-            <div class="flex items-center gap-2 text-sm text-ink-subtle">
-              <i class="fas fa-bullseye text-xs w-3 text-center"></i>
-              <%= t("views.profiles.show.goal") %>
-            </div>
-            <% if @profile.goal.present? %>
-              <span class="text-xs font-semibold px-3 py-1 rounded-full bg-brand/15 border border-brand/30 text-brand">
-                <%= @profile.goal_text %>
-              </span>
-            <% else %>
-              <span class="text-sm text-ink-subtle">—</span>
-            <% end %>
-          </div>
         </div>
       </div>
 
@@ -141,6 +128,19 @@
         <h3 class="text-sm font-semibold text-ink-subtle uppercase tracking-wide flex items-center gap-2">
           <i class="fas fa-fire text-brand text-xs"></i>
           <%= t("views.profiles.show.calorie_needs_title") %>
+          <div class="relative group ml-auto">
+            <i class="fas fa-circle-info text-xs text-ink-subtle/40 hover:text-ink-subtle cursor-default transition-colors"></i>
+            <div class="absolute right-0 top-5 z-10 w-64 hidden group-hover:block
+                        bg-surface-raised border border-surface-border/60 rounded-xl shadow-lg p-3">
+              <p class="text-[11px] font-semibold text-ink-primary mb-1.5">Mifflin-St Jeor</p>
+              <p class="text-[10px] text-ink-subtle leading-relaxed">
+                MB = (10 × poids + 6,25 × taille − 5 × âge ± constante) × coefficient d'activité
+              </p>
+              <p class="text-[10px] text-ink-subtle/60 mt-1.5 leading-relaxed">
+                Perte : MB × 0,85 · Maintien : MB × 1 · Prise de masse : MB × 1,15
+              </p>
+            </div>
+          </div>
         </h3>
 
         <% if @profile.weight.present? && @profile.height.present? && @profile.age.present? %>
