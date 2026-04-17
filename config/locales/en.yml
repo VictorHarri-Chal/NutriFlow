@@ -177,8 +177,8 @@ en:
         carbs_col: "Carbs (g)"
         fats_col: "Fats (g)"
       empty_state:
-        title: "No foods yet"
-        description: "Start by adding your first food to your bank."
+        title: "No foods"
+        description: "Add your first food to find it here."
         cta: "Add a food"
       no_results:
         title: "No results"
