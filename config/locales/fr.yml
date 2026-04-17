@@ -177,8 +177,8 @@ fr:
         carbs_col: "Gluc. (g)"
         fats_col: "Lip. (g)"
       empty_state:
-        title: "Aucun aliment enregistré"
-        description: "Commencez par ajouter votre premier aliment à votre banque."
+        title: "Aucun aliment"
+        description: "Ajoutez votre premier aliment pour le retrouver ici."
         cta: "Ajouter un aliment"
       no_results:
         title: "Aucun résultat"
