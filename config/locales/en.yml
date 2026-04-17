@@ -636,7 +636,7 @@ en:
           instructions: "Instructions"
           instructions_hint: "One step per line"
           image: "Image (optional)"
-          image_hint: "JPG or PNG — exercise illustration"
+          image_hint: "JPG or PNG"
       body_parts:
         back: "Back"
         chest: "Chest"

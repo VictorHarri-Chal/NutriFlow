@@ -73,12 +73,14 @@
           </h3>
           <div class="space-y-0.5">
             <%= link_to exercises_path(query: params[:query], equipment: params[:equipment], difficulty: params[:difficulty], source: params[:source]),
-                class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:body_part].blank? ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}" do %>
+                class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:body_part].blank? ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}",
+                data: { turbo_action: "replace" } do %>
               <%= t("views.exercises.all") %>
             <% end %>
             <% @body_parts.each do |part| %>
               <%= link_to exercises_path(query: params[:query], body_part: part, equipment: params[:equipment], difficulty: params[:difficulty], source: params[:source]),
-                  class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:body_part] == part ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}" do %>
+                  class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:body_part] == part ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}",
+                  data: { turbo_action: "replace" } do %>
                 <%= t_body_part(part) %>
               <% end %>
             <% end %>
@@ -94,12 +96,14 @@
           </h3>
           <div class="space-y-0.5">
             <%= link_to exercises_path(query: params[:query], body_part: params[:body_part], difficulty: params[:difficulty], source: params[:source]),
-                class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:equipment].blank? ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}" do %>
+                class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:equipment].blank? ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}",
+                data: { turbo_action: "replace" } do %>
               <%= t("views.exercises.all") %>
             <% end %>
             <% @equipments.each do |eq| %>
               <%= link_to exercises_path(query: params[:query], body_part: params[:body_part], equipment: eq, difficulty: params[:difficulty], source: params[:source]),
-                  class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:equipment] == eq ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}" do %>
+                  class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:equipment] == eq ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}",
+                  data: { turbo_action: "replace" } do %>
                 <%= t_equipment(eq) %>
               <% end %>
             <% end %>
@@ -115,12 +119,14 @@
           </h3>
           <div class="space-y-0.5">
             <%= link_to exercises_path(query: params[:query], body_part: params[:body_part], equipment: params[:equipment], source: params[:source]),
-                class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:difficulty].blank? ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}" do %>
+                class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:difficulty].blank? ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}",
+                data: { turbo_action: "replace" } do %>
               <%= t("views.exercises.all") %>
             <% end %>
             <% %w[beginner intermediate advanced].each do |level| %>
               <%= link_to exercises_path(query: params[:query], body_part: params[:body_part], equipment: params[:equipment], difficulty: level, source: params[:source]),
-                  class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:difficulty] == level ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}" do %>
+                  class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:difficulty] == level ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}",
+                  data: { turbo_action: "replace" } do %>
                 <%= t("views.exercises.difficulty.#{level}") %>
               <% end %>
             <% end %>

@@ -18,7 +18,7 @@ class ExercisesController < ApplicationController
     @body_parts = Exercise.body_parts
     @equipments = Exercise.equipments
 
-    @pagy, @exercises = pagy(@exercises.with_attached_image.order(:name), items: 20)
+    @pagy, @exercises = pagy(@exercises.with_attached_image.order(:name), items: 12)
   end
 
   def show
