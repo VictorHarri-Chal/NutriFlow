@@ -1,8 +1,5 @@
 <div class="max-w-6xl mx-auto mt-16 card p-8">
-  <div class="flex items-center gap-4 mb-6">
-    <%= link_to recipes_path, class: "text-ink-subtle hover:text-ink-muted transition" do %>
-      <i class="fas fa-arrow-left text-xl"></i>
-    <% end %>
+  <div class="mb-6">
     <h1 class="text-3xl font-bold text-ink-primary"><%= t("views.recipes.new.title") %></h1>
   </div>
   <%= render "form", recipe: @recipe %>

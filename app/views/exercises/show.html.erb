@@ -17,9 +17,13 @@
           <i class="fas fa-pen text-xs"></i>
           <%= t("views.exercises.custom.btn_edit") %>
         <% end %>
-        <%= button_to exercise_path(@exercise), method: :delete,
+        <%= link_to exercise_path(@exercise),
             class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-red-400/70 bg-surface-raised border border-surface-border/40 hover:text-red-400 hover:border-red-500/30 transition-colors",
-            form: { data: { turbo_confirm: t("views.exercises.custom.confirm_delete") } } do %>
+            data: {
+              turbo_method: :delete,
+              action: "click->confirm#show",
+              confirm_message: t("views.exercises.custom.confirm_delete")
+            } do %>
           <i class="fas fa-trash text-xs"></i>
           <%= t("views.exercises.custom.btn_delete") %>
         <% end %>

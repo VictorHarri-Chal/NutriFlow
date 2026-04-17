@@ -636,7 +636,7 @@ fr:
           instructions: "Instructions"
           instructions_hint: "Une étape par ligne"
           image: "Image (optionnel)"
-          image_hint: "JPG ou PNG — illustration de l'exercice"
+          image_hint: "JPG ou PNG"
       body_parts:
         back: "Dos"
         chest: "Pectoraux"
