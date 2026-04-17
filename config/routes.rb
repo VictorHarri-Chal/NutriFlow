@@ -33,6 +33,8 @@ Rails.application.routes.draw do
     resources :day_recipes, only: [:new, :create, :edit, :update, :destroy]
   end
 
+  resources :exercises, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+
   resources :weight_entries, only: [:index, :create, :destroy]
 
   resources :recipes do

@@ -1,0 +1,13 @@
+<% content_for :page_title, t("views.exercises.custom.new_title") %>
+
+<div class="max-w-3xl mx-auto mt-16">
+
+  <div class="card p-8">
+    <h1 class="text-2xl font-bold text-ink-primary mb-8">
+      <%= t("views.exercises.custom.new_title") %>
+    </h1>
+
+    <%= render "form", exercise: @exercise %>
+  </div>
+
+</div>

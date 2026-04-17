@@ -16,6 +16,11 @@
             <span class="font-medium pb-1"><%= t("views.shared.sidebar.recipes") %></span>
         <% end %>
 
+        <%= link_to exercises_path, class: current_page?(exercises_path) ? "nav-link-active" : "nav-link" do %>
+            <i class="fas fa-dumbbell w-5 h-5 mr-3"></i>
+            <span class="font-medium pb-1"><%= t("views.shared.sidebar.exercises") %></span>
+        <% end %>
+
         <%= link_to weight_entries_path, class: current_page?(weight_entries_path) ? "nav-link-active" : "nav-link" do %>
             <i class="fas fa-weight-scale w-5 h-5 mr-3"></i>
             <span class="font-medium pb-1"><%= t("views.shared.sidebar.weight") %></span>

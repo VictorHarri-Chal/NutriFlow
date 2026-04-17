@@ -1,0 +1,144 @@
+<% content_for :page_title, exercise_name(@exercise).capitalize %>
+
+<div class="max-w-5xl mx-auto mt-16">
+
+  <!-- Retour + actions custom -->
+  <div class="mb-8 flex items-center justify-between">
+    <%= link_to exercises_path(body_part: params[:body_part], equipment: params[:equipment], query: params[:query]),
+            class: "inline-flex items-center gap-2 text-sm text-ink-muted hover:text-ink-primary transition-colors" do %>
+      <i class="fas fa-arrow-left text-xs"></i>
+      <%= t("views.exercises.back_to_list") %>
+    <% end %>
+
+    <% if @exercise.custom? %>
+      <div class="flex items-center gap-2">
+        <%= link_to edit_exercise_path(@exercise),
+            class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-ink-muted bg-surface-raised border border-surface-border/40 hover:text-ink-primary hover:border-surface-border transition-colors" do %>
+          <i class="fas fa-pen text-xs"></i>
+          <%= t("views.exercises.custom.btn_edit") %>
+        <% end %>
+        <%= button_to exercise_path(@exercise), method: :delete,
+            class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-red-400/70 bg-surface-raised border border-surface-border/40 hover:text-red-400 hover:border-red-500/30 transition-colors",
+            form: { data: { turbo_confirm: t("views.exercises.custom.confirm_delete") } } do %>
+          <i class="fas fa-trash text-xs"></i>
+          <%= t("views.exercises.custom.btn_delete") %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Zone principale : GIF + infos essentielles -->
+  <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+
+    <!-- Image / GIF (2/5) -->
+    <div class="lg:col-span-2 card p-0 overflow-hidden self-start rounded-xl">
+      <% img_url = exercise_image_url(@exercise) %>
+      <% if img_url.present? %>
+        <img src="<%= img_url %>"
+             alt="<%= exercise_name(@exercise) %>"
+             class="w-full object-contain bg-surface-base">
+      <% else %>
+        <div class="aspect-square flex items-center justify-center bg-surface-raised">
+          <i class="fas fa-dumbbell text-6xl text-ink-subtle/20"></i>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Infos (3/5) -->
+    <div class="lg:col-span-3 flex flex-col gap-4">
+
+      <!-- Titre + badges -->
+      <div>
+        <h1 class="text-2xl font-bold text-ink-primary capitalize leading-tight mb-4">
+          <%= exercise_name(@exercise) %>
+        </h1>
+        <div class="flex flex-wrap gap-2">
+          <% if @exercise.difficulty.present? %>
+            <span class="px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-wide <%= difficulty_badge_classes(@exercise.difficulty) %>">
+              <%= t("views.exercises.difficulty.#{@exercise.difficulty}", default: @exercise.difficulty) %>
+            </span>
+          <% end %>
+          <% if @exercise.body_part.present? %>
+            <span class="px-2.5 py-1 bg-surface-raised border border-surface-border/50 rounded-lg text-xs text-ink-muted">
+              <%= t_body_part(@exercise.body_part) %>
+            </span>
+          <% end %>
+          <% if @exercise.equipment.present? %>
+            <span class="px-2.5 py-1 bg-surface-raised border border-surface-border/50 rounded-lg text-xs text-ink-muted">
+              <i class="fas fa-dumbbell text-[10px] mr-1 opacity-50"></i><%= t_equipment(@exercise.equipment) %>
+            </span>
+          <% end %>
+          <% if @exercise.category.present? %>
+            <span class="px-2.5 py-1 bg-surface-raised border border-surface-border/50 rounded-lg text-xs text-ink-muted">
+              <%= t_category(@exercise.category) %>
+            </span>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Muscles -->
+      <div class="card p-4 space-y-4">
+        <p class="text-xs font-semibold text-ink-subtle uppercase tracking-wider">
+          <%= t("views.exercises.show.muscles") %>
+        </p>
+
+        <% if @exercise.target_muscle.present? %>
+          <div class="flex items-center gap-3">
+            <span class="text-xs text-ink-subtle w-20 flex-shrink-0"><%= t("views.exercises.show.primary_muscle") %></span>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-brand/10 text-brand border border-brand/20 rounded-lg text-xs font-medium">
+              <span class="w-1.5 h-1.5 rounded-full bg-brand flex-shrink-0"></span>
+              <%= t_muscle(@exercise.target_muscle) %>
+            </span>
+          </div>
+        <% end %>
+
+        <% if @exercise.secondary_muscles.any? %>
+          <div class="flex items-start gap-3">
+            <span class="text-xs text-ink-subtle w-20 flex-shrink-0 pt-1"><%= t("views.exercises.show.secondary_muscles") %></span>
+            <div class="flex flex-wrap gap-1.5">
+              <% @exercise.secondary_muscles.each do |muscle| %>
+                <span class="px-2 py-0.5 bg-surface-hover border border-surface-border/40 rounded-md text-xs text-ink-muted">
+                  <%= t_muscle(muscle) %>
+                </span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Description -->
+      <% desc = exercise_description(@exercise) %>
+      <% if desc.present? %>
+        <div class="card p-4">
+          <p class="text-xs font-semibold text-ink-subtle uppercase tracking-wider mb-2">
+            <%= t("views.exercises.show.description") %>
+          </p>
+          <p class="text-sm text-ink-muted leading-relaxed"><%= desc %></p>
+        </div>
+      <% end %>
+
+    </div>
+  </div>
+
+  <!-- Instructions -->
+  <% instrs = exercise_instructions(@exercise) %>
+  <% if instrs.present? %>
+    <div class="card p-5">
+      <p class="text-xs font-semibold text-ink-subtle uppercase tracking-wider mb-4">
+        <%= t("views.exercises.show.instructions") %>
+      </p>
+      <ol class="space-y-3">
+        <% instrs.split("\n").each_with_index do |step, i| %>
+          <% next if step.strip.blank? %>
+          <li class="flex gap-3 items-start">
+            <span class="flex-shrink-0 w-5 h-5 rounded-full bg-surface-raised border border-surface-border/60 text-ink-subtle text-xs font-semibold flex items-center justify-center mt-0.5">
+              <%= i + 1 %>
+            </span>
+            <p class="text-sm text-ink-muted leading-relaxed"><%= step.strip %></p>
+          </li>
+        <% end %>
+      </ol>
+    </div>
+  <% end %>
+
+</div>
