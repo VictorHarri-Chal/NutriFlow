@@ -1,0 +1,247 @@
+<% content_for :page_title, t("views.exercises.page_title") %>
+
+<div class="max-w-7xl mx-auto mt-16">
+
+  <!-- En-tête -->
+  <header class="mb-8">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div class="flex-shrink-0">
+        <h1 class="text-2xl font-bold text-ink-primary"><%= t("views.exercises.title") %></h1>
+        <p class="text-xs text-ink-subtle mt-0.5">
+          <%= t("views.exercises.exercise_count", count: @pagy.count) %>
+        </p>
+      </div>
+
+      <!-- Recherche + bouton créer -->
+      <div class="flex items-center gap-3 flex-1 max-w-lg">
+        <%= form_with url: exercises_path, method: :get, local: true, class: "relative flex-1" do |f| %>
+          <%= hidden_field_tag :body_part,  params[:body_part]  if params[:body_part].present? %>
+          <%= hidden_field_tag :equipment,  params[:equipment]  if params[:equipment].present? %>
+          <%= hidden_field_tag :difficulty, params[:difficulty] if params[:difficulty].present? %>
+          <%= hidden_field_tag :source,     params[:source]     if params[:source].present? %>
+          <%= text_field_tag :query, params[:query],
+              class: "input-dark pl-9 #{params[:query].present? ? 'pr-8' : ''} py-1.5 text-sm",
+              placeholder: t("views.exercises.search_placeholder"),
+              autocomplete: "off" %>
+          <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-ink-subtle text-xs pointer-events-none"></i>
+          <% if params[:query].present? %>
+            <%= link_to exercises_path(body_part: params[:body_part], equipment: params[:equipment], difficulty: params[:difficulty], source: params[:source]),
+                class: "absolute right-3 top-1/2 -translate-y-1/2 text-ink-subtle hover:text-ink-muted" do %>
+              <i class="fas fa-times text-xs"></i>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <%= link_to new_exercise_path, class: "btn-primary flex-shrink-0" do %>
+          <i class="fas fa-plus text-xs"></i>
+          <%= t("views.exercises.custom.btn_new") %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Toggle source (Tous / Mes exercices) — slider -->
+    <div class="mt-4 relative inline-grid grid-cols-2 p-1 bg-surface-raised border border-surface-border/40 rounded-xl"
+         data-controller="tab-slider">
+      <%# Sliding pill indicator %>
+      <span class="absolute top-1 bottom-1 rounded-lg bg-brand transition-[left,right] duration-[220ms] ease-in-out
+                   <%= params[:source] == 'custom' ? 'left-[50%] right-1' : 'left-1 right-[50%]' %>"
+            data-tab-slider-target="pill"></span>
+
+      <%= link_to exercises_path(body_part: params[:body_part], equipment: params[:equipment], difficulty: params[:difficulty], query: params[:query]),
+          class: "relative z-10 px-6 py-1.5 text-sm font-semibold transition-colors text-center #{params[:source].blank? ? 'text-surface-base' : 'text-ink-muted hover:text-ink-primary'}",
+          data: { tab_slider_target: "tab", action: "tab-slider#select" } do %>
+        <%= t("views.exercises.source_all") %>
+      <% end %>
+      <%= link_to exercises_path(source: "custom", body_part: params[:body_part], equipment: params[:equipment], difficulty: params[:difficulty], query: params[:query]),
+          class: "relative z-10 px-6 py-1.5 text-sm font-semibold transition-colors text-center #{params[:source] == 'custom' ? 'text-surface-base' : 'text-ink-muted hover:text-ink-primary'}",
+          data: { tab_slider_target: "tab", action: "tab-slider#select" } do %>
+        <%= t("views.exercises.source_custom") %>
+      <% end %>
+    </div>
+  </header>
+
+  <div class="flex flex-col lg:flex-row gap-6">
+
+    <!-- Filtres latéraux -->
+    <aside class="lg:w-52 flex-shrink-0">
+      <div class="card p-4 space-y-5 lg:sticky lg:top-6 max-h-[calc(100vh-6rem)] overflow-y-auto">
+
+        <!-- Body part -->
+        <div>
+          <h3 class="text-xs font-semibold text-ink-subtle uppercase tracking-wider mb-2">
+            <%= t("views.exercises.filter_body_part") %>
+          </h3>
+          <div class="space-y-0.5">
+            <%= link_to exercises_path(query: params[:query], equipment: params[:equipment], difficulty: params[:difficulty], source: params[:source]),
+                class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:body_part].blank? ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}" do %>
+              <%= t("views.exercises.all") %>
+            <% end %>
+            <% @body_parts.each do |part| %>
+              <%= link_to exercises_path(query: params[:query], body_part: part, equipment: params[:equipment], difficulty: params[:difficulty], source: params[:source]),
+                  class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:body_part] == part ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}" do %>
+                <%= t_body_part(part) %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="border-t border-surface-border/40"></div>
+
+        <!-- Équipement -->
+        <div>
+          <h3 class="text-xs font-semibold text-ink-subtle uppercase tracking-wider mb-2">
+            <%= t("views.exercises.filter_equipment") %>
+          </h3>
+          <div class="space-y-0.5">
+            <%= link_to exercises_path(query: params[:query], body_part: params[:body_part], difficulty: params[:difficulty], source: params[:source]),
+                class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:equipment].blank? ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}" do %>
+              <%= t("views.exercises.all") %>
+            <% end %>
+            <% @equipments.each do |eq| %>
+              <%= link_to exercises_path(query: params[:query], body_part: params[:body_part], equipment: eq, difficulty: params[:difficulty], source: params[:source]),
+                  class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:equipment] == eq ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}" do %>
+                <%= t_equipment(eq) %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="border-t border-surface-border/40"></div>
+
+        <!-- Niveau / Difficulté -->
+        <div>
+          <h3 class="text-xs font-semibold text-ink-subtle uppercase tracking-wider mb-2">
+            <%= t("views.exercises.filter_difficulty") %>
+          </h3>
+          <div class="space-y-0.5">
+            <%= link_to exercises_path(query: params[:query], body_part: params[:body_part], equipment: params[:equipment], source: params[:source]),
+                class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:difficulty].blank? ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}" do %>
+              <%= t("views.exercises.all") %>
+            <% end %>
+            <% %w[beginner intermediate advanced].each do |level| %>
+              <%= link_to exercises_path(query: params[:query], body_part: params[:body_part], equipment: params[:equipment], difficulty: level, source: params[:source]),
+                  class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:difficulty] == level ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}" do %>
+                <%= t("views.exercises.difficulty.#{level}") %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- Grille d'exercices -->
+    <div class="flex-1 min-w-0">
+
+      <% if @exercises.empty? %>
+        <div class="text-center py-12 border-2 border-dashed border-surface-border/50 rounded-xl bg-surface-base">
+          <div class="w-14 h-14 mx-auto mb-3 bg-surface-raised rounded-full flex items-center justify-center border border-surface-border/40">
+            <i class="fas fa-dumbbell text-brand text-xl"></i>
+          </div>
+          <% if params[:source] == "custom" %>
+            <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.exercises.custom.empty.title") %></h3>
+            <p class="text-ink-muted mb-4"><%= t("views.exercises.custom.empty.description") %></p>
+            <%= link_to new_exercise_path, class: "btn-primary" do %>
+              <i class="fas fa-plus"></i>
+              <%= t("views.exercises.custom.btn_new") %>
+            <% end %>
+          <% elsif params[:query].present? || params[:body_part].present? || params[:equipment].present? || params[:difficulty].present? %>
+            <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.exercises.no_results.title") %></h3>
+            <p class="text-ink-muted mb-4"><%= t("views.exercises.no_results.description") %></p>
+            <%= link_to exercises_path, class: "btn-secondary" do %>
+              <i class="fas fa-times"></i>
+              <%= t("views.exercises.no_results.clear") %>
+            <% end %>
+          <% else %>
+            <h3 class="text-lg font-semibold text-ink-primary mb-2"><%= t("views.exercises.empty_state.title") %></h3>
+            <p class="text-ink-muted"><%= t("views.exercises.empty_state.description") %></p>
+          <% end %>
+        </div>
+
+      <% else %>
+        <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
+          <% @exercises.each do |exercise| %>
+            <%= link_to exercise_path(exercise,
+                    body_part:  params[:body_part],
+                    equipment:  params[:equipment],
+                    difficulty: params[:difficulty],
+                    source:     params[:source],
+                    query:      params[:query]),
+                class: "card p-0 overflow-hidden hover:border-surface-border transition-all group" do %>
+
+              <!-- Image / GIF / placeholder -->
+              <% has_gif = exercise.gif_url.present? %>
+              <% has_image = !has_gif && exercise.image.attached? %>
+              <div class="aspect-square bg-surface-base relative overflow-hidden"
+                   <% if has_gif %>
+                   data-controller="gif-preview"
+                   data-gif-preview-src-value="<%= exercise.gif_url %>"
+                   data-action="mouseenter->gif-preview#mouseenter mouseleave->gif-preview#mouseleave"
+                   <% end %>>
+
+                <% if has_gif %>
+                  <!-- Placeholder jusqu'au chargement du canvas -->
+                  <div class="w-full h-full flex items-center justify-center bg-surface-raised"
+                       data-gif-preview-target="placeholder">
+                    <i class="fas fa-dumbbell text-4xl text-ink-subtle/25"></i>
+                  </div>
+                  <canvas data-gif-preview-target="canvas"
+                          class="hidden absolute inset-0 w-full h-full"></canvas>
+                  <img data-gif-preview-target="gif"
+                       src=""
+                       alt="<%= exercise.name %>"
+                       class="hidden absolute inset-0 w-full h-full object-cover">
+                <% elsif has_image %>
+                  <img src="<%= url_for(exercise.image) %>"
+                       alt="<%= exercise.name %>"
+                       class="absolute inset-0 w-full h-full object-cover">
+                <% else %>
+                  <div class="w-full h-full flex items-center justify-center bg-surface-raised">
+                    <i class="fas fa-dumbbell text-4xl text-ink-subtle/25"></i>
+                  </div>
+                <% end %>
+
+                <!-- Badge difficulté -->
+                <% if exercise.difficulty.present? %>
+                  <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md text-xs font-medium <%= difficulty_badge_classes(exercise.difficulty) %>">
+                    <%= t("views.exercises.difficulty.#{exercise.difficulty}", default: exercise.difficulty) %>
+                  </span>
+                <% end %>
+
+                <!-- Badge custom -->
+                <% if exercise.custom? %>
+                  <span class="absolute top-2 right-2 px-2 py-0.5 rounded-md text-xs font-medium bg-brand/15 text-brand border border-brand/25">
+                    <i class="fas fa-star text-[9px]"></i>
+                  </span>
+                <% end %>
+              </div>
+
+              <!-- Infos -->
+              <div class="p-3">
+                <h3 class="text-sm font-semibold text-ink-primary capitalize leading-tight mb-1 line-clamp-2 group-hover:text-brand transition-colors">
+                  <%= exercise_name(exercise) %>
+                </h3>
+                <% if exercise.target_muscle.present? %>
+                  <p class="text-xs text-ink-subtle capitalize"><%= t_muscle(exercise.target_muscle) %></p>
+                <% end %>
+                <% if exercise.equipment.present? %>
+                  <p class="text-xs text-ink-subtle/50 mt-0.5"><%= t_equipment(exercise.equipment) %></p>
+                <% end %>
+              </div>
+
+            <% end %>
+          <% end %>
+        </div>
+
+        <!-- Pagination -->
+        <% if @pagy&.pages&.> 1 %>
+          <div class="mt-6 flex justify-center">
+            <%= render PaginationComponent.new(pagy: @pagy) %>
+          </div>
+        <% end %>
+
+      <% end %>
+    </div>
+  </div>
+
+</div>

@@ -61,3 +61,4 @@ node_modules
 .deploy_staging_merged_pr_register
 
 .claude
+public/exercise_gifs/
