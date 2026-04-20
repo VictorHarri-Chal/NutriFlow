@@ -32,17 +32,20 @@
     <%# ── Hydration widget ── %>
     <%= render 'calendars/water_widget', day: @day, profile: @profile %>
 
+    <%# ── Workout widget ── %>
+    <% if current_user.show_workout_section? %>
+      <%= render 'calendars/workout_widget', day: @day %>
+    <% end %>
+
     <%# ── Inline form (turbo frame) ── %>
     <%= turbo_frame_tag "item_form" %>
 
-    <%# ── Food groups ── %>
-    <div class="mt-2">
-      <%= render 'calendars/day_items',
-                 all_day_items:           @all_day_items,
-                 day_items_by_group:      @day_items_by_group,
-                 day_items_without_group: @day_items_without_group,
-                 day:                     @day %>
-    </div>
+    <%# ── Food widget ── %>
+    <%= render 'calendars/food_widget',
+               all_day_items:           @all_day_items,
+               day_items_by_group:      @day_items_by_group,
+               day_items_without_group: @day_items_without_group,
+               day:                     @day %>
 
     <%# ── Daily note ── %>
     <% if current_user.show_day_note? %>

@@ -60,6 +60,8 @@ en:
       models:
         recipe:
           at_least_one_ingredient: "At least one ingredient is required"
+        workout_session:
+          at_least_one_exercise: "Add at least one exercise before saving the session."
         recipe_rating:
           attributes:
             recipe_id:
@@ -148,15 +150,20 @@ en:
           one: "%{count} glass"
           other: "%{count} glasses"
         reset: "Reset"
+        add_ml: "Add %{ml} ml of water"
       copy_success: "Yesterday's foods have been copied successfully."
       copy_error: "Some foods could not be copied."
       copy_nothing_to_copy: "No foods logged yesterday."
       note_title: "Day note"
       note_placeholder: "Special meal, workout day, how you felt..."
       wellbeing:
+        widget_title: "Notes & Wellbeing"
         energy: "Energy"
         mood: "Mood"
         sleep: "Sleep"
+      food_widget:
+        title: "Food"
+        empty: "No foods logged for this day."
       empty_state:
         title: "No foods logged"
         description: "You haven't added any foods for this day yet."
@@ -361,6 +368,8 @@ en:
         journal_section: "Daily journal"
         show_day_note: "Daily notes section"
         show_day_note_hint: "Shows the free-text area, as well as the energy, mood and sleep indicators at the bottom of each day."
+        show_workout_section: "Workout section"
+        show_workout_section_hint: "Shows the workout widget and the quick-add button in the calendar."
       general:
         title: "General settings"
         description: "Customize your NutriFlow experience."
@@ -747,3 +756,33 @@ en:
         title: "History"
         empty: "No measurements recorded"
         delete_confirm: "Delete this entry?"
+
+    workout_sessions:
+      confirm_delete: "Delete this session?"
+      widget:
+        title: "Workout"
+        session_count:
+          one: "1 session"
+          other: "%{count} sessions"
+        empty: "No workout session today"
+        add_session: "Add a session"
+      form:
+        title_new: "New session"
+        title_edit: "Edit session"
+        search_exercise: "Search an exercise..."
+        no_exercise_found: "No exercise found"
+        add_exercise: "Add"
+        add_set: "Set"
+        weight_kg: "Weight (kg)"
+        reps: "Reps"
+        duration: "Duration"
+        rpe: "Intensity (RPE)"
+        notes: "Notes"
+        notes_placeholder: "How you felt, observations..."
+        empty_hint: "Search an exercise and click Add to start"
+        search_hint: "Type to search an exercise"
+        last_perf_prefix: "Last time"
+        rpe_light: "Light"
+        rpe_max: "Max"
+        no_exercises_error: "Add at least one exercise before saving the session."
+        submit_add: "Add"

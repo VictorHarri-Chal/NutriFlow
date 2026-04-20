@@ -20,8 +20,8 @@
              carbs_percentage:    @carbs_percentage %>
 <% end %>
 
-<%= turbo_stream.replace "day_items" do %>
-  <%= render "calendars/day_items",
+<%= turbo_stream.replace "food_widget" do %>
+  <%= render "calendars/food_widget",
              all_day_items:           @all_day_items,
              day_items_by_group:      @day_items_by_group,
              day_items_without_group: @day_items_without_group,

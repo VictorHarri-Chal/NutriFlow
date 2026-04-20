@@ -31,6 +31,6 @@ class SettingsController < ApplicationController
   private
 
   def preferences_params
-    params.require(:user).permit(:show_day_note)
+    params.require(:user).permit(:show_day_note, :show_workout_section)
   end
 end
