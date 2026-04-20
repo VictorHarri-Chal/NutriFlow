@@ -31,9 +31,13 @@ Rails.application.routes.draw do
     end
     resources :day_foods, only: [:new, :create, :edit, :update, :destroy]
     resources :day_recipes, only: [:new, :create, :edit, :update, :destroy]
+    resources :workout_sessions, only: [:new, :create, :edit, :update, :destroy]
   end
 
-  resources :exercises, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+  resources :exercises, only: [:index, :show, :new, :create, :edit, :update, :destroy] do
+    collection { get :search }
+    member     { get :last_performance }
+  end
 
   resources :weight_entries, only: [:index, :create, :destroy]
 

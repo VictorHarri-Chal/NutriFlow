@@ -1,0 +1,74 @@
+<%
+  total_calories = all_day_items.sum(&:total_calories)
+  total_proteins = all_day_items.sum(&:total_proteins)
+  total_carbs    = all_day_items.sum(&:total_carbs)
+  total_fats     = all_day_items.sum(&:total_fats)
+%>
+
+<div id="food_widget"
+     data-controller="collapsible"
+     data-collapsible-storage-key="food-widget"
+     data-collapsible-open-by-default
+     class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-3 mb-4">
+
+  <%# Header (click to toggle) %>
+  <div class="flex items-center justify-between cursor-pointer select-none"
+       data-action="click->collapsible#toggle"
+       data-collapsible-target="trigger">
+    <div class="flex items-center gap-2">
+      <i class="fas fa-chevron-down text-xs text-ink-subtle transition-transform duration-200"
+         data-collapsible-target="icon"></i>
+      <span class="text-xs font-medium text-ink-subtle uppercase tracking-wider">
+        <%= t("views.calendars.food_widget.title") %>
+      </span>
+    </div>
+  </div>
+
+  <%# Collapsible content %>
+  <div data-collapsible-target="content" class="mt-3 space-y-3">
+
+    <% if all_day_items.any? %>
+      <% day_items_by_group.each do |group, items| %>
+        <%= render DayFoodGroupComponent.new(day_food_group: group, day_foods: items, day: day) %>
+      <% end %>
+      <% if day_items_without_group.any? %>
+        <%= render DayFoodGroupComponent.new(day_foods: day_items_without_group, day: day) %>
+      <% end %>
+    <% else %>
+      <p class="text-sm text-ink-subtle text-center py-3"><%= t("views.calendars.food_widget.empty") %></p>
+    <% end %>
+
+    <%# Global add buttons (always visible) %>
+    <div class="flex gap-2">
+      <% if @has_foods %>
+        <%= link_to new_day_day_food_path(day),
+            class: "flex-1 flex items-center justify-center gap-2 py-2 rounded-xl border border-dashed border-surface-border/50 text-sm text-ink-subtle hover:text-brand hover:border-brand/40 hover:bg-brand/5 transition-colors",
+            data: { turbo_frame: "item_form" } do %>
+          <i class="fas fa-plus text-xs"></i>
+          <%= t("views.calendars.add_food") %>
+        <% end %>
+      <% else %>
+        <%= link_to foods_path,
+            class: "flex-1 flex items-center justify-center gap-2 py-2 rounded-xl border border-dashed border-surface-border/50 text-sm text-ink-subtle hover:text-brand hover:border-brand/40 hover:bg-brand/5 transition-colors" do %>
+          <i class="fas fa-plus text-xs"></i>
+          <%= t("views.calendars.add_food") %>
+        <% end %>
+      <% end %>
+      <% if @has_recipes %>
+        <%= link_to new_day_day_recipe_path(day),
+            class: "flex-1 flex items-center justify-center gap-2 py-2 rounded-xl border border-dashed border-surface-border/50 text-sm text-ink-subtle hover:text-brand hover:border-brand/40 hover:bg-brand/5 transition-colors",
+            data: { turbo_frame: "item_form" } do %>
+          <i class="fas fa-plus text-xs"></i>
+          <%= t("views.calendars.add_recipe") %>
+        <% end %>
+      <% else %>
+        <%= link_to recipes_path,
+            class: "flex-1 flex items-center justify-center gap-2 py-2 rounded-xl border border-dashed border-surface-border/50 text-sm text-ink-subtle hover:text-brand hover:border-brand/40 hover:bg-brand/5 transition-colors" do %>
+          <i class="fas fa-plus text-xs"></i>
+          <%= t("views.calendars.add_recipe") %>
+        <% end %>
+      <% end %>
+    </div>
+
+  </div>
+</div>

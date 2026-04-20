@@ -4,6 +4,7 @@ class Day < ApplicationRecord
   has_many :foods, through: :day_foods
   has_many :day_recipes, dependent: :destroy
   has_many :recipes, through: :day_recipes
+  has_many :workout_sessions, dependent: :destroy
 
   validates :date, presence: true, uniqueness: { scope: :user_id }
   validates :note, length: { maximum: 1000 }, allow_blank: true

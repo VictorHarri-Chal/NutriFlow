@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_17_153710) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_18_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -211,6 +211,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_17_153710) do
     t.datetime "updated_at", null: false
     t.string "locale", default: "fr", null: false
     t.boolean "show_day_note", default: true, null: false
+    t.boolean "show_workout_section", default: true, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
@@ -223,6 +224,30 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_17_153710) do
     t.datetime "updated_at", null: false
     t.index ["user_id", "date"], name: "index_weight_entries_on_user_id_and_date", unique: true
     t.index ["user_id"], name: "index_weight_entries_on_user_id"
+  end
+
+  create_table "workout_sessions", force: :cascade do |t|
+    t.bigint "day_id", null: false
+    t.integer "duration_minutes"
+    t.integer "rpe"
+    t.text "notes"
+    t.integer "calories_burned"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["day_id"], name: "index_workout_sessions_on_day_id"
+  end
+
+  create_table "workout_sets", force: :cascade do |t|
+    t.bigint "workout_session_id", null: false
+    t.bigint "exercise_id", null: false
+    t.decimal "weight_kg", precision: 6, scale: 2
+    t.integer "reps"
+    t.integer "position", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["exercise_id"], name: "index_workout_sets_on_exercise_id"
+    t.index ["workout_session_id", "position"], name: "index_workout_sets_on_workout_session_id_and_position"
+    t.index ["workout_session_id"], name: "index_workout_sets_on_workout_session_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
@@ -246,4 +271,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_17_153710) do
   add_foreign_key "recipe_ratings", "users"
   add_foreign_key "recipes", "users"
   add_foreign_key "weight_entries", "users"
+  add_foreign_key "workout_sessions", "days"
+  add_foreign_key "workout_sets", "exercises"
+  add_foreign_key "workout_sets", "workout_sessions"
 end

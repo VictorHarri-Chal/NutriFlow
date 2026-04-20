@@ -25,6 +25,45 @@ class ExercisesController < ApplicationController
     @exercise = Exercise.accessible_to(current_user).find(params[:id])
   end
 
+  def search
+    exercises = Exercise.accessible_to(current_user)
+    if params[:query].present?
+      exercises = exercises.search_by_name(params[:query])
+    else
+      exercises = exercises.order(:name)
+    end
+    exercises = exercises.limit(10)
+
+    render json: exercises.map { |e|
+      key = e.body_part&.gsub(" ", "_")
+      {
+        id:               e.id,
+        name:             e.name,
+        body_part_label:  I18n.t("views.exercises.body_parts.#{key}", default: e.body_part&.capitalize.to_s)
+      }
+    }
+  end
+
+  def last_performance
+    exercise = Exercise.accessible_to(current_user).find(params[:id])
+
+    last_session = WorkoutSession.joins(:day, :workout_sets)
+                                 .where(days: { user_id: current_user.id })
+                                 .where(workout_sets: { exercise_id: exercise.id })
+                                 .order("days.date DESC")
+                                 .first
+
+    if last_session
+      sets = last_session.workout_sets.where(exercise_id: exercise.id).order(:position)
+      render json: {
+        date: I18n.l(last_session.day.date, format: :short),
+        sets: sets.map { |s| { weight_kg: s.weight_kg, reps: s.reps } }
+      }
+    else
+      render json: { sets: [] }
+    end
+  end
+
   def new
     @exercise = Exercise.new
   end

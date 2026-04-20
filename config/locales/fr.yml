@@ -60,6 +60,8 @@ fr:
       models:
         recipe:
           at_least_one_ingredient: "Au moins un ingrédient est requis"
+        workout_session:
+          at_least_one_exercise: "Ajoutez au moins un exercice avant d'enregistrer la séance."
         recipe_rating:
           attributes:
             recipe_id:
@@ -148,15 +150,20 @@ fr:
           one: "%{count} verre"
           other: "%{count} verres"
         reset: "Réinitialiser"
+        add_ml: "Ajouter %{ml} ml d'eau"
       copy_success: "Les aliments d'hier ont été copiés avec succès."
       copy_error: "Impossible de copier certains aliments."
       copy_nothing_to_copy: "Aucun aliment enregistré hier."
       note_title: "Note du jour"
       note_placeholder: "Repas de fête, jour de sport, ressenti..."
       wellbeing:
+        widget_title: "Notes & Bien-être"
         energy: "Énergie"
         mood: "Humeur"
         sleep: "Sommeil"
+      food_widget:
+        title: "Alimentation"
+        empty: "Aucun aliment enregistré pour cette journée."
       empty_state:
         title: "Aucun aliment consommé"
         description: "Vous n'avez pas encore ajouté d'aliments pour cette journée."
@@ -361,6 +368,8 @@ fr:
         journal_section: "Journal quotidien"
         show_day_note: "Section notes du jour"
         show_day_note_hint: "Affiche la zone de texte libre, ainsi que les indicateurs d'énergie, d'humeur et de sommeil en bas de chaque journée."
+        show_workout_section: "Section entraînement"
+        show_workout_section_hint: "Affiche le widget de séances et le bouton d'ajout rapide dans le calendrier."
       general:
         title: "Paramètres généraux"
         description: "Personnalisez votre expérience NutriFlow."
@@ -747,3 +756,33 @@ fr:
         title: "Historique"
         empty: "Aucune mesure enregistrée"
         delete_confirm: "Supprimer cette entrée ?"
+
+    workout_sessions:
+      confirm_delete: "Supprimer cette séance ?"
+      widget:
+        title: "Entraînement"
+        session_count:
+          one: "1 séance"
+          other: "%{count} séances"
+        empty: "Aucune séance pour aujourd'hui"
+        add_session: "Ajouter une séance"
+      form:
+        title_new: "Nouvelle séance"
+        title_edit: "Modifier la séance"
+        search_exercise: "Rechercher un exercice..."
+        no_exercise_found: "Aucun exercice trouvé"
+        add_exercise: "Ajouter"
+        add_set: "Série"
+        weight_kg: "Poids (kg)"
+        reps: "Répétitions"
+        duration: "Durée"
+        rpe: "Intensité (RPE)"
+        notes: "Notes"
+        notes_placeholder: "Sensations, observations..."
+        empty_hint: "Cherchez un exercice et cliquez Ajouter pour commencer"
+        search_hint: "Tapez pour rechercher un exercice"
+        last_perf_prefix: "Dernière fois"
+        rpe_light: "Léger"
+        rpe_max: "Maximal"
+        no_exercises_error: "Ajoutez au moins un exercice avant d'enregistrer la séance."
+        submit_add: "Ajouter"

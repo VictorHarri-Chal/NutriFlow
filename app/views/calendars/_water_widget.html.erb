@@ -59,16 +59,20 @@
     <%# Quick-add buttons %>
     <div class="flex items-center gap-2 flex-wrap">
       <% [100, 200, 300, 400, 500].each do |ml| %>
-        <%= link_to "+#{ml}", update_water_day_path(day, delta: ml),
+        <%= link_to "+#{ml} ml", update_water_day_path(day, delta: ml),
             data: { turbo_method: :patch },
+            title: t("views.calendars.water.add_ml", ml: ml),
             class: "btn-secondary text-xs px-3 py-1.5" %>
       <% end %>
 
       <% if water_ml > 0 %>
         <div class="ml-auto">
-          <%= link_to t("views.calendars.water.reset"), update_water_day_path(day, amount: 0),
+          <%= link_to update_water_day_path(day, amount: 0),
               data: { turbo_method: :patch },
-              class: "text-xs text-ink-subtle hover:text-status-danger transition-colors px-2 py-1.5 rounded-lg hover:bg-status-danger_dim/20" %>
+              title: t("views.calendars.water.reset"),
+              class: "text-ink-subtle hover:text-status-danger transition-colors p-1.5 rounded-lg hover:bg-status-danger_dim/20" do %>
+            <i class="fas fa-rotate-left text-xs"></i>
+          <% end %>
         </div>
       <% end %>
     </div>

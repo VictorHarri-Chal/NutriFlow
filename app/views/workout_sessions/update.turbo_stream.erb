@@ -1,0 +1,6 @@
+<%= turbo_stream.replace "item_form" do %>
+  <%= turbo_frame_tag "item_form" %>
+<% end %>
+<%= turbo_stream.replace "workout_widget" do %>
+  <%= render "calendars/workout_widget", day: @day %>
+<% end %>
