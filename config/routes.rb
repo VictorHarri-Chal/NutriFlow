@@ -28,6 +28,7 @@ Rails.application.routes.draw do
   resources :days, only: [:update] do
     member do
       patch :update_water
+      patch :update_steps
     end
     resources :day_foods, only: [:new, :create, :edit, :update, :destroy]
     resources :day_recipes, only: [:new, :create, :edit, :update, :destroy]

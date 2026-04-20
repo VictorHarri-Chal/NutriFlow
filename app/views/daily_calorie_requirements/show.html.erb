@@ -37,7 +37,7 @@
       <div class="macro-card">
         <div class="text-sm text-ink-subtle font-medium"><%= t("views.daily_calorie_requirements.physical_activity") %></div>
         <div class="text-lg font-semibold text-ink-primary mt-1">
-          <%= @profile.activity_level.present? ? @profile.activity_level_text : t("shared.not_provided") %>
+          <%= @profile.job_activity_level.present? ? @profile.job_activity_level_text : t("shared.not_provided") %>
         </div>
       </div>
 

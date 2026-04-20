@@ -11,6 +11,23 @@ class Day < ApplicationRecord
 
   scope :for_date, ->(date) { where(date: date) }
 
+  # Steps for this day — falls back to profile default, then 6 000
+  def effective_steps(profile = nil)
+    return steps if steps.present?
+
+    profile ||= user&.profile
+    profile&.default_daily_steps || 6_000
+  end
+
+  # Sum of calories burned across all workout sessions for this day
+  def workout_calories_total
+    if workout_sessions.loaded?
+      workout_sessions.sum { |s| s.calories_burned.to_i }
+    else
+      workout_sessions.sum(:calories_burned).to_i
+    end
+  end
+
   def total_calories
     preloaded_day_foods.sum(&:total_calories) + preloaded_day_recipes.sum(&:total_calories)
   end
