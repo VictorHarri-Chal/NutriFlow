@@ -5,12 +5,11 @@ fr:
         male: "Homme"
         female: "Femme"
         other: "Autre"
-      activity_level:
-        sedentary: "Sédentaire"
-        lightly_active: "Légèrement actif"
-        moderately_active: "Modérément actif"
-        very_active: "Très actif"
-        extremely_active: "Extrêmement actif"
+      job_activity_level:
+        desk_job: "Sédentaire"
+        light_activity: "Peu actif"
+        standing_job: "Modérément actif"
+        physical_job: "Très actif"
       goal:
         weight_loss: "Perte de poids"
         maintenance: "Maintien"

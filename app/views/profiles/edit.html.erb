@@ -6,6 +6,16 @@
     <h1 class="text-2xl font-bold text-ink-primary mb-8"><%= t("views.profiles.edit.title") %></h1>
 
     <%= simple_form_for @profile, url: profile_path, method: :patch do |f| %>
+      <% if @profile.errors.any? %>
+        <div class="mb-6 flex items-start gap-3 px-4 py-3 rounded-xl bg-status-danger/10 border border-status-danger/30 text-sm text-status-danger">
+          <i class="fas fa-circle-exclamation mt-0.5 shrink-0"></i>
+          <ul class="list-none space-y-0.5">
+            <% @profile.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
       <div class="space-y-8">
 
         <%# ── Informations personnelles ── %>
@@ -83,17 +93,47 @@
           </div>
         </div>
 
-        <%# ── Niveau d'activité ── %>
+        <%# ── Activité quotidienne (poste) ── %>
         <div class="border-t border-surface-border/40 pt-6">
           <h2 class="text-sm font-semibold text-ink-subtle uppercase tracking-wide mb-4 flex items-center gap-2">
-            <i class="fas fa-bolt text-brand text-xs"></i>
-            <%= t("views.profiles.edit.activity_level") %>
+            <i class="fas fa-briefcase text-brand text-xs"></i>
+            <%= t("views.profiles.edit.job_activity_level") %>
           </h2>
-          <%= f.input :activity_level,
-              label: false,
-              collection: Profile.activity_level.values.map { |al| [al.text, al] },
-              input_html: { class: "input-dark select-chevron appearance-none pr-10" },
-              label_html: { class: "label-dark" } %>
+          <p class="text-xs text-ink-subtle mb-4"><%= t("views.profiles.edit.job_activity_level_hint") %></p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <% [
+              { value: "desk_job",       icon: "fa-laptop",        kcal: 150 },
+              { value: "light_activity", icon: "fa-person-walking", kcal: 300 },
+              { value: "standing_job",   icon: "fa-person",         kcal: 500 },
+              { value: "physical_job",   icon: "fa-hard-hat",       kcal: 800 }
+            ].each do |opt| %>
+              <label class="cursor-pointer">
+                <%= f.radio_button :job_activity_level, opt[:value], class: "sr-only peer" %>
+                <span class="flex flex-col items-center gap-2 p-4 rounded-xl border text-center transition-colors
+                             bg-surface-hover border-surface-border/50 text-ink-muted
+                             hover:border-brand/30 hover:text-ink-primary
+                             peer-checked:bg-brand/10 peer-checked:border-brand peer-checked:text-brand">
+                  <i class="fas <%= opt[:icon] %> text-xl"></i>
+                  <span class="text-xs font-semibold leading-tight">
+                    <%= t("enumerize.profile.job_activity_level.#{opt[:value]}") %>
+                  </span>
+                  <span class="text-[10px] text-ink-subtle/60 peer-checked:text-brand/60">
+                    +<%= opt[:kcal] %> kcal
+                  </span>
+                </span>
+              </label>
+            <% end %>
+          </div>
+
+          <%# Pas par jour (défaut profil) %>
+          <div class="mt-4">
+            <%= f.label :default_daily_steps, t("views.profiles.edit.default_daily_steps"), class: "label-dark block mb-1.5" %>
+            <p class="text-xs text-ink-subtle mb-2"><%= t("views.profiles.edit.default_daily_steps_hint") %></p>
+            <div class="relative max-w-xs">
+              <%= f.number_field :default_daily_steps, min: 0, max: 99_999, step: 1, class: "input-dark pr-14" %>
+              <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">pas/j</span>
+            </div>
+          </div>
         </div>
 
         <%# ── Objectif ── %>

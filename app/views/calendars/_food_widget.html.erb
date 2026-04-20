@@ -38,37 +38,6 @@
       <p class="text-sm text-ink-subtle text-center py-3"><%= t("views.calendars.food_widget.empty") %></p>
     <% end %>
 
-    <%# Global add buttons (always visible) %>
-    <div class="flex gap-2">
-      <% if @has_foods %>
-        <%= link_to new_day_day_food_path(day),
-            class: "flex-1 flex items-center justify-center gap-2 py-2 rounded-xl border border-dashed border-surface-border/50 text-sm text-ink-subtle hover:text-brand hover:border-brand/40 hover:bg-brand/5 transition-colors",
-            data: { turbo_frame: "item_form" } do %>
-          <i class="fas fa-plus text-xs"></i>
-          <%= t("views.calendars.add_food") %>
-        <% end %>
-      <% else %>
-        <%= link_to foods_path,
-            class: "flex-1 flex items-center justify-center gap-2 py-2 rounded-xl border border-dashed border-surface-border/50 text-sm text-ink-subtle hover:text-brand hover:border-brand/40 hover:bg-brand/5 transition-colors" do %>
-          <i class="fas fa-plus text-xs"></i>
-          <%= t("views.calendars.add_food") %>
-        <% end %>
-      <% end %>
-      <% if @has_recipes %>
-        <%= link_to new_day_day_recipe_path(day),
-            class: "flex-1 flex items-center justify-center gap-2 py-2 rounded-xl border border-dashed border-surface-border/50 text-sm text-ink-subtle hover:text-brand hover:border-brand/40 hover:bg-brand/5 transition-colors",
-            data: { turbo_frame: "item_form" } do %>
-          <i class="fas fa-plus text-xs"></i>
-          <%= t("views.calendars.add_recipe") %>
-        <% end %>
-      <% else %>
-        <%= link_to recipes_path,
-            class: "flex-1 flex items-center justify-center gap-2 py-2 rounded-xl border border-dashed border-surface-border/50 text-sm text-ink-subtle hover:text-brand hover:border-brand/40 hover:bg-brand/5 transition-colors" do %>
-          <i class="fas fa-plus text-xs"></i>
-          <%= t("views.calendars.add_recipe") %>
-        <% end %>
-      <% end %>
-    </div>
 
   </div>
 </div>

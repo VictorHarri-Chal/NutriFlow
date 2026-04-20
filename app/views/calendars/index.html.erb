@@ -27,7 +27,9 @@
                calories_percentage: @calories_percentage,
                proteins_percentage: @proteins_percentage,
                fats_percentage:     @fats_percentage,
-               carbs_percentage:    @carbs_percentage %>
+               carbs_percentage:    @carbs_percentage,
+               tdee_breakdown:      @tdee_breakdown,
+               day:                 @day %>
 
     <%# ── Hydration widget ── %>
     <%= render 'calendars/water_widget', day: @day, profile: @profile %>

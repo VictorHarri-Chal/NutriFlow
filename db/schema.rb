@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_18_100000) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_20_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -86,6 +86,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_18_100000) do
     t.integer "mood"
     t.integer "sleep_quality"
     t.integer "water_ml", default: 0, null: false
+    t.integer "steps"
     t.index ["date", "user_id"], name: "index_days_on_date_and_user_id", unique: true
     t.index ["user_id"], name: "index_days_on_user_id"
   end
@@ -158,12 +159,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_18_100000) do
     t.decimal "height"
     t.integer "age"
     t.string "gender"
-    t.string "activity_level"
     t.string "goal"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "water_goal_ml", default: 2000, null: false
     t.decimal "goal_weight", precision: 5, scale: 2
+    t.string "job_activity_level", default: "light_activity", null: false
+    t.integer "default_daily_steps", default: 6000, null: false
     t.index ["user_id"], name: "index_profiles_on_user_id"
   end
 

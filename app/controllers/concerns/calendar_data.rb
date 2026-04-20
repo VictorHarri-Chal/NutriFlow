@@ -52,12 +52,33 @@ module CalendarData
     @has_recipes = current_user.recipes.exists?
 
     @profile = current_user.profile
-    return unless @profile&.weight.present?
+    return unless @profile&.weight.present? && @profile.bmr
 
-    @daily_calorie_goal = @profile.calories_needed_for_goal
+    # ── TDEE breakdown ────────────────────────────────────────────────────
+    effective_steps = day.effective_steps(@profile)
+    job_neat        = Profile::JOB_NEAT_KCAL[@profile.job_activity_level.to_sym] ||
+                      Profile::JOB_NEAT_KCAL[:light_activity]
+    steps_kcal      = @profile.neat_from_steps(effective_steps)
+    workout_kcal    = day.workout_calories_total
+    tdee            = @profile.bmr + job_neat + steps_kcal + workout_kcal
+    multiplier      = Profile::GOAL_MULTIPLIERS[@profile.goal.to_sym] || 1.0
+
+    @tdee_breakdown = {
+      bmr:          @profile.bmr,
+      job_neat:     job_neat,
+      steps_kcal:   steps_kcal,
+      steps_count:  effective_steps,
+      steps_custom: day.steps.present?,   # true = user overrode the default
+      workout_kcal: workout_kcal,
+      tdee:         tdee,
+      multiplier:   multiplier,
+      goal_delta:   (tdee * multiplier - tdee).round
+    }
+
+    @daily_calorie_goal = (tdee * multiplier).round
     @daily_protein_goal = @profile.daily_protein_goal
     @daily_fats_goal    = @profile.daily_fats_goal
-    @daily_carbs_goal   = @profile.daily_carbs_goal
+    @daily_carbs_goal   = @profile.daily_carbs_goal(day: day)
 
     return unless @daily_calorie_goal
 
