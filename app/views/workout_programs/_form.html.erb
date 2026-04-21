@@ -19,7 +19,7 @@
   </div>
 
   <div class="flex justify-end gap-3 pt-2 border-t border-surface-border/40">
-    <%= link_to t("shared.cancel"), workout_programs_path, class: "btn-ghost" %>
+    <%= link_to t("shared.cancel"), program.persisted? ? workout_program_path(program) : workout_programs_path, class: "btn-ghost" %>
     <%= f.submit program.persisted? ? t("shared.save") : t("views.workout_programs.form.create_btn"),
           class: "btn-primary cursor-pointer" %>
   </div>
