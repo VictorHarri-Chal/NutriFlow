@@ -25,8 +25,12 @@
 
       <div data-controller="exercise-combobox"
            data-exercise-combobox-search-path-value="<%= search_exercises_path %>"
+           data-exercise-combobox-favorites-path-value="<%= favorites_exercises_path(format: :json) %>"
+           data-exercise-combobox-recents-path-value="<%= recents_exercises_path(format: :json) %>"
            data-exercise-combobox-no-results-value="<%= t("views.workout_sessions.form.no_exercise_found") %>"
            data-exercise-combobox-hint-value="<%= t("views.workout_sessions.form.search_hint") %>"
+           data-exercise-combobox-favorites-label-value="<%= t("views.exercises.source_favorites") %>"
+           data-exercise-combobox-recents-label-value="<%= t("views.exercises.recents_section") %>"
            data-action="exercise-selected->workout-form#addExercise"
            class="relative">
         <div class="relative">

@@ -1,27 +1,65 @@
 <div class="space-y-4">
-  <!-- Journal personnel -->
+  <%# ── Journal / notation ── %>
   <%= render RecipeRatingFormComponent.new(recipe: recipe, current_user: current_user) %>
 
-  <!-- Résumé rapide -->
-  <div class="card p-5">
-    <h3 class="text-sm font-semibold text-ink-subtle uppercase tracking-wide mb-4 flex items-center">
-      <i class="fas fa-chart-pie text-brand mr-2"></i>
-      <%= t("views.components.recipe_sidebar.summary") %>
-    </h3>
-    <dl class="space-y-2">
-      <div class="flex justify-between items-center text-sm">
-        <dt class="text-ink-subtle"><%= t("views.components.recipe_sidebar.ingredients_count") %></dt>
-        <dd class="font-semibold text-ink-primary"><%= recipe.recipe_items.size %></dd>
+  <%# ── Profil nutritionnel ── %>
+  <div class="card p-5 space-y-4">
+    <p class="text-xs font-semibold text-ink-subtle uppercase tracking-wider">
+      <%= t("views.components.recipe_sidebar.macro_profile") %>
+    </p>
+
+    <%# Barre macros empilée %>
+    <% if total_macro_kcal > 0 %>
+      <div>
+        <div class="flex h-2 rounded-full overflow-hidden gap-0.5 mb-3">
+          <div class="bg-emerald-500 rounded-l-full" style="flex: <%= protein_pct %>"></div>
+          <div class="bg-sky-400" style="flex: <%= carbs_pct %>"></div>
+          <div class="bg-amber-400 rounded-r-full" style="flex: <%= fat_pct %>"></div>
+        </div>
+        <div class="flex items-center gap-3 text-xs">
+          <span class="flex items-center gap-1.5 text-ink-muted">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+            <%= t("views.components.recipe_sidebar.protein") %> <span class="font-semibold text-ink-primary tabular-nums"><%= protein_pct %>%</span>
+          </span>
+          <span class="flex items-center gap-1.5 text-ink-muted">
+            <span class="w-2 h-2 rounded-full bg-sky-400 shrink-0"></span>
+            <%= t("views.components.recipe_sidebar.carbs") %> <span class="font-semibold text-ink-primary tabular-nums"><%= carbs_pct %>%</span>
+          </span>
+          <span class="flex items-center gap-1.5 text-ink-muted">
+            <span class="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span>
+            <%= t("views.components.recipe_sidebar.fat") %> <span class="font-semibold text-ink-primary tabular-nums"><%= fat_pct %>%</span>
+          </span>
+        </div>
       </div>
-      <div class="flex justify-between items-center text-sm">
-        <dt class="text-ink-subtle"><%= t("views.components.recipe_sidebar.total_weight") %></dt>
-        <dd class="font-semibold text-ink-primary"><%= recipe.total_weight %> g</dd>
+
+      <%# Densité protéique %>
+      <div class="flex items-center justify-between py-3 border-t border-surface-border/30">
+        <div class="text-xs text-ink-subtle leading-tight">
+          <%= t("views.components.recipe_sidebar.protein_density_label") %>
+          <div class="text-[10px] text-ink-subtle/60 mt-0.5"><%= t("views.components.recipe_sidebar.protein_density_hint") %></div>
+        </div>
+        <div class="text-right">
+          <span class="text-lg font-bold text-emerald-400 leading-none tabular-nums"><%= protein_density %></span>
+          <span class="text-xs text-ink-subtle ml-0.5">g</span>
+        </div>
       </div>
-      <div class="flex justify-between items-center text-sm border-t border-surface-border/40 pt-2 mt-2">
-        <dt class="text-ink-subtle"><%= t("views.components.recipe_sidebar.kcal_per_100g") %></dt>
-        <% kcal_per_100 = recipe.total_weight > 0 ? (recipe.total_calories / recipe.total_weight * 100).round(1) : 0 %>
-        <dd class="font-semibold text-brand"><%= kcal_per_100 %> kcal</dd>
+    <% end %>
+
+    <%# Utilisation %>
+    <div class="border-t border-surface-border/30 pt-3 space-y-2">
+      <p class="text-xs font-semibold text-ink-subtle uppercase tracking-wider mb-2">
+        <%= t("views.components.recipe_sidebar.usage") %>
+      </p>
+      <div class="flex items-center justify-between text-sm">
+        <span class="text-ink-subtle"><%= t("views.components.recipe_sidebar.times_cooked_label") %></span>
+        <span class="font-semibold text-ink-primary tabular-nums"><%= t("views.components.recipe_sidebar.times_cooked", count: times_cooked) %></span>
       </div>
-    </dl>
+      <% if last_cooked_date %>
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-ink-subtle"><%= t("views.components.recipe_sidebar.last_cooked_label") %></span>
+          <span class="font-semibold text-ink-primary tabular-nums"><%= I18n.l(last_cooked_date, format: :short) %></span>
+        </div>
+      <% end %>
+    </div>
   </div>
 </div>

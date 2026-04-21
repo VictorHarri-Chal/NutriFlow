@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_20_100000) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_21_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -89,6 +89,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_20_100000) do
     t.integer "steps"
     t.index ["date", "user_id"], name: "index_days_on_date_and_user_id", unique: true
     t.index ["user_id"], name: "index_days_on_user_id"
+  end
+
+  create_table "exercise_favorites", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "exercise_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["exercise_id"], name: "index_exercise_favorites_on_exercise_id"
+    t.index ["user_id", "exercise_id"], name: "index_exercise_favorites_on_user_id_and_exercise_id", unique: true
+    t.index ["user_id"], name: "index_exercise_favorites_on_user_id"
   end
 
   create_table "exercises", force: :cascade do |t|
@@ -199,6 +209,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_20_100000) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "favorite", default: false, null: false
     t.index ["name", "user_id"], name: "index_recipes_on_name_and_user_id"
     t.index ["user_id"], name: "index_recipes_on_user_id"
   end
@@ -262,6 +273,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_20_100000) do
   add_foreign_key "day_recipes", "days"
   add_foreign_key "day_recipes", "recipes"
   add_foreign_key "days", "users"
+  add_foreign_key "exercise_favorites", "exercises"
+  add_foreign_key "exercise_favorites", "users"
   add_foreign_key "food_labels", "users"
   add_foreign_key "food_labels_foods", "food_labels"
   add_foreign_key "food_labels_foods", "foods"

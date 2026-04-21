@@ -3,6 +3,7 @@ class Exercise < ApplicationRecord
 
   belongs_to :custom_user, class_name: "User", foreign_key: :custom_user_id, optional: true
   has_one_attached :image
+  has_many :exercise_favorites, dependent: :destroy
 
   validates :exercise_id, presence: true, uniqueness: true
   validates :name, presence: true

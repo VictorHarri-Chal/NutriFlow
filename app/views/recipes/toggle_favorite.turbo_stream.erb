@@ -1,0 +1,16 @@
+<%# Remplace le bouton dans la carte (index) — ignoré silencieusement si absent %>
+<%= turbo_stream.replace "recipe_fav_btn_#{@recipe.id}" do %>
+  <%= render "recipes/favorite_button", recipe: @recipe %>
+<% end %>
+
+<%# Remplace le bouton sur la page show — ignoré silencieusement si absent %>
+<%= turbo_stream.replace "recipe_show_fav_btn_#{@recipe.id}" do %>
+  <%= link_to toggle_favorite_recipe_path(@recipe),
+        id: "recipe_show_fav_btn_#{@recipe.id}",
+        data: { turbo_method: :patch },
+        aria: { label: @recipe.favorite? ? t("views.recipes.favorites.remove") : t("views.recipes.favorites.add") },
+        class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border transition-colors focus:outline-none #{ @recipe.favorite? ? 'text-ink-subtle border-surface-border/40 bg-surface-raised hover:text-ink-primary hover:border-surface-border' : 'text-amber-400 border-amber-400/40 bg-amber-400/10 hover:bg-amber-400/15' }" do %>
+    <i class="<%= @recipe.favorite? ? 'fas' : 'far' %> fa-star text-xs"></i>
+    <%= @recipe.favorite? ? t("views.recipes.favorites.remove") : t("views.recipes.favorites.add") %>
+  <% end %>
+<% end %>

@@ -2,7 +2,7 @@
   <%= @recipes.map { |r|
     { id: r.id, name: r.name, calories: r.total_calories.round,
       proteins: r.total_proteins.round(1), carbs: r.total_carbs.round(1), fats: r.total_fats.round(1),
-      favorite: false }
+      favorite: r.favorite }
   }.to_json.html_safe %>
 </script>
 
@@ -19,6 +19,7 @@
              data-food-combobox-suffix-value="kcal"
              data-food-combobox-no-results-value="<%= t('views.day_recipes.form.no_recipe_found') %>"
              data-food-combobox-recent-ids-value="<%= (@recent_recipe_ids || []).to_json %>"
+             data-food-combobox-favorites-label-value="<%= t('views.foods.favorites_section') %>"
              data-food-combobox-recents-label-value="<%= t('views.foods.recents_section') %>"
              data-food-combobox-all-label-value="<%= t('views.day_recipes.all_section') %>">
           <%= f.hidden_field :recipe_id, data: { "food-combobox-target": "hiddenId" } %>

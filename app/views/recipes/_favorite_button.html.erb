@@ -1,0 +1,7 @@
+<%= link_to toggle_favorite_recipe_path(recipe),
+    id: "recipe_fav_btn_#{recipe.id}",
+    class: "absolute top-3 right-3 z-10 inline-flex items-center justify-center w-7 h-7 rounded-lg bg-surface-base/80 backdrop-blur-sm border shadow-sm transition-colors #{ recipe.favorite? ? 'border-amber-400/60 text-amber-400 hover:bg-amber-400/10' : 'border-surface-border/60 text-ink-subtle/50 hover:text-amber-400 hover:border-amber-400/40' }",
+    data: { turbo_method: :patch },
+    aria: { label: recipe.favorite? ? t("views.recipes.favorites.remove") : t("views.recipes.favorites.add") } do %>
+  <i class="<%= recipe.favorite? ? 'fas' : 'far' %> fa-star text-[11px]"></i>
+<% end %>
