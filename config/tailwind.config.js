@@ -72,8 +72,6 @@ module.exports = {
     'bg-teal-500/20',   'text-teal-400',   'border-teal-500/30',   'bg-teal-400',
     'bg-blue-500/20',   'text-blue-400',   'border-blue-500/30',   'bg-blue-400',
     'bg-violet-500/20', 'text-violet-400', 'border-violet-500/30', 'bg-violet-400',
-    // _picker.html.erb — hover state on program day pills (inside ERB tags, not scanned by Tailwind)
-    'hover:bg-brand/30', 'hover:border-brand', 'hover:text-ink-primary', 'hover:scale-[1.03]',
   ],
   plugins: [
     // require('@tailwindcss/forms'),
