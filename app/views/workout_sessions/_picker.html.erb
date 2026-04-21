@@ -1,10 +1,20 @@
 <%# Picker shown before the form — user chooses between loading from program or a custom session %>
-<%# Highlight the program day matching the current calendar day %>
 <% calendar_dow = (day.date.wday - 1) % 7 %>
+
+<%# Static class strings — defined here so Tailwind JIT can scan them (not inside ERB expressions) %>
+<% row_base        = "flex items-center gap-3 px-3 py-2.5 rounded-xl border transition-colors cursor-pointer group" %>
+<% row_today       = "border-brand/30 bg-brand/5 hover:bg-brand/10 hover:border-brand/40" %>
+<% row_default     = "border-surface-border/40 bg-surface-base hover:bg-surface-hover/40 hover:border-surface-border/60" %>
+<% bar_today       = "bg-brand" %>
+<% bar_default     = "bg-surface-border/40 group-hover:bg-surface-border/70 transition-colors" %>
+<% name_today      = "text-sm font-semibold text-brand" %>
+<% name_default    = "text-sm font-medium text-ink-primary" %>
+<% chevron_today   = "text-brand/50" %>
+<% chevron_default = "text-ink-subtle/20 group-hover:text-ink-subtle/50 transition-colors" %>
 
 <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4 mb-4">
 
-  <%# ── Close × ── %>
+  <%# ── Header ── %>
   <div class="flex items-center justify-between mb-4">
     <h3 class="text-sm font-bold text-ink-primary"><%= t("views.workout_sessions.picker.title") %></h3>
     <button type="button"
@@ -15,50 +25,58 @@
     </button>
   </div>
 
-  <div class="space-y-2">
+  <div class="space-y-3">
 
-    <%# ── Option 1: Load from active program ── %>
-    <div class="rounded-xl border border-surface-border/40 bg-surface-base p-4">
-      <div class="flex items-center gap-2 mb-3">
-        <div class="w-7 h-7 rounded-lg bg-surface-raised border border-surface-border/40 flex items-center justify-center shrink-0">
-          <i class="fas fa-clipboard-list text-[10px] text-ink-subtle"></i>
-        </div>
-        <div>
-          <p class="text-sm font-medium text-ink-primary"><%= t("views.workout_sessions.picker.from_program_title") %></p>
-          <p class="text-xs text-ink-subtle"><%= active_program.name %></p>
-        </div>
-      </div>
-      <% pill_base    = "inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-all" %>
-      <% pill_today   = "bg-brand/10 border-brand/30 text-ink-primary hover:bg-brand/30 hover:border-brand hover:scale-[1.03]" %>
-      <% pill_default = "bg-surface-raised border-surface-border/40 text-ink-muted hover:bg-brand/30 hover:border-brand hover:text-ink-primary hover:scale-[1.03]" %>
-      <div class="flex flex-wrap gap-1.5">
+    <%# ── Programme : liste des jours d'entraînement ── %>
+    <div>
+      <p class="text-[10px] font-semibold uppercase tracking-wider text-ink-subtle/50 mb-2 px-0.5">
+        <%= active_program.name %>
+      </p>
+      <div class="space-y-1.5">
         <% training_days.each do |pd| %>
-          <% is_today_day = pd.day_of_week == calendar_dow %>
+          <% is_today = pd.day_of_week == calendar_dow %>
           <%= link_to new_day_workout_session_path(day, program_day_id: pd.id),
                 data: { turbo_frame: "item_form" },
-                class: "#{pill_base} #{is_today_day ? pill_today : pill_default}" do %>
-            <span class="<%= is_today_day ? 'font-semibold' : '' %>"><%= pd.name.presence || pd.day_name %></span>
-            <span class="text-[10px] <%= is_today_day ? 'text-brand/70' : 'text-ink-subtle/40' %>">
-              <%= t("views.workout_programs.day.exercise_count", count: pd.program_exercises.size) %>
-            </span>
-            <span class="text-[9px] <%= is_today_day ? 'text-brand/60' : 'text-ink-subtle/30' %>"><%= pd.day_abbr %></span>
+                class: "#{row_base} #{is_today ? row_today : row_default}" do %>
+            <div class="w-0.5 h-8 rounded-full shrink-0 <%= is_today ? bar_today : bar_default %>"></div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="<%= is_today ? name_today : name_default %>">
+                  <%= pd.name.presence || pd.day_name %>
+                </span>
+                <% if is_today %>
+                  <span class="text-[9px] font-bold uppercase tracking-wider bg-brand/20 text-brand px-1.5 py-0.5 rounded-full leading-none">
+                    <%= t("views.calendars.today") %>
+                  </span>
+                <% end %>
+              </div>
+              <p class="text-[11px] text-ink-subtle/70 mt-0.5">
+                <%= t("views.workout_programs.day.exercise_count", count: pd.program_exercises.size) %><%= pd.duration_minutes.present? ? " · #{pd.duration_minutes} min" : "" %>
+              </p>
+            </div>
+            <i class="fas fa-chevron-right text-[10px] shrink-0 <%= is_today ? chevron_today : chevron_default %>"></i>
           <% end %>
         <% end %>
       </div>
     </div>
 
-    <%# ── Option 2: Custom session ── %>
+    <%# ── Divider ── %>
+    <div class="flex items-center gap-3 py-0.5">
+      <div class="flex-1 h-px bg-surface-border/30"></div>
+      <span class="text-[10px] text-ink-subtle/40 font-medium"><%= t("views.workout_sessions.picker.or") %></span>
+      <div class="flex-1 h-px bg-surface-border/30"></div>
+    </div>
+
+    <%# ── Séance personnalisée ── %>
     <%= link_to new_day_workout_session_path(day, mode: "custom"),
           data: { turbo_frame: "item_form" },
-          class: "flex items-center gap-3 w-full p-4 rounded-xl border border-surface-border/40 bg-surface-base hover:border-surface-border/70 hover:bg-surface-hover transition-colors" do %>
-      <div class="w-7 h-7 rounded-lg bg-surface-raised border border-surface-border/40 flex items-center justify-center shrink-0">
-        <i class="fas fa-dumbbell text-[10px] text-ink-subtle"></i>
-      </div>
+          class: "#{row_base} #{row_default}" do %>
+      <div class="w-0.5 h-8 rounded-full shrink-0 <%= bar_default %>"></div>
       <div class="flex-1">
-        <p class="text-sm font-medium text-ink-primary"><%= t("views.workout_sessions.picker.custom_title") %></p>
-        <p class="text-xs text-ink-subtle mt-0.5"><%= t("views.workout_sessions.picker.custom_desc") %></p>
+        <p class="<%= name_default %>"><%= t("views.workout_sessions.picker.custom_title") %></p>
+        <p class="text-[11px] text-ink-subtle/70 mt-0.5"><%= t("views.workout_sessions.picker.custom_desc") %></p>
       </div>
-      <i class="fas fa-chevron-right text-xs text-ink-subtle/40"></i>
+      <i class="fas fa-chevron-right text-[10px] shrink-0 <%= chevron_default %>"></i>
     <% end %>
 
   </div>
