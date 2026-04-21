@@ -1,0 +1,8 @@
+<%# locals: (exercise:, favorited:) %>
+<%= link_to toggle_favorite_exercise_path(exercise),
+    id: "favorite_btn_#{exercise.id}",
+    class: "inline-flex items-center justify-center w-7 h-7 rounded-lg bg-surface-base/80 backdrop-blur-sm border transition-colors shadow-sm #{ favorited ? 'border-amber-400/60 text-amber-400 hover:bg-amber-400/10' : 'border-surface-border/60 text-ink-subtle/60 hover:text-amber-400 hover:border-amber-400/40' }",
+    data: { turbo_method: :patch },
+    aria: { label: favorited ? t("views.exercises.favorites.remove") : t("views.exercises.favorites.add") } do %>
+  <i class="<%= favorited ? 'fas' : 'far' %> fa-star text-[11px]"></i>
+<% end %>

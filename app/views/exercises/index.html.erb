@@ -2,9 +2,9 @@
 
 <div class="max-w-7xl mx-auto mt-16">
 
-  <!-- En-tête -->
-  <header class="mb-8">
-    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+  <!-- ── En-tête ── -->
+  <header class="mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
       <div class="flex-shrink-0">
         <h1 class="text-2xl font-bold text-ink-primary"><%= t("views.exercises.title") %></h1>
         <p class="text-xs text-ink-subtle mt-0.5">
@@ -14,7 +14,7 @@
 
       <!-- Recherche + bouton créer -->
       <div class="flex items-center gap-3 flex-1 max-w-lg">
-        <%= form_with url: exercises_path, method: :get, local: true, class: "relative flex-1" do |f| %>
+        <%= form_with url: exercises_path, method: :get, local: true, class: "relative flex-1" do %>
           <%= hidden_field_tag :body_part,  params[:body_part]  if params[:body_part].present? %>
           <%= hidden_field_tag :equipment,  params[:equipment]  if params[:equipment].present? %>
           <%= hidden_field_tag :difficulty, params[:difficulty] if params[:difficulty].present? %>
@@ -39,215 +39,260 @@
       </div>
     </div>
 
-    <!-- Toggle source (Tous / Mes exercices) — slider -->
-    <div class="mt-4 relative inline-grid grid-cols-2 p-1 bg-surface-raised border border-surface-border/40 rounded-xl"
-         data-controller="tab-slider">
-      <%# Sliding pill indicator %>
-      <span class="absolute top-1 bottom-1 rounded-lg bg-brand transition-[left,right] duration-[220ms] ease-in-out
-                   <%= params[:source] == 'custom' ? 'left-[50%] right-1' : 'left-1 right-[50%]' %>"
-            data-tab-slider-target="pill"></span>
+    <!-- ── Barre de filtres unifiée ── -->
+    <%
+      has_filters = params[:body_part].present? || params[:equipment].present? || params[:difficulty].present?
+      # Classes réutilisables
+      chip_base    = "inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-sm font-medium transition-all border cursor-pointer select-none"
+      chip_active  = "bg-brand/15 text-brand border-brand/40"
+      chip_default = "bg-surface-raised border-surface-border/40 text-ink-muted hover:text-ink-primary hover:border-surface-border/70"
+    %>
+    <div class="flex flex-wrap items-center gap-2">
 
-      <%= link_to exercises_path(body_part: params[:body_part], equipment: params[:equipment], difficulty: params[:difficulty], query: params[:query]),
-          class: "relative z-10 px-6 py-1.5 text-sm font-semibold transition-colors text-center #{params[:source].blank? ? 'text-surface-base' : 'text-ink-muted hover:text-ink-primary'}",
-          data: { tab_slider_target: "tab", action: "tab-slider#select" } do %>
-        <%= t("views.exercises.source_all") %>
+      <%# ── Source tabs ── %>
+      <% [
+        { source: nil,         label: t("views.exercises.source_all"),       icon: "fa-list" },
+        { source: "favorites", label: t("views.exercises.source_favorites"), icon: "fa-star" },
+        { source: "custom",    label: t("views.exercises.source_custom"),    icon: "fa-pen" }
+      ].each do |tab| %>
+        <% active = tab[:source].nil? ? params[:source].blank? : params[:source] == tab[:source] %>
+        <%= link_to exercises_path(source: tab[:source], body_part: params[:body_part], equipment: params[:equipment], difficulty: params[:difficulty], query: params[:query]),
+            class: "#{chip_base} #{active ? 'bg-brand text-surface-base border-brand shadow-sm' : chip_default}" do %>
+          <i class="fas <%= tab[:icon] %> text-xs"></i>
+          <%= tab[:label] %>
+        <% end %>
       <% end %>
-      <%= link_to exercises_path(source: "custom", body_part: params[:body_part], equipment: params[:equipment], difficulty: params[:difficulty], query: params[:query]),
-          class: "relative z-10 px-6 py-1.5 text-sm font-semibold transition-colors text-center #{params[:source] == 'custom' ? 'text-surface-base' : 'text-ink-muted hover:text-ink-primary'}",
-          data: { tab_slider_target: "tab", action: "tab-slider#select" } do %>
-        <%= t("views.exercises.source_custom") %>
+
+      <%# Séparateur vertical %>
+      <div class="h-6 w-px bg-surface-border/40 mx-1"></div>
+
+      <%# ── Dropdown : Groupe musculaire ── %>
+      <% bp_active = params[:body_part].present? %>
+      <div class="relative" data-controller="filter-dropdown">
+        <button type="button"
+                data-action="click->filter-dropdown#toggle"
+                data-filter-dropdown-target="trigger"
+                class="<%= chip_base %> <%= bp_active ? chip_active : chip_default %>">
+          <i class="fas fa-hand-fist text-xs"></i>
+          <span data-filter-dropdown-target="label">
+            <%= bp_active ? t_body_part(params[:body_part]) : t("views.exercises.filter_body_part") %>
+          </span>
+          <i class="fas fa-chevron-down text-[10px] transition-transform duration-200 ml-0.5"
+             data-filter-dropdown-target="icon"></i>
+        </button>
+        <div data-filter-dropdown-target="dropdown"
+             class="hidden absolute left-0 top-full mt-1.5 z-50 min-w-[180px] bg-surface-raised border border-surface-border/60 rounded-xl shadow-2xl overflow-hidden py-1">
+          <%= link_to exercises_path(query: params[:query], equipment: params[:equipment], difficulty: params[:difficulty], source: params[:source]),
+              class: "flex items-center justify-between px-3 py-2 text-sm transition-colors #{params[:body_part].blank? ? 'text-brand font-medium bg-brand/8' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}" do %>
+            <%= t("views.exercises.all") %>
+            <i class="fas fa-check text-xs text-brand <%= params[:body_part].blank? ? '' : 'invisible' %>"></i>
+          <% end %>
+          <% @body_parts.each do |part| %>
+            <%= link_to exercises_path(query: params[:query], body_part: part, equipment: params[:equipment], difficulty: params[:difficulty], source: params[:source]),
+                class: "flex items-center justify-between px-3 py-2 text-sm transition-colors #{params[:body_part] == part ? 'text-brand font-medium bg-brand/8' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}" do %>
+              <%= t_body_part(part) %>
+              <i class="fas fa-check text-xs text-brand <%= params[:body_part] == part ? '' : 'invisible' %>"></i>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <%# ── Dropdown : Équipement ── %>
+      <% eq_active = params[:equipment].present? %>
+      <div class="relative" data-controller="filter-dropdown">
+        <button type="button"
+                data-action="click->filter-dropdown#toggle"
+                data-filter-dropdown-target="trigger"
+                class="<%= chip_base %> <%= eq_active ? chip_active : chip_default %>">
+          <i class="fas fa-dumbbell text-xs"></i>
+          <span data-filter-dropdown-target="label">
+            <%= eq_active ? t_equipment(params[:equipment]) : t("views.exercises.filter_equipment") %>
+          </span>
+          <i class="fas fa-chevron-down text-[10px] transition-transform duration-200 ml-0.5"
+             data-filter-dropdown-target="icon"></i>
+        </button>
+        <div data-filter-dropdown-target="dropdown"
+             class="hidden absolute left-0 top-full mt-1.5 z-50 min-w-[180px] bg-surface-raised border border-surface-border/60 rounded-xl shadow-2xl overflow-hidden py-1">
+          <%= link_to exercises_path(query: params[:query], body_part: params[:body_part], difficulty: params[:difficulty], source: params[:source]),
+              class: "flex items-center justify-between px-3 py-2 text-sm transition-colors #{params[:equipment].blank? ? 'text-brand font-medium bg-brand/8' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}" do %>
+            <%= t("views.exercises.all") %>
+            <i class="fas fa-check text-xs text-brand <%= params[:equipment].blank? ? '' : 'invisible' %>"></i>
+          <% end %>
+          <% @equipments.each do |eq| %>
+            <%= link_to exercises_path(query: params[:query], body_part: params[:body_part], equipment: eq, difficulty: params[:difficulty], source: params[:source]),
+                class: "flex items-center justify-between px-3 py-2 text-sm transition-colors #{params[:equipment] == eq ? 'text-brand font-medium bg-brand/8' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}" do %>
+              <%= t_equipment(eq) %>
+              <i class="fas fa-check text-xs text-brand <%= params[:equipment] == eq ? '' : 'invisible' %>"></i>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <%# ── Dropdown : Niveau ── %>
+      <% diff_active = params[:difficulty].present? %>
+      <div class="relative" data-controller="filter-dropdown">
+        <button type="button"
+                data-action="click->filter-dropdown#toggle"
+                data-filter-dropdown-target="trigger"
+                class="<%= chip_base %> <%= diff_active ? chip_active : chip_default %>">
+          <i class="fas fa-signal text-xs"></i>
+          <span data-filter-dropdown-target="label">
+            <%= diff_active ? t("views.exercises.difficulty.#{params[:difficulty]}") : t("views.exercises.filter_difficulty") %>
+          </span>
+          <i class="fas fa-chevron-down text-[10px] transition-transform duration-200 ml-0.5"
+             data-filter-dropdown-target="icon"></i>
+        </button>
+        <div data-filter-dropdown-target="dropdown"
+             class="hidden absolute left-0 top-full mt-1.5 z-50 min-w-[160px] bg-surface-raised border border-surface-border/60 rounded-xl shadow-2xl overflow-hidden py-1">
+          <%= link_to exercises_path(query: params[:query], body_part: params[:body_part], equipment: params[:equipment], source: params[:source]),
+              class: "flex items-center justify-between px-3 py-2 text-sm transition-colors #{params[:difficulty].blank? ? 'text-brand font-medium bg-brand/8' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}" do %>
+            <%= t("views.exercises.all") %>
+            <i class="fas fa-check text-xs text-brand <%= params[:difficulty].blank? ? '' : 'invisible' %>"></i>
+          <% end %>
+          <% [
+            { value: "beginner",     icon: "fa-seedling", color: "text-green-400" },
+            { value: "intermediate", icon: "fa-fire",     color: "text-orange-400" },
+            { value: "advanced",     icon: "fa-bolt",     color: "text-red-400" }
+          ].each do |d| %>
+            <%= link_to exercises_path(query: params[:query], body_part: params[:body_part], equipment: params[:equipment], difficulty: d[:value], source: params[:source]),
+                class: "flex items-center justify-between px-3 py-2 text-sm transition-colors #{params[:difficulty] == d[:value] ? 'text-brand font-medium bg-brand/8' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}" do %>
+              <span class="flex items-center gap-2">
+                <i class="fas <%= d[:icon] %> text-xs <%= params[:difficulty] == d[:value] ? 'text-brand' : d[:color] %>"></i>
+                <%= t("views.exercises.difficulty.#{d[:value]}") %>
+              </span>
+              <i class="fas fa-check text-xs text-brand <%= params[:difficulty] == d[:value] ? '' : 'invisible' %>"></i>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <%# Effacer tous les filtres — icône dans la même DA que les dropdowns %>
+      <% if has_filters %>
+        <%= link_to exercises_path(source: params[:source], query: params[:query]),
+            class: "#{chip_base} border-red-500/30 text-red-400/70 bg-surface-raised hover:text-red-400 hover:border-red-500/50 hover:bg-red-500/5",
+            title: t("views.exercises.no_results.clear") do %>
+          <i class="fas fa-filter-circle-xmark text-xs"></i>
+        <% end %>
       <% end %>
+
     </div>
   </header>
 
-  <div class="flex flex-col lg:flex-row gap-6">
-
-    <!-- Filtres latéraux -->
-    <aside class="lg:w-52 flex-shrink-0">
-      <div class="card p-4 space-y-5 lg:sticky lg:top-6 max-h-[calc(100vh-6rem)] overflow-y-auto">
-
-        <!-- Body part -->
-        <div>
-          <h3 class="text-xs font-semibold text-ink-subtle uppercase tracking-wider mb-2">
-            <%= t("views.exercises.filter_body_part") %>
-          </h3>
-          <div class="space-y-0.5">
-            <%= link_to exercises_path(query: params[:query], equipment: params[:equipment], difficulty: params[:difficulty], source: params[:source]),
-                class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:body_part].blank? ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}",
-                data: { turbo_action: "replace" } do %>
-              <%= t("views.exercises.all") %>
-            <% end %>
-            <% @body_parts.each do |part| %>
-              <%= link_to exercises_path(query: params[:query], body_part: part, equipment: params[:equipment], difficulty: params[:difficulty], source: params[:source]),
-                  class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:body_part] == part ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}",
-                  data: { turbo_action: "replace" } do %>
-                <%= t_body_part(part) %>
-              <% end %>
-            <% end %>
-          </div>
-        </div>
-
-        <div class="border-t border-surface-border/40"></div>
-
-        <!-- Équipement -->
-        <div>
-          <h3 class="text-xs font-semibold text-ink-subtle uppercase tracking-wider mb-2">
-            <%= t("views.exercises.filter_equipment") %>
-          </h3>
-          <div class="space-y-0.5">
-            <%= link_to exercises_path(query: params[:query], body_part: params[:body_part], difficulty: params[:difficulty], source: params[:source]),
-                class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:equipment].blank? ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}",
-                data: { turbo_action: "replace" } do %>
-              <%= t("views.exercises.all") %>
-            <% end %>
-            <% @equipments.each do |eq| %>
-              <%= link_to exercises_path(query: params[:query], body_part: params[:body_part], equipment: eq, difficulty: params[:difficulty], source: params[:source]),
-                  class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:equipment] == eq ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}",
-                  data: { turbo_action: "replace" } do %>
-                <%= t_equipment(eq) %>
-              <% end %>
-            <% end %>
-          </div>
-        </div>
-
-        <div class="border-t border-surface-border/40"></div>
-
-        <!-- Niveau / Difficulté -->
-        <div>
-          <h3 class="text-xs font-semibold text-ink-subtle uppercase tracking-wider mb-2">
-            <%= t("views.exercises.filter_difficulty") %>
-          </h3>
-          <div class="space-y-0.5">
-            <%= link_to exercises_path(query: params[:query], body_part: params[:body_part], equipment: params[:equipment], source: params[:source]),
-                class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:difficulty].blank? ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}",
-                data: { turbo_action: "replace" } do %>
-              <%= t("views.exercises.all") %>
-            <% end %>
-            <% %w[beginner intermediate advanced].each do |level| %>
-              <%= link_to exercises_path(query: params[:query], body_part: params[:body_part], equipment: params[:equipment], difficulty: level, source: params[:source]),
-                  class: "flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-colors #{params[:difficulty] == level ? 'bg-brand/15 text-brand font-medium' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}",
-                  data: { turbo_action: "replace" } do %>
-                <%= t("views.exercises.difficulty.#{level}") %>
-              <% end %>
-            <% end %>
-          </div>
-        </div>
-
+  <!-- ── Grille d'exercices ── -->
+  <% if @exercises.empty? %>
+    <div class="text-center py-16 border-2 border-dashed border-surface-border/50 rounded-xl bg-surface-base">
+      <div class="w-14 h-14 mx-auto mb-3 bg-surface-raised rounded-full flex items-center justify-center border border-surface-border/40">
+        <i class="fas fa-dumbbell text-brand text-xl"></i>
       </div>
-    </aside>
-
-    <!-- Grille d'exercices -->
-    <div class="flex-1 min-w-0">
-
-      <% if @exercises.empty? %>
-        <div class="text-center py-12 border-2 border-dashed border-surface-border/50 rounded-xl bg-surface-base">
-          <div class="w-14 h-14 mx-auto mb-3 bg-surface-raised rounded-full flex items-center justify-center border border-surface-border/40">
-            <i class="fas fa-dumbbell text-brand text-xl"></i>
-          </div>
-          <% if params[:source] == "custom" %>
-            <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.exercises.custom.empty.title") %></h3>
-            <p class="text-ink-muted mb-4"><%= t("views.exercises.custom.empty.description") %></p>
-            <%= link_to new_exercise_path, class: "btn-primary" do %>
-              <i class="fas fa-plus"></i>
-              <%= t("views.exercises.custom.btn_new") %>
-            <% end %>
-          <% elsif params[:query].present? || params[:body_part].present? || params[:equipment].present? || params[:difficulty].present? %>
-            <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.exercises.no_results.title") %></h3>
-            <p class="text-ink-muted mb-4"><%= t("views.exercises.no_results.description") %></p>
-            <%= link_to exercises_path, class: "btn-secondary" do %>
-              <i class="fas fa-times"></i>
-              <%= t("views.exercises.no_results.clear") %>
-            <% end %>
-          <% else %>
-            <h3 class="text-lg font-semibold text-ink-primary mb-2"><%= t("views.exercises.empty_state.title") %></h3>
-            <p class="text-ink-muted"><%= t("views.exercises.empty_state.description") %></p>
-          <% end %>
-        </div>
-
-      <% else %>
-        <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
-          <% @exercises.each do |exercise| %>
-            <%= link_to exercise_path(exercise,
-                    body_part:  params[:body_part],
-                    equipment:  params[:equipment],
-                    difficulty: params[:difficulty],
-                    source:     params[:source],
-                    query:      params[:query]),
-                class: "card p-0 overflow-hidden hover:border-surface-border transition-all group" do %>
-
-              <!-- Image / GIF / placeholder -->
-              <% has_gif = exercise.gif_url.present? %>
-              <% has_image = !has_gif && exercise.image.attached? %>
-              <div class="aspect-square bg-surface-base relative overflow-hidden"
-                   <% if has_gif %>
-                   data-controller="gif-preview"
-                   data-gif-preview-src-value="<%= exercise.gif_url %>"
-                   data-action="mouseenter->gif-preview#mouseenter mouseleave->gif-preview#mouseleave"
-                   <% end %>>
-
-                <% if has_gif %>
-                  <!-- Placeholder jusqu'au chargement du canvas -->
-                  <div class="w-full h-full flex items-center justify-center bg-surface-raised"
-                       data-gif-preview-target="placeholder">
-                    <i class="fas fa-dumbbell text-4xl text-ink-subtle/25"></i>
-                  </div>
-                  <canvas data-gif-preview-target="canvas"
-                          class="hidden absolute inset-0 w-full h-full"></canvas>
-                  <img data-gif-preview-target="gif"
-                       src=""
-                       alt="<%= exercise.name %>"
-                       class="hidden absolute inset-0 w-full h-full object-cover">
-                <% elsif has_image %>
-                  <img src="<%= url_for(exercise.image) %>"
-                       alt="<%= exercise.name %>"
-                       class="absolute inset-0 w-full h-full object-cover">
-                <% else %>
-                  <div class="w-full h-full flex items-center justify-center bg-surface-raised">
-                    <i class="fas fa-dumbbell text-4xl text-ink-subtle/25"></i>
-                  </div>
-                <% end %>
-
-                <!-- Badge difficulté -->
-                <% if exercise.difficulty.present? %>
-                  <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md text-xs font-medium <%= difficulty_badge_classes(exercise.difficulty) %>">
-                    <%= t("views.exercises.difficulty.#{exercise.difficulty}", default: exercise.difficulty) %>
-                  </span>
-                <% end %>
-
-                <!-- Badge custom -->
-                <% if exercise.custom? %>
-                  <span class="absolute top-2 right-2 px-2 py-0.5 rounded-md text-xs font-medium bg-brand/15 text-brand border border-brand/25">
-                    <i class="fas fa-star text-[9px]"></i>
-                  </span>
-                <% end %>
-              </div>
-
-              <!-- Infos -->
-              <div class="p-3">
-                <h3 class="text-sm font-semibold text-ink-primary capitalize leading-tight mb-1 line-clamp-2 group-hover:text-brand transition-colors">
-                  <%= exercise_name(exercise) %>
-                </h3>
-                <% if exercise.target_muscle.present? %>
-                  <p class="text-xs text-ink-subtle capitalize"><%= t_muscle(exercise.target_muscle) %></p>
-                <% end %>
-                <% if exercise.equipment.present? %>
-                  <p class="text-xs text-ink-subtle/50 mt-0.5"><%= t_equipment(exercise.equipment) %></p>
-                <% end %>
-              </div>
-
-            <% end %>
-          <% end %>
-        </div>
-
-        <!-- Pagination -->
-        <% if @pagy&.pages&.> 1 %>
-          <div class="mt-6 flex justify-center">
-            <%= render PaginationComponent.new(pagy: @pagy) %>
-          </div>
+      <% if params[:source] == "custom" %>
+        <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.exercises.custom.empty.title") %></h3>
+        <p class="text-ink-muted mb-4"><%= t("views.exercises.custom.empty.description") %></p>
+        <%= link_to new_exercise_path, class: "btn-primary" do %>
+          <i class="fas fa-plus"></i>
+          <%= t("views.exercises.custom.btn_new") %>
         <% end %>
-
+      <% elsif params[:source] == "favorites" %>
+        <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.exercises.favorites_empty.title") %></h3>
+        <p class="text-ink-muted"><%= t("views.exercises.favorites_empty.description") %></p>
+      <% elsif has_filters %>
+        <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.exercises.no_results.title") %></h3>
+        <p class="text-ink-muted mb-4"><%= t("views.exercises.no_results.description") %></p>
+        <%= link_to exercises_path, class: "btn-secondary" do %>
+          <i class="fas fa-times"></i>
+          <%= t("views.exercises.no_results.clear") %>
+        <% end %>
+      <% else %>
+        <h3 class="text-lg font-semibold text-ink-primary mb-2"><%= t("views.exercises.empty_state.title") %></h3>
+        <p class="text-ink-muted"><%= t("views.exercises.empty_state.description") %></p>
       <% end %>
     </div>
-  </div>
+
+  <% else %>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+      <% @exercises.each do |exercise| %>
+        <%# Wrapper relatif : lien + bouton favori sont frères (évite lien dans lien) %>
+        <div class="relative group">
+
+          <%# ── Lien principal ── %>
+          <%= link_to exercise_path(exercise,
+                  body_part:  params[:body_part],
+                  equipment:  params[:equipment],
+                  difficulty: params[:difficulty],
+                  source:     params[:source],
+                  query:      params[:query]),
+              class: "card p-0 overflow-hidden hover:border-surface-border transition-all block" do %>
+
+            <!-- Image / GIF / placeholder -->
+            <% has_gif   = exercise.gif_url.present? %>
+            <% has_image = !has_gif && exercise.image.attached? %>
+            <div class="aspect-square bg-surface-base relative overflow-hidden"
+                 <% if has_gif %>
+                 data-controller="gif-preview"
+                 data-gif-preview-src-value="<%= exercise.gif_url %>"
+                 data-action="mouseenter->gif-preview#mouseenter mouseleave->gif-preview#mouseleave"
+                 <% end %>>
+
+              <% if has_gif %>
+                <div class="w-full h-full flex items-center justify-center bg-surface-raised"
+                     data-gif-preview-target="placeholder">
+                  <i class="fas fa-dumbbell text-4xl text-ink-subtle/25"></i>
+                </div>
+                <canvas data-gif-preview-target="canvas"
+                        class="hidden absolute inset-0 w-full h-full"></canvas>
+                <img data-gif-preview-target="gif"
+                     src=""
+                     alt="<%= exercise.name %>"
+                     class="hidden absolute inset-0 w-full h-full object-cover">
+              <% elsif has_image %>
+                <img src="<%= url_for(exercise.image) %>"
+                     alt="<%= exercise.name %>"
+                     class="absolute inset-0 w-full h-full object-cover">
+              <% else %>
+                <div class="w-full h-full flex items-center justify-center bg-surface-raised">
+                  <i class="fas fa-dumbbell text-4xl text-ink-subtle/25"></i>
+                </div>
+              <% end %>
+
+              <!-- Badge difficulté -->
+              <% if exercise.difficulty.present? %>
+                <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md text-xs font-medium <%= difficulty_badge_classes(exercise.difficulty) %>">
+                  <%= t("views.exercises.difficulty.#{exercise.difficulty}", default: exercise.difficulty) %>
+                </span>
+              <% end %>
+            </div>
+
+            <!-- Infos -->
+            <div class="p-3">
+              <h3 class="text-sm font-semibold text-ink-primary capitalize leading-tight mb-1 line-clamp-2 group-hover:text-brand transition-colors">
+                <%= exercise_name(exercise) %>
+              </h3>
+              <% if exercise.target_muscle.present? %>
+                <p class="text-xs text-ink-subtle capitalize"><%= t_muscle(exercise.target_muscle) %></p>
+              <% end %>
+              <% if exercise.equipment.present? %>
+                <p class="text-xs text-ink-subtle/50 mt-0.5"><%= t_equipment(exercise.equipment) %></p>
+              <% end %>
+            </div>
+
+          <% end %>
+
+          <%# ── Bouton favori (frère du lien, positionné en absolu) ── %>
+          <div class="absolute top-2 right-2 z-10">
+            <% favorited = @favorited_ids.include?(exercise.id) %>
+            <%= render "exercises/favorite_button", exercise: exercise, favorited: favorited %>
+          </div>
+
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Pagination -->
+    <% if @pagy&.pages&.> 1 %>
+      <div class="mt-6 flex justify-center">
+        <%= render PaginationComponent.new(pagy: @pagy) %>
+      </div>
+    <% end %>
+
+  <% end %>
 
 </div>

@@ -10,8 +10,11 @@
       <%= t("views.exercises.back_to_list") %>
     <% end %>
 
-    <% if @exercise.custom? %>
-      <div class="flex items-center gap-2">
+    <div class="flex items-center gap-2">
+      <%# Bouton favori — disponible sur tous les exercices %>
+      <%= render "exercises/favorite_button", exercise: @exercise, favorited: @is_favorited %>
+
+      <% if @exercise.custom? %>
         <%= link_to edit_exercise_path(@exercise),
             class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-ink-muted bg-surface-raised border border-surface-border/40 hover:text-ink-primary hover:border-surface-border transition-colors" do %>
           <i class="fas fa-pen text-xs"></i>
@@ -27,8 +30,8 @@
           <i class="fas fa-trash text-xs"></i>
           <%= t("views.exercises.custom.btn_delete") %>
         <% end %>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
   </div>
 
   <!-- Zone principale : GIF + infos essentielles -->

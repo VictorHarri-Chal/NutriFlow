@@ -1,18 +1,26 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Lightweight AJAX exercise search combobox.
-// Opens on focus, searches on input (debounced), dispatches "exercise-selected" on pick.
+// Exercise combobox with favorites + recents sections.
+// Opens on focus:
+//   - empty query → shows "Favoris" section + "Récents" section then hint to type
+//   - ≥2 chars    → AJAX search (with star on favorited results)
 export default class extends Controller {
   static targets = ["input", "dropdown", "hiddenId"]
   static values = {
-    searchPath: String,
-    noResults:  { type: String, default: "Aucun résultat" },
-    hint:       { type: String, default: "Tapez pour rechercher un exercice" }
+    searchPath:     String,
+    favoritesPath:  String,
+    recentsPath:    String,
+    noResults:      { type: String, default: "Aucun résultat" },
+    hint:           { type: String, default: "Tapez pour rechercher un exercice" },
+    favoritesLabel: { type: String, default: "Favoris" },
+    recentsLabel:   { type: String, default: "Récents" }
   }
 
   connect() {
     this._boundClose    = this._onOutsideClick.bind(this)
     this._debounceTimer = null
+    this._favorites     = null  // cached after first fetch
+    this._recents       = null  // cached after first fetch
   }
 
   disconnect() {
@@ -22,13 +30,13 @@ export default class extends Controller {
 
   // ── Open on focus ─────────────────────────────────────────────────
 
-  open() {
+  async open() {
     const query = this.inputTarget.value.trim()
     if (query.length >= 2) {
       clearTimeout(this._debounceTimer)
       this._search(query)
     } else {
-      this._showHint()
+      await this._showFavoritesAndRecents()
     }
   }
 
@@ -38,7 +46,7 @@ export default class extends Controller {
     clearTimeout(this._debounceTimer)
     const query = this.inputTarget.value.trim()
     if (query.length < 2) {
-      this._showHint()
+      this._showFavoritesAndRecents()
       return
     }
     this._debounceTimer = setTimeout(() => this._search(query), 250)
@@ -61,10 +69,10 @@ export default class extends Controller {
   optionKeydown(event) {
     const opts = this._visibleOptions()
     const idx  = opts.indexOf(event.currentTarget)
-    if (event.key === "ArrowDown")       { event.preventDefault(); opts[idx + 1]?.focus() }
-    else if (event.key === "ArrowUp")    { event.preventDefault(); idx === 0 ? this.inputTarget.focus() : opts[idx - 1]?.focus() }
-    else if (event.key === "Enter")      { event.preventDefault(); event.currentTarget.click() }
-    else if (event.key === "Escape")     { this._close(); this.inputTarget.focus() }
+    if (event.key === "ArrowDown")    { event.preventDefault(); opts[idx + 1]?.focus() }
+    else if (event.key === "ArrowUp") { event.preventDefault(); idx === 0 ? this.inputTarget.focus() : opts[idx - 1]?.focus() }
+    else if (event.key === "Enter")   { event.preventDefault(); event.currentTarget.click() }
+    else if (event.key === "Escape")  { this._close(); this.inputTarget.focus() }
   }
 
   // ── Select ────────────────────────────────────────────────────────
@@ -73,7 +81,6 @@ export default class extends Controller {
     const opt = event.currentTarget
     if (this.hasHiddenIdTarget) this.hiddenIdTarget.value = opt.dataset.id
 
-    // Dispatch to parent workout-form controller
     this.element.dispatchEvent(new CustomEvent("exercise-selected", {
       bubbles: true,
       detail: { id: opt.dataset.id, name: opt.dataset.name }
@@ -86,14 +93,67 @@ export default class extends Controller {
 
   // ── Private ───────────────────────────────────────────────────────
 
-  _showHint() {
-    this.dropdownTarget.innerHTML = `
-      <div class="px-3 py-4 text-sm text-ink-subtle text-center flex flex-col items-center gap-1.5">
-        <i class="fas fa-dumbbell text-xs text-ink-subtle/50"></i>
-        <span>${this.hintValue}</span>
-      </div>
-    `
+  async _showFavoritesAndRecents() {
+    // Fetch both in parallel if not cached
+    const promises = []
+    if (!this._favorites) {
+      promises.push(
+        fetch(this.favoritesPathValue, { headers: { Accept: "application/json" } })
+          .then(r => r.json())
+          .then(data => { this._favorites = data })
+          .catch(() => { this._favorites = [] })
+      )
+    }
+    if (this.hasRecentsPathValue && !this._recents) {
+      promises.push(
+        fetch(this.recentsPathValue, { headers: { Accept: "application/json" } })
+          .then(r => r.json())
+          .then(data => { this._recents = data })
+          .catch(() => { this._recents = [] })
+      )
+    }
+    if (promises.length > 0) await Promise.all(promises)
+
+    this.dropdownTarget.innerHTML = ""
+
+    const favorites = this._favorites || []
+    const recents   = (this._recents  || []).filter(r => !favorites.some(f => f.id === r.id))
+
+    if (favorites.length > 0) {
+      this.dropdownTarget.appendChild(this._makeHeader(this.favoritesLabelValue))
+      favorites.forEach(ex => this.dropdownTarget.appendChild(this._makeOption(ex)))
+    }
+
+    if (recents.length > 0) {
+      if (favorites.length > 0) {
+        const sep = document.createElement("div")
+        sep.className = "mx-3 my-1 border-t border-surface-border/30"
+        this.dropdownTarget.appendChild(sep)
+      }
+      this.dropdownTarget.appendChild(this._makeHeader(this.recentsLabelValue))
+      recents.forEach(ex => this.dropdownTarget.appendChild(this._makeOption(ex)))
+    }
+
+    if (favorites.length > 0 || recents.length > 0) {
+      const sep = document.createElement("div")
+      sep.className = "mx-3 my-1.5 border-t border-surface-border/30"
+      this.dropdownTarget.appendChild(sep)
+    }
+
+    // Hint to type
+    const hint = document.createElement("div")
+    hint.className = "px-3 py-3 text-sm text-ink-subtle text-center flex flex-col items-center gap-1.5"
+    hint.innerHTML = `<i class="fas fa-search text-xs text-ink-subtle/50"></i><span>${this.hintValue}</span>`
+    this.dropdownTarget.appendChild(hint)
+
     this._open()
+  }
+
+  _makeHeader(label) {
+    const header = document.createElement("div")
+    header.className = "px-3 pt-2.5 pb-1 text-[10px] font-semibold tracking-widest uppercase text-ink-subtle/60 select-none"
+    header.textContent = label
+    return header
   }
 
   async _search(query) {
@@ -114,31 +174,36 @@ export default class extends Controller {
       empty.textContent = this.noResultsValue
       this.dropdownTarget.appendChild(empty)
     } else {
-      exercises.forEach(ex => {
-        const btn = document.createElement("button")
-        btn.type = "button"
-        btn.dataset.id   = ex.id
-        btn.dataset.name = ex.name
-        btn.className = "w-full text-left px-3 py-2 text-sm text-ink-primary hover:bg-surface-hover transition-colors flex items-center justify-between gap-2"
-
-        const nameSpan = document.createElement("span")
-        nameSpan.className = "truncate capitalize"
-        nameSpan.textContent = ex.name
-
-        const partSpan = document.createElement("span")
-        partSpan.className = "text-xs text-ink-subtle shrink-0"
-        partSpan.textContent = ex.body_part_label || ""
-
-        btn.appendChild(nameSpan)
-        btn.appendChild(partSpan)
-
-        btn.addEventListener("click",   this.select.bind(this))
-        btn.addEventListener("keydown", this.optionKeydown.bind(this))
-        this.dropdownTarget.appendChild(btn)
-      })
+      exercises.forEach(ex => this.dropdownTarget.appendChild(this._makeOption(ex)))
     }
 
     this._open()
+  }
+
+  _makeOption(ex) {
+    const btn = document.createElement("button")
+    btn.type = "button"
+    btn.dataset.id   = ex.id
+    btn.dataset.name = ex.name
+    btn.className = "w-full text-left px-3 py-2 text-sm text-ink-primary hover:bg-surface-hover transition-colors flex items-center justify-between gap-2"
+
+    const starHtml = ex.favorite
+      ? `<i class="fas fa-star text-amber-400 text-xs shrink-0"></i>`
+      : ""
+
+    const left = document.createElement("span")
+    left.className = "flex items-center gap-1.5 min-w-0"
+    left.innerHTML = `${starHtml}<span class="truncate capitalize">${ex.name}</span>`
+
+    const right = document.createElement("span")
+    right.className = "text-xs text-ink-subtle shrink-0"
+    right.textContent = ex.body_part_label || ""
+
+    btn.appendChild(left)
+    btn.appendChild(right)
+    btn.addEventListener("click",   this.select.bind(this))
+    btn.addEventListener("keydown", this.optionKeydown.bind(this))
+    return btn
   }
 
   _open() {

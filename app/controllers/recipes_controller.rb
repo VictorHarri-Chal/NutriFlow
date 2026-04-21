@@ -1,8 +1,11 @@
 class RecipesController < ApplicationController
-  before_action :set_recipe, only: [:show, :edit, :update, :destroy, :duplicate]
+  before_action :set_recipe, only: [:show, :edit, :update, :destroy, :duplicate, :toggle_favorite]
 
   def index
     @recipes = current_user.recipes.includes(recipe_items: :food, recipe_ratings: [])
+    @source  = params[:source]
+
+    @recipes = @recipes.where(favorite: true) if @source == "favorites"
 
     if params[:query].present?
       @recipes = @recipes.search_by_name(params[:query])
@@ -65,6 +68,14 @@ class RecipesController < ApplicationController
       redirect_to recipe_path(copy), notice: t("controllers.recipes.duplicated")
     else
       redirect_to recipes_path, alert: t("controllers.recipes.duplicate_error")
+    end
+  end
+
+  def toggle_favorite
+    @recipe.update!(favorite: !@recipe.favorite)
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_back fallback_location: recipes_path }
     end
   end
 

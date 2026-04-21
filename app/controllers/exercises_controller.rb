@@ -2,7 +2,9 @@ class ExercisesController < ApplicationController
   before_action :set_custom_exercise, only: [:edit, :update, :destroy]
 
   def index
-    if params[:source] == "custom"
+    if params[:source] == "favorites"
+      base = current_user.favorited_exercises.accessible_to(current_user)
+    elsif params[:source] == "custom"
       base = Exercise.for_user(current_user)
     else
       gif_fetch_started = Exercise.global.where.not(gif_status: nil).exists?
@@ -15,14 +17,16 @@ class ExercisesController < ApplicationController
     @exercises = @exercises.by_equipment(params[:equipment])  if params[:equipment].present?
     @exercises = @exercises.where(difficulty: params[:difficulty]) if params[:difficulty].present?
 
-    @body_parts = Exercise.body_parts
-    @equipments = Exercise.equipments
+    @body_parts        = Exercise.body_parts
+    @equipments        = Exercise.equipments
+    @favorited_ids     = current_user.exercise_favorites.pluck(:exercise_id).to_set
 
-    @pagy, @exercises = pagy(@exercises.with_attached_image.order(:name), items: 12)
+    @pagy, @exercises = pagy(@exercises.with_attached_image.order(:name), items: 15)
   end
 
   def show
-    @exercise = Exercise.accessible_to(current_user).find(params[:id])
+    @exercise     = Exercise.accessible_to(current_user).find(params[:id])
+    @is_favorited = current_user.exercise_favorites.exists?(exercise: @exercise)
   end
 
   def search
@@ -34,12 +38,56 @@ class ExercisesController < ApplicationController
     end
     exercises = exercises.limit(10)
 
+    favorited_ids = current_user.exercise_favorites.pluck(:exercise_id).to_set
+
     render json: exercises.map { |e|
       key = e.body_part&.gsub(" ", "_")
       {
         id:               e.id,
         name:             e.name,
-        body_part_label:  I18n.t("views.exercises.body_parts.#{key}", default: e.body_part&.capitalize.to_s)
+        body_part_label:  I18n.t("views.exercises.body_parts.#{key}", default: e.body_part&.capitalize.to_s),
+        favorite:         favorited_ids.include?(e.id)
+      }
+    }
+  end
+
+  # GET /exercises/recents.json — last 8 distinct exercises used in workout sets by the user
+  def recents
+    exercise_ids = WorkoutSet
+      .joins(workout_session: :day)
+      .where(days: { user_id: current_user.id })
+      .order("workout_sets.created_at DESC")
+      .pluck(:exercise_id)
+      .uniq
+      .first(8)
+
+    exercises = Exercise.where(id: exercise_ids).index_by(&:id)
+    favorited_ids = current_user.exercise_favorites.pluck(:exercise_id).to_set
+
+    ordered = exercise_ids.filter_map { |id| exercises[id] }
+
+    render json: ordered.map { |e|
+      key = e.body_part&.gsub(" ", "_")
+      {
+        id:               e.id,
+        name:             e.name,
+        body_part_label:  I18n.t("views.exercises.body_parts.#{key}", default: e.body_part&.capitalize.to_s),
+        favorite:         favorited_ids.include?(e.id)
+      }
+    }
+  end
+
+  # GET /exercises/favorites.json — used by exercise combobox to show favorites upfront
+  def favorites
+    exercises = current_user.favorited_exercises.accessible_to(current_user).order(:name)
+
+    render json: exercises.map { |e|
+      key = e.body_part&.gsub(" ", "_")
+      {
+        id:               e.id,
+        name:             e.name,
+        body_part_label:  I18n.t("views.exercises.body_parts.#{key}", default: e.body_part&.capitalize.to_s),
+        favorite:         true
       }
     }
   end
@@ -64,6 +112,32 @@ class ExercisesController < ApplicationController
     end
   end
 
+  def toggle_favorite
+    exercise = Exercise.accessible_to(current_user).find(params[:id])
+    fav = current_user.exercise_favorites.find_by(exercise: exercise)
+
+    if fav
+      fav.destroy
+      favorited = false
+    else
+      current_user.exercise_favorites.create!(exercise: exercise)
+      favorited = true
+    end
+
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: [
+          turbo_stream.replace(
+            "favorite_btn_#{exercise.id}",
+            partial: "exercises/favorite_button",
+            locals:  { exercise: exercise, favorited: favorited }
+          )
+        ]
+      end
+      format.html { redirect_back fallback_location: exercises_path }
+    end
+  end
+
   def new
     @exercise = Exercise.new
   end
@@ -84,6 +158,7 @@ class ExercisesController < ApplicationController
 
   def update
     if @exercise.update(exercise_params)
+      @exercise.image.purge if params[:exercise][:remove_image] == "1"
       redirect_to exercise_path(@exercise), notice: t("views.exercises.custom.flash.updated")
     else
       render :edit, status: :unprocessable_entity

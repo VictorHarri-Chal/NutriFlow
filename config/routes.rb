@@ -36,15 +36,23 @@ Rails.application.routes.draw do
   end
 
   resources :exercises, only: [:index, :show, :new, :create, :edit, :update, :destroy] do
-    collection { get :search }
-    member     { get :last_performance }
+    collection do
+      get  :search
+      get  :favorites
+      get  :recents
+    end
+    member do
+      get   :last_performance
+      patch :toggle_favorite
+    end
   end
 
   resources :weight_entries, only: [:index, :create, :destroy]
 
   resources :recipes do
     member do
-      post :duplicate
+      post  :duplicate
+      patch :toggle_favorite
     end
     resources :recipe_ratings, only: [:create, :destroy]
   end
