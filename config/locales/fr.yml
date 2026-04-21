@@ -31,6 +31,11 @@ fr:
       updated: "Notation mise à jour avec succès."
       destroyed: "Notation supprimée avec succès."
       error: "Impossible d'enregistrer la notation."
+    workout_programs:
+      created: "Programme créé avec succès."
+      updated: "Programme mis à jour."
+      destroyed: "Programme supprimé."
+      activated: "Programme activé."
     recipes:
       created: "Recette créée avec succès."
       updated: "Recette mise à jour avec succès."
@@ -108,6 +113,7 @@ fr:
         collapse: "Réduire"
         weight: "Suivi poids"
         exercises: "Entraînement"
+        workout_programs: "Mon programme"
 
     calendars:
       page_title: "Calendrier"
@@ -620,6 +626,70 @@ fr:
         delete_food_confirm: "Es-tu sûr de vouloir supprimer cet aliment ?"
       food_labels:
         no_labels: "Aucun label"
+    workout_programs:
+      day_names:
+        monday: "Lundi"
+        tuesday: "Mardi"
+        wednesday: "Mercredi"
+        thursday: "Jeudi"
+        friday: "Vendredi"
+        saturday: "Samedi"
+        sunday: "Dimanche"
+      day_abbrs:
+        monday: "Lun"
+        tuesday: "Mar"
+        wednesday: "Mer"
+        thursday: "Jeu"
+        friday: "Ven"
+        saturday: "Sam"
+        sunday: "Dim"
+      title: "Mes programmes"
+      subtitle: "Crée tes semaines-types et charge-les directement dans le calendrier."
+      new_program: "Nouveau programme"
+      active: "Actif"
+      inactive: "Inactif"
+      activate: "Activer"
+      set_active: "Définir comme actif"
+      edit_program: "Modifier"
+      back: "Mes programmes"
+      back_to_program: "Retour au programme"
+      delete_confirm: "Supprimer « %{name} » ? Cette action est irréversible."
+      confirm_remove_exercise: "Supprimer cet exercice du programme ?"
+      days_with_sessions:
+        zero: "Aucune séance"
+        one: "1 jour actif"
+        other: "%{count} jours actifs"
+      week_hint: "Clique sur un nom de séance pour le modifier. Ajoute des exercices avec le champ +"
+      split_types:
+        ppl: "Push / Pull / Legs"
+        upper_lower: "Upper / Lower"
+        fullbody: "Full Body"
+        push_pull: "Push / Pull"
+        bro_split: "Bro Split"
+        custom: "Personnalisé"
+      form:
+        name: "Nom du programme"
+        name_placeholder: "ex. PPL Printemps, Full Body..."
+        split_type: "Type de split"
+        split_hint: "Informatif, n'a pas d'effet sur la structure."
+        create_btn: "Créer le programme"
+      empty:
+        title: "Aucun programme"
+        description: "Crée ton premier programme pour préparer tes semaines d'entraînement."
+      day:
+        rest_placeholder: "Repos"
+        empty_hint: "Ajouter des exercices"
+        add_exercise: "Ajouter un exercice..."
+        no_exercise_found: "Aucun exercice trouvé"
+        sets: "Séries"
+        reps: "Reps"
+        weight_kg: "kg"
+        duration_placeholder: "Durée"
+        notes_placeholder: "Notes..."
+        exercise_count:
+          zero: "vide"
+          one: "1 exo"
+          other: "%{count} exos"
     exercises:
       page_title: "Entraînement"
       title: "Banque d'exercices"
@@ -833,7 +903,7 @@ fr:
         empty: "Aucune séance pour aujourd'hui"
         add_session: "Ajouter une séance"
       form:
-        title_new: "Nouvelle séance"
+        title_new: "Ajouter une séance"
         title_edit: "Modifier la séance"
         search_exercise: "Rechercher un exercice..."
         no_exercise_found: "Aucun exercice trouvé"
@@ -851,4 +921,12 @@ fr:
         rpe_light: "Léger"
         rpe_max: "Maximal"
         no_exercises_error: "Ajoutez au moins un exercice avant d'enregistrer la séance."
+        no_weight_error: "Renseignez le poids, les répétitions et la durée avant d'enregistrer."
         submit_add: "Ajouter"
+        from_program: "Charger depuis « %{name} »"
+      picker:
+        title: "Nouvelle séance"
+        from_program: "Depuis le programme « %{name} »"
+        from_program_title: "Depuis mon programme"
+        custom_title: "Séance personnalisée"
+        custom_desc: "Choisissez vos exercices librement"

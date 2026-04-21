@@ -100,7 +100,12 @@ export default class extends Controller {
     })
 
     document.body.appendChild(form)
-    form.submit()
+    // Use requestSubmit so Turbo intercepts and handles turbo-stream responses
+    if (form.requestSubmit) {
+      form.requestSubmit()
+    } else {
+      form.submit()
+    }
   }
 
   getCsrfToken() {

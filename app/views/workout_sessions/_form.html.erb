@@ -1,17 +1,21 @@
 <%= form_with model: [day, workout_session],
     data: { controller: "workout-form",
             action: "submit->workout-form#validateSubmit",
-            workout_form_last_perf_path_value:     last_performance_exercise_path(":id"),
-            workout_form_label_weight_value:        t("views.workout_sessions.form.weight_kg"),
-            workout_form_label_reps_value:          t("views.workout_sessions.form.reps"),
-            workout_form_label_add_set_value:       t("views.workout_sessions.form.add_set"),
-            workout_form_label_last_perf_value:     t("views.workout_sessions.form.last_perf_prefix"),
-            workout_form_no_exercise_error_value:   t("views.workout_sessions.form.no_exercises_error") } do |f| %>
+            workout_form_last_perf_path_value:       last_performance_exercise_path(":id"),
+            workout_form_exercise_search_path_value: search_exercises_path,
+            workout_form_label_weight_value:         t("views.workout_sessions.form.weight_kg"),
+            workout_form_label_reps_value:           t("views.workout_sessions.form.reps"),
+            workout_form_label_add_set_value:        t("views.workout_sessions.form.add_set"),
+            workout_form_label_last_perf_value:      t("views.workout_sessions.form.last_perf_prefix"),
+            workout_form_no_exercise_error_value:    t("views.workout_sessions.form.no_exercises_error") } do |f| %>
 
   <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4 mb-4">
 
-    <%# ── Close × ── %>
-    <div class="flex justify-end mb-3">
+    <%# ── Header ── %>
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-sm font-bold text-ink-primary">
+        <%= workout_session.persisted? ? t("views.workout_sessions.form.title_edit") : t("views.workout_sessions.form.title_new") %>
+      </h3>
       <button type="button"
               data-controller="close-frame"
               data-action="click->close-frame#close"
@@ -20,7 +24,16 @@
       </button>
     </div>
 
-    <%# ── Exercise search + groups (no separator between them) ── %>
+    <%# ── Validation errors ── %>
+    <% if workout_session.errors.any? %>
+      <div class="mb-4 text-xs text-status-danger bg-status-danger/10 border border-status-danger/30 rounded-lg px-3 py-2 space-y-0.5">
+        <% workout_session.errors.full_messages.each do |msg| %>
+          <p><%= msg %></p>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%# ── Exercise search + groups ── %>
     <div class="space-y-2 mb-4">
 
       <div data-controller="exercise-combobox"
@@ -49,18 +62,26 @@
       </div>
 
       <div data-workout-form-target="noExerciseError"
-           class="hidden text-xs text-status-danger bg-status-danger_dim/20 border border-status-danger/30 rounded-lg px-3 py-2">
+           class="hidden text-xs text-status-danger bg-status-danger/10 border border-status-danger/30 rounded-lg px-3 py-2">
         <%= t("views.workout_sessions.form.no_exercises_error") %>
       </div>
 
+      <div data-workout-form-target="noWeightError"
+           class="hidden text-xs text-status-danger bg-status-danger/10 border border-status-danger/30 rounded-lg px-3 py-2">
+        <%= t("views.workout_sessions.form.no_weight_error") %>
+      </div>
+
       <div data-workout-form-target="exercisesList" class="space-y-2">
-        <% workout_session.grouped_sets.each do |exercise, sets| %>
+        <% set_position_counter = 0 %>
+        <% workout_session.grouped_sets.each_with_index do |(exercise, sets), group_idx| %>
           <div class="exercise-group rounded-xl border border-surface-border/40 bg-surface-base p-3 space-y-2"
                data-exercise-id="<%= exercise.id %>">
-            <div class="flex items-center justify-between">
-              <span class="text-sm font-semibold text-ink-primary capitalize"><%= exercise.name %></span>
+
+            <%# Group header %>
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-sm font-semibold text-ink-primary capitalize truncate"><%= exercise.name %></span>
               <button type="button" data-action="click->workout-form#removeExercise"
-                      class="text-xs text-ink-subtle hover:text-status-danger transition-colors cursor-pointer">
+                      class="text-xs text-ink-subtle hover:text-status-danger transition-colors cursor-pointer shrink-0">
                 <i class="fas fa-times"></i>
               </button>
             </div>
@@ -70,34 +91,41 @@
               <span class="last-perf-text text-xs text-ink-subtle"></span>
             </div>
 
-            <%# Header row — no px so # aligns with numbers below %>
-            <div class="grid grid-cols-12 gap-2 text-xs text-ink-subtle">
-              <span class="col-span-1">#</span>
-              <span class="col-span-5"><%= t("views.workout_sessions.form.weight_kg") %></span>
-              <span class="col-span-5"><%= t("views.workout_sessions.form.reps") %></span>
-              <span class="col-span-1"></span>
+            <%# Column headers %>
+            <div class="grid grid-cols-[16px_1fr_1fr_20px] gap-2 text-xs text-ink-subtle">
+              <span>#</span>
+              <span><%= t("views.workout_sessions.form.weight_kg") %></span>
+              <span><%= t("views.workout_sessions.form.reps") %></span>
+              <span></span>
             </div>
 
             <div class="sets-container space-y-1.5">
               <% sets.each_with_index do |ws, i| %>
-                <div class="set-row grid grid-cols-12 gap-2 items-center">
-                  <input type="hidden" name="workout_session[workout_sets_attributes][<%= ws.id %>][id]" value="<%= ws.id %>">
-                  <input type="hidden" name="workout_session[workout_sets_attributes][<%= ws.id %>][exercise_id]" value="<%= exercise.id %>">
-                  <input type="hidden" name="workout_session[workout_sets_attributes][<%= ws.id %>][_destroy]" value="false" data-destroy-flag="true">
-                  <span class="col-span-1 text-xs text-ink-subtle set-number"><%= i + 1 %></span>
-                  <input type="number"
-                         name="workout_session[workout_sets_attributes][<%= ws.id %>][weight_kg]"
-                         value="<%= ws.weight_kg %>" placeholder="0" min="0" step="0.5"
-                         class="col-span-5 input-dark text-sm py-1.5 cursor-text">
-                  <input type="number"
-                         name="workout_session[workout_sets_attributes][<%= ws.id %>][reps]"
-                         value="<%= ws.reps.presence || 12 %>" min="0" step="1"
-                         class="col-span-5 input-dark text-sm py-1.5 cursor-text">
-                  <%# First set cannot be deleted %>
-                  <button type="button" data-action="click->workout-form#removeSet"
-                          class="col-span-1 text-ink-subtle hover:text-status-danger transition-colors text-xs flex items-center justify-center cursor-pointer <%= i == 0 ? 'invisible pointer-events-none' : '' %>">
-                    <i class="fas fa-times"></i>
-                  </button>
+                <% ws_key = ws.persisted? ? ws.id : 1_000_000 + set_position_counter %>
+                <div class="set-row">
+                  <% if ws.persisted? %>
+                    <input type="hidden" name="workout_session[workout_sets_attributes][<%= ws_key %>][id]" value="<%= ws.id %>">
+                    <input type="hidden" name="workout_session[workout_sets_attributes][<%= ws_key %>][_destroy]" value="false" data-destroy-flag="true">
+                  <% end %>
+                  <input type="hidden" name="workout_session[workout_sets_attributes][<%= ws_key %>][exercise_id]" value="<%= exercise.id %>">
+                  <input type="hidden" name="workout_session[workout_sets_attributes][<%= ws_key %>][position]" value="<%= set_position_counter %>" data-position-input="true">
+                  <% set_position_counter += 1 %>
+
+                  <div class="grid grid-cols-[16px_1fr_1fr_20px] gap-2 items-center">
+                    <span class="text-xs text-ink-subtle set-number"><%= i + 1 %></span>
+                    <input type="number"
+                           name="workout_session[workout_sets_attributes][<%= ws_key %>][weight_kg]"
+                           value="<%= ws.weight_kg %>" placeholder="0" min="0" step="0.5"
+                           class="input-dark text-sm py-1.5 cursor-text">
+                    <input type="number"
+                           name="workout_session[workout_sets_attributes][<%= ws_key %>][reps]"
+                           value="<%= ws.reps.presence || 10 %>" min="0" step="1"
+                           class="input-dark text-sm py-1.5 cursor-text">
+                    <button type="button" data-action="click->workout-form#removeSet"
+                            class="text-ink-subtle hover:text-status-danger transition-colors text-xs flex items-center justify-center cursor-pointer <%= i == 0 ? 'invisible pointer-events-none' : '' %>">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
                 </div>
               <% end %>
             </div>
@@ -113,7 +141,7 @@
 
     </div>
 
-    <%# ── Duration + RPE (no separator line above) ── %>
+    <%# ── Duration + RPE ── %>
     <div class="grid grid-cols-2 gap-4 mb-4">
       <div>
         <%= f.label :duration_minutes, t("views.workout_sessions.form.duration"), class: "label-dark block mb-1" %>

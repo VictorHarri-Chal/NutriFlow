@@ -1,0 +1,15 @@
+<% content_for :page_title, @program.name %>
+
+<div class="max-w-lg mx-auto mt-16">
+  <div class="mb-6">
+    <%= link_to workout_program_path(@program), class: "inline-flex items-center gap-2 text-sm text-ink-muted hover:text-ink-primary transition-colors" do %>
+      <i class="fas fa-arrow-left text-xs"></i>
+      <%= t("views.workout_programs.back_to_program") %>
+    <% end %>
+  </div>
+
+  <div class="card p-6">
+    <h1 class="text-xl font-bold text-ink-primary mb-5"><%= t("views.workout_programs.edit_program") %></h1>
+    <%= render "form", program: @program %>
+  </div>
+</div>

@@ -1,0 +1,90 @@
+<%# day: ProgramDay, program: WorkoutProgram %>
+
+<div class="flex flex-col bg-surface-raised border border-surface-border/40 rounded-xl overflow-hidden h-full"
+     id="program_day_<%= day.id %>">
+
+  <%# ── Day header ── %>
+  <div class="px-3 py-2.5 border-b border-surface-border/40 bg-surface-base/60">
+    <p class="text-[10px] font-bold uppercase tracking-widest text-ink-subtle/60 mb-1.5 text-center">
+      <%= day.day_abbr %>
+    </p>
+
+    <%# Inline editable session name %>
+    <%= form_with url: workout_program_program_day_path(program, day),
+          method: :patch,
+          scope: :program_day,
+          class: "w-full" do |f| %>
+      <%= f.text_field :name,
+            value: day.name,
+            placeholder: t("views.workout_programs.day.rest_placeholder"),
+            class: "w-full text-center text-sm font-bold bg-transparent border border-transparent rounded-lg px-1 py-1 text-ink-primary placeholder:text-ink-subtle/30 hover:border-surface-border/60 focus:border-brand/50 focus:outline-none focus:bg-surface-hover transition-colors cursor-text",
+            data: { action: "blur->auto-submit#submit keydown.enter->auto-submit#submit",
+                    controller: "auto-submit" } %>
+    <% end %>
+  </div>
+
+  <%# ── Duration + Notes metadata ── %>
+  <%= form_with url: workout_program_program_day_path(program, day),
+        method: :patch,
+        html: { novalidate: true },
+        class: "px-2 pt-2 pb-1 border-b border-surface-border/20 space-y-1" do %>
+    <div class="flex items-center gap-1.5">
+      <i class="fas fa-clock text-[9px] text-ink-subtle/50 shrink-0 w-3 text-center"></i>
+      <div class="relative flex-1">
+        <%= number_field_tag "program_day[duration_minutes]", day.duration_minutes,
+              min: 0, step: 1,
+              placeholder: t("views.workout_programs.day.duration_placeholder"),
+              class: "w-full pr-6 text-[10px] bg-transparent border border-transparent rounded px-1 py-0.5 text-ink-muted placeholder:text-ink-subtle/30 hover:border-surface-border/50 focus:border-brand/40 focus:outline-none focus:bg-surface-hover transition-colors cursor-text",
+              data: { action: "blur->auto-submit#submit", controller: "auto-submit" } %>
+        <span class="absolute right-1 top-1/2 -translate-y-1/2 text-[9px] text-ink-subtle/40 pointer-events-none">min</span>
+      </div>
+    </div>
+    <div class="flex items-start gap-1.5">
+      <i class="fas fa-comment-alt text-[9px] text-ink-subtle/50 shrink-0 w-3 text-center mt-1.5"></i>
+      <%= text_area_tag "program_day[notes]", day.notes,
+            rows: 2,
+            placeholder: t("views.workout_programs.day.notes_placeholder"),
+            class: "w-full text-[10px] bg-transparent border border-transparent rounded px-1 py-0.5 text-ink-muted placeholder:text-ink-subtle/30 hover:border-surface-border/50 focus:border-brand/40 focus:outline-none focus:bg-surface-hover transition-all cursor-text min-h-[28px] focus:min-h-[56px]",
+            style: "resize: vertical; overflow-y: auto;",
+            data: { action: "blur->auto-submit#submit", controller: "auto-submit" } %>
+    </div>
+  <% end %>
+
+  <%# ── Exercise list ── %>
+  <div class="flex-1 p-2 space-y-1.5 overflow-y-auto" id="program_day_exercises_<%= day.id %>">
+    <% if day.program_exercises.empty? %>
+      <div class="py-6 text-center" id="program_day_<%= day.id %>_empty">
+        <p class="text-[10px] text-ink-subtle/40 italic"><%= t("views.workout_programs.day.empty_hint") %></p>
+      </div>
+    <% else %>
+      <% day.program_exercises.each do |pe| %>
+        <%= render "program_exercise", program: program, day: day, pe: pe %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# ── Add exercise combobox ── %>
+  <div class="p-2 border-t border-surface-border/30">
+    <div data-controller="program-builder"
+         data-program-builder-search-path-value="<%= search_exercises_path %>"
+         data-program-builder-favorites-path-value="<%= favorites_exercises_path(format: :json) %>"
+         data-program-builder-favorites-label-value="<%= t("views.exercises.source_favorites") %>"
+         data-program-builder-create-path-value="<%= workout_program_program_day_program_exercises_path(program, day) %>"
+         data-program-builder-no-results-value="<%= t("views.workout_programs.day.no_exercise_found") %>"
+         class="relative">
+      <div class="relative">
+        <i class="fas fa-plus absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-subtle/50 text-[10px] pointer-events-none"></i>
+        <input type="text"
+               data-program-builder-target="input"
+               data-action="focus->program-builder#open input->program-builder#input keydown->program-builder#keydown"
+               class="w-full pl-7 pr-3 py-1.5 text-xs bg-surface-base border border-surface-border/40 rounded-lg text-ink-primary placeholder:text-ink-subtle/40 focus:outline-none focus:border-brand/50 transition-colors cursor-text"
+               placeholder="<%= t("views.workout_programs.day.add_exercise") %>"
+               autocomplete="off">
+      </div>
+      <div data-program-builder-target="dropdown"
+           class="hidden bg-surface-raised border border-surface-border/60 rounded-lg shadow-2xl overflow-y-auto">
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,50 @@
+<% content_for :page_title, @program.name %>
+
+<div class="max-w-7xl mx-auto mt-16">
+
+  <%# ── Header ── %>
+  <div class="flex items-center justify-between mb-6">
+    <%= link_to workout_programs_path, class: "inline-flex items-center gap-2 text-sm text-ink-muted hover:text-ink-primary transition-colors" do %>
+      <i class="fas fa-arrow-left text-xs"></i>
+      <%= t("views.workout_programs.back") %>
+    <% end %>
+
+    <div class="flex items-center gap-2">
+      <% if @program.is_active? %>
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-brand/15 text-brand border border-brand/30">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand animate-pulse"></span>
+          <%= t("views.workout_programs.active") %>
+        </span>
+      <% else %>
+        <%= link_to activate_workout_program_path(@program),
+              data: { turbo_method: :patch },
+              class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-ink-muted border border-surface-border/40 bg-surface-raised hover:text-brand hover:border-brand/30 transition-colors" do %>
+          <i class="fas fa-circle-dot text-xs"></i>
+          <%= t("views.workout_programs.set_active") %>
+        <% end %>
+      <% end %>
+      <%= link_to edit_workout_program_path(@program),
+            class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-ink-muted bg-surface-raised border border-surface-border/40 hover:text-ink-primary hover:border-surface-border transition-colors" do %>
+        <i class="fas fa-pen text-xs"></i>
+        <%= t("views.workout_programs.edit_program") %>
+      <% end %>
+    </div>
+  </div>
+
+  <%# ── Title + split type ── %>
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-ink-primary"><%= @program.name %></h1>
+    <p class="text-sm text-ink-subtle mt-1"><%= t("views.workout_programs.split_types.#{@program.split_type}") %></p>
+  </div>
+
+  <%# ── Week grid — horizontal scroll on small screens ── %>
+  <div class="overflow-x-auto">
+    <div class="grid grid-cols-7 gap-3 min-w-[1050px]" style="height: calc(100vh - 15rem);">
+      <% @program_days.each do |day| %>
+        <%= render "day_column", program: @program, day: day %>
+      <% end %>
+    </div>
+  </div>
+
+
+</div>

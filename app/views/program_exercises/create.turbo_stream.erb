@@ -1,0 +1,7 @@
+<%# Remove empty state if present %>
+<%= turbo_stream.remove "program_day_#{@day.id}_empty" %>
+
+<%# Append the new exercise card to the day's exercise list %>
+<%= turbo_stream.append "program_day_exercises_#{@day.id}" do %>
+  <%= render "workout_programs/program_exercise", program: @program, day: @day, pe: @exercise %>
+<% end %>

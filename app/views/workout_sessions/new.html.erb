@@ -1,3 +1,7 @@
 <%= turbo_frame_tag "item_form" do %>
-  <%= render "form", day: @day, workout_session: @workout_session %>
+  <% if @show_picker %>
+    <%= render "picker", day: @day, active_program: @active_program, training_days: @training_days %>
+  <% else %>
+    <%= render "form", day: @day, workout_session: @workout_session %>
+  <% end %>
 <% end %>
