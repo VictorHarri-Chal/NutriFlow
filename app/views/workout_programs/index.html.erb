@@ -1,0 +1,80 @@
+<% content_for :page_title, t("views.workout_programs.title") %>
+
+<div class="max-w-4xl mx-auto mt-16">
+
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-ink-primary"><%= t("views.workout_programs.title") %></h1>
+      <p class="text-xs text-ink-subtle mt-0.5"><%= t("views.workout_programs.subtitle") %></p>
+    </div>
+    <%= link_to new_workout_program_path, class: "btn-primary" do %>
+      <i class="fas fa-plus"></i>
+      <%= t("views.workout_programs.new_program") %>
+    <% end %>
+  </div>
+
+  <% if @programs.any? %>
+    <div class="space-y-3">
+      <% @programs.each do |program| %>
+        <div class="card p-5 flex items-center gap-4 hover:border-surface-border/70 transition-colors group">
+
+          <%# Clickable portion: badge + info %>
+          <%= link_to workout_program_path(program), class: "flex items-center gap-4 flex-1 min-w-0" do %>
+            <%# Status badge %>
+            <div class="shrink-0">
+              <% if program.is_active? %>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-brand/15 text-brand border border-brand/30">
+                  <span class="w-1.5 h-1.5 rounded-full bg-brand animate-pulse"></span>
+                  <%= t("views.workout_programs.active") %>
+                </span>
+              <% else %>
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs text-ink-subtle border border-surface-border/40 bg-surface-raised">
+                  <%= t("views.workout_programs.inactive") %>
+                </span>
+              <% end %>
+            </div>
+
+            <%# Info %>
+            <div class="flex-1 min-w-0">
+              <p class="font-semibold text-ink-primary truncate group-hover:text-brand transition-colors"><%= program.name %></p>
+              <p class="text-xs text-ink-subtle mt-0.5">
+                <%= t("views.workout_programs.split_types.#{program.split_type}") %>
+                · <%= t("views.workout_programs.days_with_sessions", count: program.program_days.where.not(name: [nil, ""]).count) %>
+              </p>
+            </div>
+          <% end %>
+
+          <%# Actions — outside the link to avoid nested <a> %>
+          <div class="flex items-center gap-2 shrink-0">
+            <% unless program.is_active? %>
+              <%= link_to activate_workout_program_path(program),
+                    data: { turbo_method: :patch },
+                    class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-brand border border-brand/30 bg-brand/5 hover:bg-brand/10 transition-colors" do %>
+                <i class="fas fa-circle-dot text-xs"></i>
+                <%= t("views.workout_programs.set_active") %>
+              <% end %>
+            <% end %>
+            <%= delete_link_with_confirm(workout_program_path(program),
+                  confirm: t("views.workout_programs.delete_confirm", name: program.name),
+                  icon_class: "fas fa-trash text-xs",
+                  class: "inline-flex items-center justify-center w-8 h-8 rounded-lg text-ink-subtle/50 bg-surface-raised border border-surface-border/40 hover:text-red-400 hover:border-red-500/30 transition-colors") %>
+          </div>
+
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-16 border-2 border-dashed border-surface-border/50 rounded-xl bg-surface-base">
+      <div class="w-14 h-14 mx-auto mb-3 bg-surface-raised rounded-full flex items-center justify-center border border-surface-border/40">
+        <i class="fas fa-clipboard-list text-brand text-xl"></i>
+      </div>
+      <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.workout_programs.empty.title") %></h3>
+      <p class="text-ink-muted mb-5 text-sm"><%= t("views.workout_programs.empty.description") %></p>
+      <%= link_to new_workout_program_path, class: "btn-primary" do %>
+        <i class="fas fa-plus"></i>
+        <%= t("views.workout_programs.new_program") %>
+      <% end %>
+    </div>
+  <% end %>
+
+</div>

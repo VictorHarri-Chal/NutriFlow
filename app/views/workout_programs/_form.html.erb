@@ -1,0 +1,26 @@
+<%= form_with model: program, class: "space-y-5" do |f| %>
+  <% if program.errors.any? %>
+    <div class="bg-status-danger_dim/20 border border-status-danger/30 rounded-lg px-4 py-3 text-sm text-status-danger">
+      <%= program.errors.full_messages.first %>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :name, t("views.workout_programs.form.name"), class: "label-dark block mb-1" %>
+    <%= f.text_field :name, class: "input-dark", placeholder: t("views.workout_programs.form.name_placeholder"), autofocus: true %>
+  </div>
+
+  <div>
+    <%= f.label :split_type, t("views.workout_programs.form.split_type"), class: "label-dark block mb-1" %>
+    <%= f.select :split_type,
+          WorkoutProgram::SPLIT_TYPES.map { |k| [t("views.workout_programs.split_types.#{k}"), k] },
+          {},
+          class: "input-dark" %>
+  </div>
+
+  <div class="flex justify-end gap-3 pt-2 border-t border-surface-border/40">
+    <%= link_to t("shared.cancel"), workout_programs_path, class: "btn-ghost" %>
+    <%= f.submit program.persisted? ? t("shared.save") : t("views.workout_programs.form.create_btn"),
+          class: "btn-primary cursor-pointer" %>
+  </div>
+<% end %>

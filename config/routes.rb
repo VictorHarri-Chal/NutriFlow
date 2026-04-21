@@ -35,6 +35,13 @@ Rails.application.routes.draw do
     resources :workout_sessions, only: [:new, :create, :edit, :update, :destroy]
   end
 
+  resources :workout_programs do
+    member { patch :activate }
+    resources :program_days, only: [:update] do
+      resources :program_exercises, only: [:create, :update, :destroy]
+    end
+  end
+
   resources :exercises, only: [:index, :show, :new, :create, :edit, :update, :destroy] do
     collection do
       get  :search

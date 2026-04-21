@@ -5,7 +5,7 @@ class WorkoutSession < ApplicationRecord
 
   accepts_nested_attributes_for :workout_sets,
     allow_destroy: true,
-    reject_if: ->(attrs) { attrs[:weight_kg].blank? && attrs[:reps].blank? }
+    reject_if: ->(attrs) { attrs[:exercise_id].blank? }
 
   validates :rpe, numericality: { in: 1..10, only_integer: true }, allow_nil: true
   validates :duration_minutes, numericality: { greater_than: 0, only_integer: true }, allow_nil: true
@@ -52,7 +52,15 @@ class WorkoutSession < ApplicationRecord
   end
 
   def grouped_sets
-    workout_sets.includes(:exercise).group_by(&:exercise)
+    if new_record?
+      # In-memory: exercises were preloaded via set.exercise = pe.exercise in the controller,
+      # or need to be loaded by exercise_id (error re-render case from accepted nested attrs).
+      workout_sets.group_by do |s|
+        s.exercise || (s.exercise_id.present? ? Exercise.find_by(id: s.exercise_id) : nil)
+      end.reject { |exercise, _| exercise.nil? }
+    else
+      workout_sets.includes(:exercise).group_by(&:exercise)
+    end
   end
 
   private

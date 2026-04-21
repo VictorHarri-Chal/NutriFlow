@@ -1,0 +1,65 @@
+<%# Picker shown before the form — user chooses between loading from program or a custom session %>
+<%# Highlight the program day matching the current calendar day %>
+<% calendar_dow = (day.date.wday - 1) % 7 %>
+
+<div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4 mb-4">
+
+  <%# ── Close × ── %>
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-sm font-bold text-ink-primary"><%= t("views.workout_sessions.picker.title") %></h3>
+    <button type="button"
+            data-controller="close-frame"
+            data-action="click->close-frame#close"
+            class="text-ink-subtle hover:text-ink-primary transition-colors cursor-pointer p-1 -mr-1 -mt-1">
+      <i class="fas fa-times text-sm"></i>
+    </button>
+  </div>
+
+  <div class="space-y-2">
+
+    <%# ── Option 1: Load from active program ── %>
+    <div class="rounded-xl border border-surface-border/40 bg-surface-base p-4">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-7 h-7 rounded-lg bg-surface-raised border border-surface-border/40 flex items-center justify-center shrink-0">
+          <i class="fas fa-clipboard-list text-[10px] text-ink-subtle"></i>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-ink-primary"><%= t("views.workout_sessions.picker.from_program_title") %></p>
+          <p class="text-xs text-ink-subtle"><%= active_program.name %></p>
+        </div>
+      </div>
+      <% pill_base    = "inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-all" %>
+      <% pill_today   = "bg-brand/10 border-brand/30 text-ink-primary hover:bg-brand/30 hover:border-brand hover:scale-[1.03]" %>
+      <% pill_default = "bg-surface-raised border-surface-border/40 text-ink-muted hover:bg-brand/30 hover:border-brand hover:text-ink-primary hover:scale-[1.03]" %>
+      <div class="flex flex-wrap gap-1.5">
+        <% training_days.each do |pd| %>
+          <% is_today_day = pd.day_of_week == calendar_dow %>
+          <%= link_to new_day_workout_session_path(day, program_day_id: pd.id),
+                data: { turbo_frame: "item_form" },
+                class: "#{pill_base} #{is_today_day ? pill_today : pill_default}" do %>
+            <span class="<%= is_today_day ? 'font-semibold' : '' %>"><%= pd.name.presence || pd.day_name %></span>
+            <span class="text-[10px] <%= is_today_day ? 'text-brand/70' : 'text-ink-subtle/40' %>">
+              <%= t("views.workout_programs.day.exercise_count", count: pd.program_exercises.size) %>
+            </span>
+            <span class="text-[9px] <%= is_today_day ? 'text-brand/60' : 'text-ink-subtle/30' %>"><%= pd.day_abbr %></span>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <%# ── Option 2: Custom session ── %>
+    <%= link_to new_day_workout_session_path(day, mode: "custom"),
+          data: { turbo_frame: "item_form" },
+          class: "flex items-center gap-3 w-full p-4 rounded-xl border border-surface-border/40 bg-surface-base hover:border-surface-border/70 hover:bg-surface-hover transition-colors" do %>
+      <div class="w-7 h-7 rounded-lg bg-surface-raised border border-surface-border/40 flex items-center justify-center shrink-0">
+        <i class="fas fa-dumbbell text-[10px] text-ink-subtle"></i>
+      </div>
+      <div class="flex-1">
+        <p class="text-sm font-medium text-ink-primary"><%= t("views.workout_sessions.picker.custom_title") %></p>
+        <p class="text-xs text-ink-subtle mt-0.5"><%= t("views.workout_sessions.picker.custom_desc") %></p>
+      </div>
+      <i class="fas fa-chevron-right text-xs text-ink-subtle/40"></i>
+    <% end %>
+
+  </div>
+</div>

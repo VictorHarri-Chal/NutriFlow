@@ -6,9 +6,10 @@ import { Controller } from "@hotwired/stimulus"
 // - manages RPE slider ↔ hidden field sync
 // - fetches "last performance" for context when an exercise is added
 export default class extends Controller {
-  static targets = ["exercisesList", "emptyHint", "noExerciseError", "rpeSlider", "rpeDisplay", "rpeValue"]
+  static targets = ["exercisesList", "emptyHint", "noExerciseError", "noWeightError", "rpeSlider", "rpeDisplay", "rpeValue"]
   static values = {
     lastPerfPath:       String,
+    exerciseSearchPath: String,
     labelWeight:        { type: String, default: "Poids (kg)" },
     labelReps:          { type: String, default: "Reps" },
     labelAddSet:        { type: String, default: "Série" },
@@ -18,9 +19,16 @@ export default class extends Controller {
 
   connect() {
     this._setIndex = this._countExistingInputs()
-    // Sync RPE display on load (edit form)
     if (this.hasRpeSliderTarget && this.rpeSliderTarget.value) {
       this._syncRpeDisplay(this.rpeSliderTarget.value)
+    }
+    if (this.hasExercisesListTarget) {
+      this._reindexPositions()
+      this._syncEmptyHint()
+      this.exercisesListTarget.querySelectorAll("[data-exercise-id]").forEach(group => {
+        const container = group.querySelector(".sets-container")
+        if (container) this._renumberSets(container)
+      })
     }
   }
 
@@ -41,29 +49,53 @@ export default class extends Controller {
   // ── Form submit validation ────────────────────────────────────────
 
   validateSubmit(event) {
+    if (!this.hasExercisesListTarget) return
+
+    // Check exercises present
     const visible = this.exercisesListTarget.querySelectorAll("[data-exercise-id]:not(.hidden)")
     if (visible.length === 0) {
       event.preventDefault()
-      if (this.hasNoExerciseErrorTarget) {
-        this.noExerciseErrorTarget.classList.remove("hidden")
-      }
-    } else {
-      if (this.hasNoExerciseErrorTarget) {
-        this.noExerciseErrorTarget.classList.add("hidden")
-      }
+      if (this.hasNoExerciseErrorTarget) this.noExerciseErrorTarget.classList.remove("hidden")
+      if (this.hasNoWeightErrorTarget)   this.noWeightErrorTarget.classList.add("hidden")
+      return
     }
+    if (this.hasNoExerciseErrorTarget) this.noExerciseErrorTarget.classList.add("hidden")
+
+    // Check all visible weight and reps inputs are filled
+    let missingField = false
+    this.exercisesListTarget.querySelectorAll(".set-row:not(.hidden) input[name*='weight_kg']").forEach(input => {
+      const empty = input.value === ""
+      input.classList.toggle("input-weight-error", empty)
+      if (empty) missingField = true
+    })
+    this.exercisesListTarget.querySelectorAll(".set-row:not(.hidden) input[name*='[reps]']").forEach(input => {
+      const empty = input.value === ""
+      input.classList.toggle("input-weight-error", empty)
+      if (empty) missingField = true
+    })
+
+    // Check duration is filled
+    const durationInput = this.element.querySelector("input[name='workout_session[duration_minutes]']")
+    if (durationInput) {
+      const empty = durationInput.value === ""
+      durationInput.classList.toggle("input-weight-error", empty)
+      if (empty) missingField = true
+    }
+
+    if (missingField) {
+      event.preventDefault()
+      if (this.hasNoWeightErrorTarget) this.noWeightErrorTarget.classList.remove("hidden")
+      return
+    }
+    if (this.hasNoWeightErrorTarget) this.noWeightErrorTarget.classList.add("hidden")
   }
 
   // ── Exercise added from combobox ──────────────────────────────────
 
   addExercise(event) {
-    // Only handle custom events from exercise-combobox
     if (event.type !== "exercise-selected") return
-
     const { id, name } = event.detail
     if (!id || !name) return
-
-    // Don't add duplicate
     if (this.element.querySelector(`[data-exercise-id="${id}"]`)) return
 
     const group = this._buildExerciseGroup(id, name)
@@ -77,6 +109,8 @@ export default class extends Controller {
   addSet(event) {
     const group     = event.currentTarget.closest("[data-exercise-id]")
     const container = group.querySelector(".sets-container")
+    const visible   = container.querySelectorAll(".set-row:not(.hidden)")
+    if (visible.length >= 10) return
     container.appendChild(this._buildSetRow(group.dataset.exerciseId))
     this._renumberSets(container)
   }
@@ -95,14 +129,12 @@ export default class extends Controller {
   }
 
   removeExercise(event) {
-    const group = event.currentTarget.closest("[data-exercise-id]")
+    const group        = event.currentTarget.closest("[data-exercise-id]")
     const destroyFlags = group.querySelectorAll("[data-destroy-flag]")
     if (destroyFlags.length > 0) {
-      // Persisted sets — mark for destruction and hide, keep inputs in DOM so they submit
       destroyFlags.forEach(i => i.value = "1")
       group.classList.add("hidden")
     } else {
-      // Newly added group (no persisted sets) — safe to remove from DOM entirely
       group.remove()
     }
     this._syncEmptyHint()
@@ -116,10 +148,10 @@ export default class extends Controller {
     div.dataset.exerciseId = exerciseId
 
     div.innerHTML = `
-      <div class="flex items-center justify-between">
-        <span class="text-sm font-semibold text-ink-primary capitalize exercise-name-label"></span>
+      <div class="flex items-center justify-between gap-2">
+        <span class="text-sm font-semibold text-ink-primary capitalize truncate exercise-name-label"></span>
         <button type="button" data-action="click->workout-form#removeExercise"
-                class="text-xs text-ink-subtle hover:text-status-danger transition-colors cursor-pointer">
+                class="text-xs text-ink-subtle hover:text-status-danger transition-colors cursor-pointer shrink-0">
           <i class="fas fa-times"></i>
         </button>
       </div>
@@ -127,11 +159,11 @@ export default class extends Controller {
         <i class="fas fa-history text-[10px] text-ink-subtle shrink-0"></i>
         <span class="last-perf-text text-xs text-ink-subtle"></span>
       </div>
-      <div class="grid grid-cols-12 gap-2 text-xs text-ink-subtle">
-        <span class="col-span-1">#</span>
-        <span class="col-span-5">${this.labelWeightValue}</span>
-        <span class="col-span-5">${this.labelRepsValue}</span>
-        <span class="col-span-1"></span>
+      <div class="grid grid-cols-[16px_1fr_1fr_20px] gap-2 text-xs text-ink-subtle">
+        <span>#</span>
+        <span>${this.labelWeightValue}</span>
+        <span>${this.labelRepsValue}</span>
+        <span></span>
       </div>
       <div class="sets-container space-y-1.5"></div>
       <button type="button" data-action="click->workout-form#addSet"
@@ -143,48 +175,63 @@ export default class extends Controller {
     div.querySelector(".exercise-name-label").textContent = exerciseName
 
     const container = div.querySelector(".sets-container")
-    container.appendChild(this._buildSetRow(exerciseId))
+    for (let i = 0; i < 3; i++) container.appendChild(this._buildSetRow(exerciseId))
     this._renumberSets(container)
     return div
   }
 
-  _buildSetRow(exerciseId) {
+  _buildSetRow(exerciseId, opts = {}) {
     const idx = this._setIndex++
     const div = document.createElement("div")
-    div.className = "set-row grid grid-cols-12 gap-2 items-center"
+    div.className = "set-row"
+
     div.innerHTML = `
-      <input type="hidden"
-             name="workout_session[workout_sets_attributes][${idx}][exercise_id]"
-             value="${exerciseId}">
-      <span class="col-span-1 text-xs text-ink-subtle set-number"></span>
-      <input type="number"
-             name="workout_session[workout_sets_attributes][${idx}][weight_kg]"
-             placeholder="0" min="0" step="0.5"
-             class="col-span-5 input-dark text-sm py-1.5 cursor-text">
-      <input type="number"
-             name="workout_session[workout_sets_attributes][${idx}][reps]"
-             value="12" min="0" step="1"
-             class="col-span-5 input-dark text-sm py-1.5 cursor-text">
-      <button type="button" data-action="click->workout-form#removeSet"
-              class="col-span-1 text-ink-subtle hover:text-status-danger transition-colors text-xs flex items-center justify-center cursor-pointer">
-        <i class="fas fa-times"></i>
-      </button>
+      <input type="hidden" name="workout_session[workout_sets_attributes][${idx}][exercise_id]" value="${exerciseId}">
+      <input type="hidden" name="workout_session[workout_sets_attributes][${idx}][position]" value="0" data-position-input="true">
+      <div class="grid grid-cols-[16px_1fr_1fr_20px] gap-2 items-center">
+        <span class="text-xs text-ink-subtle set-number"></span>
+        <input type="number" name="workout_session[workout_sets_attributes][${idx}][weight_kg]"
+               placeholder="0" min="0" step="0.5" value="${opts.weightKg != null ? opts.weightKg : ''}"
+               class="input-dark text-sm py-1.5 cursor-text">
+        <input type="number" name="workout_session[workout_sets_attributes][${idx}][reps]"
+               value="${opts.reps != null ? opts.reps : 10}" min="0" step="1"
+               class="input-dark text-sm py-1.5 cursor-text">
+        <button type="button" data-action="click->workout-form#removeSet"
+                class="text-ink-subtle hover:text-status-danger transition-colors text-xs flex items-center justify-center cursor-pointer">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
     `
     return div
   }
 
   _renumberSets(container) {
-    Array.from(container.querySelectorAll(".set-row:not(.hidden)"))
-      .forEach((row, i) => {
-        const num = row.querySelector(".set-number")
-        if (num) num.textContent = i + 1
-        // First visible set is mandatory — hide its × button
-        const btn = row.querySelector("[data-action*='removeSet']")
-        if (btn) {
-          btn.classList.toggle("invisible",        i === 0)
-          btn.classList.toggle("pointer-events-none", i === 0)
-        }
-      })
+    const rows = Array.from(container.querySelectorAll(".set-row:not(.hidden)"))
+    rows.forEach((row, i) => {
+      const num = row.querySelector(".set-number")
+      if (num) num.textContent = i + 1
+      const btn = row.querySelector("[data-action*='removeSet']")
+      if (btn) {
+        btn.classList.toggle("invisible",           i === 0)
+        btn.classList.toggle("pointer-events-none", i === 0)
+      }
+    })
+    const addBtn = container.closest("[data-exercise-id]")?.querySelector("[data-action*='addSet']")
+    if (addBtn) {
+      const atMax = rows.length >= 10
+      addBtn.classList.toggle("opacity-30",          atMax)
+      addBtn.classList.toggle("pointer-events-none", atMax)
+    }
+    this._reindexPositions()
+  }
+
+  _reindexPositions() {
+    if (!this.hasExercisesListTarget) return
+    let pos = 0
+    Array.from(this.exercisesListTarget.querySelectorAll(".set-row:not(.hidden)")).forEach(row => {
+      const posInput = row.querySelector("[data-position-input]")
+      if (posInput) posInput.value = pos++
+    })
   }
 
   _countExistingInputs() {

@@ -112,6 +112,21 @@
     background-repeat: no-repeat;
   }
 
+  /* ---- Weight validation error state ---- */
+  .input-weight-error {
+    @apply border-status-danger/60 bg-status-danger/5;
+  }
+
+  /* ---- Remove number input spinners ---- */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
   /* ---- Devise forms ---- */
   .devise-form input[type="email"],
   .devise-form input[type="password"],

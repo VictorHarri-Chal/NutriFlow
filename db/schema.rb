@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_21_130000) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_21_195826) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -179,6 +179,34 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_21_130000) do
     t.index ["user_id"], name: "index_profiles_on_user_id"
   end
 
+  create_table "program_days", force: :cascade do |t|
+    t.bigint "workout_program_id", null: false
+    t.integer "day_of_week", null: false
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "duration_minutes"
+    t.text "notes"
+    t.index ["workout_program_id", "day_of_week"], name: "index_program_days_on_workout_program_id_and_day_of_week", unique: true
+    t.index ["workout_program_id"], name: "index_program_days_on_workout_program_id"
+  end
+
+  create_table "program_exercises", force: :cascade do |t|
+    t.bigint "program_day_id", null: false
+    t.bigint "exercise_id", null: false
+    t.integer "sets", default: 3, null: false
+    t.integer "reps_target", default: 10, null: false
+    t.decimal "weight_target", precision: 6, scale: 2
+    t.integer "rest_seconds"
+    t.integer "position", default: 0, null: false
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["exercise_id"], name: "index_program_exercises_on_exercise_id"
+    t.index ["program_day_id", "position"], name: "index_program_exercises_on_program_day_id_and_position"
+    t.index ["program_day_id"], name: "index_program_exercises_on_program_day_id"
+  end
+
   create_table "recipe_items", force: :cascade do |t|
     t.bigint "recipe_id", null: false
     t.bigint "food_id", null: false
@@ -239,6 +267,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_21_130000) do
     t.index ["user_id"], name: "index_weight_entries_on_user_id"
   end
 
+  create_table "workout_programs", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "name", null: false
+    t.string "split_type", default: "custom", null: false
+    t.boolean "is_active", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "is_active"], name: "index_workout_programs_on_user_id_and_is_active"
+    t.index ["user_id"], name: "index_workout_programs_on_user_id"
+  end
+
   create_table "workout_sessions", force: :cascade do |t|
     t.bigint "day_id", null: false
     t.integer "duration_minutes"
@@ -280,12 +319,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_21_130000) do
   add_foreign_key "food_labels_foods", "foods"
   add_foreign_key "foods", "users"
   add_foreign_key "profiles", "users"
+  add_foreign_key "program_days", "workout_programs"
+  add_foreign_key "program_exercises", "exercises"
+  add_foreign_key "program_exercises", "program_days"
   add_foreign_key "recipe_items", "foods"
   add_foreign_key "recipe_items", "recipes"
   add_foreign_key "recipe_ratings", "recipes"
   add_foreign_key "recipe_ratings", "users"
   add_foreign_key "recipes", "users"
   add_foreign_key "weight_entries", "users"
+  add_foreign_key "workout_programs", "users"
   add_foreign_key "workout_sessions", "days"
   add_foreign_key "workout_sets", "exercises"
   add_foreign_key "workout_sets", "workout_sessions"

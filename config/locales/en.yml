@@ -31,6 +31,11 @@ en:
       updated: "Rating updated successfully."
       destroyed: "Rating deleted successfully."
       error: "Unable to save the rating."
+    workout_programs:
+      created: "Program created successfully."
+      updated: "Program updated."
+      destroyed: "Program deleted."
+      activated: "Program activated."
     recipes:
       created: "Recipe created successfully."
       updated: "Recipe updated successfully."
@@ -108,6 +113,7 @@ en:
         collapse: "Collapse"
         weight: "Weight tracking"
         exercises: "Training"
+        workout_programs: "My program"
 
     calendars:
       page_title: "Calendar"
@@ -622,6 +628,70 @@ en:
         delete_food_confirm: "Are you sure you want to delete this food?"
       food_labels:
         no_labels: "No labels"
+    workout_programs:
+      day_names:
+        monday: "Monday"
+        tuesday: "Tuesday"
+        wednesday: "Wednesday"
+        thursday: "Thursday"
+        friday: "Friday"
+        saturday: "Saturday"
+        sunday: "Sunday"
+      day_abbrs:
+        monday: "Mon"
+        tuesday: "Tue"
+        wednesday: "Wed"
+        thursday: "Thu"
+        friday: "Fri"
+        saturday: "Sat"
+        sunday: "Sun"
+      title: "My programs"
+      subtitle: "Build your weekly templates and load them directly from the calendar."
+      new_program: "New program"
+      active: "Active"
+      inactive: "Inactive"
+      activate: "Set as active"
+      set_active: "Set as active"
+      edit_program: "Edit"
+      back: "My programs"
+      back_to_program: "Back to program"
+      delete_confirm: "Delete « %{name} »? This cannot be undone."
+      confirm_remove_exercise: "Remove this exercise from the program?"
+      days_with_sessions:
+        zero: "No sessions"
+        one: "1 active day"
+        other: "%{count} active days"
+      week_hint: "Click a session name to edit it. Add exercises with the + field."
+      split_types:
+        ppl: "Push / Pull / Legs"
+        upper_lower: "Upper / Lower"
+        fullbody: "Full Body"
+        push_pull: "Push / Pull"
+        bro_split: "Bro Split"
+        custom: "Custom"
+      form:
+        name: "Program name"
+        name_placeholder: "e.g. PPL Spring, Full Body..."
+        split_type: "Split type"
+        split_hint: "Informational only, does not affect the structure."
+        create_btn: "Create program"
+      empty:
+        title: "No programs yet"
+        description: "Create your first program to plan your training weeks."
+      day:
+        rest_placeholder: "Rest"
+        empty_hint: "Add exercises"
+        add_exercise: "Add an exercise..."
+        no_exercise_found: "No exercise found"
+        sets: "Sets"
+        reps: "Reps"
+        weight_kg: "kg"
+        duration_placeholder: "Duration"
+        notes_placeholder: "Notes..."
+        exercise_count:
+          zero: "empty"
+          one: "1 ex."
+          other: "%{count} ex."
     exercises:
       page_title: "Training"
       title: "Exercise Library"
@@ -835,7 +905,7 @@ en:
         empty: "No workout session today"
         add_session: "Add a session"
       form:
-        title_new: "New session"
+        title_new: "Add a session"
         title_edit: "Edit session"
         search_exercise: "Search an exercise..."
         no_exercise_found: "No exercise found"
@@ -853,4 +923,12 @@ en:
         rpe_light: "Light"
         rpe_max: "Max"
         no_exercises_error: "Add at least one exercise before saving the session."
+        no_weight_error: "Fill in weight, reps, and duration before saving."
         submit_add: "Add"
+        from_program: "Load from « %{name} »"
+      picker:
+        title: "New session"
+        from_program: "From program « %{name} »"
+        from_program_title: "From my program"
+        custom_title: "Custom session"
+        custom_desc: "Choose your exercises freely"
