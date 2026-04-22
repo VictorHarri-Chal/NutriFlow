@@ -32,7 +32,8 @@
           <% end %>
         <% end %>
 
-        <%= link_to new_exercise_path, class: "btn-primary flex-shrink-0" do %>
+        <% ex_truly_empty = @exercises.empty? && params[:query].blank? && params[:body_part].blank? && params[:equipment].blank? && params[:difficulty].blank? %>
+        <%= link_to new_exercise_path, class: "btn-primary flex-shrink-0 #{ex_truly_empty ? 'invisible pointer-events-none' : ''}" do %>
           <i class="fas fa-plus text-xs"></i>
           <%= t("views.exercises.custom.btn_new") %>
         <% end %>
@@ -193,7 +194,11 @@
         <% end %>
       <% elsif params[:source] == "favorites" %>
         <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.exercises.favorites_empty.title") %></h3>
-        <p class="text-ink-muted"><%= t("views.exercises.favorites_empty.description") %></p>
+        <p class="text-ink-muted mb-4"><%= t("views.exercises.favorites_empty.description") %></p>
+        <%= link_to exercises_path, class: "btn-secondary" do %>
+          <i class="fas fa-list"></i>
+          <%= t("views.exercises.favorites_empty.see_all") %>
+        <% end %>
       <% elsif has_filters %>
         <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.exercises.no_results.title") %></h3>
         <p class="text-ink-muted mb-4"><%= t("views.exercises.no_results.description") %></p>

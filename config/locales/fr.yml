@@ -232,8 +232,8 @@ fr:
       recents_section: "Récents"
       all_section: "Tous les aliments"
       no_favorites:
-        title: "Aucun favori"
-        description: "Marquez des aliments comme favoris pour les retrouver rapidement ici."
+        title: "Aucun aliment favori"
+        description: "Appuyez sur ★ sur un aliment pour le retrouver ici."
         see_all: "Voir tous les aliments"
       form:
         macros_hint: "Renseignez les macros de l'aliment sur une base de 100g"
@@ -296,6 +296,7 @@ fr:
       source_favorites: "Favoris"
       no_favorites: "Aucune recette favorite"
       no_favorites_hint: "Appuyez sur ★ sur une recette pour la retrouver ici."
+      no_favorites_see_all: "Voir toutes les recettes"
       favorites:
         add: "Ajouter aux favoris"
         remove: "Retirer des favoris"
@@ -708,6 +709,7 @@ fr:
       favorites_empty:
         title: "Aucun favori"
         description: "Ajoutez des exercices à vos favoris pour les retrouver ici."
+        see_all: "Voir tous les exercices"
       empty_state:
         title: "Banque d'exercices vide"
         description: "La banque d'exercices n'a pas encore été alimentée. Lancez la commande de seed."
