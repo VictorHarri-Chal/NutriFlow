@@ -133,4 +133,29 @@
   .devise-form input[type="text"] {
     @apply input-dark;
   }
+
+  /* ---- Global scrollbar ---- */
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #3F3F46 transparent;
+  }
+  /* Webkit (Chrome, Safari, Edge) */
+  *::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: #3F3F46;
+    border-radius: 9999px;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: #71717A;
+  }
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
 }

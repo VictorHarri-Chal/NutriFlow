@@ -713,6 +713,17 @@ en:
       empty_state:
         title: "Empty exercise library"
         description: "The exercise library has not been seeded yet. Run the seed command."
+      body_parts:
+        back: "Back"
+        chest: "Chest"
+        upper_legs: "Legs"
+        lower_legs: "Calves"
+        shoulders: "Shoulders"
+        upper_arms: "Arms"
+        lower_arms: "Forearms"
+        waist: "Core"
+        neck: "Neck"
+        cardio: "Cardio"
       difficulty:
         beginner: "Beginner"
         intermediate: "Intermediate"
@@ -924,6 +935,7 @@ en:
         rpe_max: "Max"
         no_exercises_error: "Add at least one exercise before saving the session."
         no_weight_error: "Fill in weight, reps, and duration before saving."
+        max_sets: "max 10"
         submit_add: "Add"
         from_program: "Load from « %{name} »"
       picker:

@@ -2,12 +2,15 @@
   <%= @recipes.map { |r|
     { id: r.id, name: r.name, calories: r.total_calories.round,
       proteins: r.total_proteins.round(1), carbs: r.total_carbs.round(1), fats: r.total_fats.round(1),
+      totalWeight: r.total_weight.to_f,
       favorite: r.favorite }
   }.to_json.html_safe %>
 </script>
 
 <%= simple_form_for([day, day_recipe]) do |f| %>
-  <div class="space-y-4">
+  <div data-controller="day-recipe-preview"
+       data-action="input->day-recipe-preview#update"
+       class="space-y-4">
 
     <%# ── Recette ── %>
     <div>
@@ -22,7 +25,10 @@
              data-food-combobox-favorites-label-value="<%= t('views.foods.favorites_section') %>"
              data-food-combobox-recents-label-value="<%= t('views.foods.recents_section') %>"
              data-food-combobox-all-label-value="<%= t('views.day_recipes.all_section') %>">
-          <%= f.hidden_field :recipe_id, data: { "food-combobox-target": "hiddenId" } %>
+          <%= f.hidden_field :recipe_id, data: {
+                "food-combobox-target": "hiddenId",
+                "day-recipe-preview-target": "recipeId"
+              } %>
           <div class="relative">
             <input type="text"
                    class="input-dark pl-8 text-sm"
@@ -37,11 +43,11 @@
         </div>
       <% else %>
         <%# Édition — recette non modifiable %>
+        <%= f.hidden_field :recipe_id, data: { "day-recipe-preview-target": "recipeId" } %>
         <div class="flex items-center gap-2 px-3 py-2.5 bg-surface-base border border-surface-border/50 rounded-lg">
           <i class="fas fa-lock text-xs text-ink-subtle shrink-0"></i>
           <span class="text-sm text-ink-primary"><%= day_recipe.recipe&.name %></span>
         </div>
-        <%= f.hidden_field :recipe_id %>
       <% end %>
     </div>
 
@@ -55,7 +61,8 @@
           <%= f.number_field :quantity,
                 min: 1, step: 1,
                 value: day_recipe.new_record? ? 100 : day_recipe.quantity.to_i,
-                class: "input-dark text-sm pr-8" %>
+                class: "input-dark text-sm pr-8",
+                data: { "day-recipe-preview-target": "quantity" } %>
           <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">g</span>
         </div>
       </div>
@@ -86,11 +93,45 @@
     <label class="flex items-center gap-3 cursor-pointer select-none">
       <%= f.check_box :use_recipe_quantity, label: false,
             class: "sr-only peer",
-            checked: day_recipe.use_recipe_quantity? %>
+            checked: day_recipe.use_recipe_quantity?,
+            data: {
+              "day-recipe-preview-target": "useRecipeQty",
+              action: "change->day-recipe-preview#update"
+            } %>
       <div class="relative w-9 h-5 rounded-full shrink-0 transition-colors bg-surface-border peer-checked:bg-brand
                   after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4"></div>
       <span class="text-sm text-ink-muted"><%= t("views.day_recipes.form.use_recipe_quantity") %></span>
     </label>
+
+    <%# ── Aperçu macros (affiché dès qu'un plat est sélectionné) ── %>
+    <div data-day-recipe-preview-target="panel" class="hidden bg-surface-base rounded-lg border border-surface-border/40 px-4 py-3">
+      <div class="flex items-center gap-4">
+        <div class="text-center shrink-0 w-14">
+          <div class="text-xl font-bold text-brand leading-tight" data-day-recipe-preview-target="calories">0</div>
+          <div class="text-xs text-ink-subtle">kcal</div>
+        </div>
+        <div class="flex-1 grid grid-cols-3 gap-2 border-l border-surface-border/40 pl-4">
+          <div class="text-center">
+            <div class="text-sm font-semibold text-ink-primary">
+              <span data-day-recipe-preview-target="proteins">0</span><span class="text-xs font-normal text-ink-subtle">g</span>
+            </div>
+            <div class="text-xs text-ink-subtle"><%= t("views.recipes.show.proteins_short") %></div>
+          </div>
+          <div class="text-center">
+            <div class="text-sm font-semibold text-ink-primary">
+              <span data-day-recipe-preview-target="carbs">0</span><span class="text-xs font-normal text-ink-subtle">g</span>
+            </div>
+            <div class="text-xs text-ink-subtle"><%= t("views.recipes.show.carbs_short") %></div>
+          </div>
+          <div class="text-center">
+            <div class="text-sm font-semibold text-ink-primary">
+              <span data-day-recipe-preview-target="fats">0</span><span class="text-xs font-normal text-ink-subtle">g</span>
+            </div>
+            <div class="text-xs text-ink-subtle"><%= t("views.recipes.show.fats_short") %></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </div>
 

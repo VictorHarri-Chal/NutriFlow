@@ -1,2 +1,17 @@
-<%# Silent update — the input already shows the new value %>
-
+<%# Refresh only the read-only meta block so summary/rest/notes stay in sync without disturbing input focus %>
+<%= turbo_stream.update "pe_#{@exercise.id}_meta" do %>
+  <div class="flex items-center gap-2 flex-wrap">
+    <span class="text-[11px] font-semibold text-brand/70"><%= @exercise.label %></span>
+    <% if @exercise.rest_seconds.present? %>
+      <% mins = @exercise.rest_seconds / 60; secs = @exercise.rest_seconds % 60 %>
+      <% rest_label = mins > 0 ? "#{mins}min#{secs > 0 ? "#{secs}s" : ""}" : "#{secs}s" %>
+      <span class="flex items-center gap-0.5 text-[10px] text-ink-subtle/50">
+        <i class="fas fa-hourglass-half text-[8px]"></i>
+        <%= rest_label %>
+      </span>
+    <% end %>
+  </div>
+  <% if @exercise.notes.present? %>
+    <p class="text-[10px] text-ink-subtle/40 italic leading-snug mt-0.5"><%= @exercise.notes %></p>
+  <% end %>
+<% end %>

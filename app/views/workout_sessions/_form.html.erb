@@ -7,7 +7,8 @@
             workout_form_label_reps_value:           t("views.workout_sessions.form.reps"),
             workout_form_label_add_set_value:        t("views.workout_sessions.form.add_set"),
             workout_form_label_last_perf_value:      t("views.workout_sessions.form.last_perf_prefix"),
-            workout_form_no_exercise_error_value:    t("views.workout_sessions.form.no_exercises_error") } do |f| %>
+            workout_form_no_exercise_error_value:    t("views.workout_sessions.form.no_exercises_error"),
+            workout_form_label_max_sets_value:       t("views.workout_sessions.form.max_sets") } do |f| %>
 
   <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4 mb-4">
 
@@ -74,6 +75,10 @@
       <div data-workout-form-target="exercisesList" class="space-y-2">
         <% set_position_counter = 0 %>
         <% workout_session.grouped_sets.each_with_index do |(exercise, sets), group_idx| %>
+          <%# Capture first set's key & values before the sets loop %>
+          <% first_ws = sets.first %>
+          <% first_ws_key = first_ws.persisted? ? first_ws.id : 1_000_000 + set_position_counter %>
+
           <div class="exercise-group rounded-xl border border-surface-border/40 bg-surface-base p-3 space-y-2"
                data-exercise-id="<%= exercise.id %>">
 
@@ -88,7 +93,8 @@
 
             <div class="last-perf hidden rounded-lg bg-surface-hover border border-surface-border/30 px-3 py-1.5 flex items-center gap-2">
               <i class="fas fa-history text-[10px] text-ink-subtle shrink-0"></i>
-              <span class="last-perf-text text-xs text-ink-subtle"></span>
+              <span class="last-perf-text text-xs text-ink-subtle flex-1"></span>
+              <span class="last-perf-delta hidden text-[10px] font-semibold shrink-0"></span>
             </div>
 
             <%# Column headers %>
@@ -130,11 +136,36 @@
               <% end %>
             </div>
 
-            <button type="button" data-action="click->workout-form#addSet"
-                    class="text-xs text-brand hover:text-brand/80 transition-colors flex items-center gap-1 cursor-pointer mt-1">
-              <i class="fas fa-plus text-[10px]"></i>
-              <%= t("views.workout_sessions.form.add_set") %>
-            </button>
+            <div class="flex items-center gap-2 mt-1">
+              <button type="button" data-action="click->workout-form#addSet"
+                      class="text-xs text-brand hover:text-brand/80 transition-colors flex items-center gap-1 cursor-pointer">
+                <i class="fas fa-plus text-[10px]"></i>
+                <%= t("views.workout_sessions.form.add_set") %>
+              </button>
+              <span class="hidden text-[10px] text-ink-subtle/40" data-add-set-max-hint><%= t("views.workout_sessions.form.max_sets") %></span>
+            </div>
+
+            <%# ── Rest + Notes per exercise (bound to first set) ── %>
+            <div class="space-y-1 border-t border-surface-border/20 pt-2 mt-1">
+              <div class="flex items-center gap-1.5">
+                <i class="fas fa-hourglass-half text-[9px] text-ink-subtle/40 shrink-0 w-3 text-center"></i>
+                <div class="relative flex-1">
+                  <input type="number"
+                         name="workout_session[workout_sets_attributes][<%= first_ws_key %>][rest_seconds]"
+                         value="<%= first_ws.rest_seconds %>"
+                         min="0" step="5"
+                         class="w-full pr-7 text-[11px] bg-transparent border border-transparent rounded px-1 py-0.5 text-ink-muted placeholder:text-ink-subtle/30 hover:border-surface-border/50 focus:border-brand/40 focus:outline-none focus:bg-surface-hover transition-colors cursor-text">
+                  <span class="absolute right-1.5 top-1/2 -translate-y-1/2 text-[9px] text-ink-subtle/30 pointer-events-none">sec</span>
+                </div>
+              </div>
+              <div class="flex items-start gap-1.5">
+                <i class="fas fa-comment-alt text-[9px] text-ink-subtle/40 shrink-0 w-3 text-center mt-1.5"></i>
+                <textarea name="workout_session[workout_sets_attributes][<%= first_ws_key %>][notes]"
+                          rows="1"
+                          class="w-full text-[11px] bg-transparent border border-transparent rounded px-1 py-0.5 text-ink-muted placeholder:text-ink-subtle/30 hover:border-surface-border/50 focus:border-brand/40 focus:outline-none focus:bg-surface-hover transition-all cursor-text min-h-[20px] focus:min-h-[48px] resize-none overflow-y-hidden"><%= first_ws.notes %></textarea>
+              </div>
+            </div>
+
           </div>
         <% end %>
       </div>

@@ -711,6 +711,17 @@ fr:
       empty_state:
         title: "Banque d'exercices vide"
         description: "La banque d'exercices n'a pas encore été alimentée. Lancez la commande de seed."
+      body_parts:
+        back: "Dos"
+        chest: "Pecs"
+        upper_legs: "Jambes"
+        lower_legs: "Mollets"
+        shoulders: "Épaules"
+        upper_arms: "Bras"
+        lower_arms: "Avant-bras"
+        waist: "Abdos"
+        neck: "Cou"
+        cardio: "Cardio"
       difficulty:
         beginner: "Débutant"
         intermediate: "Intermédiaire"
@@ -922,6 +933,7 @@ fr:
         rpe_max: "Maximal"
         no_exercises_error: "Ajoutez au moins un exercice avant d'enregistrer la séance."
         no_weight_error: "Renseignez le poids, les répétitions et la durée avant d'enregistrer."
+        max_sets: "max 10"
         submit_add: "Ajouter"
         from_program: "Charger depuis « %{name} »"
       picker:

@@ -31,12 +31,14 @@ class WorkoutSessionsController < ApplicationController
 
         program_day.program_exercises.each do |pe|
           next unless pe.exercise.present?
-          pe.sets.times do
+          pe.sets.times do |i|
             set = @workout_session.workout_sets.build(
-              exercise_id: pe.exercise_id,
-              weight_kg:   pe.weight_target,
-              reps:        pe.reps_target.presence || 1,
-              position:    @workout_session.workout_sets.size
+              exercise_id:  pe.exercise_id,
+              weight_kg:    pe.weight_target,
+              reps:         pe.reps_target.presence || 1,
+              position:     @workout_session.workout_sets.size,
+              rest_seconds: i == 0 ? pe.rest_seconds : nil,
+              notes:        i == 0 ? pe.notes.presence : nil
             )
             set.exercise = pe.exercise
           end
@@ -122,7 +124,7 @@ class WorkoutSessionsController < ApplicationController
   def workout_session_params
     params.require(:workout_session).permit(
       :duration_minutes, :rpe, :notes,
-      workout_sets_attributes: [:id, :exercise_id, :weight_kg, :reps, :position, :_destroy]
+      workout_sets_attributes: [:id, :exercise_id, :weight_kg, :reps, :position, :rest_seconds, :notes, :_destroy]
     )
   end
 

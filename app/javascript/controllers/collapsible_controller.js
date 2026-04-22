@@ -13,6 +13,10 @@ export default class extends Controller {
     }
   }
 
+  disconnect() {
+    this._removeOutsideClick()
+  }
+
   toggle() {
     if (this.contentTarget.classList.contains("hidden")) {
       this._open(true)
@@ -21,20 +25,43 @@ export default class extends Controller {
     }
   }
 
+  // Stops propagation so clicks inside the content area don't bubble to a parent toggle
+  stopEvent(event) {
+    event.stopPropagation()
+  }
+
   // Kept for backward compatibility
   show() { this._open(true) }
   hide() { this._close(true) }
 
   _open(persist) {
     this.contentTarget.classList.remove("hidden")
-    this.iconTarget.classList.add("rotate-180")
+    if (this.hasIconTarget) this.iconTarget.classList.add("rotate-180")
     if (persist && this.storageKey) localStorage.setItem(this.storageKey, "open")
+    if (this.element.hasAttribute("data-collapsible-dismiss-on-outside-click")) {
+      this._boundOutsideClick = this._onOutsideClick.bind(this)
+      setTimeout(() => document.addEventListener("click", this._boundOutsideClick), 0)
+    }
   }
 
   _close(persist) {
     this.contentTarget.classList.add("hidden")
-    this.iconTarget.classList.remove("rotate-180")
+    if (this.hasIconTarget) this.iconTarget.classList.remove("rotate-180")
     if (persist && this.storageKey) localStorage.setItem(this.storageKey, "closed")
+    this._removeOutsideClick()
+  }
+
+  _onOutsideClick(event) {
+    if (!this.element.contains(event.target)) {
+      this._close(true)
+    }
+  }
+
+  _removeOutsideClick() {
+    if (this._boundOutsideClick) {
+      document.removeEventListener("click", this._boundOutsideClick)
+      this._boundOutsideClick = null
+    }
   }
 
   get storageKey() {
