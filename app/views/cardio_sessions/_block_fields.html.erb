@@ -1,0 +1,97 @@
+<%# Renders the single cardio block inside the session form. %>
+<div class="space-y-3" data-cardio-form-target="block">
+
+  <%# Machine — full width %>
+  <div>
+    <%= bf.label :machine, t("views.cardio_sessions.form.machine_label"), class: "label-dark" %>
+    <div data-controller="custom-select" class="relative">
+      <%= bf.select :machine,
+            CardioBlock::MACHINES.map { |m| [t("views.cardio_sessions.machines.#{m}"), m] },
+            { prompt: t("views.cardio_sessions.form.machine_prompt") },
+            class: "sr-only",
+            data: { custom_select_target: "select", machine_select: true, action: "change->cardio-form#machineChanged" } %>
+      <button type="button"
+              data-action="click->custom-select#toggle"
+              class="input-dark text-sm flex items-center justify-between cursor-pointer w-full text-left">
+        <span data-custom-select-target="label" class="text-ink-subtle"></span>
+        <i class="fas fa-chevron-down text-xs text-ink-subtle flex-shrink-0"></i>
+      </button>
+      <div data-custom-select-target="dropdown"
+           data-custom-select-dropdown
+           class="hidden absolute z-50 w-full mt-1 bg-surface-raised border border-surface-border/60 rounded-lg max-h-52 overflow-y-auto"></div>
+    </div>
+  </div>
+
+  <%# Numeric fields row — flex so visible fields share space equally %>
+  <div class="flex gap-2">
+
+    <%# Duration — always visible %>
+    <div class="flex-1">
+      <%= bf.label :duration_minutes, t("views.cardio_sessions.form.duration_label"), class: "label-dark" %>
+      <div class="relative">
+        <%= bf.number_field :duration_minutes,
+              min: 1, step: 1,
+              placeholder: "30",
+              class: "input-dark text-sm pr-10" %>
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-subtle/50 pointer-events-none">min</span>
+      </div>
+    </div>
+
+    <%# Speed — treadmill + outdoor_run %>
+    <div class="flex-1 hidden" data-field-group="speed">
+      <%= bf.label :speed_kmh, t("views.cardio_sessions.form.speed_label"), class: "label-dark" %>
+      <div class="relative">
+        <%= bf.number_field :speed_kmh,
+              step: 0.1,
+              placeholder: "4",
+              class: "input-dark text-sm pr-14",
+              disabled: true %>
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-subtle/50 pointer-events-none">km/h</span>
+      </div>
+    </div>
+
+    <%# Incline — treadmill only %>
+    <div class="flex-1 hidden" data-field-group="incline">
+      <%= bf.label :incline_percent, t("views.cardio_sessions.form.incline_label"), class: "label-dark" %>
+      <div class="relative">
+        <%= bf.number_field :incline_percent,
+              min: 0, max: 30, step: 1,
+              placeholder: "0",
+              class: "input-dark text-sm pr-7",
+              disabled: true %>
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-subtle/50 pointer-events-none">%</span>
+      </div>
+    </div>
+
+    <%# Distance — outdoor_run + swimming %>
+    <div class="flex-1 hidden" data-field-group="distance">
+      <%= bf.label :distance_km, t("views.cardio_sessions.form.distance_label"), class: "label-dark" %>
+      <div class="relative">
+        <%= bf.number_field :distance_km,
+              min: 0.1, step: 0.1,
+              placeholder: "5.0",
+              class: "input-dark text-sm pr-8",
+              disabled: true %>
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-subtle/50 pointer-events-none">km</span>
+      </div>
+    </div>
+
+  </div>
+
+  <%# Resistance — bike, elliptical, rower, ski_erg, stairmaster %>
+  <div data-field-group="resistance" class="hidden">
+    <%= bf.label :resistance_level, t("views.cardio_sessions.form.resistance_label"), class: "label-dark" %>
+    <div class="flex items-center gap-3">
+      <%= bf.range_field :resistance_level,
+            min: 1, max: 20, step: 1,
+            class: "flex-1 accent-brand",
+            disabled: true,
+            data: { action: "input->cardio-form#updateResistanceLabel" } %>
+      <span class="text-sm font-medium text-ink-primary tabular-nums w-6 text-right"
+            data-resistance-label>
+        <%= bf.object&.resistance_level || 10 %>
+      </span>
+    </div>
+  </div>
+
+</div>

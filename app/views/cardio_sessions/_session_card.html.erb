@@ -1,0 +1,87 @@
+<%# Renders a single cardio session summary card %>
+<div class="group/card bg-surface-raised border border-surface-border/30 rounded-xl p-3.5 space-y-2.5">
+
+  <%# Header: total stats + actions %>
+  <div class="flex items-center justify-between gap-2">
+    <div class="flex items-center gap-3 flex-wrap">
+      <span class="flex items-center gap-1 text-[11px] text-ink-muted">
+        <i class="fas fa-clock text-ink-subtle/60 text-[9px]"></i>
+        <%= cardio_session.total_duration %> min
+      </span>
+      <span class="flex items-center gap-1 text-[11px] text-status-success/80 font-medium">
+        <i class="fas fa-fire-alt text-[9px]"></i>
+        ~<%= cardio_session.total_calories %> kcal
+      </span>
+    </div>
+
+    <% if defined?(show_actions) && show_actions %>
+      <div class="flex items-center gap-0.5 opacity-0 group-hover/card:opacity-100 transition-opacity flex-shrink-0">
+        <%= link_to edit_day_cardio_session_path(cardio_session.day, cardio_session),
+              class: "p-1.5 text-ink-subtle/50 hover:text-ink-primary transition-colors rounded",
+              data: { turbo_frame: "item_form" } do %>
+          <i class="fas fa-pen text-[11px]"></i>
+        <% end %>
+        <%= link_to day_cardio_session_path(cardio_session.day, cardio_session),
+              class: "p-1.5 text-ink-subtle/50 hover:text-status-danger transition-colors rounded",
+              data: {
+                turbo_method: :delete,
+                action: "click->confirm#show",
+                confirm_message: t("views.cardio_sessions.confirm_delete")
+              } do %>
+          <i class="fas fa-trash text-[11px]"></i>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Machine blocks %>
+  <div class="space-y-1.5 border-t border-surface-border/20 pt-2">
+    <% cardio_session.cardio_blocks.each do |block| %>
+      <div class="flex items-center justify-between gap-2">
+        <%# Machine name + icon %>
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="w-5 h-5 flex items-center justify-center rounded-md bg-surface-hover/70 text-ink-subtle/60 shrink-0">
+            <i class="fas <%= block.machine_icon %> text-[9px]"></i>
+          </span>
+          <span class="text-[11px] font-medium text-ink-primary truncate">
+            <%= t("views.cardio_sessions.machines.#{block.machine}") %>
+          </span>
+        </div>
+
+        <%# Metrics chips %>
+        <div class="flex items-center gap-1 flex-wrap justify-end shrink-0">
+          <span class="text-[10px] text-ink-subtle/60 bg-surface-hover/60 border border-surface-border/20 rounded px-1.5 py-0.5 tabular-nums whitespace-nowrap">
+            <%= block.duration_minutes %> min
+          </span>
+          <% if block.speed_kmh.present? %>
+            <span class="text-[10px] text-ink-subtle/60 bg-surface-hover/60 border border-surface-border/20 rounded px-1.5 py-0.5 tabular-nums whitespace-nowrap">
+              <%= number_with_precision(block.speed_kmh, precision: 1, strip_insignificant_zeros: true) %> km/h
+            </span>
+          <% end %>
+          <% if block.incline_percent.present? && block.incline_percent > 0 %>
+            <span class="text-[10px] text-ink-subtle/60 bg-surface-hover/60 border border-surface-border/20 rounded px-1.5 py-0.5 tabular-nums whitespace-nowrap">
+              +<%= block.incline_percent %>%
+            </span>
+          <% end %>
+          <% if block.resistance_level.present? %>
+            <span class="text-[10px] text-ink-subtle/60 bg-surface-hover/60 border border-surface-border/20 rounded px-1.5 py-0.5 tabular-nums whitespace-nowrap">
+              R<%= block.resistance_level %>
+            </span>
+          <% end %>
+          <% if block.distance_km.present? %>
+            <span class="text-[10px] text-ink-subtle/60 bg-surface-hover/60 border border-surface-border/20 rounded px-1.5 py-0.5 tabular-nums whitespace-nowrap">
+              <%= number_with_precision(block.distance_km, precision: 2, strip_insignificant_zeros: true) %> km
+            </span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <% if cardio_session.notes.present? %>
+    <p class="text-[11px] text-ink-subtle/60 italic border-t border-surface-border/20 pt-2">
+      <%= cardio_session.notes %>
+    </p>
+  <% end %>
+
+</div>

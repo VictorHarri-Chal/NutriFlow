@@ -39,6 +39,11 @@
       <%= render 'calendars/workout_widget', day: @day %>
     <% end %>
 
+    <%# ── Cardio widget ── %>
+    <% if current_user.show_cardio_section? %>
+      <%= render 'calendars/cardio_widget', day: @day %>
+    <% end %>
+
     <%# ── Inline form (turbo frame) ── %>
     <%= turbo_frame_tag "item_form" %>
 
