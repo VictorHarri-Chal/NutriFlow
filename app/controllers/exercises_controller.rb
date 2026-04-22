@@ -95,17 +95,31 @@ class ExercisesController < ApplicationController
   def last_performance
     exercise = Exercise.accessible_to(current_user).find(params[:id])
 
-    last_session = WorkoutSession.joins(:day, :workout_sets)
-                                 .where(days: { user_id: current_user.id })
-                                 .where(workout_sets: { exercise_id: exercise.id })
-                                 .order("days.date DESC")
-                                 .first
+    # Use a subquery to avoid JOIN duplication (multiple sets per session would
+    # cause duplicate rows and .limit(2) would return the same session twice)
+    sessions = WorkoutSession
+                 .joins(:day)
+                 .where(id: WorkoutSet.where(exercise_id: exercise.id).select(:workout_session_id))
+                 .where(days: { user_id: current_user.id })
+                 .order("days.date DESC")
+                 .limit(2)
+                 .to_a
 
-    if last_session
-      sets = last_session.workout_sets.where(exercise_id: exercise.id).order(:position)
+    if sessions.any?
+      last = sessions.first
+      prev = sessions.second
+
+      last_sets  = last.workout_sets.where(exercise_id: exercise.id).order(:position)
+      prev_sets  = prev&.workout_sets&.where(exercise_id: exercise.id)
+
+      last_max   = last_sets.maximum(:weight_kg)&.to_f || 0
+      prev_max   = prev_sets&.maximum(:weight_kg)&.to_f || 0
+      delta      = (last_max > 0 && prev_max > 0) ? (last_max - prev_max).round(2) : nil
+
       render json: {
-        date: I18n.l(last_session.day.date, format: :short),
-        sets: sets.map { |s| { weight_kg: s.weight_kg, reps: s.reps } }
+        date:  I18n.l(last.day.date, format: :short),
+        sets:  last_sets.map { |s| { weight_kg: s.weight_kg, reps: s.reps } },
+        delta: delta
       }
     else
       render json: { sets: [] }

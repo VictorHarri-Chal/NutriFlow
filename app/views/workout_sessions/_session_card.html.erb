@@ -1,80 +1,118 @@
 <%# Renders a single workout session summary card %>
-<div class="bg-surface-base border border-surface-border/40 rounded-xl p-4 space-y-3">
+<% grouped = workout_session.grouped_sets %>
+
+<div class="group/card bg-surface-raised border border-surface-border/30 rounded-xl p-4 space-y-3">
 
   <%# Header: stats + actions %>
-  <div class="flex items-start justify-between gap-3">
+  <div class="flex items-center justify-between gap-3">
     <div class="flex items-center gap-3 flex-wrap">
       <% if workout_session.duration_minutes.present? %>
-        <span class="flex items-center gap-1.5 text-xs text-ink-muted">
-          <i class="fas fa-clock text-ink-subtle text-[10px]"></i>
+        <span class="flex items-center gap-1 text-[11px] text-ink-muted">
+          <i class="fas fa-clock text-ink-subtle/60 text-[9px]"></i>
           <%= workout_session.duration_minutes %> min
         </span>
       <% end %>
       <% if workout_session.rpe.present? %>
-        <span class="flex items-center gap-1.5 text-xs text-ink-muted">
-          <i class="fas fa-fire text-ink-subtle text-[10px]"></i>
-          RPE <%= workout_session.rpe %>/10
+        <span class="flex items-center gap-1 text-[11px] text-ink-muted">
+          <i class="fas fa-fire text-ink-subtle/60 text-[9px]"></i>
+          RPE <%= workout_session.rpe %>
         </span>
       <% end %>
       <% cal = workout_session.estimated_calories(current_user.profile&.weight&.to_f) %>
-      <span class="flex items-center gap-1.5 text-xs text-brand font-medium">
-        <i class="fas fa-bolt text-[10px]"></i>
+      <span class="flex items-center gap-1 text-[11px] text-brand/70 font-medium">
+        <i class="fas fa-bolt text-[9px]"></i>
         ~<%= cal %> kcal
       </span>
     </div>
 
     <% if defined?(show_actions) && show_actions %>
-      <div class="flex items-center gap-1 flex-shrink-0">
+      <div class="flex items-center gap-0.5 opacity-0 group-hover/card:opacity-100 transition-opacity flex-shrink-0">
         <%= link_to edit_day_workout_session_path(workout_session.day, workout_session),
-            class: "p-1.5 text-ink-subtle hover:text-ink-primary transition-colors",
+            class: "p-1.5 text-ink-subtle/50 hover:text-ink-primary transition-colors rounded",
             data: { turbo_frame: "item_form" } do %>
-          <i class="fas fa-pen text-xs"></i>
+          <i class="fas fa-pen text-[11px]"></i>
         <% end %>
         <%= link_to day_workout_session_path(workout_session.day, workout_session),
-            class: "p-1.5 rounded-lg text-ink-subtle hover:text-status-danger hover:bg-status-danger_dim/20 transition-colors",
+            class: "p-1.5 text-ink-subtle/50 hover:text-status-danger transition-colors rounded",
             data: {
               turbo_method: :delete,
               action: "click->confirm#show",
               confirm_message: t("views.workout_sessions.confirm_delete")
             } do %>
-          <i class="fas fa-trash text-xs"></i>
+          <i class="fas fa-trash text-[11px]"></i>
         <% end %>
       </div>
     <% end %>
   </div>
 
-  <%# Exercises grouped %>
-  <div class="space-y-2">
-    <% workout_session.grouped_sets.each do |exercise, sets| %>
-      <div class="flex items-start gap-3">
-        <span class="text-xs font-medium text-ink-primary capitalize min-w-0 flex-1 truncate pt-0.5">
-          <%= exercise.name %>
+  <%# Muscle group chips — tinted brand to distinguish from set badges %>
+  <% body_parts = grouped.keys.filter_map(&:body_part).uniq %>
+  <% if body_parts.any? %>
+    <div class="flex flex-wrap gap-1">
+      <% body_parts.first(3).each do |bp| %>
+        <span class="text-[10px] px-2 py-0.5 rounded-full bg-brand/10 border border-brand/20 text-brand/60 leading-none font-medium">
+          <%= t("views.exercises.body_parts.#{bp.parameterize(separator: '_')}", default: bp.split.map(&:capitalize).join(" ")) %>
         </span>
-        <div class="flex flex-wrap gap-1 justify-end">
-          <% sets.each do |s| %>
-            <%
-              weight = s.weight_kg.present? && s.weight_kg > 0
-              reps   = s.reps.present? && s.reps > 0
-              next unless weight || reps
-              label  = if weight && reps
-                         "#{number_with_precision(s.weight_kg, precision: 1, strip_insignificant_zeros: true)}kg × #{s.reps}"
-                       elsif reps
-                         "PDC × #{s.reps}"
-                       else
-                         "#{number_with_precision(s.weight_kg, precision: 1, strip_insignificant_zeros: true)}kg"
-                       end
-            %>
-            <span class="text-xs text-ink-subtle bg-surface-hover border border-surface-border/30 rounded-md px-2 py-0.5 whitespace-nowrap">
-              <%= label %>
-            </span>
-          <% end %>
+      <% end %>
+      <% if body_parts.size > 3 %>
+        <span class="text-[10px] px-2 py-0.5 rounded-full bg-surface-hover border border-surface-border/20 text-ink-subtle/40 leading-none">
+          +<%= body_parts.size - 3 %>
+        </span>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# Exercises grouped %>
+  <div class="space-y-2.5 border-t border-surface-border/20 pt-2">
+    <% grouped.each do |exercise, sets| %>
+      <% first_set = sets.first %>
+      <div class="space-y-0.5">
+        <div class="flex items-start gap-3">
+          <span class="text-[11px] font-medium text-ink-primary capitalize min-w-0 flex-1 truncate pt-px">
+            <%= exercise.name %>
+          </span>
+          <div class="flex flex-wrap gap-0.5 justify-end">
+            <% sets.each do |s| %>
+              <%
+                weight = s.weight_kg.present? && s.weight_kg > 0
+                reps   = s.reps.present? && s.reps > 0
+                next unless weight || reps
+                label  = if weight && reps
+                           "#{number_with_precision(s.weight_kg, precision: 1, strip_insignificant_zeros: true)}kg×#{s.reps}"
+                         elsif reps
+                           "PDC×#{s.reps}"
+                         else
+                           "#{number_with_precision(s.weight_kg, precision: 1, strip_insignificant_zeros: true)}kg"
+                         end
+              %>
+              <span class="text-[10px] text-ink-subtle/60 bg-surface-hover/60 border border-surface-border/20 rounded px-1.5 py-0.5 whitespace-nowrap tabular-nums">
+                <%= label %>
+              </span>
+            <% end %>
+          </div>
         </div>
+        <%# Rest + notes meta %>
+        <% if first_set&.rest_seconds.present? || first_set&.notes.present? %>
+          <div class="space-y-0.5">
+            <% if first_set.rest_seconds.present? %>
+              <% mins = first_set.rest_seconds / 60; secs = first_set.rest_seconds % 60 %>
+              <% rest_label = mins > 0 ? "#{mins}min#{secs > 0 ? " #{secs}s" : ""}" : "#{secs}s" %>
+              <span class="flex items-center gap-1 text-[10px] text-ink-subtle/50">
+                <i class="fas fa-hourglass-half text-[8px]"></i>
+                <%= rest_label %>
+              </span>
+            <% end %>
+            <% if first_set.notes.present? %>
+              <p class="text-[10px] text-ink-subtle/40 italic leading-snug"><%= first_set.notes %></p>
+            <% end %>
+          </div>
+        <% end %>
       </div>
     <% end %>
   </div>
 
   <% if workout_session.notes.present? %>
-    <p class="text-xs text-ink-subtle italic border-t border-surface-border/30 pt-2">
+    <p class="text-[11px] text-ink-subtle/60 italic border-t border-surface-border/20 pt-2">
       <%= workout_session.notes %>
     </p>
   <% end %>

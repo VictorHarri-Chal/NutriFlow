@@ -14,6 +14,7 @@ export default class extends Controller {
     labelReps:          { type: String, default: "Reps" },
     labelAddSet:        { type: String, default: "Série" },
     labelLastPerf:      { type: String, default: "Dernière fois" },
+    labelMaxSets:       { type: String, default: "max 10" },
     noExerciseError:    { type: String, default: "Ajoutez au moins un exercice." }
   }
 
@@ -96,7 +97,19 @@ export default class extends Controller {
     if (event.type !== "exercise-selected") return
     const { id, name } = event.detail
     if (!id || !name) return
-    if (this.element.querySelector(`[data-exercise-id="${id}"]`)) return
+
+    // If the group exists but was soft-deleted (hidden), restore it instead of blocking
+    const existing = this.element.querySelector(`[data-exercise-id="${id}"]`)
+    if (existing) {
+      if (!existing.classList.contains("hidden")) return
+      existing.classList.remove("hidden")
+      existing.querySelectorAll("[data-destroy-flag]").forEach(i => i.value = "0")
+      existing.querySelectorAll(".set-row.hidden").forEach(r => r.classList.remove("hidden"))
+      const container = existing.querySelector(".sets-container")
+      if (container) this._renumberSets(container)
+      this._syncEmptyHint()
+      return
+    }
 
     const group = this._buildExerciseGroup(id, name)
     this.exercisesListTarget.appendChild(group)
@@ -147,6 +160,9 @@ export default class extends Controller {
     div.className = "exercise-group rounded-xl border border-surface-border/40 bg-surface-base p-3 space-y-2"
     div.dataset.exerciseId = exerciseId
 
+    // Capture the index that will be used by the first _buildSetRow call
+    const firstSetIdx = this._setIndex
+
     div.innerHTML = `
       <div class="flex items-center justify-between gap-2">
         <span class="text-sm font-semibold text-ink-primary capitalize truncate exercise-name-label"></span>
@@ -157,7 +173,8 @@ export default class extends Controller {
       </div>
       <div class="last-perf hidden rounded-lg bg-surface-hover border border-surface-border/30 px-3 py-1.5 flex items-center gap-2">
         <i class="fas fa-history text-[10px] text-ink-subtle shrink-0"></i>
-        <span class="last-perf-text text-xs text-ink-subtle"></span>
+        <span class="last-perf-text text-xs text-ink-subtle flex-1"></span>
+        <span class="last-perf-delta hidden text-[10px] font-semibold shrink-0"></span>
       </div>
       <div class="grid grid-cols-[16px_1fr_1fr_20px] gap-2 text-xs text-ink-subtle">
         <span>#</span>
@@ -166,11 +183,33 @@ export default class extends Controller {
         <span></span>
       </div>
       <div class="sets-container space-y-1.5"></div>
-      <button type="button" data-action="click->workout-form#addSet"
-              class="text-xs text-brand hover:text-brand/80 transition-colors flex items-center gap-1 cursor-pointer mt-1">
-        <i class="fas fa-plus text-[10px]"></i>
-        ${this.labelAddSetValue}
-      </button>
+      <div class="flex items-center gap-2 mt-1">
+        <button type="button" data-action="click->workout-form#addSet"
+                class="text-xs text-brand hover:text-brand/80 transition-colors flex items-center gap-1 cursor-pointer">
+          <i class="fas fa-plus text-[10px]"></i>
+          ${this.labelAddSetValue}
+        </button>
+        <span class="hidden text-[10px] text-ink-subtle/40" data-add-set-max-hint>${this.labelMaxSetsValue}</span>
+      </div>
+      <div class="space-y-1 border-t border-surface-border/20 pt-2 mt-1">
+        <div class="flex items-center gap-1.5">
+          <i class="fas fa-hourglass-half text-[9px] text-ink-subtle/40 shrink-0 w-3 text-center"></i>
+          <div class="relative flex-1">
+            <input type="number"
+                   name="workout_session[workout_sets_attributes][${firstSetIdx}][rest_seconds]"
+                   min="0" step="5"
+                   class="w-full pr-7 text-[11px] bg-transparent border border-transparent rounded px-1 py-0.5 text-ink-muted placeholder:text-ink-subtle/30 hover:border-surface-border/50 focus:border-brand/40 focus:outline-none focus:bg-surface-hover transition-colors cursor-text">
+            <span class="absolute right-1.5 top-1/2 -translate-y-1/2 text-[9px] text-ink-subtle/30 pointer-events-none">sec</span>
+          </div>
+        </div>
+        <div class="flex items-start gap-1.5">
+          <i class="fas fa-comment-alt text-[9px] text-ink-subtle/40 shrink-0 w-3 text-center mt-1.5"></i>
+          <textarea name="workout_session[workout_sets_attributes][${firstSetIdx}][notes]"
+                    rows="1"
+                    style="resize: none; overflow-y: hidden;"
+                    class="w-full text-[11px] bg-transparent border border-transparent rounded px-1 py-0.5 text-ink-muted placeholder:text-ink-subtle/30 hover:border-surface-border/50 focus:border-brand/40 focus:outline-none focus:bg-surface-hover transition-all cursor-text min-h-[20px] focus:min-h-[48px]"></textarea>
+        </div>
+      </div>
     `
     div.querySelector(".exercise-name-label").textContent = exerciseName
 
@@ -216,11 +255,14 @@ export default class extends Controller {
         btn.classList.toggle("pointer-events-none", i === 0)
       }
     })
-    const addBtn = container.closest("[data-exercise-id]")?.querySelector("[data-action*='addSet']")
+    const group  = container.closest("[data-exercise-id]")
+    const addBtn = group?.querySelector("[data-action*='addSet']")
     if (addBtn) {
       const atMax = rows.length >= 10
       addBtn.classList.toggle("opacity-30",          atMax)
       addBtn.classList.toggle("pointer-events-none", atMax)
+      const maxHint = group.querySelector("[data-add-set-max-hint]")
+      if (maxHint) maxHint.classList.toggle("hidden", !atMax)
     }
     this._reindexPositions()
   }
@@ -263,6 +305,18 @@ export default class extends Controller {
       if (lastPerf && text) {
         text.textContent = `${this.labelLastPerfValue} (${data.date}) : ${parts}`
         lastPerf.classList.remove("hidden")
+      }
+
+      // Delta vs previous session (only for weighted exercises)
+      const deltaEl = group.querySelector(".last-perf-delta")
+      if (deltaEl && data.delta != null && data.delta !== 0) {
+        const sign = data.delta > 0 ? "+" : ""
+        deltaEl.textContent = `${sign}${data.delta}kg`
+        deltaEl.className = [
+          "last-perf-delta text-[10px] font-semibold shrink-0",
+          data.delta > 0 ? "text-status-success" : "text-ink-subtle/50"
+        ].join(" ")
+        deltaEl.classList.remove("hidden")
       }
     } catch (_) {}
   }
