@@ -232,8 +232,8 @@ en:
       recents_section: "Recent"
       all_section: "All foods"
       no_favorites:
-        title: "No favorites yet"
-        description: "Mark foods as favorites to find them quickly here."
+        title: "No favorite foods"
+        description: "Press ★ on a food to find it here."
         see_all: "See all foods"
       form:
         macros_hint: "Enter the food macros per 100g"
@@ -296,6 +296,7 @@ en:
       source_favorites: "Favorites"
       no_favorites: "No favorite recipes"
       no_favorites_hint: "Press ★ on a recipe to find it here."
+      no_favorites_see_all: "See all recipes"
       favorites:
         add: "Add to favorites"
         remove: "Remove from favorites"
@@ -710,6 +711,7 @@ en:
       favorites_empty:
         title: "No favorites yet"
         description: "Add exercises to your favorites to find them here."
+        see_all: "See all exercises"
       empty_state:
         title: "Empty exercise library"
         description: "The exercise library has not been seeded yet. Run the seed command."

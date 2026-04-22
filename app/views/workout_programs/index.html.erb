@@ -7,7 +7,7 @@
       <h1 class="text-2xl font-bold text-ink-primary"><%= t("views.workout_programs.title") %></h1>
       <p class="text-xs text-ink-subtle mt-0.5"><%= t("views.workout_programs.subtitle") %></p>
     </div>
-    <%= link_to new_workout_program_path, class: "btn-primary" do %>
+    <%= link_to new_workout_program_path, class: "btn-primary #{@programs.empty? ? 'invisible pointer-events-none' : ''}" do %>
       <i class="fas fa-plus"></i>
       <%= t("views.workout_programs.new_program") %>
     <% end %>
