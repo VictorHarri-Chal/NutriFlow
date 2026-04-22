@@ -23,6 +23,13 @@
           <%= t("views.workout_programs.set_active") %>
         <% end %>
       <% end %>
+      <%= button_to duplicate_workout_program_path(@program),
+            method: :post,
+            class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-ink-muted bg-surface-raised border border-surface-border/40 hover:text-ink-primary hover:border-surface-border transition-colors",
+            form: { class: "contents" } do %>
+        <i class="fas fa-copy text-xs"></i>
+        <%= t("views.workout_programs.duplicate_btn") %>
+      <% end %>
       <%= link_to edit_workout_program_path(@program),
             class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-ink-muted bg-surface-raised border border-surface-border/40 hover:text-ink-primary hover:border-surface-border transition-colors" do %>
         <i class="fas fa-pen text-xs"></i>

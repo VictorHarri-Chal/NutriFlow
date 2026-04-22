@@ -30,17 +30,20 @@ export default class extends Controller {
 
     const link = event.currentTarget
     const message = link.dataset.confirmMessage || this.messageValue || this.defaultMessageValue
-    const url = link.href || this.urlValue
-    const method = link.dataset.turboMethod || this.methodValue || "delete"
+    const url = link.dataset.url || link.href || this.urlValue
+    const method = link.dataset.turboMethod || link.dataset.method || this.methodValue || "delete"
+    const extraParams = link.dataset.confirmParams ? JSON.parse(link.dataset.confirmParams) : {}
+    const confirmLabel = link.dataset.confirmLabel || this.confirmLabelValue
 
     this.messageTarget.textContent = message
     this.confirmButtonTarget.dataset.url = url
     this.confirmButtonTarget.dataset.method = method
+    this.confirmButtonTarget.dataset.params = JSON.stringify(extraParams)
+    this.confirmButtonTarget.textContent = confirmLabel
 
     this.modalTarget.classList.remove("hidden")
     document.body.classList.add("overflow-hidden")
 
-    // Animation d'entrée
     requestAnimationFrame(() => {
       const modalContent = this.modalTarget.querySelector('[data-confirm-target="modalContent"]')
       if (modalContent) {
@@ -49,26 +52,32 @@ export default class extends Controller {
       }
     })
 
-    // Ajouter l'écouteur pour Escape (supprimer d'abord pour éviter les doublons)
     document.removeEventListener('keydown', this.handleEscape)
     document.addEventListener('keydown', this.handleEscape)
   }
 
+  // Direct submit without confirmation modal (for actions that don't need confirmation)
+  submit(event) {
+    event.preventDefault()
+    const link = event.currentTarget
+    const url = link.dataset.url || link.href || this.urlValue
+    const method = link.dataset.turboMethod || link.dataset.method || "post"
+    const params = link.dataset.confirmParams ? JSON.parse(link.dataset.confirmParams) : {}
+    this.submitForm(url, method, params)
+  }
+
   hide() {
-    // Animation de sortie
     const modalContent = this.modalTarget.querySelector('[data-confirm-target="modalContent"]')
     if (modalContent) {
       modalContent.classList.remove("scale-100", "opacity-100")
       modalContent.classList.add("scale-95", "opacity-0")
     }
 
-    // Attendre la fin de l'animation avant de cacher
     setTimeout(() => {
       this.modalTarget.classList.add("hidden")
       document.body.classList.remove("overflow-hidden")
     }, 200)
 
-    // Retirer l'écouteur Escape
     document.removeEventListener('keydown', this.handleEscape)
   }
 
@@ -76,12 +85,13 @@ export default class extends Controller {
     const button = event.currentTarget
     const url = button.dataset.url
     const method = button.dataset.method
+    const params = button.dataset.params ? JSON.parse(button.dataset.params) : {}
 
     this.hide()
-    this.submitForm(url, method)
+    this.submitForm(url, method, params)
   }
 
-  submitForm(url, method) {
+  submitForm(url, method, params = {}) {
     const form = document.createElement('form')
     form.method = 'POST'
     form.action = url
@@ -90,6 +100,10 @@ export default class extends Controller {
       { name: '_method', value: method.toUpperCase() },
       { name: 'authenticity_token', value: this.getCsrfToken() }
     ]
+
+    Object.entries(params).forEach(([key, value]) => {
+      inputs.push({ name: key, value: String(value) })
+    })
 
     inputs.forEach(({ name, value }) => {
       const input = document.createElement('input')
@@ -100,7 +114,6 @@ export default class extends Controller {
     })
 
     document.body.appendChild(form)
-    // Use requestSubmit so Turbo intercepts and handles turbo-stream responses
     if (form.requestSubmit) {
       form.requestSubmit()
     } else {

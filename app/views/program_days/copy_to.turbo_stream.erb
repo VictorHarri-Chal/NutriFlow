@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "program_day_#{@target_day.id}" do %>
+  <%= render "workout_programs/day_column", program: @program, day: @target_day %>
+<% end %>

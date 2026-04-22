@@ -36,6 +36,8 @@ fr:
       updated: "Programme mis à jour."
       destroyed: "Programme supprimé."
       activated: "Programme activé."
+      duplicated: "Programme dupliqué avec succès."
+      duplicate_name: "Copie de %{name}"
     recipes:
       created: "Recette créée avec succès."
       updated: "Recette mise à jour avec succès."
@@ -652,6 +654,7 @@ fr:
       activate: "Activer"
       set_active: "Définir comme actif"
       edit_program: "Modifier"
+      duplicate_btn: "Dupliquer"
       back: "Mes programmes"
       back_to_program: "Retour au programme"
       delete_confirm: "Supprimer « %{name} » ? Cette action est irréversible."
@@ -687,6 +690,9 @@ fr:
         weight_kg: "kg"
         duration_placeholder: "Durée"
         notes_placeholder: "Notes..."
+        copy_to_title: "Copier vers"
+        copy_to_confirm: "Ce jour a déjà des exercices, ils seront remplacés. Continuer ?"
+        copy_confirm_btn: "Copier"
         exercise_count:
           zero: "vide"
           one: "1 exo"
