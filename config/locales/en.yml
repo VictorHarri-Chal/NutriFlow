@@ -70,6 +70,8 @@ en:
           at_least_one_ingredient: "At least one ingredient is required"
         workout_session:
           at_least_one_exercise: "Add at least one exercise before saving the session."
+        cardio_session:
+          at_least_one_block: "Add at least one machine before saving the cardio session."
         recipe_rating:
           attributes:
             recipe_id:
@@ -179,7 +181,7 @@ en:
         steps: "Walking"
         steps_unit: "steps"
         steps_default_hint: "profile default"
-        workout: "Workout"
+        workout: "Workout & cardio"
         total_tdee: "Total expenditure"
         goal_label:
           weight_loss: "Weight loss goal (−15 %)"
@@ -416,10 +418,12 @@ en:
         title: "Preferences"
         description: "Customize the display and behavior of the application."
         journal_section: "Daily journal"
-        show_day_note: "Daily notes section"
+        show_day_note: "Notes & well-being section"
         show_day_note_hint: "Shows the free-text area, as well as the energy, mood and sleep indicators at the bottom of each day."
         show_workout_section: "Workout section"
         show_workout_section_hint: "Shows the workout widget and the quick-add button in the calendar."
+        show_cardio_section: "Cardio section"
+        show_cardio_section_hint: "Shows the cardio widget and the quick-add button in the calendar."
       general:
         title: "General settings"
         description: "Customize your NutriFlow experience."
@@ -913,6 +917,36 @@ en:
         empty: "No measurements recorded"
         delete_confirm: "Delete this entry?"
 
+    cardio_sessions:
+      confirm_delete: "Delete this cardio session?"
+      widget:
+        title: "Cardio"
+        empty: "No cardio activity today"
+        add: "Add a cardio session"
+      form:
+        title_new: "New cardio session"
+        title_edit: "Edit cardio session"
+        machine_label: "Machine"
+        machine_prompt: "Choose a machine…"
+        duration_label: "Duration"
+        speed_label: "Speed"
+        incline_label: "Incline"
+        resistance_label: "Resistance"
+        distance_label: "Distance"
+        notes_label: "Notes"
+        submit: "Save"
+        submit_add: "Add"
+        cancel: "Cancel"
+      machines:
+        treadmill: "Treadmill"
+        bike: "Bike"
+        rower: "Rowing machine"
+        ski_erg: "Ski Erg"
+        stairmaster: "Stairmaster"
+        elliptical: "Elliptical"
+        outdoor_run: "Outdoor run"
+        jump_rope: "Jump rope"
+        swimming: "Swimming"
     workout_sessions:
       confirm_delete: "Delete this session?"
       widget:

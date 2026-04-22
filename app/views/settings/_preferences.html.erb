@@ -14,29 +14,8 @@
 
     <%= form_with url: update_preferences_setting_path, method: :patch do |f| %>
 
-      <%# Toggle : Afficher la section notes du jour %>
-      <div class="flex items-start justify-between gap-6 py-3">
-        <div>
-          <label class="text-sm font-medium text-ink-primary block mb-0.5">
-            <%= t("views.settings.preferences.show_day_note") %>
-          </label>
-          <p class="text-xs text-ink-subtle"><%= t("views.settings.preferences.show_day_note_hint") %></p>
-        </div>
-        <label class="flex items-center cursor-pointer shrink-0 mt-0.5">
-          <input type="hidden" name="user[show_day_note]" value="0">
-          <input type="checkbox"
-                 name="user[show_day_note]"
-                 value="1"
-                 class="sr-only peer"
-                 <%= current_user.show_day_note? ? 'checked' : '' %>
-                 onchange="this.form.submit()">
-          <div class="relative w-9 h-5 rounded-full shrink-0 transition-colors bg-surface-border peer-checked:bg-brand
-                      after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4"></div>
-        </label>
-      </div>
-
       <%# Toggle : Afficher la section entraînement %>
-      <div class="flex items-start justify-between gap-6 py-3 border-t border-surface-border/30">
+      <div class="flex items-start justify-between gap-6 py-3">
         <div>
           <label class="text-sm font-medium text-ink-primary block mb-0.5">
             <%= t("views.settings.preferences.show_workout_section") %>
@@ -50,6 +29,48 @@
                  value="1"
                  class="sr-only peer"
                  <%= current_user.show_workout_section? ? 'checked' : '' %>
+                 onchange="this.form.submit()">
+          <div class="relative w-9 h-5 rounded-full shrink-0 transition-colors bg-surface-border peer-checked:bg-brand
+                      after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4"></div>
+        </label>
+      </div>
+
+      <%# Toggle : Afficher la section cardio %>
+      <div class="flex items-start justify-between gap-6 py-3 border-t border-surface-border/30">
+        <div>
+          <label class="text-sm font-medium text-ink-primary block mb-0.5">
+            <%= t("views.settings.preferences.show_cardio_section") %>
+          </label>
+          <p class="text-xs text-ink-subtle"><%= t("views.settings.preferences.show_cardio_section_hint") %></p>
+        </div>
+        <label class="flex items-center cursor-pointer shrink-0 mt-0.5">
+          <input type="hidden" name="user[show_cardio_section]" value="0">
+          <input type="checkbox"
+                 name="user[show_cardio_section]"
+                 value="1"
+                 class="sr-only peer"
+                 <%= current_user.show_cardio_section? ? 'checked' : '' %>
+                 onchange="this.form.submit()">
+          <div class="relative w-9 h-5 rounded-full shrink-0 transition-colors bg-surface-border peer-checked:bg-brand
+                      after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4"></div>
+        </label>
+      </div>
+
+      <%# Toggle : Afficher la section notes & bien-être %>
+      <div class="flex items-start justify-between gap-6 py-3 border-t border-surface-border/30">
+        <div>
+          <label class="text-sm font-medium text-ink-primary block mb-0.5">
+            <%= t("views.settings.preferences.show_day_note") %>
+          </label>
+          <p class="text-xs text-ink-subtle"><%= t("views.settings.preferences.show_day_note_hint") %></p>
+        </div>
+        <label class="flex items-center cursor-pointer shrink-0 mt-0.5">
+          <input type="hidden" name="user[show_day_note]" value="0">
+          <input type="checkbox"
+                 name="user[show_day_note]"
+                 value="1"
+                 class="sr-only peer"
+                 <%= current_user.show_day_note? ? 'checked' : '' %>
                  onchange="this.form.submit()">
           <div class="relative w-9 h-5 rounded-full shrink-0 transition-colors bg-surface-border peer-checked:bg-brand
                       after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4"></div>

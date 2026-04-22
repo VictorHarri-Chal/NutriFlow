@@ -1,0 +1,59 @@
+<%# Cardio session form — rendered inside turbo_frame "item_form" %>
+<%= turbo_frame_tag "item_form" do %>
+  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl p-5 mb-4">
+
+    <%# Header %>
+    <div class="flex items-center justify-between mb-5">
+      <div class="flex items-center gap-2">
+        <h3 class="text-sm font-semibold text-ink-primary">
+          <%= cardio_session.new_record? ? t("views.cardio_sessions.form.title_new") : t("views.cardio_sessions.form.title_edit") %>
+        </h3>
+      </div>
+      <button type="button"
+              class="p-1.5 text-ink-subtle/50 hover:text-ink-primary transition-colors rounded"
+              data-controller="close-frame"
+              data-action="click->close-frame#close">
+        <i class="fas fa-times text-sm"></i>
+      </button>
+    </div>
+
+    <%# Validation errors %>
+    <% if cardio_session.errors.any? %>
+      <div class="mb-4 p-3 rounded-lg bg-status-danger/10 border border-status-danger/30 text-status-danger text-xs space-y-0.5">
+        <% cardio_session.errors.full_messages.each do |msg| %>
+          <p><%= msg %></p>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%= form_with model: [day, cardio_session],
+          data: { controller: "cardio-form", turbo_frame: "item_form" },
+          class: "space-y-4" do |f| %>
+
+      <%# Single block %>
+      <div>
+        <%= f.fields_for :cardio_blocks do |bf| %>
+          <%= render "cardio_sessions/block_fields", bf: bf %>
+        <% end %>
+      </div>
+
+      <%# Notes %>
+      <div>
+        <%= f.label :notes, t("views.cardio_sessions.form.notes_label"), class: "label-dark" %>
+        <%= f.text_area :notes,
+              rows: 2,
+              class: "input-dark text-sm resize-none" %>
+      </div>
+
+      <%# Footer actions %>
+      <div class="flex items-center justify-end gap-2 pt-4 border-t border-surface-border/40">
+        <%= link_to t("views.cardio_sessions.form.cancel"),
+              calendars_path(date: day.date),
+              class: "btn-ghost text-sm",
+              data: { turbo_frame: "item_form" } %>
+        <%= f.submit cardio_session.new_record? ? t("views.cardio_sessions.form.submit_add") : t("views.cardio_sessions.form.submit"), class: "btn-primary text-sm" %>
+      </div>
+
+    <% end %>
+  </div>
+<% end %>

@@ -5,6 +5,7 @@ class Day < ApplicationRecord
   has_many :day_recipes, dependent: :destroy
   has_many :recipes, through: :day_recipes
   has_many :workout_sessions, dependent: :destroy
+  has_many :cardio_sessions,  dependent: :destroy, inverse_of: :day
 
   validates :date, presence: true, uniqueness: { scope: :user_id }
   validates :note, length: { maximum: 1000 }, allow_blank: true
@@ -19,13 +20,19 @@ class Day < ApplicationRecord
     profile&.default_daily_steps || 6_000
   end
 
-  # Sum of calories burned across all workout sessions for this day
+  # Sum of calories burned across all workout sessions + cardio for this day
   def workout_calories_total
-    if workout_sessions.loaded?
+    strength_kcal = if workout_sessions.loaded?
       workout_sessions.sum { |s| s.calories_burned.to_i }
     else
       workout_sessions.sum(:calories_burned).to_i
     end
+
+    cardio_kcal = CardioBlock.joins(:cardio_session)
+                             .where(cardio_sessions: { day_id: id })
+                             .sum(:calories_burned).to_i
+
+    strength_kcal + cardio_kcal
   end
 
   def total_calories

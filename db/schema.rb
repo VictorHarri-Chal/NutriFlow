@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_22_120000) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_22_153632) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,29 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_22_120000) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "cardio_blocks", force: :cascade do |t|
+    t.bigint "cardio_session_id", null: false
+    t.string "machine"
+    t.integer "duration_minutes"
+    t.decimal "speed_kmh", precision: 4, scale: 1
+    t.integer "incline_percent"
+    t.integer "resistance_level"
+    t.decimal "distance_km", precision: 5, scale: 2
+    t.integer "calories_burned"
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cardio_session_id"], name: "index_cardio_blocks_on_cardio_session_id"
+  end
+
+  create_table "cardio_sessions", force: :cascade do |t|
+    t.bigint "day_id", null: false
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["day_id"], name: "index_cardio_sessions_on_day_id"
   end
 
   create_table "day_food_groups", force: :cascade do |t|
@@ -253,6 +276,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_22_120000) do
     t.string "locale", default: "fr", null: false
     t.boolean "show_day_note", default: true, null: false
     t.boolean "show_workout_section", default: true, null: false
+    t.boolean "show_cardio_section", default: true, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
@@ -307,6 +331,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_22_120000) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "cardio_blocks", "cardio_sessions"
+  add_foreign_key "cardio_sessions", "days"
   add_foreign_key "day_food_groups", "users"
   add_foreign_key "day_foods", "day_food_groups"
   add_foreign_key "day_foods", "days"

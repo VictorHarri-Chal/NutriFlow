@@ -1,0 +1,5 @@
+class AddShowCardioSectionToUsers < ActiveRecord::Migration[8.0]
+  def change
+    add_column :users, :show_cardio_section, :boolean, default: true, null: false
+  end
+end
