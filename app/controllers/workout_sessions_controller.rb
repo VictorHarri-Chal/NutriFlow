@@ -52,6 +52,7 @@ class WorkoutSessionsController < ApplicationController
     @workout_session = @day.workout_sessions.build(workout_session_params)
 
     if @workout_session.save
+      mark_pr_sets(@workout_session)
       compute_calories(@workout_session)
       load_calendar_data(@day)
       @selected_date = @day.date
@@ -77,6 +78,7 @@ class WorkoutSessionsController < ApplicationController
 
   def update
     if @workout_session.update(workout_session_params)
+      mark_pr_sets(@workout_session)
       compute_calories(@workout_session)
       load_calendar_data(@day)
       @selected_date = @day.date
@@ -109,6 +111,27 @@ class WorkoutSessionsController < ApplicationController
   end
 
   private
+
+  # Flags each set as a PR if its weight beats the all-time max for that exercise
+  # (excluding the current session so it's compared against prior history only).
+  def mark_pr_sets(session)
+    sets = session.workout_sets.where.not(weight_kg: nil).to_a
+    return if sets.empty?
+
+    exercise_ids = sets.map(&:exercise_id).uniq
+    previous_maxes = WorkoutSet
+      .joins(workout_session: :day)
+      .where(exercise_id: exercise_ids, days: { user_id: current_user.id })
+      .where.not(workout_session_id: session.id)
+      .group(:exercise_id)
+      .maximum(:weight_kg)
+
+    sets.each do |ws|
+      prev_max = previous_maxes[ws.exercise_id]&.to_f || 0
+      is_pr    = ws.weight_kg.to_f > 0 && ws.weight_kg.to_f > prev_max
+      ws.update_column(:is_pr, is_pr)
+    end
+  end
 
   def set_day
     @day = current_user.days.find(params[:day_id])

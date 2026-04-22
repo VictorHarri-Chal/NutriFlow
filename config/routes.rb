@@ -38,7 +38,9 @@ Rails.application.routes.draw do
   resources :workout_programs do
     member { patch :activate }
     resources :program_days, only: [:update] do
-      resources :program_exercises, only: [:create, :update, :destroy]
+      resources :program_exercises, only: [:create, :update, :destroy] do
+        collection { patch :reorder }
+      end
     end
   end
 

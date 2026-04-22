@@ -15,11 +15,13 @@ export default class extends Controller {
     labelAddSet:        { type: String, default: "Série" },
     labelLastPerf:      { type: String, default: "Dernière fois" },
     labelMaxSets:       { type: String, default: "max 10" },
-    noExerciseError:    { type: String, default: "Ajoutez au moins un exercice." }
+    noExerciseError:    { type: String, default: "Ajoutez au moins un exercice." },
+    sessionId:          { type: Number, default: 0 }
   }
 
   connect() {
-    this._setIndex = this._countExistingInputs()
+    this._setIndex    = this._countExistingInputs()
+    this._allTimeMaxes = new Map() // exerciseId → all-time max weight (for PR detection)
     if (this.hasRpeSliderTarget && this.rpeSliderTarget.value) {
       this._syncRpeDisplay(this.rpeSliderTarget.value)
     }
@@ -29,6 +31,9 @@ export default class extends Controller {
       this.exercisesListTarget.querySelectorAll("[data-exercise-id]").forEach(group => {
         const container = group.querySelector(".sets-container")
         if (container) this._renumberSets(container)
+        // Fetch last perf for exercises already in form (edit mode)
+        const exerciseId = group.dataset.exerciseId
+        if (exerciseId) this._fetchLastPerformance(exerciseId, group)
       })
     }
   }
@@ -153,6 +158,20 @@ export default class extends Controller {
     this._syncEmptyHint()
   }
 
+  // ── PR detection ─────────────────────────────────────────────────
+
+  checkPr(event) {
+    const input      = event.currentTarget
+    const group      = input.closest("[data-exercise-id]")
+    if (!group) return
+    const max = this._allTimeMaxes.get(group.dataset.exerciseId)
+    if (!max || max <= 0) return
+    const badge = input.closest(".set-row")?.querySelector("[data-pr-badge]")
+    if (!badge) return
+    const val = parseFloat(input.value)
+    badge.classList.toggle("hidden", !(val > 0 && val > max))
+  }
+
   // ── Private ───────────────────────────────────────────────────────
 
   _buildExerciseGroup(exerciseId, exerciseName) {
@@ -176,10 +195,11 @@ export default class extends Controller {
         <span class="last-perf-text text-xs text-ink-subtle flex-1"></span>
         <span class="last-perf-delta hidden text-[10px] font-semibold shrink-0"></span>
       </div>
-      <div class="grid grid-cols-[16px_1fr_1fr_20px] gap-2 text-xs text-ink-subtle">
+      <div class="grid grid-cols-[16px_1fr_1fr_28px_20px] gap-2 text-xs text-ink-subtle">
         <span>#</span>
         <span>${this.labelWeightValue}</span>
         <span>${this.labelRepsValue}</span>
+        <span></span>
         <span></span>
       </div>
       <div class="sets-container space-y-1.5"></div>
@@ -227,14 +247,19 @@ export default class extends Controller {
     div.innerHTML = `
       <input type="hidden" name="workout_session[workout_sets_attributes][${idx}][exercise_id]" value="${exerciseId}">
       <input type="hidden" name="workout_session[workout_sets_attributes][${idx}][position]" value="0" data-position-input="true">
-      <div class="grid grid-cols-[16px_1fr_1fr_20px] gap-2 items-center">
+      <div class="grid grid-cols-[16px_1fr_1fr_28px_20px] gap-2 items-center">
         <span class="text-xs text-ink-subtle set-number"></span>
         <input type="number" name="workout_session[workout_sets_attributes][${idx}][weight_kg]"
+               data-action="input->workout-form#checkPr"
                placeholder="0" min="0" step="0.5" value="${opts.weightKg != null ? opts.weightKg : ''}"
                class="input-dark text-sm py-1.5 cursor-text">
         <input type="number" name="workout_session[workout_sets_attributes][${idx}][reps]"
                value="${opts.reps != null ? opts.reps : 10}" min="0" step="1"
                class="input-dark text-sm py-1.5 cursor-text">
+        <span data-pr-badge
+              class="hidden flex items-center justify-center text-[9px] font-bold text-brand bg-brand/10 border border-brand/30 rounded px-1.5 py-0.5 leading-none whitespace-nowrap">
+          PR
+        </span>
         <button type="button" data-action="click->workout-form#removeSet"
                 class="text-ink-subtle hover:text-status-danger transition-colors text-xs flex items-center justify-center cursor-pointer">
           <i class="fas fa-times"></i>
@@ -288,11 +313,23 @@ export default class extends Controller {
   }
 
   async _fetchLastPerformance(exerciseId, group) {
-    const path = this.lastPerfPathValue.replace(":id", exerciseId)
+    let path = this.lastPerfPathValue.replace(":id", exerciseId)
+    if (this.sessionIdValue > 0) path += `?exclude_session_id=${this.sessionIdValue}`
     try {
       const res  = await fetch(path, { headers: { Accept: "application/json" } })
       if (!res.ok) return
       const data = await res.json()
+
+      // Store all-time max and re-evaluate PR badges on existing set rows
+      if (data.all_time_max > 0) {
+        this._allTimeMaxes.set(exerciseId, data.all_time_max)
+        group.querySelectorAll(".set-row:not(.hidden) [name*='weight_kg']").forEach(input => {
+          const val   = parseFloat(input.value)
+          const badge = input.closest(".set-row")?.querySelector("[data-pr-badge]")
+          if (badge) badge.classList.toggle("hidden", !(val > 0 && val > data.all_time_max))
+        })
+      }
+
       if (!data.sets?.length) return
 
       const parts = data.sets.map(s => {
@@ -307,14 +344,14 @@ export default class extends Controller {
         lastPerf.classList.remove("hidden")
       }
 
-      // Delta vs previous session (only for weighted exercises)
+      // Delta with directional arrow + red for regressions
       const deltaEl = group.querySelector(".last-perf-delta")
       if (deltaEl && data.delta != null && data.delta !== 0) {
-        const sign = data.delta > 0 ? "+" : ""
-        deltaEl.textContent = `${sign}${data.delta}kg`
+        const isPositive = data.delta > 0
+        deltaEl.textContent = isPositive ? `↑ +${data.delta}kg` : `↓ ${data.delta}kg`
         deltaEl.className = [
           "last-perf-delta text-[10px] font-semibold shrink-0",
-          data.delta > 0 ? "text-status-success" : "text-ink-subtle/50"
+          isPositive ? "text-status-success" : "text-status-danger"
         ].join(" ")
         deltaEl.classList.remove("hidden")
       }

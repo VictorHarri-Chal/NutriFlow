@@ -127,6 +127,14 @@
     -moz-appearance: textfield;
   }
 
+  /* ---- Sortable drag-to-reorder ---- */
+  .sortable-ghost {
+    @apply opacity-30 bg-surface-hover;
+  }
+  .sortable-drag {
+    @apply shadow-2xl scale-[1.01];
+  }
+
   /* ---- Devise forms ---- */
   .devise-form input[type="email"],
   .devise-form input[type="password"],

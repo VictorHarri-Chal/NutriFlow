@@ -51,7 +51,10 @@
   <% end %>
 
   <%# ── Exercise list ── %>
-  <div class="flex-1 p-2 space-y-1.5 overflow-y-auto" id="program_day_exercises_<%= day.id %>">
+  <div class="flex-1 p-2 space-y-1.5 overflow-y-auto"
+       id="program_day_exercises_<%= day.id %>"
+       data-controller="sortable-list"
+       data-sortable-list-url-value="<%= reorder_workout_program_program_day_program_exercises_path(program, day) %>">
     <% if day.program_exercises.empty? %>
       <div class="py-6 text-center" id="program_day_<%= day.id %>_empty">
         <p class="text-[10px] text-ink-subtle/40 italic"><%= t("views.workout_programs.day.empty_hint") %></p>
