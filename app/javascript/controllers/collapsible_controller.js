@@ -11,10 +11,18 @@ export default class extends Controller {
     } else {
       this._close(false)
     }
+
+    if (this.group) {
+      this._boundGroupClose = this._onGroupOpen.bind(this)
+      document.addEventListener("collapsible:open", this._boundGroupClose)
+    }
   }
 
   disconnect() {
     this._removeOutsideClick()
+    if (this._boundGroupClose) {
+      document.removeEventListener("collapsible:open", this._boundGroupClose)
+    }
   }
 
   toggle() {
@@ -42,6 +50,9 @@ export default class extends Controller {
       this._boundOutsideClick = this._onOutsideClick.bind(this)
       setTimeout(() => document.addEventListener("click", this._boundOutsideClick), 0)
     }
+    if (this.group) {
+      document.dispatchEvent(new CustomEvent("collapsible:open", { detail: { group: this.group, source: this.element } }))
+    }
   }
 
   _close(persist) {
@@ -64,7 +75,17 @@ export default class extends Controller {
     }
   }
 
+  _onGroupOpen(event) {
+    if (event.detail.group === this.group && event.detail.source !== this.element) {
+      this._close(false)
+    }
+  }
+
   get storageKey() {
     return this.element.dataset.collapsibleStorageKey || null
+  }
+
+  get group() {
+    return this.element.dataset.collapsibleGroup || null
   }
 }

@@ -36,6 +36,8 @@ en:
       updated: "Program updated."
       destroyed: "Program deleted."
       activated: "Program activated."
+      duplicated: "Program duplicated successfully."
+      duplicate_name: "Copy of %{name}"
     recipes:
       created: "Recipe created successfully."
       updated: "Recipe updated successfully."
@@ -654,6 +656,7 @@ en:
       activate: "Set as active"
       set_active: "Set as active"
       edit_program: "Edit"
+      duplicate_btn: "Duplicate"
       back: "My programs"
       back_to_program: "Back to program"
       delete_confirm: "Delete « %{name} »? This cannot be undone."
@@ -689,6 +692,9 @@ en:
         weight_kg: "kg"
         duration_placeholder: "Duration"
         notes_placeholder: "Notes..."
+        copy_to_title: "Copy to"
+        copy_to_confirm: "This day already has exercises, they will be replaced. Continue?"
+        copy_confirm_btn: "Copy"
         exercise_count:
           zero: "empty"
           one: "1 ex."

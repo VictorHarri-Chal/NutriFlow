@@ -1,13 +1,64 @@
 <%# day: ProgramDay, program: WorkoutProgram %>
 
-<div class="flex flex-col bg-surface-raised border border-surface-border/40 rounded-xl overflow-hidden h-full"
+<div class="flex flex-col bg-surface-raised border border-surface-border/40 rounded-xl h-full"
      id="program_day_<%= day.id %>">
 
   <%# ── Day header ── %>
-  <div class="px-3 py-2.5 border-b border-surface-border/40 bg-surface-base/60">
-    <p class="text-[10px] font-bold uppercase tracking-widest text-ink-subtle/60 mb-1.5 text-center">
-      <%= day.day_abbr %>
-    </p>
+  <div class="px-3 py-2.5 border-b border-surface-border/40 bg-surface-base/60 rounded-t-xl"
+       data-controller="collapsible"
+       data-collapsible-group="copy-panels"
+       data-collapsible-dismiss-on-outside-click>
+
+    <%# Abbr row with copy button %>
+    <div class="flex items-center justify-between mb-1.5">
+      <div class="w-5 shrink-0"></div>
+      <p class="text-[10px] font-bold uppercase tracking-widest text-ink-subtle/60 text-center flex-1">
+        <%= day.day_abbr %>
+      </p>
+      <% if day.program_exercises.any? %>
+        <button type="button"
+                data-action="click->collapsible#toggle"
+                title="<%= t("views.workout_programs.day.copy_to_title") %>"
+                class="w-5 h-5 flex items-center justify-center rounded text-ink-subtle/30 hover:text-ink-subtle/70 transition-colors cursor-pointer shrink-0">
+          <i class="fas fa-copy text-[9px]"></i>
+        </button>
+      <% else %>
+        <div class="w-5 shrink-0"></div>
+      <% end %>
+    </div>
+
+    <%# Copy targets panel — inline, no absolute positioning to avoid overflow clipping %>
+    <div data-collapsible-target="content" class="hidden mb-2">
+      <p class="text-[9px] font-semibold uppercase tracking-wider text-ink-subtle/40 mb-1.5">
+        <%= t("views.workout_programs.day.copy_to_title") %>
+      </p>
+      <div class="grid grid-cols-3 gap-1">
+        <% program.program_days.reject { |d| d.id == day.id }.each do |target| %>
+          <% copy_url = copy_to_workout_program_program_day_path(program, day) %>
+          <% if target.program_exercises.any? %>
+            <button type="button"
+                    class="text-center py-1 text-[10px] rounded-lg border border-surface-border/40 text-ink-muted hover:bg-surface-hover hover:text-ink-primary hover:border-surface-border/60 transition-colors cursor-pointer"
+                    data-action="click->confirm#show"
+                    data-url="<%= copy_url %>"
+                    data-confirm-params="<%= { target_day_id: target.id }.to_json %>"
+                    data-method="post"
+                    data-confirm-message="<%= t("views.workout_programs.day.copy_to_confirm") %>"
+                    data-confirm-label="<%= t("views.workout_programs.day.copy_confirm_btn") %>">
+              <%= target.day_abbr %>
+            </button>
+          <% else %>
+            <button type="button"
+                    class="text-center py-1 text-[10px] rounded-lg border border-surface-border/40 text-ink-muted hover:bg-surface-hover hover:text-ink-primary hover:border-surface-border/60 transition-colors cursor-pointer"
+                    data-action="click->confirm#submit"
+                    data-url="<%= copy_url %>"
+                    data-confirm-params="<%= { target_day_id: target.id }.to_json %>"
+                    data-method="post">
+              <%= target.day_abbr %>
+            </button>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
 
     <%# Inline editable session name %>
     <%= form_with url: workout_program_program_day_path(program, day),
@@ -61,13 +112,13 @@
       </div>
     <% else %>
       <% day.program_exercises.each do |pe| %>
-        <%= render "program_exercise", program: program, day: day, pe: pe %>
+        <%= render "workout_programs/program_exercise", program: program, day: day, pe: pe %>
       <% end %>
     <% end %>
   </div>
 
   <%# ── Add exercise combobox ── %>
-  <div class="p-2 border-t border-surface-border/30">
+  <div class="p-2 border-t border-surface-border/30 rounded-b-xl bg-surface-raised">
     <div data-controller="program-builder"
          data-program-builder-search-path-value="<%= search_exercises_path %>"
          data-program-builder-favorites-path-value="<%= favorites_exercises_path(format: :json) %>"
