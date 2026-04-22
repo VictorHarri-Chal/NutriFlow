@@ -22,6 +22,17 @@
         <%= t("views.calendars.food_widget.title") %>
       </span>
     </div>
+    <div data-action="click->collapsible#stopEvent">
+      <%= button_to copy_yesterday_calendars_path,
+            params: { date: day.date.to_s },
+            method: :post,
+            class: "flex items-center gap-1 text-[11px] text-ink-subtle/50 hover:text-ink-muted transition-colors cursor-pointer",
+            form: { class: "contents" },
+            title: t("views.calendars.copy_yesterday_title") do %>
+        <i class="fas fa-history text-[9px]"></i>
+        <span><%= t("views.calendars.copy_yesterday") %></span>
+      <% end %>
+    </div>
   </div>
 
   <%# Collapsible content %>

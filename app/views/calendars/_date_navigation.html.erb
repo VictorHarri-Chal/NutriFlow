@@ -38,15 +38,6 @@
       <% end %>
     <% end %>
 
-    <%= button_to copy_yesterday_calendars_path,
-          params: { date: selected_date.to_s },
-          method: :post,
-          class: "w-8 h-8 flex items-center justify-center rounded-xl text-ink-primary bg-surface-raised border border-surface-border/50 hover:bg-surface-hover transition-all",
-          form: { class: "contents" },
-          title: t("views.calendars.copy_yesterday_title") do %>
-      <i class="fas fa-copy text-xs"></i>
-    <% end %>
-
     <button type="button"
             data-action="click->heatmap-panel#open"
             class="w-8 h-8 flex items-center justify-center rounded-xl text-ink-primary bg-surface-raised border border-surface-border/50 hover:bg-surface-hover hover:text-brand transition-all"
