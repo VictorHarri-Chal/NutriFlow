@@ -14,7 +14,8 @@
       <!-- Barre de recherche -->
       <div class="flex-1 max-w-md lg:mx-6">
         <%= form_with url: recipes_path, method: :get, local: true, class: "relative" do |f| %>
-          <%= hidden_field_tag :sort, params[:sort] if params[:sort].present? %>
+          <%= hidden_field_tag :sort,      params[:sort]      if params[:sort].present? %>
+          <%= hidden_field_tag :direction, params[:direction] if params[:direction].present? %>
 
           <%= text_field_tag :query, params[:query],
               class: "input-dark pl-10 #{params[:query].present? ? 'pr-10' : ''} py-1.5 text-sm",
@@ -59,13 +60,27 @@
 
     <%# Séparateur %>
     <% unless params[:query].present? %>
+      <%
+        sort_defaults = { "name" => "asc", "date" => "desc", "calories" => "desc", "proteins" => "desc" }
+        current_sort  = params[:sort].presence || "name"
+        current_dir   = params[:direction].presence || sort_defaults[current_sort]
+      %>
       <div class="h-5 w-px bg-surface-border/40 mx-1"></div>
       <span class="text-xs text-ink-subtle font-medium"><%= t("views.recipes.sort_label") %></span>
-      <% [["name", t("views.recipes.sort_name")], ["newest", t("views.recipes.sort_newest")], ["oldest", t("views.recipes.sort_oldest")], ["calories", t("views.recipes.sort_calories")], ["proteins", t("views.recipes.sort_proteins")]].each do |key, label| %>
-        <% active = (params[:sort] || "name") == key %>
-        <%= link_to recipes_path(sort: key, source: @source, query: params[:query]),
+      <% [
+        ["name",     t("views.recipes.sort_name")],
+        ["date",     t("views.recipes.sort_date")],
+        ["calories", t("views.recipes.sort_calories")],
+        ["proteins", t("views.recipes.sort_proteins")]
+      ].each do |key, label| %>
+        <%
+          active   = current_sort == key
+          next_dir = active ? (current_dir == "asc" ? "desc" : "asc") : sort_defaults[key]
+          arrow    = active ? (current_dir == "asc" ? " ↑" : " ↓") : ""
+        %>
+        <%= link_to recipes_path(sort: key, direction: next_dir, source: @source, query: params[:query]),
               class: "inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors #{active ? 'bg-brand text-surface-base border-brand' : 'bg-surface-raised border-surface-border/40 text-ink-muted hover:text-ink-primary hover:border-surface-border/70'}" do %>
-          <%= label %>
+          <%= label %><%= arrow %>
         <% end %>
       <% end %>
     <% end %>

@@ -11,7 +11,8 @@ class RecipesController < ApplicationController
       @recipes = @recipes.search_by_name(params[:query])
       @pagy, @recipes = pagy(@recipes, items: 12)
     elsif %w[calories proteins].include?(params[:sort])
-      sorted = @recipes.to_a.sort_by { |r| r.public_send(:"total_#{params[:sort]}") }.reverse
+      sorted = @recipes.to_a.sort_by { |r| r.public_send(:"total_#{params[:sort]}") }
+      sorted.reverse! unless params[:direction] == "asc"
       @pagy, @recipes = pagy_array(sorted, items: 12)
     else
       @recipes = @recipes.order(sort_order)
@@ -86,9 +87,10 @@ class RecipesController < ApplicationController
   end
 
   def sort_order
+    dir = params[:direction] == "desc" ? :desc : :asc
     case params[:sort]
-    when "newest" then { created_at: :desc }
-    when "oldest" then { created_at: :asc }
+    when "date" then { created_at: params[:direction] == "asc" ? :asc : :desc }
+    when "name" then { name: dir }
     else { name: :asc }
     end
   end
