@@ -34,6 +34,15 @@ class ProgramExercisesController < ApplicationController
     end
   end
 
+  def reorder
+    ids = Array(params[:ids]).map(&:to_i)
+    return head :bad_request if ids.empty?
+    ids.each_with_index do |id, index|
+      @day.program_exercises.where(id: id).update_all(position: index)
+    end
+    head :ok
+  end
+
   private
 
   def set_program

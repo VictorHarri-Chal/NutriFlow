@@ -95,15 +95,26 @@ class ExercisesController < ApplicationController
   def last_performance
     exercise = Exercise.accessible_to(current_user).find(params[:id])
 
+    # All-time max weight for PR detection.
+    # exclude_session_id: when editing a session, exclude it so the current
+    # sets don't inflate the max and break the "val > max" comparison.
+    exclude_session_id = params[:exclude_session_id].presence&.to_i
+    all_time_max_scope = WorkoutSet
+                           .joins(workout_session: :day)
+                           .where(exercise_id: exercise.id, days: { user_id: current_user.id })
+    all_time_max_scope = all_time_max_scope.where.not(workout_session_id: exclude_session_id) if exclude_session_id
+    all_time_max = all_time_max_scope.maximum(:weight_kg)&.to_f || 0
+
     # Use a subquery to avoid JOIN duplication (multiple sets per session would
-    # cause duplicate rows and .limit(2) would return the same session twice)
-    sessions = WorkoutSession
-                 .joins(:day)
-                 .where(id: WorkoutSet.where(exercise_id: exercise.id).select(:workout_session_id))
-                 .where(days: { user_id: current_user.id })
-                 .order("days.date DESC")
-                 .limit(2)
-                 .to_a
+    # cause duplicate rows and .limit(2) would return the same session twice).
+    # Also exclude the session being edited so "last performance" shows the previous session.
+    sessions_scope = WorkoutSession
+                       .joins(:day)
+                       .where(id: WorkoutSet.where(exercise_id: exercise.id).select(:workout_session_id))
+                       .where(days: { user_id: current_user.id })
+                       .order("days.date DESC")
+    sessions_scope = sessions_scope.where.not(id: exclude_session_id) if exclude_session_id
+    sessions = sessions_scope.limit(2).to_a
 
     if sessions.any?
       last = sessions.first
@@ -117,12 +128,13 @@ class ExercisesController < ApplicationController
       delta      = (last_max > 0 && prev_max > 0) ? (last_max - prev_max).round(2) : nil
 
       render json: {
-        date:  I18n.l(last.day.date, format: :short),
-        sets:  last_sets.map { |s| { weight_kg: s.weight_kg, reps: s.reps } },
-        delta: delta
+        date:         I18n.l(last.day.date, format: :short),
+        sets:         last_sets.map { |s| { weight_kg: s.weight_kg, reps: s.reps } },
+        delta:        delta,
+        all_time_max: all_time_max
       }
     else
-      render json: { sets: [] }
+      render json: { sets: [], all_time_max: all_time_max }
     end
   end
 

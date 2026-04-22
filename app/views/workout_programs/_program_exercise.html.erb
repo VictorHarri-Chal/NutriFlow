@@ -4,13 +4,25 @@
 
 <div class="group relative bg-surface-base border border-surface-border/30 rounded-lg px-3 py-2 cursor-pointer hover:bg-surface-hover/20 hover:border-surface-border/50 transition-colors duration-150"
      id="program_exercise_<%= pe.id %>"
+     data-sortable-id="<%= pe.id %>"
      data-pe-exercise-id="<%= pe.exercise_id %>"
      data-controller="collapsible"
      data-action="click->collapsible#toggle"
      data-collapsible-dismiss-on-outside-click
      <%= expanded ? "data-collapsible-open-by-default" : "" %>>
 
-  <%# ── Header: name + delete ── %>
+  <%# Drag handle: full-width top strip — doesn't compress the title %>
+  <div data-drag-handle
+       data-action="click->collapsible#stopEvent"
+       class="absolute inset-x-0 top-0 h-3 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing z-10 rounded-t-lg">
+    <div class="flex gap-0.5 pointer-events-none">
+      <span class="block w-3 h-px bg-surface-border/70 rounded-full"></span>
+      <span class="block w-3 h-px bg-surface-border/70 rounded-full"></span>
+      <span class="block w-3 h-px bg-surface-border/70 rounded-full"></span>
+    </div>
+  </div>
+
+  <%# ── Header: name + delete (full width, not compressed) ── %>
   <div class="flex items-center justify-between gap-1 mb-1.5">
     <span class="text-xs font-medium text-ink-primary leading-tight line-clamp-2 flex-1">
       <%= pe.exercise.name.capitalize %>
