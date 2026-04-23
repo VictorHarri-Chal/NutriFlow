@@ -1,10 +1,10 @@
 <script id="recipes-data" type="application/json">
-  <%= @recipes.map { |r|
+  <%= json_escape(@recipes.map { |r|
     { id: r.id, name: r.name, calories: r.total_calories.round,
       proteins: r.total_proteins.round(1), carbs: r.total_carbs.round(1), fats: r.total_fats.round(1),
       totalWeight: r.total_weight.to_f,
       favorite: r.favorite }
-  }.to_json.html_safe %>
+  }.to_json) %>
 </script>
 
 <%= simple_form_for([day, day_recipe]) do |f| %>

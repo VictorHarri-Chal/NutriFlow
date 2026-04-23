@@ -1034,6 +1034,7 @@ en:
         kpi_sleep: "Avg. sleep"
         kpi_hydration: "Avg. hydration"
         kpi_steps: "Avg. steps / day"
+        steps_unit: "steps"
         out_of_five: "/ 5"
         hydration_pct: "%{pct}% of goal"
         hydration_goal: "Goal: %{goal} ml"

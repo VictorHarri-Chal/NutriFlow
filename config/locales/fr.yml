@@ -1032,6 +1032,7 @@ fr:
         kpi_sleep: "Sommeil moyen"
         kpi_hydration: "Hydratation moy."
         kpi_steps: "Pas moyens / jour"
+        steps_unit: "pas"
         out_of_five: "/ 5"
         hydration_pct: "%{pct}% de l'objectif"
         hydration_goal: "Objectif : %{goal} ml"

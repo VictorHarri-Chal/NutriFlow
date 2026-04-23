@@ -1,5 +1,5 @@
 <script id="foods-data" type="application/json">
-  <%= @foods.to_json(only: [:id, :name, :calories, :proteins, :carbs, :fats, :sugars, :favorite]).html_safe %>
+  <%= json_escape(@foods.to_json(only: [:id, :name, :calories, :proteins, :carbs, :fats, :sugars, :favorite])) %>
 </script>
 
 <%= simple_form_for([day, day_food]) do |f| %>
