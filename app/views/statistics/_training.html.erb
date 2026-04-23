@@ -1,0 +1,267 @@
+<% period_label = t("views.statistics.period_labels.#{@period}") %>
+
+<% if @session_count == 0 %>
+  <%= render "statistics/empty_state",
+        icon:  "fa-dumbbell",
+        title: t("views.statistics.training.no_data_title", period: period_label),
+        hint:  t("views.statistics.training.no_data_hint") %>
+
+<% else %>
+
+  <%# ── KPI cards ── %>
+  <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+      <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-2">
+        <%= t("views.statistics.training.kpi_sessions") %>
+      </p>
+      <p class="text-2xl font-bold text-brand"><%= @session_count %></p>
+    </div>
+
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+      <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-2">
+        <%= t("views.statistics.training.kpi_sets") %>
+      </p>
+      <p class="text-2xl font-bold text-ink-primary">
+        <%= number_with_delimiter(@total_sets) %>
+      </p>
+    </div>
+
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+      <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-2">
+        <%= t("views.statistics.training.kpi_volume") %>
+      </p>
+      <p class="text-2xl font-bold text-ink-primary">
+        <%= number_with_delimiter(@total_volume) %>
+        <span class="text-xs font-normal text-ink-subtle ml-0.5"><%= t("views.statistics.training.kpi_volume_unit") %></span>
+      </p>
+    </div>
+
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+      <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-2">
+        <%= t("views.statistics.training.kpi_avg_volume") %>
+      </p>
+      <p class="text-2xl font-bold text-ink-primary">
+        <%= number_with_delimiter((@total_volume.to_f / @session_count).round) %>
+        <span class="text-xs font-normal text-ink-subtle ml-0.5"><%= t("views.statistics.training.kpi_volume_unit") %></span>
+      </p>
+    </div>
+
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+      <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-2">
+        <%= t("views.statistics.training.kpi_streak_weeks") %>
+      </p>
+      <p class="text-2xl font-bold text-ink-primary">
+        <%= @training_streak_weeks %>
+        <span class="text-xs font-normal text-ink-subtle ml-0.5">/ <%= @training_total_weeks %></span>
+      </p>
+    </div>
+
+  </div>
+
+  <%# ── Fréquence + répartition musculaire ── %>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+    <div class="lg:col-span-2 bg-surface-raised border border-surface-border/40 rounded-2xl p-6">
+      <h2 class="text-sm font-semibold text-ink-primary mb-4 flex items-center gap-2">
+        <i class="fas fa-chart-bar text-brand text-xs"></i>
+        <%= @period == 7 ? t("views.statistics.training.frequency_title_daily") : t("views.statistics.training.frequency_title") %>
+      </h2>
+      <% if @freq_labels.any? %>
+        <div class="relative h-48">
+          <canvas data-controller="bar-chart"
+                  data-bar-chart-labels-value="<%= @freq_labels.to_json %>"
+                  data-bar-chart-data-value="<%= @freq_data.to_json %>"
+                  data-bar-chart-unit-value="<%= t("views.statistics.training.frequency_unit") %>">
+          </canvas>
+        </div>
+      <% else %>
+        <div class="flex items-center justify-center h-48 text-sm text-ink-subtle">
+          <%= t("views.statistics.training.no_data", period: period_label) %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl p-6">
+      <h2 class="text-sm font-semibold text-ink-primary mb-1 flex items-center gap-2">
+        <i class="fas fa-person-running text-brand text-xs"></i>
+        <%= t("views.statistics.training.muscle_title") %>
+      </h2>
+      <p class="text-xs text-ink-subtle mb-4">% du volume total</p>
+      <% if @muscle_groups.any? %>
+        <div class="space-y-3">
+          <% @muscle_groups.each do |body_part, pct| %>
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-medium text-ink-muted"><%= t_body_part(body_part) %></span>
+                <span class="text-xs text-ink-subtle"><%= pct %>%</span>
+              </div>
+              <div class="progress-track h-1.5">
+                <div class="h-full rounded-full bg-brand" style="width: <%= pct %>%"></div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="flex flex-col items-center justify-center h-32 gap-2 border border-dashed border-surface-border/50 rounded-xl text-center px-3">
+          <i class="fas fa-dumbbell text-xl text-ink-subtle/50"></i>
+          <p class="text-xs text-ink-subtle"><%= t("views.statistics.training.muscle_empty", period: period_label) %></p>
+        </div>
+      <% end %>
+    </div>
+
+  </div>
+
+  <%# ── Records estimés (1RM) ── %>
+  <% if @top_1rms.any? %>
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-6 py-5">
+      <div class="flex items-center gap-2 mb-4">
+        <i class="fas fa-medal text-brand text-xs"></i>
+        <h2 class="text-sm font-semibold text-ink-primary"><%= t("views.statistics.training.one_rm_title") %></h2>
+        <span class="text-xs text-ink-subtle ml-1">— Formule de Brzycki, 1–10 reps</span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-surface-border/30">
+        <% @top_1rms.each_with_index do |(name, orm), i| %>
+          <div class="flex items-center justify-between sm:flex-col sm:items-start gap-1 py-3 sm:py-0 <%= i > 0 ? 'sm:pl-6' : '' %> <%= i < @top_1rms.size - 1 ? 'sm:pr-6' : '' %>">
+            <p class="text-xs text-ink-subtle truncate max-w-[60%] sm:max-w-full"><%= name %></p>
+            <p class="text-xl font-bold text-ink-primary flex-shrink-0">
+              <%= orm %> <span class="text-xs font-normal text-ink-subtle">kg est.</span>
+            </p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-6 py-5">
+      <div class="flex items-center gap-2 mb-3">
+        <i class="fas fa-medal text-brand text-xs"></i>
+        <h2 class="text-sm font-semibold text-ink-primary"><%= t("views.statistics.training.one_rm_title") %></h2>
+      </div>
+      <div class="flex flex-col items-center justify-center py-6 gap-2 border border-dashed border-surface-border/50 rounded-xl text-center px-4">
+        <i class="fas fa-medal text-2xl text-ink-subtle/50"></i>
+        <p class="text-xs text-ink-subtle"><%= t("views.statistics.training.one_rm_empty") %></p>
+      </div>
+    </div>
+  <% end %>
+
+  <%# ── PRs + progression par exercice ── %>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl p-6">
+      <h2 class="text-sm font-semibold text-ink-primary mb-1 flex items-center gap-2">
+        <i class="fas fa-trophy text-brand text-xs"></i>
+        <%= t("views.statistics.training.prs_title") %>
+      </h2>
+      <p class="text-xs text-ink-subtle mb-4">5 derniers records sur <%= period_label %></p>
+      <% if @recent_prs.any? %>
+        <div class="divide-y divide-surface-border/30">
+          <% @recent_prs.each do |pr| %>
+            <div class="flex items-center justify-between py-2.5">
+              <div>
+                <p class="text-sm font-medium text-ink-primary"><%= pr.exercise&.name %></p>
+                <p class="text-xs text-ink-subtle"><%= l(pr.workout_session.day.date, format: :long) %></p>
+              </div>
+              <div class="text-right">
+                <% if pr.weight_kg.present? %>
+                  <p class="text-sm font-semibold text-brand"><%= pr.weight_kg %> kg</p>
+                <% end %>
+                <% if pr.reps.present? %>
+                  <p class="text-xs text-ink-subtle"><%= pr.reps %> reps</p>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="flex flex-col items-center justify-center py-10 gap-2 border border-dashed border-surface-border/50 rounded-xl text-center px-4">
+          <i class="fas fa-trophy text-2xl text-ink-subtle/50"></i>
+          <p class="text-sm font-medium text-ink-muted"><%= t("views.statistics.training.prs_empty") %></p>
+          <p class="text-xs text-ink-subtle">Les PRs sont détectés automatiquement à chaque nouvelle performance.</p>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl p-6">
+      <h2 class="text-sm font-semibold text-ink-primary mb-4 flex items-center gap-2">
+        <i class="fas fa-arrow-trend-up text-brand text-xs"></i>
+        <%= t("views.statistics.training.progression_title") %>
+      </h2>
+
+      <% if @user_exercises.any? %>
+        <%= turbo_frame_tag "exercise_chart" do %>
+          <%= form_with url: statistics_path, method: :get, local: true, class: "mb-4",
+              data: { turbo_frame: "exercise_chart" } do %>
+            <%= hidden_field_tag :period, @period %>
+            <%= hidden_field_tag :tab, "training" %>
+            <div data-controller="custom-select" class="relative">
+              <%= select_tag :exercise_id,
+                  options_from_collection_for_select(@user_exercises, :id, :name, @selected_exercise&.id),
+                  class: "sr-only",
+                  data: { custom_select_target: "select" },
+                  onchange: "this.closest('form').requestSubmit()" %>
+              <button type="button"
+                      data-action="click->custom-select#toggle"
+                      class="input-dark text-sm flex items-center justify-between cursor-pointer w-full text-left">
+                <span data-custom-select-target="label" class="text-ink-subtle truncate pr-2"></span>
+                <i class="fas fa-chevron-down text-xs text-ink-subtle flex-shrink-0"></i>
+              </button>
+              <div data-custom-select-target="dropdown"
+                   data-custom-select-dropdown
+                   class="hidden absolute z-50 w-full mt-1 bg-surface-raised border border-surface-border/60 rounded-lg max-h-52 overflow-y-auto shadow-lg"></div>
+            </div>
+          <% end %>
+
+          <% if @progress_labels&.any? %>
+            <div class="relative h-40">
+              <canvas data-controller="line-chart"
+                      data-line-chart-labels-value="<%= @progress_labels.to_json %>"
+                      data-line-chart-data-value="<%= @progress_data.to_json %>"
+                      data-line-chart-unit-value="<%= t("views.statistics.training.progression_unit") %>"
+                      data-line-chart-color-value="#34D399">
+              </canvas>
+            </div>
+          <% else %>
+            <div class="flex flex-col items-center justify-center h-40 gap-2 border border-dashed border-surface-border/50 rounded-xl text-center px-3">
+              <i class="fas fa-chart-line text-2xl text-ink-subtle/50"></i>
+              <p class="text-xs text-ink-subtle"><%= t("views.statistics.training.no_exercises", period: period_label) %></p>
+            </div>
+          <% end %>
+        <% end %>
+      <% else %>
+        <div class="flex flex-col items-center justify-center h-40 gap-2 border border-dashed border-surface-border/50 rounded-xl text-center px-3">
+          <i class="fas fa-chart-line text-2xl text-ink-subtle/50"></i>
+          <p class="text-xs text-ink-subtle"><%= t("views.statistics.training.no_exercises", period: period_label) %></p>
+        </div>
+      <% end %>
+    </div>
+
+  </div>
+
+  <%# ── Plus grande progression ── %>
+  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl p-6">
+    <h2 class="text-sm font-semibold text-ink-primary mb-1 flex items-center gap-2">
+      <i class="fas fa-rocket text-brand text-xs"></i>
+      <%= t("views.statistics.training.most_progressive_title") %>
+    </h2>
+    <p class="text-xs text-ink-subtle mb-4">Comparaison 1ère moitié / 2ème moitié de la période</p>
+    <% if @most_progressive&.any? %>
+      <div class="divide-y divide-surface-border/30">
+        <% @most_progressive.each do |name, gain, max_w| %>
+          <div class="flex items-center justify-between py-2.5">
+            <p class="text-sm font-medium text-ink-primary truncate pr-4"><%= name %></p>
+            <div class="flex items-center gap-3 flex-shrink-0">
+              <span class="text-xs text-ink-subtle"><%= max_w %> kg max</span>
+              <span class="text-sm font-semibold text-status-success">+<%= gain %>%</span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="flex flex-col items-center justify-center py-8 gap-2 border border-dashed border-surface-border/50 rounded-xl text-center px-4">
+        <i class="fas fa-rocket text-2xl text-ink-subtle/50"></i>
+        <p class="text-sm font-medium text-ink-muted"><%= t("views.statistics.training.progressions_empty") %></p>
+      </div>
+    <% end %>
+  </div>
+
+<% end %>

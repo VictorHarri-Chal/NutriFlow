@@ -1,0 +1,37 @@
+<% content_for :page_title, t("views.statistics.page_title") %>
+
+<div class="max-w-6xl mx-auto mt-16 pb-16 space-y-6">
+
+  <%# ── En-tête + sélecteur de période ── %>
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <h1 class="text-2xl font-bold text-ink-primary">
+      <%= t("views.statistics.page_title") %>
+    </h1>
+
+    <div class="flex items-center gap-1 bg-surface-raised border border-surface-border/40 rounded-xl p-1 w-fit">
+      <% [7, 30, 90, 365].each do |p| %>
+        <%= link_to t("views.statistics.periods.#{p}"),
+            statistics_path(period: p, tab: @tab),
+            class: @period == p \
+              ? "px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand/20 text-brand transition-colors" \
+              : "px-3 py-1.5 rounded-lg text-xs font-medium text-ink-muted hover:text-ink-primary transition-colors" %>
+      <% end %>
+    </div>
+  </div>
+
+  <%# ── Onglets ── %>
+  <div class="flex items-center gap-2">
+    <% %w[nutrition training cardio bien_etre].each do |tab| %>
+      <%= link_to statistics_path(period: @period, tab: tab),
+          class: @tab == tab \
+            ? "px-4 py-2 rounded-full text-sm font-semibold bg-brand/20 text-brand border border-brand/30 transition-colors" \
+            : "px-4 py-2 rounded-full text-sm font-medium text-ink-muted border border-surface-border/40 hover:text-ink-primary hover:border-surface-border/70 transition-colors" do %>
+        <%= t("views.statistics.tabs.#{tab}") %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# ── Contenu de l'onglet ── %>
+  <%= render partial: @tab %>
+
+</div>
