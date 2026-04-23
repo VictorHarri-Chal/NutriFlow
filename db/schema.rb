@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_22_153632) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_23_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -277,6 +277,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_22_153632) do
     t.boolean "show_day_note", default: true, null: false
     t.boolean "show_workout_section", default: true, null: false
     t.boolean "show_cardio_section", default: true, null: false
+    t.boolean "show_water_tracking", default: true, null: false
+    t.boolean "show_tdee_breakdown", default: true, null: false
+    t.boolean "show_weight_tracking", default: true, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

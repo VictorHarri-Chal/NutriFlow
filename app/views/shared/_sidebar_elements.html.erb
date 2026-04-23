@@ -16,19 +16,23 @@
             <span class="font-medium pb-1"><%= t("views.shared.sidebar.recipes") %></span>
         <% end %>
 
-        <%= link_to exercises_path, class: current_page?(exercises_path) ? "nav-link-active" : "nav-link" do %>
-            <i class="fas fa-dumbbell w-5 h-5 mr-3"></i>
-            <span class="font-medium pb-1"><%= t("views.shared.sidebar.exercises") %></span>
+        <% if current_user.show_workout_section? %>
+          <%= link_to exercises_path, class: current_page?(exercises_path) ? "nav-link-active" : "nav-link" do %>
+              <i class="fas fa-dumbbell w-5 h-5 mr-3"></i>
+              <span class="font-medium pb-1"><%= t("views.shared.sidebar.exercises") %></span>
+          <% end %>
+
+          <%= link_to workout_programs_path, class: request.path.start_with?(workout_programs_path) ? "nav-link-active" : "nav-link" do %>
+              <i class="fas fa-clipboard-list w-5 h-5 mr-3"></i>
+              <span class="font-medium pb-1"><%= t("views.shared.sidebar.workout_programs") %></span>
+          <% end %>
         <% end %>
 
-        <%= link_to workout_programs_path, class: request.path.start_with?(workout_programs_path) ? "nav-link-active" : "nav-link" do %>
-            <i class="fas fa-clipboard-list w-5 h-5 mr-3"></i>
-            <span class="font-medium pb-1"><%= t("views.shared.sidebar.workout_programs") %></span>
-        <% end %>
-
-        <%= link_to weight_entries_path, class: current_page?(weight_entries_path) ? "nav-link-active" : "nav-link" do %>
-            <i class="fas fa-weight-scale w-5 h-5 mr-3"></i>
-            <span class="font-medium pb-1"><%= t("views.shared.sidebar.weight") %></span>
+        <% if current_user.show_weight_tracking? %>
+          <%= link_to weight_entries_path, class: current_page?(weight_entries_path) ? "nav-link-active" : "nav-link" do %>
+              <i class="fas fa-weight-scale w-5 h-5 mr-3"></i>
+              <span class="font-medium pb-1"><%= t("views.shared.sidebar.weight") %></span>
+          <% end %>
         <% end %>
 
         <%= link_to statistics_path, class: current_page?(statistics_path) ? "nav-link-active" : "nav-link" do %>

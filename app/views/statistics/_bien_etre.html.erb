@@ -1,7 +1,8 @@
 <% period_label = t("views.statistics.period_labels.#{@period}") %>
 <% has_wellbeing_data = @avg_energy || @avg_mood || @avg_sleep %>
+<% show_hydration = current_user.show_water_tracking? %>
 
-<% if !has_wellbeing_data && !@avg_water_ml && !@avg_steps %>
+<% if !has_wellbeing_data && !(show_hydration && @avg_water_ml) && !@avg_steps %>
   <%= render "statistics/empty_state",
         icon:  "fa-heart-pulse",
         title: t("views.statistics.bien_etre.no_data_title", period: period_label),
@@ -69,8 +70,9 @@
   </div>
 
   <%# ── Hydratation + Pas ── %>
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <div class="grid grid-cols-1 <%= show_hydration ? 'sm:grid-cols-2' : '' %> gap-4">
 
+    <% if show_hydration %>
     <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-5">
       <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-2">
         <%= t("views.statistics.bien_etre.kpi_hydration") %>
@@ -98,6 +100,7 @@
         <p class="text-xs text-ink-subtle leading-relaxed"><%= t("views.statistics.bien_etre.hydration_empty") %></p>
       <% end %>
     </div>
+    <% end %>
 
     <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-5">
       <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-2">
