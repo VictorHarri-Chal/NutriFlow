@@ -28,21 +28,20 @@
       </div>
 
       <%# Image %>
-      <div>
+      <div data-controller="remove-image"
+           data-remove-image-removed-text-value="<%= t('views.exercises.custom.fields.image_will_be_removed') %>">
         <%= f.label :image, t("views.exercises.custom.fields.image"), class: "label-dark block mb-1.5" %>
         <% if exercise.image.attached? %>
-          <%= f.hidden_field :remove_image, value: "0", id: "remove_image_hidden" %>
-          <div id="image_preview_wrapper" class="relative inline-block mb-3">
+          <%= f.hidden_field :remove_image, value: "0",
+                data: { "remove-image-target": "hidden" } %>
+          <div class="relative inline-block mb-3"
+               data-remove-image-target="preview">
             <div class="w-20 h-20 rounded-xl overflow-hidden border border-surface-border/40">
               <%= image_tag url_for(exercise.image), class: "w-full h-full object-cover" %>
             </div>
             <button type="button"
-                    class="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500/80 hover:bg-red-500 text-white flex items-center justify-center transition-colors shadow"
-                    onclick="
-                      document.getElementById('remove_image_hidden').value = '1';
-                      document.getElementById('image_preview_wrapper').style.display = 'none';
-                      document.getElementById('remove_image_hint').textContent = '<%= j t("views.exercises.custom.fields.image_will_be_removed") %>';
-                    "
+                    class="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-status-danger/80 hover:bg-status-danger text-white flex items-center justify-center transition-colors shadow"
+                    data-action="click->remove-image#remove"
                     aria-label="<%= t('views.exercises.custom.fields.remove_image') %>">
               <i class="fas fa-times text-[9px]"></i>
             </button>
@@ -53,7 +52,8 @@
               class: "block text-sm text-ink-muted file:mr-3 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-brand/10 file:text-brand hover:file:bg-brand/20 cursor-pointer",
               accept: "image/jpeg,image/png" %>
         </div>
-        <p class="text-xs text-ink-subtle/60 mt-1.5" id="remove_image_hint"><%= t("views.exercises.custom.fields.image_hint") %></p>
+        <p class="text-xs text-ink-subtle/60 mt-1.5"
+           data-remove-image-target="hint"><%= t("views.exercises.custom.fields.image_hint") %></p>
       </div>
     </div>
 
@@ -165,9 +165,9 @@
           <%= f.label :difficulty, t("views.exercises.custom.fields.difficulty"), class: "label-dark block mb-1.5" %>
           <div class="grid grid-cols-3 gap-2">
             <% [
-              { value: "beginner",     icon: "fa-seedling", key: "beginner",     color: "peer-checked:bg-green-500/10 peer-checked:border-green-500 peer-checked:text-green-400" },
-              { value: "intermediate", icon: "fa-fire",     key: "intermediate", color: "peer-checked:bg-amber-500/10 peer-checked:border-amber-500 peer-checked:text-amber-400" },
-              { value: "advanced",     icon: "fa-bolt",     key: "advanced",     color: "peer-checked:bg-red-500/10 peer-checked:border-red-500 peer-checked:text-red-400" }
+              { value: "beginner",     icon: "fa-seedling", key: "beginner",     color: "peer-checked:bg-status-success/10 peer-checked:border-status-success peer-checked:text-status-success" },
+              { value: "intermediate", icon: "fa-fire",     key: "intermediate", color: "peer-checked:bg-brand/10 peer-checked:border-brand peer-checked:text-brand" },
+              { value: "advanced",     icon: "fa-bolt",     key: "advanced",     color: "peer-checked:bg-status-danger/10 peer-checked:border-status-danger peer-checked:text-status-danger" }
             ].each do |opt| %>
               <label class="cursor-pointer">
                 <%= f.radio_button :difficulty, opt[:value], class: "sr-only peer" %>

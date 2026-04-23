@@ -59,7 +59,7 @@
             </span>
           </div>
           <div class="w-full bg-surface-hover rounded-full h-1.5 overflow-hidden">
-            <div class="h-1.5 rounded-full transition-all duration-700 ease-out <%= proteins_percentage >= 100 ? 'bg-status-success' : 'bg-blue-400' %>"
+            <div class="h-1.5 rounded-full transition-all duration-700 ease-out <%= proteins_percentage >= 100 ? 'bg-status-success' : 'bg-macro-proteins' %>"
                  style="width: <%= [proteins_percentage.to_f, 100].min %>%"></div>
           </div>
         </div>
@@ -84,7 +84,7 @@
           </div>
           <div class="w-full bg-surface-hover rounded-full h-1.5 overflow-hidden">
             <% carbs_pct = defined?(carbs_percentage) && carbs_percentage ? carbs_percentage : 0 %>
-            <div class="h-1.5 rounded-full transition-all duration-700 ease-out bg-amber-400"
+            <div class="h-1.5 rounded-full transition-all duration-700 ease-out bg-macro-carbs"
                  style="width: <%= [carbs_pct.to_f, 100].min %>%"></div>
           </div>
         </div>
@@ -99,7 +99,7 @@
             </span>
           </div>
           <div class="w-full bg-surface-hover rounded-full h-1.5 overflow-hidden">
-            <div class="h-1.5 rounded-full transition-all duration-700 ease-out <%= fats_percentage > 105 ? 'bg-status-danger' : fats_percentage >= 100 ? 'bg-status-success' : 'bg-orange-400' %>"
+            <div class="h-1.5 rounded-full transition-all duration-700 ease-out <%= fats_percentage > 105 ? 'bg-status-danger' : fats_percentage >= 100 ? 'bg-status-success' : 'bg-macro-fats' %>"
                  style="width: <%= [fats_percentage.to_f, 100].min %>%"></div>
           </div>
         </div>
@@ -115,7 +115,7 @@
           </div>
           <div class="w-full bg-surface-hover rounded-full h-1.5 overflow-hidden">
             <% sugars_pct = defined?(daily_carbs_goal) && daily_carbs_goal && daily_carbs_goal > 0 ? [total_sugars.to_f / daily_carbs_goal * 100, 100].min : 0 %>
-            <div class="h-1.5 rounded-full transition-all duration-700 ease-out bg-pink-400/60"
+            <div class="h-1.5 rounded-full transition-all duration-700 ease-out bg-macro-sugars/60"
                  style="width: <%= sugars_pct %>%"></div>
           </div>
         </div>
@@ -186,7 +186,7 @@
                 <%= t("views.calendars.breakdown.workout") %>
               </span>
               <% if tdee_breakdown[:workout_kcal] > 0 %>
-                <span class="font-medium text-emerald-400/80 tabular-nums">
+                <span class="font-medium text-status-success/80 tabular-nums">
                   +<%= number_with_delimiter(tdee_breakdown[:workout_kcal]) %> kcal
                 </span>
               <% else %>

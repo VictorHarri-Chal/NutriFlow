@@ -2,7 +2,7 @@
 
   <%# ── Données aliments pour les combobox (lues par food_combobox_controller.js) ── %>
   <script id="foods-data" type="application/json">
-    <%= current_user.foods.order(:name).select(:id, :name, :calories, :proteins, :carbs, :fats, :sugars).to_json.html_safe %>
+    <%= json_escape(current_user.foods.order(:name).select(:id, :name, :calories, :proteins, :carbs, :fats, :sugars).to_json) %>
   </script>
 
   <div data-controller="recipe-builder" data-action="input->recipe-builder#update">
