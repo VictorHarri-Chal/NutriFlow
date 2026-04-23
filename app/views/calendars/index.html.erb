@@ -32,7 +32,9 @@
                day:                 @day %>
 
     <%# ── Hydration widget ── %>
-    <%= render 'calendars/water_widget', day: @day, profile: @profile %>
+    <% if current_user.show_water_tracking? %>
+      <%= render 'calendars/water_widget', day: @day, profile: @profile %>
+    <% end %>
 
     <%# ── Workout widget ── %>
     <% if current_user.show_workout_section? %>

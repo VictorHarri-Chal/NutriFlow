@@ -2,16 +2,24 @@
 
 class StatisticsController < ApplicationController
   VALID_PERIODS = [7, 30, 90, 365].freeze
-  VALID_TABS    = %w[nutrition training cardio bien_etre].freeze
 
   def index
     @period = VALID_PERIODS.include?(params[:period]&.to_i) ? params[:period].to_i : 30
 
-    if VALID_TABS.include?(params[:tab])
-      @tab = params[:tab]
+    @available_tabs = ["nutrition"]
+    @available_tabs << "training"  if current_user.show_workout_section?
+    @available_tabs << "cardio"    if current_user.show_cardio_section?
+    @available_tabs << "bien_etre" if current_user.show_day_note?
+
+    requested = params[:tab]
+    if @available_tabs.include?(requested)
+      @tab = requested
       session[:statistics_tab] = @tab
+    elsif @available_tabs.include?(session[:statistics_tab])
+      @tab = session[:statistics_tab]
     else
-      @tab = VALID_TABS.include?(session[:statistics_tab]) ? session[:statistics_tab] : "nutrition"
+      @tab = "nutrition"
+      session[:statistics_tab] = @tab
     end
 
     @from = @period.days.ago.to_date
