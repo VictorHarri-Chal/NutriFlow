@@ -1,0 +1,163 @@
+<% period_label = t("views.statistics.period_labels.#{@period}") %>
+<% has_wellbeing_data = @avg_energy || @avg_mood || @avg_sleep %>
+
+<% if !has_wellbeing_data && !@avg_water_ml && !@avg_steps %>
+  <%= render "statistics/empty_state",
+        icon:  "fa-heart-pulse",
+        title: t("views.statistics.bien_etre.no_data_title", period: period_label),
+        hint:  t("views.statistics.bien_etre.no_data_hint") %>
+
+<% else %>
+
+  <%# ── KPI énergie / humeur / sommeil ── %>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-5">
+      <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-2">
+        <%= t("views.statistics.bien_etre.kpi_energy") %>
+      </p>
+      <% if @avg_energy %>
+        <p class="text-3xl font-bold text-brand">
+          <%= @avg_energy %>
+          <span class="text-sm font-normal text-ink-subtle ml-1"><%= t("views.statistics.bien_etre.out_of_five") %></span>
+        </p>
+        <div class="mt-3 progress-track h-1.5">
+          <div class="h-full rounded-full bg-brand" style="width: <%= (@avg_energy / 5.0 * 100).round %>%"></div>
+        </div>
+      <% else %>
+        <p class="text-2xl font-bold text-ink-subtle mb-2">—</p>
+        <p class="text-xs text-ink-subtle leading-relaxed"><%= t("views.statistics.bien_etre.evolution_empty", period: period_label) %></p>
+      <% end %>
+    </div>
+
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-5">
+      <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-2">
+        <%= t("views.statistics.bien_etre.kpi_mood") %>
+      </p>
+      <% if @avg_mood %>
+        <p class="text-3xl font-bold text-macro-proteins">
+          <%= @avg_mood %>
+          <span class="text-sm font-normal text-ink-subtle ml-1"><%= t("views.statistics.bien_etre.out_of_five") %></span>
+        </p>
+        <div class="mt-3 progress-track h-1.5">
+          <div class="h-full rounded-full bg-macro-proteins" style="width: <%= (@avg_mood / 5.0 * 100).round %>%"></div>
+        </div>
+      <% else %>
+        <p class="text-2xl font-bold text-ink-subtle mb-2">—</p>
+        <p class="text-xs text-ink-subtle leading-relaxed"><%= t("views.statistics.bien_etre.evolution_empty", period: period_label) %></p>
+      <% end %>
+    </div>
+
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-5">
+      <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-2">
+        <%= t("views.statistics.bien_etre.kpi_sleep") %>
+      </p>
+      <% if @avg_sleep %>
+        <p class="text-3xl font-bold text-macro-carbs">
+          <%= @avg_sleep %>
+          <span class="text-sm font-normal text-ink-subtle ml-1"><%= t("views.statistics.bien_etre.out_of_five") %></span>
+        </p>
+        <div class="mt-3 progress-track h-1.5">
+          <div class="h-full rounded-full bg-macro-carbs" style="width: <%= (@avg_sleep / 5.0 * 100).round %>%"></div>
+        </div>
+      <% else %>
+        <p class="text-2xl font-bold text-ink-subtle mb-2">—</p>
+        <p class="text-xs text-ink-subtle leading-relaxed"><%= t("views.statistics.bien_etre.evolution_empty", period: period_label) %></p>
+      <% end %>
+    </div>
+
+  </div>
+
+  <%# ── Hydratation + Pas ── %>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-5">
+      <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-2">
+        <%= t("views.statistics.bien_etre.kpi_hydration") %>
+      </p>
+      <% if @avg_water_ml %>
+        <div class="flex items-end gap-2 mb-2">
+          <p class="text-2xl font-bold text-status-info">
+            <%= number_with_delimiter(@avg_water_ml) %>
+            <span class="text-xs font-normal text-ink-subtle ml-0.5">ml</span>
+          </p>
+          <% if @hydration_pct %>
+            <p class="text-sm font-semibold text-ink-muted mb-0.5"><%= t("views.statistics.bien_etre.hydration_pct", pct: @hydration_pct) %></p>
+          <% end %>
+        </div>
+        <% if @water_goal_ml.to_i > 0 %>
+          <div class="progress-track h-1.5">
+            <div class="h-full rounded-full bg-status-info" style="width: <%= @hydration_pct || 0 %>%"></div>
+          </div>
+          <p class="text-xs text-ink-subtle mt-1.5">
+            <%= t("views.statistics.bien_etre.hydration_goal", goal: number_with_delimiter(@water_goal_ml)) %>
+          </p>
+        <% end %>
+      <% else %>
+        <p class="text-2xl font-bold text-ink-subtle mb-2">—</p>
+        <p class="text-xs text-ink-subtle leading-relaxed"><%= t("views.statistics.bien_etre.hydration_empty") %></p>
+      <% end %>
+    </div>
+
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-5">
+      <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-2">
+        <%= t("views.statistics.bien_etre.kpi_steps") %>
+      </p>
+      <% if @avg_steps %>
+        <p class="text-2xl font-bold text-status-success">
+          <%= number_with_delimiter(@avg_steps) %>
+          <span class="text-xs font-normal text-ink-subtle ml-0.5">pas</span>
+        </p>
+        <% if @steps_goal.to_i > 0 %>
+          <% steps_pct = [(@avg_steps.to_f / @steps_goal * 100).round, 100].min %>
+          <div class="mt-3 progress-track h-1.5">
+            <div class="h-full rounded-full bg-status-success" style="width: <%= steps_pct %>%"></div>
+          </div>
+          <p class="text-xs text-ink-subtle mt-1.5">
+            <%= t("views.statistics.bien_etre.steps_goal", goal: number_with_delimiter(@steps_goal)) %>
+          </p>
+        <% end %>
+      <% else %>
+        <p class="text-2xl font-bold text-ink-subtle mb-2">—</p>
+        <p class="text-xs text-ink-subtle leading-relaxed"><%= t("views.statistics.bien_etre.steps_empty") %></p>
+      <% end %>
+    </div>
+
+  </div>
+
+  <%# ── Évolution bien-être — multi-line chart ── %>
+  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl p-6">
+    <h2 class="text-sm font-semibold text-ink-primary mb-1 flex items-center gap-2">
+      <i class="fas fa-chart-line text-brand text-xs"></i>
+      <%= t("views.statistics.bien_etre.evolution_title") %>
+    </h2>
+    <% if @wb_labels&.any? %>
+      <p class="text-xs text-ink-subtle mb-4">
+        <%= t("views.statistics.bien_etre.days_logged", count: @wb_days.size) %>
+      </p>
+      <div class="relative h-56">
+        <canvas data-controller="multi-line-chart"
+                data-multi-line-chart-labels-value="<%= @wb_labels.to_json %>"
+                data-multi-line-chart-data1-value="<%= @wb_energy_data.to_json %>"
+                data-multi-line-chart-data2-value="<%= @wb_mood_data.to_json %>"
+                data-multi-line-chart-data3-value="<%= @wb_sleep_data.to_json %>"
+                data-multi-line-chart-label1-value="<%= t("views.statistics.bien_etre.evolution_energy") %>"
+                data-multi-line-chart-label2-value="<%= t("views.statistics.bien_etre.evolution_mood") %>"
+                data-multi-line-chart-label3-value="<%= t("views.statistics.bien_etre.evolution_sleep") %>"
+                data-multi-line-chart-color1-value="#EAB308"
+                data-multi-line-chart-color2-value="#34D399"
+                data-multi-line-chart-color3-value="#60A5FA">
+        </canvas>
+      </div>
+    <% else %>
+      <div class="flex flex-col items-center justify-center h-44 gap-3 border border-dashed border-surface-border/50 rounded-xl mt-2 text-center px-6">
+        <i class="fas fa-chart-line text-3xl text-ink-subtle/40"></i>
+        <p class="text-sm font-medium text-ink-muted"><%= t("views.statistics.bien_etre.evolution_title") %></p>
+        <p class="text-xs text-ink-subtle max-w-xs leading-relaxed">
+          <%= t("views.statistics.bien_etre.evolution_empty", period: period_label) %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+
+<% end %>

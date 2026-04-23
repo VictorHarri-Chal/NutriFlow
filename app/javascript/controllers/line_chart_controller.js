@@ -2,67 +2,46 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static values = {
-    labels:     Array,
-    data:       Array,
-    goal:       Number,
-    projLabels: Array,
-    projData:   Array
+    labels: Array,
+    data:   Array,
+    label:  { type: String, default: "" },
+    unit:   { type: String, default: "" },
+    goal:   { type: Number, default: 0 },
+    color:  { type: String, default: "#EAB308" }
   }
 
   connect() {
     const Chart = window.Chart
     if (!Chart) return
 
-    const amber     = "#EAB308"
+    const color     = this.colorValue
     const gridColor = "rgba(82, 82, 91, 0.25)"
     const tickColor = "#71717A"
-
-    const hasProj  = this.projLabelsValue.length > 0
-    const allLabels = hasProj
-      ? [...this.labelsValue, ...this.projLabelsValue]
-      : this.labelsValue
-
-    const weightData = hasProj
-      ? [...this.dataValue, ...Array(this.projLabelsValue.length).fill(null)]
-      : this.dataValue
-
-    const projDataset = hasProj ? {
-      label: "Projection",
-      data: [...Array(this.dataValue.length - 1).fill(null), this.dataValue.at(-1), ...this.projDataValue],
-      borderColor: "rgba(234, 179, 8, 0.35)",
-      borderDash: [5, 4],
-      borderWidth: 1.5,
-      pointRadius: 0,
-      fill: false,
-      tension: 0.3,
-      spanGaps: true,
-    } : null
+    const unit      = this.unitValue
 
     this.chart = new Chart(this.element, {
       type: "line",
       data: {
-        labels: allLabels,
+        labels: this.labelsValue,
         datasets: [
           {
-            label: "Poids (kg)",
-            data: weightData,
-            borderColor: amber,
-            backgroundColor: "rgba(234, 179, 8, 0.08)",
+            label: this.labelValue,
+            data: this.dataValue,
+            borderColor: color,
+            backgroundColor: `${color}14`,
             fill: true,
             tension: 0.4,
             pointRadius: 3,
             pointHoverRadius: 6,
-            pointBackgroundColor: amber,
+            pointBackgroundColor: color,
             pointBorderColor: "#18181B",
             pointBorderWidth: 1.5,
             borderWidth: 2,
-            spanGaps: false,
           },
-          ...(projDataset ? [projDataset] : []),
           ...(this.goalValue > 0 ? [{
             label: "Objectif",
-            data: allLabels.map(() => this.goalValue),
-            borderColor: "rgba(52, 211, 153, 0.5)",
+            data: this.labelsValue.map(() => this.goalValue),
+            borderColor: "rgba(34, 197, 94, 0.5)",
             borderDash: [6, 4],
             borderWidth: 1.5,
             pointRadius: 0,
@@ -85,21 +64,24 @@ export default class extends Controller {
             bodyColor: "#A1A1AA",
             padding: 10,
             callbacks: {
-              label: ctx => ctx.parsed.y !== null ? ` ${ctx.parsed.y} kg` : null
+              label: ctx => ` ${ctx.parsed.y}${unit ? " " + unit : ""}`
             }
           }
         },
         scales: {
           x: {
-            grid:  { color: gridColor },
-            ticks: { color: tickColor, maxTicksLimit: 8, maxRotation: 0 },
+            grid:   { color: gridColor },
+            ticks:  { color: tickColor, maxTicksLimit: 8, maxRotation: 0 },
             border: { color: gridColor }
           },
           y: {
-            grid:  { color: gridColor },
-            ticks: { color: tickColor, callback: val => `${val} kg` },
+            grid:   { color: gridColor },
+            ticks:  {
+              color: tickColor,
+              callback: val => `${val}${unit ? " " + unit : ""}`
+            },
             border:      { color: gridColor },
-            beginAtZero: false
+            beginAtZero: true
           }
         }
       }

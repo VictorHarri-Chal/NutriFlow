@@ -2,8 +2,8 @@
 
 <div class="max-w-4xl mx-auto mt-16 space-y-5 pb-12">
 
-  <%# ── Stat cards ── %>
-  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+  <%# ── KPI cards ── %>
+  <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
 
     <%# Poids actuel %>
     <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
@@ -14,6 +14,45 @@
         <p class="text-2xl font-bold text-ink-primary">
           <%= @current_weight %><span class="text-sm font-normal text-ink-subtle ml-1">kg</span>
         </p>
+        <% if @trend_weekly %>
+          <%
+            good   = @positive_is_good
+            toward = @trend_weekly > 0.05 ? :up : @trend_weekly < -0.05 ? :down : :flat
+            trend_color = toward == :flat ? "text-ink-subtle" :
+                          (toward == :up && good || toward == :down && !good) ? "text-status-success" : "text-status-danger"
+            trend_icon  = toward == :up ? "fa-arrow-trend-up" : toward == :down ? "fa-arrow-trend-down" : "fa-minus"
+          %>
+          <p class="text-xs <%= trend_color %> mt-1.5 flex items-center gap-1">
+            <i class="fas <%= trend_icon %> text-[9px]"></i>
+            <%= @trend_weekly > 0 ? "+#{@trend_weekly}" : @trend_weekly %> kg/sem
+          </p>
+        <% end %>
+      <% else %>
+        <p class="text-2xl font-bold text-ink-subtle">—</p>
+      <% end %>
+    </div>
+
+    <%# IMC %>
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+      <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1">
+        <%= t("views.weight_entries.stats.bmi_label") %>
+      </p>
+      <% if @bmi %>
+        <%
+          bmi_color = case @bmi_category
+                      when :underweight then "text-status-info"
+                      when :normal      then "text-status-success"
+                      when :overweight  then "text-status-warning"
+                      else                   "text-status-danger"
+                      end
+        %>
+        <p class="text-2xl font-bold <%= bmi_color %>"><%= @bmi %></p>
+        <p class="text-[10px] <%= bmi_color %> mt-1.5 font-medium">
+          <%= t("views.weight_entries.stats.bmi_category.#{@bmi_category}") %>
+        </p>
+      <% elsif @current_weight %>
+        <p class="text-2xl font-bold text-ink-subtle">—</p>
+        <p class="text-[10px] text-ink-subtle mt-1.5"><%= t("views.weight_entries.stats.no_height") %></p>
       <% else %>
         <p class="text-2xl font-bold text-ink-subtle">—</p>
       <% end %>
@@ -26,7 +65,8 @@
       </p>
       <% if @delta_30d %>
         <%
-          delta_color = @delta_30d < 0 ? "text-status-success" : @delta_30d > 0 ? "text-status-danger" : "text-ink-primary"
+          delta_color = @delta_30d == 0 ? "text-ink-primary" :
+                        (@delta_30d > 0) == @positive_is_good ? "text-status-success" : "text-status-danger"
           delta_icon  = @delta_30d < 0 ? "fa-arrow-down" : @delta_30d > 0 ? "fa-arrow-up" : "fa-minus"
         %>
         <p class="text-2xl font-bold <%= delta_color %>">
@@ -46,7 +86,8 @@
       </p>
       <% if @delta_90d %>
         <%
-          d_color = @delta_90d < 0 ? "text-status-success" : @delta_90d > 0 ? "text-status-danger" : "text-ink-primary"
+          d_color = @delta_90d == 0 ? "text-ink-primary" :
+                    (@delta_90d > 0) == @positive_is_good ? "text-status-success" : "text-status-danger"
           d_icon  = @delta_90d < 0 ? "fa-arrow-down" : @delta_90d > 0 ? "fa-arrow-up" : "fa-minus"
         %>
         <p class="text-2xl font-bold <%= d_color %>">
@@ -69,9 +110,7 @@
           <%= @profile.goal_weight %><span class="text-sm font-normal text-ink-subtle ml-1">kg</span>
         </p>
         <% if @goal_delta %>
-          <%
-            remaining_color = @goal_delta.abs < 1 ? "text-status-success" : "text-ink-subtle"
-          %>
+          <% remaining_color = @goal_delta.abs < 1 ? "text-status-success" : "text-ink-subtle" %>
           <p class="text-xs <%= remaining_color %> mt-1">
             <% if @goal_delta > 0 %>
               <%= t("views.weight_entries.stats.to_lose", kg: @goal_delta) %>
@@ -84,9 +123,14 @@
         <% end %>
       <% else %>
         <p class="text-2xl font-bold text-ink-subtle">—</p>
-        <p class="text-xs text-ink-subtle mt-1">
-          <%= link_to t("views.weight_entries.stats.set_goal"), edit_profile_path, class: "text-brand hover:text-brand-hover" %>
-        </p>
+        <div class="mt-2">
+          <%= link_to edit_profile_path,
+                class: "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium bg-brand/10 border border-brand/25 text-brand hover:bg-brand/15 hover:border-brand/40 transition-colors" do %>
+            <i class="fas fa-circle-user text-[9px]"></i>
+            <%= t("views.weight_entries.stats.set_goal") %>
+            <i class="fas fa-arrow-right text-[9px] opacity-60"></i>
+          <% end %>
+        </div>
       <% end %>
     </div>
 
@@ -99,9 +143,14 @@
         <i class="fas fa-chart-line text-brand text-sm"></i>
         <%= t("views.weight_entries.chart.title") %>
       </h2>
-      <span class="text-xs text-ink-subtle">
-        <%= t("views.weight_entries.chart.last_n", count: [@chart_data.size, 90].min) %>
-      </span>
+      <div class="flex items-center gap-1.5">
+        <% [30, 90].each do |p| %>
+          <%= link_to weight_entries_path(period: p),
+                class: "px-3 py-1 rounded-full text-xs font-medium border transition-colors #{@period == p ? 'bg-brand/20 text-brand border-brand/50' : 'text-ink-subtle border-surface-border/50 hover:border-brand/30 hover:text-ink-muted'}" do %>
+            <%= t("views.weight_entries.chart.period_label", days: p) %>
+          <% end %>
+        <% end %>
+      </div>
     </div>
 
     <% if @chart_data.size >= 2 %>
@@ -109,9 +158,17 @@
         <canvas data-controller="weight-chart"
                 data-weight-chart-labels-value="<%= @chart_labels.to_json %>"
                 data-weight-chart-data-value="<%= @chart_data.to_json %>"
-                data-weight-chart-goal-value="<%= @chart_goal %>">
+                data-weight-chart-goal-value="<%= @chart_goal %>"
+                data-weight-chart-proj-labels-value="<%= (@proj_labels || []).to_json %>"
+                data-weight-chart-proj-data-value="<%= (@proj_data || []).to_json %>">
         </canvas>
       </div>
+      <% if @proj_labels&.any? %>
+        <p class="text-[10px] text-ink-subtle/50 mt-3 flex items-center gap-2">
+          <span class="inline-block w-6 border-t border-dashed border-brand/40"></span>
+          <%= t("views.weight_entries.chart.projection_hint") %>
+        </p>
+      <% end %>
     <% else %>
       <div class="flex flex-col items-center justify-center h-48 border border-dashed border-surface-border/50 rounded-xl">
         <i class="fas fa-chart-line text-2xl text-ink-subtle mb-2"></i>
@@ -205,7 +262,10 @@
                   <% prev_entry = recent[idx + 1] %>
                   <% diff = (entry.weight_kg - prev_entry.weight_kg).round(1) %>
                   <% if diff != 0 %>
-                    <span class="text-xs <%= diff < 0 ? 'text-status-success' : 'text-status-danger' %>">
+                    <%
+                      diff_color = (diff > 0) == @positive_is_good ? 'text-status-success' : 'text-status-danger'
+                    %>
+                    <span class="text-xs <%= diff_color %>">
                       <%= diff > 0 ? "+#{diff}" : diff %> kg
                     </span>
                   <% end %>
