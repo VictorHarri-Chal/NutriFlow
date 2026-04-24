@@ -56,12 +56,12 @@ class ExercisesController < ApplicationController
     exercise_ids = WorkoutSet
       .joins(workout_session: :day)
       .where(days: { user_id: current_user.id })
-      .order("workout_sets.created_at DESC")
+      .group(:exercise_id)
+      .order("MAX(workout_sets.created_at) DESC")
+      .limit(8)
       .pluck(:exercise_id)
-      .uniq
-      .first(8)
 
-    exercises = Exercise.where(id: exercise_ids).index_by(&:id)
+    exercises     = Exercise.where(id: exercise_ids).index_by(&:id)
     favorited_ids = current_user.exercise_favorites.pluck(:exercise_id).to_set
 
     ordered = exercise_ids.filter_map { |id| exercises[id] }

@@ -1,6 +1,9 @@
 class CardioBlock < ApplicationRecord
   belongs_to :cardio_session
 
+  # Set from the controller before save to avoid a join chain (cardio_session → day → user → profile)
+  attr_accessor :user_weight_kg
+
   MACHINES = %w[treadmill bike rower ski_erg stairmaster elliptical outdoor_run jump_rope swimming].freeze
 
   # MET values (Compendium of Physical Activities, Ainsworth et al. 2011)
@@ -96,7 +99,8 @@ class CardioBlock < ApplicationRecord
   end
 
   def compute_calories
-    weight_kg = cardio_session&.day&.user&.profile&.weight&.to_f || 75.0
-    self.calories_burned = estimated_calories(weight_kg)
+    w = user_weight_kg.to_f
+    w = cardio_session&.day&.user&.profile&.weight&.to_f || 75.0 if w <= 0
+    self.calories_burned = estimated_calories(w)
   end
 end

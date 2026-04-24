@@ -31,6 +31,7 @@ export default class extends Controller {
     this.hiddenInputTarget.value = value
     this.labelTarget.textContent = value || "—"
     this._close()
+    this.hiddenInputTarget.dispatchEvent(new Event("input", { bubbles: true }))
   }
 
   _open() {

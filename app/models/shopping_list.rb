@@ -55,28 +55,43 @@ class ShoppingList < ApplicationRecord
     return a if b.blank?
     return b if a.blank?
 
-    pa = a.to_s.strip.match(/\A([\d.]+)\s*(\S*)\z/)
     pb = b.to_s.strip.match(/\A([\d.]+)\s*(\S*)\z/)
+    return "#{a} + #{b}" unless pb
 
-    return "#{a} + #{b}" unless pa && pb
+    unit_b = pb[2]
+    val_b  = pb[1].to_f
+    conv_b = UNIT_CONVERSIONS[unit_b]
 
-    unit_a, unit_b = pa[2], pb[2]
+    # Split compound quantities ("500 g + 90 mL") into components and try
+    # to merge b into the first compatible component.
+    components = a.to_s.split(" + ").map(&:strip)
+    merged     = false
 
-    if unit_a == unit_b
-      total = pa[1].to_f + pb[1].to_f
-      n = total == total.to_i ? total.to_i : total
-      unit_a.present? ? "#{n} #{unit_a}" : n.to_s
-    else
+    new_components = components.map do |comp|
+      next comp if merged
+
+      pa = comp.match(/\A([\d.]+)\s*(\S*)\z/)
+      next comp unless pa
+
+      unit_a = pa[2]
+      val_a  = pa[1].to_f
       conv_a = UNIT_CONVERSIONS[unit_a]
-      conv_b = UNIT_CONVERSIONS[unit_b]
 
-      if conv_a && conv_b && conv_a[0] == conv_b[0]
-        total = pa[1].to_f * conv_a[1] + pb[1].to_f * conv_b[1]
-        n = total == total.to_i ? total.to_i : total
+      if unit_a == unit_b
+        total  = val_a + val_b
+        n      = total % 1 == 0 ? total.to_i : total
+        merged = true
+        unit_a.present? ? "#{n} #{unit_a}" : n.to_s
+      elsif conv_a && conv_b && conv_a[0] == conv_b[0]
+        total  = val_a * conv_a[1] + val_b * conv_b[1]
+        n      = total % 1 == 0 ? total.to_i : total
+        merged = true
         "#{n} #{conv_a[0]}"
       else
-        "#{a} + #{b}"
+        comp
       end
     end
+
+    merged ? new_components.join(" + ") : "#{a} + #{b}"
   end
 end

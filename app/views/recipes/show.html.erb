@@ -150,7 +150,7 @@
               <% @recipe.recipe_items.each do |item| %>
                 <tr>
                   <td class="font-medium text-ink-primary"><%= item.food.name %></td>
-                  <td class="text-ink-muted"><%= item.quantity %> g</td>
+                  <td class="text-ink-muted"><%= item.quantity.frac.zero? ? item.quantity.to_i : item.quantity %> <%= item.unit %></td>
                   <td class="font-semibold text-brand"><%= item.total_calories %> kcal</td>
                 </tr>
               <% end %>

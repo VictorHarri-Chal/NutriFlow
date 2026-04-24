@@ -33,7 +33,12 @@ export default class extends Controller {
         "Content-Type": "application/json",
         "X-CSRF-Token": document.querySelector("meta[name='csrf-token']")?.content
       },
-      body: JSON.stringify({ ids })
+      body:   JSON.stringify({ ids }),
+      signal: AbortSignal.timeout(5000)
+    }).catch(err => {
+      if (err.name !== "AbortError" && err.name !== "TimeoutError") {
+        console.error("[sortable-list] Reorder failed:", err)
+      }
     })
   }
 }

@@ -34,22 +34,50 @@
     </div>
   </div>
 
-  <%# ── Quantité ── %>
-  <div class="w-28 shrink-0">
-    <div class="relative">
+  <%# ── Quantité + unité ── %>
+  <div class="flex gap-1 shrink-0">
+    <%# Nombre %>
+    <div class="w-16">
       <%= f.number_field :quantity,
             min: 1, step: 1,
             value: f.object.quantity.present? ? f.object.quantity.to_i : 100,
-            class: "input-dark text-sm text-center pr-8 #{f.object.errors[:quantity].any? ? 'border-status-danger focus:ring-status-danger/50 focus:border-status-danger' : ''}",
+            class: "input-dark text-sm text-center w-full #{f.object.errors[:quantity].any? ? 'border-status-danger focus:ring-status-danger/50 focus:border-status-danger' : ''}",
             placeholder: "100" %>
-      <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">g</span>
+      <% if f.object.errors[:quantity].any? %>
+        <p class="mt-1 text-xs text-status-danger flex items-center gap-1">
+          <i class="fas fa-circle-exclamation text-[10px]"></i>
+          <%= t("views.recipes.item_fields.error_quantity") %>
+        </p>
+      <% end %>
     </div>
-    <% if f.object.errors[:quantity].any? %>
-      <p class="mt-1 text-xs text-status-danger flex items-center gap-1">
-        <i class="fas fa-circle-exclamation text-[10px]"></i>
-        <%= t("views.recipes.item_fields.error_quantity") %>
-      </p>
-    <% end %>
+
+    <%# Sélecteur d'unité %>
+    <div data-controller="unit-select" class="relative shrink-0 w-16">
+      <%= f.hidden_field :unit,
+            value: f.object.unit.presence || "g",
+            data: { "unit-select-target": "hiddenInput" } %>
+
+      <button type="button"
+              data-action="click->unit-select#toggle"
+              data-unit-select-target="trigger"
+              class="input-dark w-full text-sm flex items-center justify-between gap-1 cursor-pointer select-none px-2">
+        <span data-unit-select-target="label" class="text-ink-muted"><%= f.object.unit.presence || "g" %></span>
+        <i class="fas fa-chevron-down text-[10px] text-ink-subtle transition-transform duration-150"
+           data-unit-select-target="icon"></i>
+      </button>
+
+      <div data-unit-select-target="dropdown"
+           class="hidden absolute top-full mt-1 left-0 min-w-[4.5rem] bg-surface-raised border border-surface-border/50 rounded-xl shadow-xl overflow-hidden z-50 py-1">
+        <% RecipeItem::UNITS.each do |unit| %>
+          <button type="button"
+                  data-action="click->unit-select#select"
+                  data-value="<%= unit %>"
+                  class="w-full text-left px-3 py-2 text-xs text-ink-muted hover:text-ink-primary hover:bg-surface-hover transition-colors">
+            <%= unit %>
+          </button>
+        <% end %>
+      </div>
+    </div>
   </div>
 
   <%# ── Supprimer ── %>
