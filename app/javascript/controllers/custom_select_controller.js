@@ -43,7 +43,8 @@ export default class extends Controller {
     const opt = sel.options[sel.selectedIndex]
     const hasValue = sel.value !== ""
     this.labelTarget.textContent = opt ? opt.text : "—"
-    this.labelTarget.className = hasValue ? "text-ink-primary" : "text-ink-subtle"
+    this.labelTarget.classList.remove("text-ink-primary", "text-ink-subtle")
+    this.labelTarget.classList.add(hasValue ? "text-ink-primary" : "text-ink-subtle")
   }
 
   toggle(event) {

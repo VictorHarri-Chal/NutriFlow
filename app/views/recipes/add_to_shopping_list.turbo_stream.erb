@@ -1,0 +1,32 @@
+<% if @nothing_missing %>
+  <%# Toast informatif — tous les ingrédients sont déjà en stock %>
+  <%= turbo_stream.prepend "flash_messages" do %>
+    <div data-controller="auto-dismiss"
+         class="pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl bg-surface-raised border border-surface-border/50 shadow-lg text-sm text-ink-muted max-w-sm"
+         role="alert">
+      <i class="fas fa-circle-check text-base shrink-0 text-status-success"></i>
+      <span><%= t("views.shopping_lists.nothing_missing") %></span>
+    </div>
+  <% end %>
+<% else %>
+  <%# Toast de confirmation ─ injecté dans le DOM puis auto-retiré par le controller alert %>
+  <%= turbo_stream.prepend "flash_messages" do %>
+    <div data-controller="auto-dismiss"
+         class="pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl bg-status-success/15 border border-status-success/40 shadow-lg text-sm text-status-success max-w-sm"
+         role="alert">
+      <i class="fas fa-check-circle text-base shrink-0"></i>
+      <span>
+        <%= t("views.shopping_lists.items_added", count: @added_count) %>
+        <%= link_to t("views.shopping_lists.view_list"),
+              shopping_lists_path,
+              class: "ml-1 underline underline-offset-2 hover:opacity-80 transition-opacity" %>
+      </span>
+    </div>
+  <% end %>
+
+  <%# Met à jour le badge sidebar %>
+  <%= turbo_stream.replace "shopping_list_badge" do %>
+    <%= render "shared/shopping_badge",
+          count: @shopping_list.shopping_list_items.unchecked.count %>
+  <% end %>
+<% end %>

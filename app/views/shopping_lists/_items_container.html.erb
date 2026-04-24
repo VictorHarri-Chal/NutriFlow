@@ -1,0 +1,56 @@
+<%# locals: (shopping_list:, items_by_category:) %>
+<%
+  category_meta = {
+    "proteins"    => { icon: "fa-drumstick-bite",  label: t("views.shopping_lists.categories.proteins")   },
+    "grains"      => { icon: "fa-bread-slice",      label: t("views.shopping_lists.categories.grains")     },
+    "vegetables"  => { icon: "fa-carrot",            label: t("views.shopping_lists.categories.vegetables") },
+    "fruits"      => { icon: "fa-apple-whole",       label: t("views.shopping_lists.categories.fruits")    },
+    "dairy"       => { icon: "fa-cheese",            label: t("views.shopping_lists.categories.dairy")      },
+    "beverages"   => { icon: "fa-glass-water",       label: t("views.shopping_lists.categories.beverages")  },
+    "condiments"  => { icon: "fa-mortar-pestle",     label: t("views.shopping_lists.categories.condiments") },
+    "other"       => { icon: "fa-box",               label: t("views.shopping_lists.categories.other")      }
+  }
+
+  # Ordre d'affichage des catégories
+  ordered_keys = %w[proteins grains vegetables fruits dairy beverages condiments other]
+  sorted = ordered_keys.filter_map { |k| [k, items_by_category[k]] if items_by_category[k] }
+%>
+
+<div id="shopping_list_items">
+  <% if sorted.empty? %>
+    <div class="py-12 flex flex-col items-center justify-center text-center px-6 border-2 border-dashed border-surface-border/40 rounded-xl">
+      <div class="w-12 h-12 mx-auto mb-3 bg-surface-hover rounded-full flex items-center justify-center">
+        <i class="fas fa-cart-shopping text-brand text-lg"></i>
+      </div>
+      <h3 class="text-sm font-semibold text-ink-primary mb-1"><%= t("views.shopping_lists.empty_state.title") %></h3>
+      <p class="text-xs text-ink-muted max-w-xs"><%= t("views.shopping_lists.empty_state.hint") %></p>
+    </div>
+  <% elsif sorted.size == 1 && sorted.first[0] == "other" %>
+    <%# Un seul groupe "other" → pas de header catégorie, liste plate %>
+    <div class="bg-surface-base rounded-xl border border-surface-border/40 divide-y divide-surface-border/20">
+      <% sorted.first[1].each do |item| %>
+        <%= render "shopping_lists/item", item: item, shopping_list: shopping_list %>
+      <% end %>
+    </div>
+  <% else %>
+    <%# Plusieurs catégories → headers avec section par groupe %>
+    <div class="space-y-3">
+      <% sorted.each do |category, items| %>
+        <% meta = category_meta[category] || category_meta["other"] %>
+        <div>
+          <div class="flex items-center gap-1.5 px-1 mb-1.5">
+            <i class="fas <%= meta[:icon] %> text-[11px] text-ink-subtle/50"></i>
+            <span class="text-[11px] font-semibold tracking-widest uppercase text-ink-subtle/50 select-none">
+              <%= meta[:label] %>
+            </span>
+          </div>
+          <div class="bg-surface-base rounded-xl border border-surface-border/40 divide-y divide-surface-border/20">
+            <% items.each do |item| %>
+              <%= render "shopping_lists/item", item: item, shopping_list: shopping_list %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

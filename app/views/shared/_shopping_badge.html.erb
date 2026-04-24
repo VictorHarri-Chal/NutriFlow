@@ -1,0 +1,8 @@
+<%# locals: (count:) %>
+<span id="shopping_list_badge">
+  <% if count > 0 %>
+    <span class="ml-auto flex-shrink-0 inline-flex items-center justify-center h-4 min-w-4 px-1 rounded-full bg-brand text-zinc-900 text-[9px] font-bold leading-none">
+      <%= count > 99 ? "99+" : count %>
+    </span>
+  <% end %>
+</span>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_23_150000) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_24_100002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -180,6 +180,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_23_150000) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.boolean "favorite", default: false, null: false
+    t.string "category"
+    t.boolean "in_pantry", default: true, null: false
     t.index ["brand"], name: "index_foods_on_brand"
     t.index ["name"], name: "index_foods_on_name"
     t.index ["user_id"], name: "index_foods_on_user_id"
@@ -263,6 +265,29 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_23_150000) do
     t.boolean "favorite", default: false, null: false
     t.index ["name", "user_id"], name: "index_recipes_on_name_and_user_id"
     t.index ["user_id"], name: "index_recipes_on_user_id"
+  end
+
+  create_table "shopping_list_items", force: :cascade do |t|
+    t.bigint "shopping_list_id", null: false
+    t.bigint "food_id"
+    t.string "name", null: false
+    t.string "quantity"
+    t.boolean "checked", default: false, null: false
+    t.integer "position", default: 0, null: false
+    t.string "category"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["food_id"], name: "index_shopping_list_items_on_food_id"
+    t.index ["shopping_list_id", "position"], name: "index_shopping_list_items_on_shopping_list_id_and_position"
+    t.index ["shopping_list_id"], name: "index_shopping_list_items_on_shopping_list_id"
+  end
+
+  create_table "shopping_lists", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "name", default: "Ma liste", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_shopping_lists_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -359,6 +384,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_23_150000) do
   add_foreign_key "recipe_ratings", "recipes"
   add_foreign_key "recipe_ratings", "users"
   add_foreign_key "recipes", "users"
+  add_foreign_key "shopping_list_items", "foods"
+  add_foreign_key "shopping_list_items", "shopping_lists"
+  add_foreign_key "shopping_lists", "users"
   add_foreign_key "weight_entries", "users"
   add_foreign_key "workout_programs", "users"
   add_foreign_key "workout_sessions", "days"

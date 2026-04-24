@@ -14,7 +14,9 @@
 
       <!-- Recherche + bouton créer -->
       <div class="flex items-center gap-3 flex-1 max-w-lg">
-        <%= form_with url: exercises_path, method: :get, local: true, class: "relative flex-1" do %>
+        <%= form_with url: exercises_path, method: :get, local: true,
+              data: { controller: "search", turbo_frame: "exercises_results" },
+              class: "relative flex-1" do %>
           <%= hidden_field_tag :body_part,  params[:body_part]  if params[:body_part].present? %>
           <%= hidden_field_tag :equipment,  params[:equipment]  if params[:equipment].present? %>
           <%= hidden_field_tag :difficulty, params[:difficulty] if params[:difficulty].present? %>
@@ -22,10 +24,12 @@
           <%= text_field_tag :query, params[:query],
               class: "input-dark pl-9 #{params[:query].present? ? 'pr-8' : ''} py-1.5 text-sm",
               placeholder: t("views.exercises.search_placeholder"),
-              autocomplete: "off" %>
+              autocomplete: "off",
+              data: { action: "input->search#input" } %>
           <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-ink-subtle text-xs pointer-events-none"></i>
           <% if params[:query].present? %>
             <%= link_to exercises_path(body_part: params[:body_part], equipment: params[:equipment], difficulty: params[:difficulty], source: params[:source]),
+                data: { turbo_frame: "exercises_results" },
                 class: "absolute right-3 top-1/2 -translate-y-1/2 text-ink-subtle hover:text-ink-muted" do %>
               <i class="fas fa-times text-xs"></i>
             <% end %>
@@ -180,6 +184,7 @@
   </header>
 
   <!-- ── Grille d'exercices ── -->
+  <%= turbo_frame_tag "exercises_results" do %>
   <% if @exercises.empty? %>
     <div class="text-center py-16 border-2 border-dashed border-surface-border/50 rounded-xl bg-surface-base">
       <div class="w-14 h-14 mx-auto mb-3 bg-surface-raised rounded-full flex items-center justify-center border border-surface-border/40">
@@ -188,7 +193,7 @@
       <% if params[:source] == "custom" %>
         <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.exercises.custom.empty.title") %></h3>
         <p class="text-ink-muted mb-4"><%= t("views.exercises.custom.empty.description") %></p>
-        <%= link_to new_exercise_path, class: "btn-primary" do %>
+        <%= link_to new_exercise_path, class: "btn-primary", data: { turbo_frame: "_top" } do %>
           <i class="fas fa-plus"></i>
           <%= t("views.exercises.custom.btn_new") %>
         <% end %>
@@ -225,7 +230,8 @@
                   difficulty: params[:difficulty],
                   source:     params[:source],
                   query:      params[:query]),
-              class: "card p-0 overflow-hidden hover:border-surface-border transition-all block" do %>
+              class: "card p-0 overflow-hidden hover:border-surface-border transition-all block",
+              data: { turbo_frame: "_top" } do %>
 
             <!-- Image / GIF / placeholder -->
             <% has_gif   = exercise.gif_url.present? %>
@@ -299,5 +305,6 @@
     <% end %>
 
   <% end %>
+  <% end %> <%# /turbo_frame_tag exercises_results %>
 
 </div>
