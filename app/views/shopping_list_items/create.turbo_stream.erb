@@ -1,0 +1,44 @@
+<%# Toast notification %>
+<%= turbo_stream.prepend "flash_messages" do %>
+  <div class="pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl bg-status-success/15 border border-status-success/40 shadow-lg text-sm text-status-success max-w-sm"
+       data-controller="auto-dismiss">
+    <i class="fas fa-check-circle text-base shrink-0"></i>
+    <span><%= flash[:notice] %></span>
+  </div>
+<% end %>
+
+<%# Remplace le container complet (gère le groupement par catégorie) %>
+<%= turbo_stream.replace "shopping_list_items" do %>
+  <%= render "shopping_lists/items_container",
+        shopping_list:     @shopping_list,
+        items_by_category: @items_by_category %>
+<% end %>
+
+<%# Remet le formulaire à zéro %>
+<%= turbo_stream.replace "shopping_list_add_form" do %>
+  <%= render "shopping_lists/add_form",
+        shopping_list: @shopping_list,
+        foods_json:    current_user.foods.order(:name).select(:id, :name, :category, :favorite).as_json(only: [:id, :name, :category, :favorite]) %>
+<% end %>
+
+<%# Met à jour le compteur dans le header %>
+<%= turbo_stream.replace "shopping_list_counter" do %>
+  <p id="shopping_list_counter" class="text-xs text-ink-subtle mt-0.5">
+    <%= t("views.shopping_lists.unchecked_count", count: @unchecked_count) %>
+  </p>
+<% end %>
+
+<%# Met à jour le badge sidebar %>
+<%= turbo_stream.replace "shopping_list_badge" do %>
+  <%= render "shared/shopping_badge", count: @unchecked_count %>
+<% end %>
+
+<%# Affiche/masque la barre d'export %>
+<%= turbo_stream.replace "shopping_export_bar" do %>
+  <%= render "shopping_lists/export_bar",
+        shopping_list:   @shopping_list,
+        unchecked_count: @unchecked_count,
+        has_checked:     @has_checked,
+        has_items:       @has_items %>
+<% end %>
+

@@ -1,7 +1,7 @@
 <%# Wrapper relatif : lien + bouton favori frères (évite lien dans lien) %>
 <div class="relative group" id="recipe_<%= recipe.id %>">
 
-  <%= link_to recipe_path(recipe), class: "block" do %>
+  <%= link_to recipe_path(recipe), class: "block", data: { turbo_frame: "_top" } do %>
     <div class="bg-surface-raised rounded-xl border border-surface-border/50 overflow-hidden hover:shadow-xl hover:border-brand/40 transition-all duration-300 transform hover:scale-[1.02]">
 
       <%# ── En-tête ── %>

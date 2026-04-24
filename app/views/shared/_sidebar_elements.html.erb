@@ -16,6 +16,13 @@
             <span class="font-medium pb-1"><%= t("views.shared.sidebar.recipes") %></span>
         <% end %>
 
+        <% shopping_unchecked = current_user.shopping_lists.joins(:shopping_list_items).where(shopping_list_items: { checked: false }).count %>
+        <%= link_to shopping_lists_path, class: request.path.start_with?(shopping_lists_path) ? "nav-link-active" : "nav-link" do %>
+            <i class="fas fa-cart-shopping w-5 h-5 mr-3"></i>
+            <span class="font-medium pb-1 flex-1"><%= t("views.shared.sidebar.shopping_list") %></span>
+            <%= render "shared/shopping_badge", count: shopping_unchecked %>
+        <% end %>
+
         <% if current_user.show_workout_section? %>
           <%= link_to exercises_path, class: current_page?(exercises_path) ? "nav-link-active" : "nav-link" do %>
               <i class="fas fa-dumbbell w-5 h-5 mr-3"></i>

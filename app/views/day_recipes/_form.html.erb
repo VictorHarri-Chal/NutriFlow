@@ -4,7 +4,7 @@
       proteins: r.total_proteins.round(1), carbs: r.total_carbs.round(1), fats: r.total_fats.round(1),
       totalWeight: r.total_weight.to_f,
       favorite: r.favorite }
-  }.to_json) %>
+  }.to_json).html_safe %>
 </script>
 
 <%= simple_form_for([day, day_recipe]) do |f| %>
@@ -71,11 +71,20 @@
       <% if @day_food_groups.any? %>
         <div>
           <label class="label-dark block mb-1.5"><%= t("views.day_recipes.form.food_group") %></label>
-          <%= f.association :day_food_group,
-              collection: @day_food_groups,
-              prompt: t("views.day_foods.form.select_group"),
-              label: false,
-              input_html: { class: "input-dark select-chevron appearance-none pr-10 text-sm" } %>
+          <div data-controller="custom-select" class="relative">
+            <%= f.association :day_food_group,
+                collection: @day_food_groups,
+                prompt: t("views.day_foods.form.select_group"),
+                label: false,
+                input_html: { class: "sr-only", data: { custom_select_target: "select" } } %>
+            <button type="button" data-action="click->custom-select#toggle"
+                    class="input-dark flex items-center justify-between cursor-pointer w-full text-left text-sm">
+              <span data-custom-select-target="label" class="text-ink-subtle truncate min-w-0 flex-1"></span>
+              <i class="fas fa-chevron-down text-xs text-ink-subtle flex-shrink-0"></i>
+            </button>
+            <div data-custom-select-target="dropdown" data-custom-select-dropdown
+                 class="hidden absolute z-50 w-full mt-1 bg-surface-raised border border-surface-border/60 rounded-lg shadow-2xl max-h-48 overflow-y-auto"></div>
+          </div>
         </div>
       <% else %>
         <div>

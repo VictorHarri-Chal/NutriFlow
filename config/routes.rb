@@ -12,9 +12,14 @@ Rails.application.routes.draw do
     end
   end
   resources :foods, except: [:show] do
+    collection do
+      patch :bulk_pantry
+      post  :add_missing_to_shopping_list
+    end
     member do
-      post :duplicate
+      post  :duplicate
       patch :toggle_favorite
+      patch :toggle_pantry
     end
   end
   resource :daily_calorie_requirement, only: [:show]
@@ -67,8 +72,17 @@ Rails.application.routes.draw do
     member do
       post  :duplicate
       patch :toggle_favorite
+      post  :add_to_shopping_list
     end
     resources :recipe_ratings, only: [:create, :destroy]
+  end
+
+  resources :shopping_lists, only: [:index, :show, :destroy] do
+    member do
+      delete :clear_checked
+      delete :clear_all
+    end
+    resources :shopping_list_items, only: [:create, :update, :destroy]
   end
 
   post 'days/:date/add_food', to: 'days#add_food', as: :add_food_to_day

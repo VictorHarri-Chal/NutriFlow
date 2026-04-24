@@ -1,5 +1,5 @@
 class RecipesController < ApplicationController
-  before_action :set_recipe, only: [:show, :edit, :update, :destroy, :duplicate, :toggle_favorite]
+  before_action :set_recipe, only: [:show, :edit, :update, :destroy, :duplicate, :toggle_favorite, :add_to_shopping_list]
 
   def index
     @recipes = current_user.recipes.includes(recipe_items: :food, recipe_ratings: [])
@@ -77,6 +77,40 @@ class RecipesController < ApplicationController
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_back fallback_location: recipes_path }
+    end
+  end
+
+  def add_to_shopping_list
+    smart = params[:smart] != "false"
+    items = @recipe.recipe_items.includes(:food)
+    items = items.select { |i| !i.food.in_pantry } if smart
+
+    if smart && items.empty?
+      @nothing_missing = true
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to recipe_path(@recipe), notice: t("views.shopping_lists.nothing_missing") }
+      end
+      return
+    end
+
+    @shopping_list = current_user.shopping_lists.order(created_at: :asc).first_or_create!(
+      name: t("views.shopping_lists.default_name")
+    )
+
+    items.each do |item|
+      @shopping_list.add_or_merge_item(
+        food:     item.food,
+        name:     item.food.name,
+        quantity: "#{item.quantity.to_i} g",
+        category: item.food.category
+      )
+    end
+
+    @added_count = items.size
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to @shopping_list, notice: t("views.shopping_lists.items_added", count: @added_count) }
     end
   end
 

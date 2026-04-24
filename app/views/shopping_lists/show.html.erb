@@ -1,0 +1,43 @@
+<% content_for :page_title, t("views.shopping_lists.page_title") %>
+
+<div class="max-w-2xl mx-auto mt-16 pb-28"
+     data-controller="confirm"
+     data-confirm-title-value="<%= t('views.confirm.title') %>"
+     data-confirm-cancel-label-value="<%= t('shared.cancel') %>"
+     data-confirm-confirm-label-value="<%= t('views.confirm.confirm_btn') %>">
+
+  <div class="bg-surface-raised rounded-2xl border border-surface-border/40 shadow-lg p-6">
+
+    <%# ── Header ── %>
+    <div class="flex items-start justify-between mb-5">
+      <div>
+        <h1 class="text-2xl font-bold text-ink-primary"><%= @shopping_list.name %></h1>
+        <p id="shopping_list_counter"
+           class="text-xs text-ink-subtle mt-0.5">
+          <%= t("views.shopping_lists.unchecked_count", count: @unchecked_count) %>
+        </p>
+      </div>
+    </div>
+
+    <%# ── Formulaire d'ajout ── %>
+    <%= render "shopping_lists/add_form",
+          shopping_list: @shopping_list,
+          foods_json:    @foods_json %>
+
+    <div class="my-5 h-px bg-surface-border/30"></div>
+
+    <%# ── Items ── %>
+    <%= render "shopping_lists/items_container",
+          shopping_list:     @shopping_list,
+          items_by_category: @items_by_category %>
+
+  </div>
+
+  <%# ── Barre sticky d'export ── %>
+  <%= render "shopping_lists/export_bar",
+        shopping_list:   @shopping_list,
+        unchecked_count: @unchecked_count,
+        has_checked:     @has_checked,
+        has_items:       @has_items %>
+
+</div>
