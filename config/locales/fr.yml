@@ -24,6 +24,15 @@ fr:
       duplicated: "Aliment dupliqué. Modifiez-le avant de sauvegarder."
       duplicate_name: "Copie de %{name}"
       duplicate_error: "Impossible de dupliquer cet aliment."
+      bulk_pantry_in_stock: "Tous les aliments sont maintenant en stock."
+      bulk_pantry_out_of_stock: "Tous les aliments sont maintenant à racheter."
+      no_missing_foods: "Tous les aliments sont déjà en stock."
+      missing_added:
+        one: "%{count} aliment ajouté à la liste de courses."
+        other: "%{count} aliments ajoutés à la liste de courses."
+    shopping_list_items:
+      created: "%{name} ajouté à la liste."
+      merged: "Quantité de %{name} mise à jour."
     days:
       food_added: "Aliment ajouté avec succès."
       food_add_error: "Erreur lors de l'ajout de l'aliment."
@@ -123,6 +132,7 @@ fr:
         exercises: "Entraînement"
         workout_programs: "Mon programme"
         statistics: "Statistiques"
+        shopping_list: "Liste de courses"
 
     calendars:
       page_title: "Calendrier"
@@ -236,6 +246,28 @@ fr:
       duplicate: "Dupliquer"
       add_favorite: "Ajouter aux favoris"
       remove_favorite: "Retirer des favoris"
+      all_foods: "Tous les aliments"
+      add_missing_tooltip: "Transférer les aliments hors stock vers la liste de courses"
+      pantry_all_in: "Tout marquer en stock"
+      pantry_all_out: "Tout marquer à racheter"
+      pantry_all_in_short: "En stock"
+      pantry_all_out_short: "À racheter"
+      in_stock_filter: "En stock"
+      out_of_stock_filter: "À racheter"
+      labels_filter: "Labels"
+      no_in_stock:
+        title: "Aucun aliment en stock"
+        description: "Marque tes aliments disponibles comme « en stock »."
+        see_all: "Voir tous les aliments"
+      no_out_of_stock:
+        title: "Tout est en stock !"
+        description: "Tous tes aliments sont disponibles."
+        see_all: "Voir tous les aliments"
+      add_missing_to_list:
+        one: "Ajouter %{count} manquant à la liste"
+        other: "Ajouter %{count} manquants à la liste"
+      pantry_in_stock: "En stock"
+      pantry_out_of_stock: "À racheter"
       favorites_section: "Favoris"
       favorites_filter: "Favoris"
       recents_section: "Récents"
@@ -254,6 +286,8 @@ fr:
         preview_title: "Aperçu"
         preview_empty_hint: "Renseignez les valeurs nutritionnelles pour voir l'aperçu."
         of_which_sugars: "dont sucres :"
+        category: "Rayon"
+        category_none: "Aucun"
 
     day_foods:
       new:
@@ -332,6 +366,12 @@ fr:
         instructions: "Instructions"
         no_instructions: "Aucune instruction renseignée"
         back_to_list: "Retour aux recettes"
+        add_to_shopping_list: "Ajouter à la liste"
+        shopping_popup:
+          smart_label: "Ingrédients manquants"
+          smart_hint: "Ajoute uniquement les ingrédients non disponibles en stock"
+          all_label: "Tous les ingrédients"
+          all_hint: "Ajoute tous les ingrédients, peu importe le stock"
         duplicate: "Dupliquer"
         edit: "Modifier"
         delete: "Supprimer"
@@ -356,6 +396,8 @@ fr:
         search_food: "Rechercher un aliment..."
         quantity: "Quantité (g) *"
         remove: "Retirer"
+        error_food: "Sélectionnez un aliment"
+        error_quantity: "Quantité invalide (min. 1 g)"
 
     profiles:
       show:
@@ -1117,3 +1159,48 @@ fr:
         custom_title: "Séance personnalisée"
         custom_desc: "Choisissez vos exercices librement"
         or: "ou"
+
+    shopping_lists:
+      page_title: "Liste de courses"
+      default_name: "Ma liste"
+      deleted: "Liste supprimée."
+      items_added:
+        one: "1 ingrédient ajouté à la liste."
+        other: "%{count} ingrédients ajoutés à la liste."
+      nothing_missing: "Tous les ingrédients sont déjà en stock."
+      view_list: "Voir la liste"
+      unchecked_count:
+        zero: "Liste vide"
+        one: "1 article restant"
+        other: "%{count} articles restants"
+      delete_item: "Supprimer"
+      clear_checked: "Effacer les cochés"
+      clear_checked_confirm: "Supprimer tous les articles cochés ?"
+      clear_all: "Vider la liste"
+      clear_all_confirm: "Supprimer tous les articles de la liste ?"
+      cleared_checked: "Articles cochés supprimés."
+      cleared_all: "Liste vidée."
+      export_copy: "Copier"
+      copy_success: "Liste copiée dans le presse-papiers."
+      copy_error: "Impossible de copier la liste."
+      export_share: "Partager"
+      export_title: "Liste de courses — %{date}"
+      empty_state:
+        title: "Votre liste est vide"
+        hint: "Ajoutez des articles ou générez depuis une recette."
+      add_form:
+        placeholder: "Rechercher ou saisir un aliment"
+        quantity_placeholder: "Qté"
+        no_results: "Appuyez sur Entrée pour ajouter"
+        submit: "Ajouter"
+        favorites_label: "Favoris"
+        all_label: "Tous les aliments"
+      categories:
+        proteins: "Protéines"
+        grains: "Féculents"
+        vegetables: "Légumes"
+        fruits: "Fruits"
+        dairy: "Laitiers"
+        beverages: "Boissons"
+        condiments: "Épices & condiments"
+        other: "Autres"

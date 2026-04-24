@@ -81,6 +81,38 @@
           </div>
         </div>
 
+        <%# Catégorie rayon %>
+        <div class="border-t border-surface-border/40 pt-5">
+          <label class="label-dark block mb-3"><%= t("views.foods.form.category") %></label>
+          <div class="flex flex-wrap gap-2">
+            <%
+              effective_category = food.category.presence || "other"
+              category_options = [
+                { value: "other",      icon: "fa-box",              key: "other"      },
+                { value: "proteins",   icon: "fa-drumstick-bite",  key: "proteins"   },
+                { value: "grains",     icon: "fa-bread-slice",     key: "grains"     },
+                { value: "vegetables", icon: "fa-carrot",           key: "vegetables" },
+                { value: "fruits",     icon: "fa-apple-whole",      key: "fruits"     },
+                { value: "dairy",      icon: "fa-cheese",           key: "dairy"      },
+                { value: "beverages",  icon: "fa-glass-water",      key: "beverages"  },
+                { value: "condiments", icon: "fa-mortar-pestle",    key: "condiments" },
+              ]
+            %>
+            <% category_options.each do |opt| %>
+              <label class="cursor-pointer">
+                <%= f.radio_button :category, opt[:value], checked: effective_category == opt[:value], class: "sr-only peer" %>
+                <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-colors
+                             bg-surface-hover border-surface-border/50 text-ink-muted
+                             hover:border-brand/30 hover:text-ink-primary
+                             peer-checked:bg-brand/15 peer-checked:border-brand/50 peer-checked:text-brand">
+                  <i class="fas <%= opt[:icon] %> text-[10px]"></i>
+                  <%= t("views.shopping_lists.categories.#{opt[:key]}") %>
+                </span>
+              </label>
+            <% end %>
+          </div>
+        </div>
+
         <%# Labels ── section compacte %>
         <% if @food_labels.any? %>
           <div class="border-t border-surface-border/40 pt-5">

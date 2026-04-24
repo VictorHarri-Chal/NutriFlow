@@ -24,6 +24,15 @@ en:
       duplicated: "Food duplicated. Edit it before saving."
       duplicate_name: "Copy of %{name}"
       duplicate_error: "Unable to duplicate this food."
+      bulk_pantry_in_stock: "All foods are now in stock."
+      bulk_pantry_out_of_stock: "All foods are now marked as needed."
+      no_missing_foods: "All foods are already in stock."
+      missing_added:
+        one: "%{count} food added to shopping list."
+        other: "%{count} foods added to shopping list."
+    shopping_list_items:
+      created: "%{name} added to the list."
+      merged: "%{name} quantity updated."
     days:
       food_added: "Food added successfully."
       food_add_error: "Error adding food."
@@ -123,6 +132,7 @@ en:
         exercises: "Training"
         workout_programs: "My program"
         statistics: "Statistics"
+        shopping_list: "Shopping list"
 
     calendars:
       page_title: "Calendar"
@@ -236,6 +246,28 @@ en:
       duplicate: "Duplicate"
       add_favorite: "Add to favorites"
       remove_favorite: "Remove from favorites"
+      all_foods: "All foods"
+      add_missing_tooltip: "Transfer out-of-stock foods to the shopping list"
+      pantry_all_in: "Mark all as in stock"
+      pantry_all_out: "Mark all as needed"
+      pantry_all_in_short: "In stock"
+      pantry_all_out_short: "Need to buy"
+      in_stock_filter: "In stock"
+      out_of_stock_filter: "Need to buy"
+      labels_filter: "Labels"
+      no_in_stock:
+        title: "Nothing in stock"
+        description: "Mark your available foods as \"in stock\"."
+        see_all: "See all foods"
+      no_out_of_stock:
+        title: "Everything is in stock!"
+        description: "All your foods are available."
+        see_all: "See all foods"
+      add_missing_to_list:
+        one: "Add %{count} missing to list"
+        other: "Add %{count} missing to list"
+      pantry_in_stock: "In stock"
+      pantry_out_of_stock: "Need to buy"
       favorites_section: "Favorites"
       favorites_filter: "Favorites"
       recents_section: "Recent"
@@ -253,6 +285,8 @@ en:
         preview_title: "Preview"
         preview_empty_hint: "Fill in the nutritional values to see the preview."
         of_which_sugars: "of which sugars:"
+        category: "Aisle"
+        category_none: "None"
         create_labels_hint: "Create food labels in settings"
 
     day_foods:
@@ -332,6 +366,12 @@ en:
         instructions: "Instructions"
         no_instructions: "No instructions provided"
         back_to_list: "Back to recipes"
+        add_to_shopping_list: "Add to list"
+        shopping_popup:
+          smart_label: "Missing ingredients"
+          smart_hint: "Only adds ingredients not currently in stock"
+          all_label: "All ingredients"
+          all_hint: "Adds all ingredients regardless of stock"
         duplicate: "Duplicate"
         edit: "Edit"
         delete: "Delete"
@@ -356,6 +396,8 @@ en:
         search_food: "Search for a food..."
         quantity: "Quantity (g) *"
         remove: "Remove"
+        error_food: "Please select a food"
+        error_quantity: "Invalid quantity (min. 1 g)"
 
     profiles:
       show:
@@ -1119,3 +1161,48 @@ en:
         custom_title: "Custom session"
         custom_desc: "Choose your exercises freely"
         or: "or"
+
+    shopping_lists:
+      page_title: "Shopping list"
+      default_name: "My list"
+      deleted: "List deleted."
+      items_added:
+        one: "1 ingredient added to the list."
+        other: "%{count} ingredients added to the list."
+      nothing_missing: "All ingredients are already in stock."
+      view_list: "View list"
+      unchecked_count:
+        zero: "List is empty"
+        one: "1 item remaining"
+        other: "%{count} items remaining"
+      delete_item: "Delete"
+      clear_checked: "Clear checked"
+      clear_checked_confirm: "Delete all checked items?"
+      clear_all: "Clear list"
+      clear_all_confirm: "Delete all items from the list?"
+      cleared_checked: "Checked items removed."
+      cleared_all: "List cleared."
+      export_copy: "Copy"
+      copy_success: "List copied to clipboard."
+      copy_error: "Failed to copy the list."
+      export_share: "Share"
+      export_title: "Shopping list — %{date}"
+      empty_state:
+        title: "Your list is empty"
+        hint: "Add items or generate from a recipe."
+      add_form:
+        placeholder: "Search or enter a food"
+        quantity_placeholder: "Qty"
+        no_results: "Press Enter to add"
+        submit: "Add"
+        favorites_label: "Favorites"
+        all_label: "All foods"
+      categories:
+        proteins: "Proteins"
+        grains: "Grains"
+        vegetables: "Vegetables"
+        fruits: "Fruits"
+        dairy: "Dairy"
+        beverages: "Beverages"
+        condiments: "Spices & condiments"
+        other: "Other"

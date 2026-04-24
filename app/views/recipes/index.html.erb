@@ -13,19 +13,25 @@
 
       <!-- Barre de recherche -->
       <div class="flex-1 max-w-md lg:mx-6">
-        <%= form_with url: recipes_path, method: :get, local: true, class: "relative" do |f| %>
+        <%= form_with url: recipes_path, method: :get, local: true,
+              data: { controller: "search", turbo_frame: "recipes_results" },
+              class: "relative" do |f| %>
           <%= hidden_field_tag :sort,      params[:sort]      if params[:sort].present? %>
           <%= hidden_field_tag :direction, params[:direction] if params[:direction].present? %>
+          <%= hidden_field_tag :source,    params[:source]    if params[:source].present? %>
 
           <%= text_field_tag :query, params[:query],
               class: "input-dark pl-10 #{params[:query].present? ? 'pr-10' : ''} py-1.5 text-sm",
               placeholder: t("views.recipes.search_placeholder"),
-              autocomplete: "off" %>
+              autocomplete: "off",
+              data: { action: "input->search#input" } %>
 
           <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-ink-subtle pointer-events-none"></i>
 
           <% if params[:query].present? %>
-            <%= link_to recipes_path(sort: params[:sort]), class: "absolute right-3 top-1/2 -translate-y-1/2 text-ink-subtle hover:text-ink-muted transition-colors" do %>
+            <%= link_to recipes_path(sort: params[:sort], source: params[:source]),
+                  data: { turbo_frame: "recipes_results" },
+                  class: "absolute right-3 top-1/2 -translate-y-1/2 text-ink-subtle hover:text-ink-muted transition-colors" do %>
               <i class="fas fa-times"></i>
             <% end %>
           <% end %>
@@ -66,7 +72,6 @@
         current_dir   = params[:direction].presence || sort_defaults[current_sort]
       %>
       <div class="h-5 w-px bg-surface-border/40 mx-1"></div>
-      <span class="text-xs text-ink-subtle font-medium"><%= t("views.recipes.sort_label") %></span>
       <% [
         ["name",     t("views.recipes.sort_name")],
         ["date",     t("views.recipes.sort_date")],
@@ -86,60 +91,62 @@
     <% end %>
   </div>
 
-  <% if @recipes.any? %>
-    <!-- Grille de cartes -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <% @recipes.each do |recipe| %>
-        <%= render RecipeCardComponent.new(recipe: recipe, current_user: current_user) %>
-      <% end %>
-    </div>
+  <%= turbo_frame_tag "recipes_results" do %>
+    <% if @recipes.any? %>
+      <!-- Grille de cartes -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @recipes.each do |recipe| %>
+          <%= render RecipeCardComponent.new(recipe: recipe, current_user: current_user) %>
+        <% end %>
+      </div>
 
-    <!-- Pagination -->
-    <% if @pagy&.pages&.> 1 %>
-      <div class="mt-8 flex justify-center">
-        <%= render PaginationComponent.new(pagy: @pagy) %>
+      <!-- Pagination -->
+      <% if @pagy&.pages&.> 1 %>
+        <div class="mt-8 flex justify-center">
+          <%= render PaginationComponent.new(pagy: @pagy) %>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="text-center py-12 border-2 border-dashed border-surface-border/50 rounded-xl bg-surface-base">
+        <div class="w-14 h-14 mx-auto mb-3 bg-surface-raised rounded-full flex items-center justify-center border border-surface-border/40">
+          <% if @source == "favorites" %>
+            <i class="fas fa-star text-amber-400/60 text-xl"></i>
+          <% elsif params[:query].present? %>
+            <i class="fas fa-search text-ink-subtle text-xl"></i>
+          <% else %>
+            <i class="fas fa-bowl-food text-brand text-xl"></i>
+          <% end %>
+        </div>
+        <h3 class="text-lg font-semibold text-ink-primary mb-1">
+          <% if params[:query].present? %>
+            <%= t("views.recipes.no_results") %>
+          <% elsif @source == "favorites" %>
+            <%= t("views.recipes.no_favorites") %>
+          <% else %>
+            <%= t("views.recipes.no_recipes") %>
+          <% end %>
+        </h3>
+        <p class="text-ink-muted mb-4">
+          <% if params[:query].present? %>
+            <%= t("views.recipes.no_results_for", query: params[:query]) %>
+          <% elsif @source == "favorites" %>
+            <%= t("views.recipes.no_favorites_hint") %>
+          <% else %>
+            <%= t("views.recipes.create_first") %>
+          <% end %>
+        </p>
+        <% if @source == "favorites" %>
+          <%= link_to recipes_path, class: "btn-secondary" do %>
+            <i class="fas fa-list"></i>
+            <%= t("views.recipes.no_favorites_see_all") %>
+          <% end %>
+        <% elsif !params[:query].present? %>
+          <%= link_to new_recipe_path, class: "btn-primary", data: { turbo_frame: "_top" } do %>
+            <i class="fas fa-plus"></i>
+            <%= t("views.recipes.new_recipe") %>
+          <% end %>
+        <% end %>
       </div>
     <% end %>
-  <% else %>
-    <div class="text-center py-12 border-2 border-dashed border-surface-border/50 rounded-xl bg-surface-base">
-      <div class="w-14 h-14 mx-auto mb-3 bg-surface-raised rounded-full flex items-center justify-center border border-surface-border/40">
-        <% if @source == "favorites" %>
-          <i class="fas fa-star text-amber-400/60 text-xl"></i>
-        <% elsif params[:query].present? %>
-          <i class="fas fa-search text-ink-subtle text-xl"></i>
-        <% else %>
-          <i class="fas fa-bowl-food text-brand text-xl"></i>
-        <% end %>
-      </div>
-      <h3 class="text-lg font-semibold text-ink-primary mb-1">
-        <% if params[:query].present? %>
-          <%= t("views.recipes.no_results") %>
-        <% elsif @source == "favorites" %>
-          <%= t("views.recipes.no_favorites") %>
-        <% else %>
-          <%= t("views.recipes.no_recipes") %>
-        <% end %>
-      </h3>
-      <p class="text-ink-muted mb-4">
-        <% if params[:query].present? %>
-          <%= t("views.recipes.no_results_for", query: params[:query]) %>
-        <% elsif @source == "favorites" %>
-          <%= t("views.recipes.no_favorites_hint") %>
-        <% else %>
-          <%= t("views.recipes.create_first") %>
-        <% end %>
-      </p>
-      <% if @source == "favorites" %>
-        <%= link_to recipes_path, class: "btn-secondary" do %>
-          <i class="fas fa-list"></i>
-          <%= t("views.recipes.no_favorites_see_all") %>
-        <% end %>
-      <% elsif !params[:query].present? %>
-        <%= link_to new_recipe_path, class: "btn-primary" do %>
-          <i class="fas fa-plus"></i>
-          <%= t("views.recipes.new_recipe") %>
-        <% end %>
-      <% end %>
-    </div>
-  <% end %>
+  <% end %> <%# /turbo_frame_tag recipes_results %>
 </div>

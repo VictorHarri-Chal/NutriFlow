@@ -21,11 +21,13 @@ export default class extends Controller {
     this._debounceTimer = null
     this._favorites     = null  // cached after first fetch
     this._recents       = null  // cached after first fetch
+    this._dd            = this.dropdownTarget
   }
 
   disconnect() {
     document.removeEventListener("click", this._boundClose)
     clearTimeout(this._debounceTimer)
+    this._returnToParent()
   }
 
   // ── Open on focus ─────────────────────────────────────────────────
@@ -114,37 +116,37 @@ export default class extends Controller {
     }
     if (promises.length > 0) await Promise.all(promises)
 
-    this.dropdownTarget.innerHTML = ""
+    this._dd.innerHTML = ""
 
     const favorites = this._favorites || []
     const recents   = (this._recents  || []).filter(r => !favorites.some(f => f.id === r.id))
 
     if (favorites.length > 0) {
-      this.dropdownTarget.appendChild(this._makeHeader(this.favoritesLabelValue))
-      favorites.forEach(ex => this.dropdownTarget.appendChild(this._makeOption(ex)))
+      this._dd.appendChild(this._makeHeader(this.favoritesLabelValue))
+      favorites.forEach(ex => this._dd.appendChild(this._makeOption(ex)))
     }
 
     if (recents.length > 0) {
       if (favorites.length > 0) {
         const sep = document.createElement("div")
         sep.className = "mx-3 my-1 border-t border-surface-border/30"
-        this.dropdownTarget.appendChild(sep)
+        this._dd.appendChild(sep)
       }
-      this.dropdownTarget.appendChild(this._makeHeader(this.recentsLabelValue))
-      recents.forEach(ex => this.dropdownTarget.appendChild(this._makeOption(ex)))
+      this._dd.appendChild(this._makeHeader(this.recentsLabelValue))
+      recents.forEach(ex => this._dd.appendChild(this._makeOption(ex)))
     }
 
     if (favorites.length > 0 || recents.length > 0) {
       const sep = document.createElement("div")
       sep.className = "mx-3 my-1.5 border-t border-surface-border/30"
-      this.dropdownTarget.appendChild(sep)
+      this._dd.appendChild(sep)
     }
 
     // Hint to type
     const hint = document.createElement("div")
     hint.className = "px-3 py-3 text-sm text-ink-subtle text-center flex flex-col items-center gap-1.5"
     hint.innerHTML = `<i class="fas fa-search text-xs text-ink-subtle/50"></i><span>${this.hintValue}</span>`
-    this.dropdownTarget.appendChild(hint)
+    this._dd.appendChild(hint)
 
     this._open()
   }
@@ -166,15 +168,15 @@ export default class extends Controller {
   }
 
   _renderResults(exercises) {
-    this.dropdownTarget.innerHTML = ""
+    this._dd.innerHTML = ""
 
     if (exercises.length === 0) {
       const empty = document.createElement("div")
       empty.className = "px-3 py-4 text-sm text-ink-subtle text-center"
       empty.textContent = this.noResultsValue
-      this.dropdownTarget.appendChild(empty)
+      this._dd.appendChild(empty)
     } else {
-      exercises.forEach(ex => this.dropdownTarget.appendChild(this._makeOption(ex)))
+      exercises.forEach(ex => this._dd.appendChild(this._makeOption(ex)))
     }
 
     this._open()
@@ -207,34 +209,51 @@ export default class extends Controller {
   }
 
   _open() {
+    this._portalToBody()
     this._positionDropdown()
-    this.dropdownTarget.classList.remove("hidden")
+    this._dd.classList.remove("hidden")
     document.removeEventListener("click", this._boundClose)
     document.addEventListener("click", this._boundClose)
   }
 
   _close() {
-    this.dropdownTarget.classList.add("hidden")
+    this._dd.classList.add("hidden")
+    this._returnToParent()
     document.removeEventListener("click", this._boundClose)
+  }
+
+  // Portal: move dropdown to <body> on open to escape any stacking context.
+  _portalToBody() {
+    if (this._dd.parentElement !== document.body) {
+      this._ddParent = this._dd.parentElement
+      this._ddNextSibling = this._dd.nextSibling
+      document.body.appendChild(this._dd)
+    }
+  }
+
+  // Restore dropdown to its original DOM position (Turbo cache safety).
+  _returnToParent() {
+    if (this._ddParent && document.body.contains(this._dd)) {
+      this._ddParent.insertBefore(this._dd, this._ddNextSibling || null)
+    }
   }
 
   _positionDropdown() {
     const rect = this.inputTarget.getBoundingClientRect()
-    const d    = this.dropdownTarget
-    d.style.position = "fixed"
-    d.style.top      = `${rect.bottom + 4}px`
-    d.style.left     = `${rect.left}px`
-    d.style.width    = `${rect.width}px`
-    d.style.zIndex   = "9999"
+    this._dd.style.position = "fixed"
+    this._dd.style.top      = `${rect.bottom + 4}px`
+    this._dd.style.left     = `${rect.left}px`
+    this._dd.style.width    = `${rect.width}px`
+    this._dd.style.zIndex   = "9999"
   }
 
   _onOutsideClick(event) {
-    if (this.element.contains(event.target))        return
-    if (this.dropdownTarget.contains(event.target)) return
+    if (this.element.contains(event.target)) return
+    if (this._dd.contains(event.target))     return
     this._close()
   }
 
   _visibleOptions() {
-    return Array.from(this.dropdownTarget.querySelectorAll("button:not(.hidden)"))
+    return Array.from(this._dd.querySelectorAll("button:not(.hidden)"))
   }
 }

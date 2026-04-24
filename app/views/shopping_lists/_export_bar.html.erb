@@ -1,0 +1,78 @@
+<%# locals: (shopping_list:, unchecked_count:, has_checked:, has_items:) %>
+<%
+  category_order = %w[proteins grains vegetables fruits dairy beverages condiments other]
+  items_by_cat   = shopping_list.shopping_list_items.unchecked.group_by { |i| i.category.presence || "other" }
+  export_items   = category_order.flat_map { |cat|
+    next [] unless items_by_cat[cat]
+    items_by_cat[cat].map { |i| { name: i.name, quantity: i.quantity, category: cat } }
+  }
+  export_title = t("views.shopping_lists.export_title", date: l(Date.today, format: :long))
+  export_categories = {
+    proteins:   { emoji: "🥩", label: t("views.shopping_lists.categories.proteins")   },
+    grains:     { emoji: "🌾", label: t("views.shopping_lists.categories.grains")     },
+    vegetables: { emoji: "🥦", label: t("views.shopping_lists.categories.vegetables") },
+    fruits:     { emoji: "🍎", label: t("views.shopping_lists.categories.fruits")     },
+    dairy:      { emoji: "🥛", label: t("views.shopping_lists.categories.dairy")      },
+    beverages:  { emoji: "🥤", label: t("views.shopping_lists.categories.beverages")  },
+    condiments: { emoji: "🫙", label: t("views.shopping_lists.categories.condiments") },
+    other:      { emoji: "📦", label: t("views.shopping_lists.categories.other")      },
+  }
+%>
+<div id="shopping_export_bar"
+     data-controller="shopping-export"
+     data-shopping-export-title-value="<%= export_title %>"
+     data-shopping-export-items-value="<%= json_escape(export_items.to_json) %>"
+     data-shopping-export-categories-value="<%= json_escape(export_categories.to_json) %>"
+     data-shopping-export-copy-success-value="<%= t('views.shopping_lists.copy_success') %>"
+     data-shopping-export-copy-error-value="<%= t('views.shopping_lists.copy_error') %>"
+     class="fixed bottom-0 left-0 right-0 md:left-64 transition-[left] duration-300 ease-in-out z-30">
+  <div class="bg-surface-raised border-t border-surface-border/40 px-4 py-3 flex items-center justify-between gap-3 max-w-2xl mx-auto md:mx-0 md:max-w-none md:px-8">
+
+    <%# Gauche : effacer les cochés (moins destructif), puis vider la liste %>
+    <%# Les deux boutons sont toujours rendus (invisible vs hidden) pour éviter les décalages de layout %>
+    <div class="flex items-center gap-1">
+      <button type="button"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-ink-subtle hover:text-status-danger hover:bg-status-danger/8 transition-colors <%= has_items ? '' : 'invisible pointer-events-none' %>"
+              data-action="click->confirm#show"
+              data-confirm-message="<%= t('views.shopping_lists.clear_all_confirm') %>"
+              data-confirm-label="<%= t('views.shopping_lists.clear_all') %>"
+              data-url="<%= clear_all_shopping_list_path(shopping_list) %>"
+              data-turbo-method="delete">
+        <i class="fas fa-trash text-xs"></i>
+        <%= t("views.shopping_lists.clear_all") %>
+      </button>
+
+      <button type="button"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-ink-subtle hover:text-status-danger hover:bg-status-danger/8 transition-colors <%= has_checked ? '' : 'invisible pointer-events-none' %>"
+              data-action="click->confirm#show"
+              data-confirm-message="<%= t('views.shopping_lists.clear_checked_confirm') %>"
+              data-confirm-label="<%= t('views.shopping_lists.clear_checked') %>"
+              data-url="<%= clear_checked_shopping_list_path(shopping_list) %>"
+              data-turbo-method="delete">
+        <i class="fas fa-circle-check text-xs"></i>
+        <%= t("views.shopping_lists.clear_checked") %>
+      </button>
+    </div>
+
+    <%# Droite : export %>
+    <div class="flex items-center gap-2">
+      <button type="button"
+              data-action="click->shopping-export#copy"
+              data-shopping-export-target="copyBtn"
+              <%= "disabled" unless has_items %>
+              class="btn-secondary text-sm gap-2 <%= has_items ? '' : 'opacity-40 cursor-not-allowed' %>">
+        <i class="fas fa-copy text-xs"></i>
+        <%= t("views.shopping_lists.export_copy") %>
+      </button>
+      <button type="button"
+              data-action="click->shopping-export#share"
+              data-shopping-export-target="shareBtn"
+              <%= "disabled" unless has_items %>
+              class="btn-primary text-sm gap-2 <%= has_items ? '' : 'opacity-40 cursor-not-allowed' %>">
+        <i class="fas fa-share-nodes text-xs"></i>
+        <%= t("views.shopping_lists.export_share") %>
+      </button>
+    </div>
+
+  </div>
+</div>
