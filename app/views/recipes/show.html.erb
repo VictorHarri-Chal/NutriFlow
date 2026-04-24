@@ -18,6 +18,51 @@
         <i class="<%= @recipe.favorite? ? 'fas' : 'far' %> fa-star text-xs"></i>
         <%= @recipe.favorite? ? t("views.recipes.favorites.remove") : t("views.recipes.favorites.add") %>
       <% end %>
+      <div data-controller="recipe-shopping-popup" class="relative">
+        <button type="button"
+                data-action="click->recipe-shopping-popup#open"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-ink-muted bg-surface-raised border border-surface-border/40 hover:text-ink-primary hover:border-surface-border transition-colors">
+          <i class="fas fa-cart-plus text-xs"></i>
+          <%= t("views.recipes.show.add_to_shopping_list") %>
+        </button>
+
+        <div data-recipe-shopping-popup-target="panel"
+             class="opacity-0 scale-95 pointer-events-none transition-all duration-150 origin-top-right
+                    absolute right-0 top-full mt-2 w-72
+                    bg-surface-raised border border-surface-border/40 rounded-2xl shadow-2xl z-50 p-1.5">
+
+          <%= button_to add_to_shopping_list_recipe_path(@recipe),
+                method: :post,
+                params: { smart: "true" },
+                class: "w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface-hover transition-colors",
+                form: { data: { turbo_stream: true, action: "submit->recipe-shopping-popup#close" } } do %>
+            <div class="flex-shrink-0 w-7 h-7 rounded-lg bg-status-success/10 border border-status-success/30 flex items-center justify-center">
+              <i class="fas fa-check text-[10px] text-status-success"></i>
+            </div>
+            <div class="min-w-0">
+              <p class="text-sm font-medium text-ink-primary leading-tight"><%= t("views.recipes.show.shopping_popup.smart_label") %></p>
+              <p class="text-xs text-ink-subtle mt-0.5 leading-snug"><%= t("views.recipes.show.shopping_popup.smart_hint") %></p>
+            </div>
+          <% end %>
+
+          <div class="mx-2 my-0.5 h-px bg-surface-border/30"></div>
+
+          <%= button_to add_to_shopping_list_recipe_path(@recipe),
+                method: :post,
+                params: { smart: "false" },
+                class: "w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface-hover transition-colors",
+                form: { data: { turbo_stream: true, action: "submit->recipe-shopping-popup#close" } } do %>
+            <div class="flex-shrink-0 w-7 h-7 rounded-lg bg-brand/10 border border-brand/30 flex items-center justify-center">
+              <i class="fas fa-list text-[10px] text-brand"></i>
+            </div>
+            <div class="min-w-0">
+              <p class="text-sm font-medium text-ink-primary leading-tight"><%= t("views.recipes.show.shopping_popup.all_label") %></p>
+              <p class="text-xs text-ink-subtle mt-0.5 leading-snug"><%= t("views.recipes.show.shopping_popup.all_hint") %></p>
+            </div>
+          <% end %>
+
+        </div>
+      </div>
       <%= link_to duplicate_recipe_path(@recipe),
             data: { turbo_method: :post },
             class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-ink-muted bg-surface-raised border border-surface-border/40 hover:text-ink-primary hover:border-surface-border transition-colors" do %>

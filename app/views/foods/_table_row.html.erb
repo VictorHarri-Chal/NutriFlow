@@ -1,3 +1,6 @@
+<% filter_in_stock    = local_assigns.fetch(:active_in_stock, false) %>
+<% filter_out_of_stock = local_assigns.fetch(:active_out_of_stock, false) %>
+
 <tr class="group" id="food_<%= food.id %>">
 
   <%# Aliment + Marque %>
@@ -45,36 +48,52 @@
     <% end %>
   </td>
 
-  <%# Actions — apparaissent au survol de la ligne %>
+  <%# Actions %>
   <td class="text-right">
-    <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-      <%# Favori %>
-      <%= link_to toggle_favorite_food_path(food),
-            class: "inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors #{food.favorite? ? 'text-amber-400 hover:text-amber-300 hover:bg-amber-400/10' : 'text-ink-subtle hover:text-amber-400 hover:bg-amber-400/10'}",
-            title: food.favorite? ? t("views.foods.remove_favorite") : t("views.foods.add_favorite"),
-            data: { turbo_method: :patch } do %>
-        <i class="<%= food.favorite? ? 'fas' : 'far' %> fa-star text-sm"></i>
+    <div class="flex items-center justify-end gap-1">
+
+      <%# Actions secondaires — apparaissent au survol %>
+      <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+        <%# Favori %>
+        <%= link_to toggle_favorite_food_path(food),
+              class: "inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors #{food.favorite? ? 'text-amber-400 hover:text-amber-300 hover:bg-amber-400/10' : 'text-ink-subtle hover:text-amber-400 hover:bg-amber-400/10'}",
+              title: food.favorite? ? t("views.foods.remove_favorite") : t("views.foods.add_favorite"),
+              data: { turbo_method: :patch } do %>
+          <i class="<%= food.favorite? ? 'fas' : 'far' %> fa-star text-sm"></i>
+        <% end %>
+
+        <%= link_to duplicate_food_path(food),
+              class: "inline-flex items-center justify-center w-8 h-8 rounded-lg text-ink-subtle hover:text-ink-muted hover:bg-surface-hover transition-colors",
+              title: t("views.foods.duplicate"),
+              data: { turbo_method: :post, turbo_frame: "_top" } do %>
+          <i class="fas fa-copy text-sm"></i>
+        <% end %>
+
+        <%= link_to edit_food_path(food),
+              class: "inline-flex items-center justify-center w-8 h-8 rounded-lg text-ink-subtle hover:text-brand hover:bg-surface-hover transition-colors",
+              title: t("shared.edit"),
+              data: { turbo_frame: "_top" } do %>
+          <i class="fas fa-pen text-sm"></i>
+        <% end %>
+
+        <%= delete_link_with_confirm(
+              food_path(food),
+              confirm: t("views.foods.delete_confirm", name: food.name),
+              icon_class: "fas fa-trash text-sm",
+              title: t("shared.delete"),
+              class: "inline-flex items-center justify-center w-8 h-8 rounded-lg text-ink-subtle hover:text-status-danger hover:bg-status-danger_dim/20 transition-colors") %>
+      </div>
+
+      <%# Pantry toggle — toujours visible, tout à droite %>
+      <%= button_to toggle_pantry_food_path(food),
+            method: :patch,
+            params: { filter_in_stock: filter_in_stock, filter_out_of_stock: filter_out_of_stock },
+            title: food.in_pantry? ? t("views.foods.pantry_in_stock") : t("views.foods.pantry_out_of_stock"),
+            form: { class: "contents" },
+            class: "inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors #{food.in_pantry? ? 'text-status-success hover:text-status-success/70 hover:bg-status-success/10' : 'text-ink-subtle/40 hover:text-status-success hover:bg-status-success/10'}" do %>
+        <i class="fas <%= food.in_pantry? ? 'fa-circle-check' : 'fa-circle-xmark' %> text-sm"></i>
       <% end %>
 
-      <%= link_to duplicate_food_path(food),
-            class: "inline-flex items-center justify-center w-8 h-8 rounded-lg text-ink-subtle hover:text-ink-muted hover:bg-surface-hover transition-colors",
-            title: t("views.foods.duplicate"),
-            data: { turbo_method: :post } do %>
-        <i class="fas fa-copy text-sm"></i>
-      <% end %>
-
-      <%= link_to edit_food_path(food),
-            class: "inline-flex items-center justify-center w-8 h-8 rounded-lg text-ink-subtle hover:text-brand hover:bg-surface-hover transition-colors",
-            title: t("shared.edit") do %>
-        <i class="fas fa-pen text-sm"></i>
-      <% end %>
-
-      <%= delete_link_with_confirm(
-            food_path(food),
-            confirm: t("views.foods.delete_confirm", name: food.name),
-            icon_class: "fas fa-trash text-sm",
-            title: t("shared.delete"),
-            class: "inline-flex items-center justify-center w-8 h-8 rounded-lg text-ink-subtle hover:text-status-danger hover:bg-status-danger_dim/20 transition-colors") %>
     </div>
   </td>
 

@@ -20,10 +20,12 @@ export default class extends Controller {
   connect() {
     this._handleOutsideClick = this._onOutsideClick.bind(this)
     document.addEventListener("click", this._handleOutsideClick)
+    this._dd = this.dropdownTarget
   }
 
   disconnect() {
     document.removeEventListener("click", this._handleOutsideClick)
+    this._returnToParent()
   }
 
   // ── Public actions ───────────────────────────────────────────────────────
@@ -41,7 +43,7 @@ export default class extends Controller {
   }
 
   keydown(e) {
-    const items = this.dropdownTarget.querySelectorAll("[data-exercise-id]")
+    const items = this._dd.querySelectorAll("[data-exercise-id]")
     if (e.key === "ArrowDown") { e.preventDefault(); this._move(items, 1) }
     else if (e.key === "ArrowUp") { e.preventDefault(); this._move(items, -1) }
     else if (e.key === "Enter") { e.preventDefault(); if (this.#highlighted >= 0) items[this.#highlighted]?.click() }
@@ -78,11 +80,27 @@ export default class extends Controller {
     } catch { this._renderItems([]) }
   }
 
+  // Portal: move dropdown to <body> on open to escape any stacking context.
+  _portalToBody() {
+    if (this._dd.parentElement !== document.body) {
+      this._ddParent = this._dd.parentElement
+      this._ddNextSibling = this._dd.nextSibling
+      document.body.appendChild(this._dd)
+    }
+  }
+
+  // Restore dropdown to its original DOM position (Turbo cache safety).
+  _returnToParent() {
+    if (this._ddParent && document.body.contains(this._dd)) {
+      this._ddParent.insertBefore(this._dd, this._ddNextSibling || null)
+    }
+  }
+
   _positionDropdown() {
     const rect       = this.inputTarget.getBoundingClientRect()
     const spaceAbove = rect.top
     const spaceBelow = window.innerHeight - rect.bottom
-    const el         = this.dropdownTarget
+    const el         = this._dd
 
     el.style.position = "fixed"
     el.style.left     = `${rect.left}px`
@@ -90,7 +108,7 @@ export default class extends Controller {
     el.style.zIndex   = "9999"
 
     if (spaceAbove >= 100 || spaceAbove >= spaceBelow) {
-      // Show ABOVE: pin the BOTTOM edge to the input's top (stays attached regardless of item count)
+      // Show ABOVE: pin the BOTTOM edge to the input's top
       el.style.bottom    = `${window.innerHeight - rect.top + 4}px`
       el.style.top       = ""
       el.style.maxHeight = `${Math.min(280, spaceAbove - 12)}px`
@@ -103,23 +121,24 @@ export default class extends Controller {
   }
 
   _renderItems(items, label = null) {
-    this.dropdownTarget.innerHTML = ""
+    this._dd.innerHTML = ""
+    this._portalToBody()
     this._positionDropdown()
-    this.dropdownTarget.classList.remove("hidden")
+    this._dd.classList.remove("hidden")
     this.#highlighted = -1
 
     if (label) {
       const h = document.createElement("div")
       h.className = "px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-ink-subtle/60"
       h.textContent = label
-      this.dropdownTarget.appendChild(h)
+      this._dd.appendChild(h)
     }
 
     if (items.length === 0) {
       const el = document.createElement("div")
       el.className = "px-3 py-2 text-xs text-ink-subtle/60 italic"
       el.textContent = this.noResultsValue
-      this.dropdownTarget.appendChild(el)
+      this._dd.appendChild(el)
       return
     }
 
@@ -128,12 +147,12 @@ export default class extends Controller {
       el.className = "flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-surface-hover text-sm text-ink-primary transition-colors"
       el.dataset.exerciseId = item.id
       el.dataset.name       = item.name
-      el.dataset.action     = "click->program-builder#select"
       el.innerHTML = `
         <span class="flex-1 truncate">${item.name}</span>
         <span class="text-[10px] text-ink-subtle/60 shrink-0">${item.body_part_label || ""}</span>
       `
-      this.dropdownTarget.appendChild(el)
+      el.addEventListener("click", (e) => this.select(e))
+      this._dd.appendChild(el)
     })
   }
 
@@ -171,8 +190,9 @@ export default class extends Controller {
   }
 
   _close() {
-    this.dropdownTarget.classList.add("hidden")
-    this.dropdownTarget.innerHTML = ""
+    this._dd.classList.add("hidden")
+    this._dd.innerHTML = ""
+    this._returnToParent()
     this.#highlighted = -1
   }
 
@@ -181,6 +201,8 @@ export default class extends Controller {
   }
 
   _onOutsideClick(e) {
-    if (!this.element.contains(e.target)) this._close()
+    if (this.element.contains(e.target)) return
+    if (this._dd.contains(e.target))     return
+    this._close()
   }
 }

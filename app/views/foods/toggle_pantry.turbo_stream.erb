@@ -1,0 +1,31 @@
+<% food_matches_filter =
+  (!@filtering_in_stock && !@filtering_out_of_stock) ||
+  (@filtering_in_stock  && @food.in_pantry?)         ||
+  (@filtering_out_of_stock && !@food.in_pantry?) %>
+
+<% if food_matches_filter %>
+  <%= turbo_stream.replace "food_#{@food.id}" do %>
+    <%= render "foods/table_row", food: @food,
+          active_in_stock: @filtering_in_stock,
+          active_out_of_stock: @filtering_out_of_stock %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.remove "food_#{@food.id}" %>
+<% end %>
+
+<%= turbo_stream.replace "missing_foods_bar" do %>
+  <%= turbo_frame_tag "missing_foods_bar" do %>
+    <div class="relative inline-flex">
+      <%= button_to add_missing_to_shopping_list_foods_path,
+            method: :post,
+            title: t("views.foods.add_missing_tooltip"),
+            form: { data: { turbo_frame: "_top" }, class: "contents" },
+            class: "w-8 h-8 rounded-md inline-flex items-center justify-center border transition-colors #{@missing_count > 0 ? 'bg-brand/15 text-brand border-brand/30 hover:bg-brand/25' : 'bg-surface-hover text-ink-subtle/40 border-surface-border/40 opacity-40 pointer-events-none'}" do %>
+        <i class="fas fa-cart-plus text-xs"></i>
+      <% end %>
+      <% if @missing_count > 0 %>
+        <span class="absolute -top-1.5 -right-1.5 min-w-[1.1rem] h-[1.1rem] px-0.5 rounded-full bg-brand text-zinc-900 text-[9px] font-bold flex items-center justify-center leading-none pointer-events-none"><%= @missing_count %></span>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

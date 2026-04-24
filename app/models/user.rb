@@ -16,6 +16,7 @@ class User < ApplicationRecord
   has_many :exercise_favorites,   dependent: :destroy
   has_many :favorited_exercises,  through: :exercise_favorites, source: :exercise
   has_many :workout_programs,     dependent: :destroy
+  has_many :shopping_lists,       dependent: :destroy
 
   after_create :create_profile
 

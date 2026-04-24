@@ -2,7 +2,7 @@
 
   <%# ── Données aliments pour les combobox (lues par food_combobox_controller.js) ── %>
   <script id="foods-data" type="application/json">
-    <%= json_escape(current_user.foods.order(:name).select(:id, :name, :calories, :proteins, :carbs, :fats, :sugars).to_json) %>
+    <%= json_escape(current_user.foods.order(:name).select(:id, :name, :calories, :proteins, :carbs, :fats, :sugars).to_json).html_safe %>
   </script>
 
   <div data-controller="recipe-builder" data-action="input->recipe-builder#update">
@@ -45,7 +45,15 @@
         <%# ── Ingrédients ── %>
         <div data-controller="nested-form" data-nested-form-wrapper-selector-value=".ingredients-container">
 
-          <h2 class="text-base font-semibold text-ink-primary mb-3"><%= t("views.recipes.form.ingredients") %></h2>
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-base font-semibold text-ink-primary"><%= t("views.recipes.form.ingredients") %></h2>
+            <% if recipe.errors[:base].any? %>
+              <p class="text-xs text-status-danger flex items-center gap-1">
+                <i class="fas fa-circle-exclamation text-[10px]"></i>
+                <%= recipe.errors[:base].first %>
+              </p>
+            <% end %>
+          </div>
 
           <%# En-têtes colonnes — masqués si liste vide %>
           <div class="flex items-center gap-3 px-1 pb-2 border-b border-surface-border/40 mb-1"

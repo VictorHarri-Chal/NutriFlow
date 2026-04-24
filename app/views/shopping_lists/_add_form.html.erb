@@ -1,0 +1,77 @@
+<%# locals: (shopping_list:, foods_json:) %>
+<div id="shopping_list_add_form">
+
+  <%= form_with url: shopping_list_shopping_list_items_path(shopping_list),
+        scope: :shopping_list_item,
+        data: { turbo_stream: true },
+        class: "flex items-center gap-2" do |f| %>
+
+    <div data-controller="shopping-autocomplete"
+         data-shopping-autocomplete-foods-value="<%= json_escape(foods_json.to_json) %>"
+         data-shopping-autocomplete-no-results-value="<%= t("views.shopping_lists.add_form.no_results") %>"
+         data-shopping-autocomplete-favorites-label-value="<%= t("views.shopping_lists.add_form.favorites_label") %>"
+         data-shopping-autocomplete-all-label-value="<%= t("views.shopping_lists.add_form.all_label") %>"
+         class="flex-1 relative">
+
+      <%= f.text_field :name,
+            class: "input-dark w-full pr-4",
+            placeholder: t("views.shopping_lists.add_form.placeholder"),
+            autocomplete: "off",
+            data: {
+              "shopping-autocomplete-target": "input",
+              action: "focus->shopping-autocomplete#focus input->shopping-autocomplete#input keydown->shopping-autocomplete#keydown"
+            } %>
+
+      <%= f.hidden_field :food_id,
+            data: { "shopping-autocomplete-target": "hiddenFoodId" } %>
+      <%= f.hidden_field :category,
+            data: { "shopping-autocomplete-target": "hiddenCategory" } %>
+
+      <div data-shopping-autocomplete-target="dropdown"
+           class="hidden absolute bg-surface-raised border border-surface-border/40 rounded-xl shadow-xl overflow-hidden overflow-y-auto max-h-52 z-50">
+      </div>
+    </div>
+
+    <%# Quantité : nombre + unité custom %>
+    <div class="flex gap-1 shrink-0" data-quantity-input>
+      <input type="number"
+             name="quantity_value"
+             min="0"
+             step="1"
+             class="input-dark w-16 text-sm text-center"
+             placeholder="<%= t('views.shopping_lists.add_form.quantity_placeholder') %>"
+             autocomplete="off">
+
+      <div data-controller="unit-select" class="relative shrink-0">
+        <button type="button"
+                data-action="click->unit-select#toggle"
+                data-unit-select-target="trigger"
+                class="input-dark w-16 text-sm flex items-center justify-between gap-1 cursor-pointer select-none">
+          <span data-unit-select-target="label" class="text-ink-subtle">—</span>
+          <i class="fas fa-chevron-down text-[10px] text-ink-subtle transition-transform duration-150"
+             data-unit-select-target="icon"></i>
+        </button>
+
+        <div data-unit-select-target="dropdown"
+             class="hidden absolute top-full mt-1 left-0 min-w-[4.5rem] bg-surface-raised border border-surface-border/50 rounded-xl shadow-xl overflow-hidden z-50 py-1">
+          <% [["g", "g"], ["kg", "kg"], ["mL", "mL"], ["L", "L"], ["cs", "cs"], ["cc", "cc"], ["pièce", "pièce"]].each do |value, label| %>
+            <button type="button"
+                    data-action="click->unit-select#select"
+                    data-value="<%= value %>"
+                    class="w-full text-left px-3 py-2 text-xs text-ink-muted hover:text-ink-primary hover:bg-surface-hover transition-colors">
+              <%= label %>
+            </button>
+          <% end %>
+        </div>
+
+        <input type="hidden" name="quantity_unit" data-unit-select-target="hiddenInput">
+      </div>
+    </div>
+
+    <button type="submit"
+            class="flex-shrink-0 w-9 h-9 rounded-xl bg-brand hover:bg-brand-hover text-zinc-900 flex items-center justify-center transition-colors font-bold">
+      <i class="fas fa-plus text-sm"></i>
+    </button>
+
+  <% end %>
+</div>

@@ -4,7 +4,7 @@
 
   <!-- Retour + actions custom -->
   <div class="mb-8 flex items-center justify-between">
-    <%= link_to exercises_path(body_part: params[:body_part], equipment: params[:equipment], query: params[:query]),
+    <%= link_to exercises_path(source: params[:source], body_part: params[:body_part], equipment: params[:equipment], difficulty: params[:difficulty], query: params[:query]),
             class: "inline-flex items-center gap-2 text-sm text-ink-muted hover:text-ink-primary transition-colors" do %>
       <i class="fas fa-arrow-left text-xs"></i>
       <%= t("views.exercises.back_to_list") %>
