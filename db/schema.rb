@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_24_100002) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_24_191702) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -184,6 +184,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_24_100002) do
     t.boolean "in_pantry", default: true, null: false
     t.index ["brand"], name: "index_foods_on_brand"
     t.index ["name"], name: "index_foods_on_name"
+    t.index ["user_id", "category"], name: "index_foods_on_user_id_and_category"
+    t.index ["user_id", "favorite"], name: "index_foods_on_user_id_and_favorite"
+    t.index ["user_id", "in_pantry"], name: "index_foods_on_user_id_and_in_pantry"
+    t.index ["user_id", "name"], name: "index_foods_on_user_id_and_name_unique", unique: true
     t.index ["user_id"], name: "index_foods_on_user_id"
   end
 
@@ -238,6 +242,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_24_100002) do
     t.decimal "quantity", default: "100.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "unit", default: "g", null: false
     t.index ["food_id"], name: "index_recipe_items_on_food_id"
     t.index ["recipe_id", "food_id"], name: "index_recipe_items_on_recipe_id_and_food_id"
     t.index ["recipe_id"], name: "index_recipe_items_on_recipe_id"

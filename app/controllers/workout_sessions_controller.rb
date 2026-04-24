@@ -152,13 +152,9 @@ class WorkoutSessionsController < ApplicationController
   end
 
   def compute_calories(session)
-    session.update_column(:calories_burned, nil)
-    session.reload
-    session.workout_sets.reload
-    profile    = current_user.profile
-    raw_weight = profile&.weight.to_f
-    weight     = raw_weight > 0 ? raw_weight : 75.0
-    calories   = session.estimated_calories(weight)
-    session.update_column(:calories_burned, calories)
+    weight = current_user.profile&.weight.to_f
+    weight = 75.0 if weight <= 0
+    session.calories_burned = nil  # in-memory only — prevents estimated_calories from short-circuiting
+    session.update_column(:calories_burned, session.estimated_calories(weight))
   end
 end

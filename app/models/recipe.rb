@@ -44,7 +44,7 @@ class Recipe < ApplicationRecord
       acc[:carbs]    += item.total_carbs
       acc[:fats]     += item.total_fats
       acc[:sugars]   += item.total_sugars
-      acc[:weight]   += item.quantity.to_f
+      acc[:weight]   += item.grams_equivalent
     end.transform_values { |v| v.round(1) }
   end
 

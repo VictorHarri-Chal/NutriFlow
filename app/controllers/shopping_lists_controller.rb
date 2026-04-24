@@ -19,7 +19,7 @@ class ShoppingListsController < ApplicationController
   end
 
   def clear_checked
-    @shopping_list.shopping_list_items.checked.destroy_all
+    @shopping_list.shopping_list_items.checked.delete_all
     set_list_state
     flash.now[:notice] = t("views.shopping_lists.cleared_checked")
     respond_to do |format|
@@ -29,7 +29,7 @@ class ShoppingListsController < ApplicationController
   end
 
   def clear_all
-    @shopping_list.shopping_list_items.destroy_all
+    @shopping_list.shopping_list_items.delete_all
     set_list_state
     flash.now[:notice] = t("views.shopping_lists.cleared_all")
     respond_to do |format|

@@ -11,6 +11,7 @@ class CardioSessionsController < ApplicationController
 
   def create
     @cardio_session = @day.cardio_sessions.build(cardio_session_params)
+    inject_weight_into_blocks(@cardio_session)
 
     if @cardio_session.save
       load_calendar_data(@day)
@@ -38,7 +39,9 @@ class CardioSessionsController < ApplicationController
   end
 
   def update
-    if @cardio_session.update(cardio_session_params)
+    @cardio_session.assign_attributes(cardio_session_params)
+    inject_weight_into_blocks(@cardio_session)
+    if @cardio_session.save
       load_calendar_data(@day)
       @selected_date = @day.date
       respond_to do |format|
@@ -70,6 +73,12 @@ class CardioSessionsController < ApplicationController
   end
 
   private
+
+  def inject_weight_into_blocks(cardio_session)
+    weight = current_user.profile&.weight.to_f
+    return unless weight > 0
+    cardio_session.cardio_blocks.each { |b| b.user_weight_kg = weight }
+  end
 
   def set_day
     @day = current_user.days.find(params[:day_id])

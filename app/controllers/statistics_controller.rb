@@ -159,14 +159,10 @@ class StatisticsController < ApplicationController
                             .order("days.date DESC")
                             .limit(5)
 
-    # Exercise progression chart
-    exercise_ids = WorkoutSet.joins(workout_session: :day)
-                             .where(days: { user_id: current_user.id, date: @from..Date.today })
-                             .distinct
-                             .pluck(:exercise_id)
-    favorite_ids = current_user.favorited_exercises.pluck(:id).to_set
+    # Exercise progression chart — derive exercise_ids from already-loaded all_sets (no extra query)
+    exercise_ids = all_sets.map(&:exercise_id).uniq
+    favorite_ids = current_user.exercise_favorites.pluck(:exercise_id).to_set
     @user_exercises = Exercise.where(id: exercise_ids)
-                              .order(:name)
                               .sort_by { |e| [favorite_ids.include?(e.id) ? 0 : 1, e.name] }
 
     @selected_exercise = @user_exercises.find { |e| e.id == params[:exercise_id]&.to_i } if params[:exercise_id].present?
@@ -303,7 +299,7 @@ class StatisticsController < ApplicationController
   # ── Bien-être ────────────────────────────────────────────────────────────────
 
   def load_wellbeing_stats
-    days_range = current_user.days.where(date: @from..Date.today).order(:date)
+    days_range = current_user.days.where(date: @from..Date.today).order(:date).to_a
 
     @wb_days = days_range.select { |d|
       d.energy_level.present? || d.mood.present? || d.sleep_quality.present?

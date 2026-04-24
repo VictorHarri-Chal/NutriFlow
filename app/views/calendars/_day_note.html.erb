@@ -19,8 +19,8 @@
     <%= form_with model: day, url: day_path(day), method: :patch, data: { turbo: true } do |f| %>
 
       <%# ── Note libre ── %>
-      <div class="flex items-start gap-3 mb-4">
-        <i class="fas fa-pencil-alt text-ink-subtle/40 text-xs mt-2.5 flex-shrink-0"></i>
+      <div class="flex items-center gap-3 mb-4">
+        <i class="fas fa-pencil-alt text-ink-subtle/40 text-xs flex-shrink-0"></i>
         <%= f.text_area :note,
               rows: 1,
               placeholder: t("views.calendars.note_placeholder"),

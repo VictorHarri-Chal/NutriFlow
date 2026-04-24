@@ -58,10 +58,10 @@ class Day < ApplicationRecord
   private
 
   def preloaded_day_foods
-    day_foods.loaded? ? day_foods : day_foods.includes(:food)
+    @preloaded_day_foods ||= day_foods.loaded? ? day_foods.to_a : day_foods.includes(:food).to_a
   end
 
   def preloaded_day_recipes
-    day_recipes.loaded? ? day_recipes : day_recipes.includes(recipe: { recipe_items: :food })
+    @preloaded_day_recipes ||= day_recipes.loaded? ? day_recipes.to_a : day_recipes.includes(recipe: { recipe_items: :food }).to_a
   end
 end

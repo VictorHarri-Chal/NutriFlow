@@ -62,7 +62,7 @@ class RecipesController < ApplicationController
       instructions: @recipe.instructions
     )
     @recipe.recipe_items.each do |item|
-      copy.recipe_items.build(food: item.food, quantity: item.quantity)
+      copy.recipe_items.build(food: item.food, quantity: item.quantity, unit: item.unit)
     end
 
     if copy.save
@@ -99,10 +99,13 @@ class RecipesController < ApplicationController
     )
 
     items.each do |item|
+      canonical_unit = %w[mL L].include?(item.unit) ? "mL" : "g"
+      grams          = item.grams_equivalent
+      qty_display    = grams % 1 == 0 ? grams.to_i : grams
       @shopping_list.add_or_merge_item(
         food:     item.food,
         name:     item.food.name,
-        quantity: "#{item.quantity.to_i} g",
+        quantity: "#{qty_display} #{canonical_unit}",
         category: item.food.category
       )
     end
@@ -132,7 +135,7 @@ class RecipesController < ApplicationController
   def recipe_params
     params.require(:recipe).permit(
       :name, :instructions,
-      recipe_items_attributes: [:id, :food_id, :quantity, :_destroy]
+      recipe_items_attributes: [:id, :food_id, :quantity, :unit, :_destroy]
     )
   end
 end
