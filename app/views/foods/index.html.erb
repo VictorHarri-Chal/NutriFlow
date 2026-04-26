@@ -142,14 +142,14 @@
             params: filter_params.merge(status: "true"),
             title: t("views.foods.pantry_all_in"),
             class: "w-8 h-8 rounded-md inline-flex items-center justify-center border bg-status-success/15 text-status-success border-status-success/30 hover:bg-status-success/25 transition-colors" do %>
-        <i class="fas fa-check text-xs"></i>
+        <i class="fas fa-house text-xs"></i>
       <% end %>
       <%= button_to bulk_pantry_foods_path,
             method: :patch,
             params: filter_params.merge(status: "false"),
             title: t("views.foods.pantry_all_out"),
             class: "w-8 h-8 rounded-md inline-flex items-center justify-center border bg-status-danger/15 text-status-danger border-status-danger/30 hover:bg-status-danger/25 transition-colors" do %>
-        <i class="fas fa-xmark text-xs"></i>
+        <i class="fas fa-bag-shopping text-xs"></i>
       <% end %>
 
       <%# Cart — tout à droite, toujours visible, pastille si items manquants %>

@@ -157,7 +157,7 @@
     opacity: 0;
     transform: translateY(4px);
     transition: opacity 0.12s ease, transform 0.12s ease;
-    @apply px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap max-w-xs;
+    @apply px-2.5 py-1.5 rounded-lg text-xs font-medium max-w-xs;
     @apply bg-surface-raised text-ink-primary;
     @apply border border-surface-border/50;
     box-shadow: 0 4px 16px rgb(0 0 0 / 0.35), 0 0 0 1px rgb(82 82 91 / 0.15);

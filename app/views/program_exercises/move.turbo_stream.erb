@@ -1,0 +1,17 @@
+<%# Re-render exercise lists %>
+<%= turbo_stream.replace "program_day_exercises_#{@source_day.id}" do %>
+  <%= render "workout_programs/exercise_list", program: @program, day: @source_day %>
+<% end %>
+
+<%= turbo_stream.replace "program_day_exercises_#{@target_day.id}" do %>
+  <%= render "workout_programs/exercise_list", program: @program, day: @target_day %>
+<% end %>
+
+<%# Update copy button visibility on both days %>
+<%= turbo_stream.replace "copy_btn_day_#{@source_day.id}" do %>
+  <%= render "workout_programs/copy_button", program: @program, day: @source_day %>
+<% end %>
+
+<%= turbo_stream.replace "copy_btn_day_#{@target_day.id}" do %>
+  <%= render "workout_programs/copy_button", program: @program, day: @target_day %>
+<% end %>

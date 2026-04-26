@@ -1,7 +1,7 @@
 /**
  * Global custom tooltip system.
  * – Strips native `title` attributes (preventing browser default tooltip)
- * – Shows a custom-styled tooltip with a 200ms delay
+ * – Shows a custom-styled tooltip with an 80ms delay
  * – Auto-positions above/below, clamped to the viewport
  * – Stable across Turbo navigations and tab switches
  */
@@ -52,7 +52,7 @@ function show(e) {
         tip.style.transform = 'translateY(0)'
       })
     })
-  }, 200)
+  }, 80)
 }
 
 function hide() {

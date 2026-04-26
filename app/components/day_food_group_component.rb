@@ -56,16 +56,8 @@ class DayFoodGroupComponent < ApplicationComponent
     is_recipe?(item) ? edit_day_day_recipe_path(item.day, item) : edit_day_day_food_path(item.day, item)
   end
 
-  def update_path(item)
-    is_recipe?(item) ? day_day_recipe_path(item.day, item) : day_day_food_path(item.day, item)
-  end
-
   def delete_path(item)
     is_recipe?(item) ? day_day_recipe_path(item.day, item) : day_day_food_path(item.day, item)
-  end
-
-  def quantity_param_name(item)
-    is_recipe?(item) ? "day_recipe[quantity]" : "day_food[quantity]"
   end
 
   def delete_confirm_message(item)

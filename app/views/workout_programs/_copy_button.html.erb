@@ -1,0 +1,13 @@
+<%# locals: (program:, day:) %>
+<span id="copy_btn_day_<%= day.id %>">
+  <% if day.program_exercises.reload.any? %>
+    <button type="button"
+            data-action="click->collapsible#toggle"
+            title="<%= t("views.workout_programs.day.copy_to_title") %>"
+            class="w-5 h-5 flex items-center justify-center rounded text-ink-subtle hover:text-brand transition-colors cursor-pointer shrink-0">
+      <i class="fas fa-copy text-[10px]"></i>
+    </button>
+  <% else %>
+    <div class="w-5 shrink-0"></div>
+  <% end %>
+</span>

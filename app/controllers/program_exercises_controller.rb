@@ -1,7 +1,7 @@
 class ProgramExercisesController < ApplicationController
   before_action :set_program
   before_action :set_day
-  before_action :set_exercise, only: [:update, :destroy]
+  before_action :set_exercise, only: [:update, :destroy, :move]
 
   def create
     @exercise = @day.program_exercises.build(exercise_params)
@@ -28,6 +28,29 @@ class ProgramExercisesController < ApplicationController
 
   def destroy
     @exercise.destroy
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to @program }
+    end
+  end
+
+  def move
+    target_day = @program.program_days.find(params[:target_day_id])
+    new_position = params[:position].to_i
+
+    @source_day = @day
+    @target_day = target_day
+
+    @exercise.update!(program_day: target_day, position: new_position)
+
+    # Repack positions on both days to avoid gaps
+    @source_day.program_exercises.order(:position).each_with_index do |pe, i|
+      pe.update_column(:position, i)
+    end
+    @target_day.program_exercises.order(:position).each_with_index do |pe, i|
+      pe.update_column(:position, i)
+    end
+
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to @program }
