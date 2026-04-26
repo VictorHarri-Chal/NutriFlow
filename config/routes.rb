@@ -50,6 +50,7 @@ Rails.application.routes.draw do
       member { post :copy_to }
       resources :program_exercises, only: [:create, :update, :destroy] do
         collection { patch :reorder }
+        member     { patch :move }
       end
     end
   end

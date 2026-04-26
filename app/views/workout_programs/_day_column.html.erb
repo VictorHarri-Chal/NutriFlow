@@ -15,16 +15,7 @@
       <p class="text-[10px] font-bold uppercase tracking-widest text-ink-subtle/60 text-center flex-1">
         <%= day.day_abbr %>
       </p>
-      <% if day.program_exercises.any? %>
-        <button type="button"
-                data-action="click->collapsible#toggle"
-                title="<%= t("views.workout_programs.day.copy_to_title") %>"
-                class="w-5 h-5 flex items-center justify-center rounded text-ink-subtle/30 hover:text-ink-subtle/70 transition-colors cursor-pointer shrink-0">
-          <i class="fas fa-copy text-[9px]"></i>
-        </button>
-      <% else %>
-        <div class="w-5 shrink-0"></div>
-      <% end %>
+      <%= render "workout_programs/copy_button", program: program, day: day %>
     </div>
 
     <%# Copy targets panel — inline, no absolute positioning to avoid overflow clipping %>
@@ -102,20 +93,7 @@
   <% end %>
 
   <%# ── Exercise list ── %>
-  <div class="flex-1 p-2 space-y-1.5 overflow-y-auto"
-       id="program_day_exercises_<%= day.id %>"
-       data-controller="sortable-list"
-       data-sortable-list-url-value="<%= reorder_workout_program_program_day_program_exercises_path(program, day) %>">
-    <% if day.program_exercises.empty? %>
-      <div class="py-6 text-center" id="program_day_<%= day.id %>_empty">
-        <p class="text-[10px] text-ink-subtle/40 italic"><%= t("views.workout_programs.day.empty_hint") %></p>
-      </div>
-    <% else %>
-      <% day.program_exercises.each do |pe| %>
-        <%= render "workout_programs/program_exercise", program: program, day: day, pe: pe %>
-      <% end %>
-    <% end %>
-  </div>
+  <%= render "workout_programs/exercise_list", program: program, day: day %>
 
   <%# ── Add exercise combobox ── %>
   <div class="p-2 border-t border-surface-border/30 rounded-b-xl bg-surface-raised">

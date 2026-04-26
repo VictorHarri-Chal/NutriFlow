@@ -77,30 +77,8 @@
                 <% end %>
               </td>
 
-              <%# Inline quantity edit %>
               <td>
-                <div data-controller="inline-edit">
-                  <span data-inline-edit-target="display"
-                        data-action="click->inline-edit#edit"
-                        class="cursor-pointer group flex items-center gap-1 hover:text-brand transition-colors">
-                    <%= item.display_quantity %>
-                    <i class="fas fa-pen text-xs text-ink-subtle opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                  </span>
-                  <%= form_with url: update_path(item), method: :patch,
-                                class: "hidden",
-                                data: { "inline-edit-target": "form" } do %>
-                    <div class="flex items-center gap-1">
-                      <input type="number"
-                             name="<%= quantity_param_name(item) %>"
-                             value="<%= item.quantity.to_i %>"
-                             min="1" step="1"
-                             class="w-20 bg-surface-base border border-surface-border rounded px-2 py-1 text-sm text-ink-primary focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand"
-                             data-inline-edit-target="input"
-                             data-action="keydown->inline-edit#keydown blur->inline-edit#blur">
-                      <span class="text-ink-subtle text-xs">g</span>
-                    </div>
-                  <% end %>
-                </div>
+                <span class="text-ink-primary"><%= item.display_quantity %></span>
               </td>
 
               <td class="font-semibold text-brand"><%= item.total_calories %> kcal</td>

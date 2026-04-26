@@ -1,10 +1,13 @@
 <%= turbo_stream.remove "program_exercise_#{@exercise.id}" %>
 
-<%# Restore empty hint if day has no more exercises %>
+<%# Restore empty hint and hide copy button if day has no more exercises %>
 <% if @day.program_exercises.empty? %>
   <%= turbo_stream.append "program_day_exercises_#{@day.id}" do %>
     <div class="py-6 text-center" id="program_day_<%= @day.id %>_empty">
       <p class="text-[10px] text-ink-subtle/40 italic"><%= t("views.workout_programs.day.empty_hint") %></p>
     </div>
+  <% end %>
+  <%= turbo_stream.replace "copy_btn_day_#{@day.id}" do %>
+    <%= render "workout_programs/copy_button", program: @program, day: @day %>
   <% end %>
 <% end %>
