@@ -7,7 +7,7 @@ image: victorharrichal/nutri_flow
 # Deploy to these servers.
 servers:
   web:
-    - 91.98.133.64
+    - <%= ENV.fetch("KAMAL_SERVER_IP") %>
   # job:
   #   hosts:
   #     - 192.168.0.1
@@ -19,18 +19,13 @@ servers:
 # Note: If using Cloudflare, set encryption mode in SSL/TLS setting to "Full" to enable CF-to-app encryption.
 proxy:
   ssl: true
-  host: app.example.com // Mettre le nom de domaine ici
+  host: <%= ENV.fetch("KAMAL_HOST") %>
 
-
-# # Credentials for your image host.
-# registry:
-#   # Specify the registry server, if you're not using Docker Hub
-#   # server: registry.digitalocean.com / ghcr.io / ...
-#   username: your-user
-
-  # Always use an access token rather than real password when possible.
+# Credentials for your image host.
+registry:
+  username: victorharrichal
   password:
-    - KAMAL_REGISTRY_PASSWORD // Mettre le mot de passe de l'image docker hub ici
+    - KAMAL_REGISTRY_PASSWORD
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
 env:
@@ -62,12 +57,10 @@ aliases:
   logs: app logs -f
   dbc: app exec --interactive --reuse "bin/rails dbconsole"
 
-
 # Use a persistent storage volume for sqlite database files and local Active Storage files.
 # Recommended to change this to a mounted volume path that is backed up off server.
 volumes:
   - "nutri_flow_storage:/rails/storage"
-
 
 # Bridge fingerprinted assets, like JS and CSS, between versions to avoid
 # hitting 404 on in-flight requests. Combines all files from new and old
