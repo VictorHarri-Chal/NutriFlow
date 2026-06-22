@@ -46,7 +46,7 @@
               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-ink-subtle hover:text-status-danger hover:bg-status-danger/8 transition-colors <%= has_checked ? '' : 'invisible pointer-events-none' %>"
               data-action="click->confirm#show"
               data-confirm-message="<%= t('views.shopping_lists.clear_checked_confirm') %>"
-              data-confirm-label="<%= t('views.shopping_lists.clear_checked') %>"
+              data-confirm-label="<%= t('views.shopping_lists.clear_checked_modal_label') %>"
               data-url="<%= clear_checked_shopping_list_path(shopping_list) %>"
               data-turbo-method="delete">
         <i class="fas fa-circle-check text-xs"></i>
