@@ -1,7 +1,7 @@
 class Food < ApplicationRecord
   include PgSearch::Model
 
-  CATEGORIES = %w[proteins grains vegetables fruits dairy beverages condiments other].freeze
+  CATEGORIES = %w[proteins grains vegetables fruits dairy beverages condiments supplements other].freeze
 
   belongs_to :user
   has_many :day_foods, dependent: :destroy
