@@ -83,7 +83,8 @@ production:
     <<: *default
     database: nutri_flow_production
     username: nutri_flow
-    password: <%= ENV["NUTRI_FLOW_DATABASE_PASSWORD"] %>
+    password: <%= ENV["POSTGRES_PASSWORD"] %>
+    host: <%= ENV.fetch("DB_HOST", "localhost") %>
   cache:
     <<: *primary_production
     database: nutri_flow_production_cache
