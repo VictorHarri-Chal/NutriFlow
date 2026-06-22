@@ -2,11 +2,3 @@
 APP_PATH = File.expand_path("../config/application", __dir__)
 require_relative "../config/boot"
 require "rails/commands"
-s3:
-  access_key_id: 15e937db5a7026f42e89d30d9ff77e4c
-  secret_access_key: 0dc7132a5fec71190368dd19058a57f67b98a159e308027ca4465cb5e9cf70b7
-  endpoint: https://cf9a0b25bbe6f0c961a015d8be262707.r2.cloudflarestorage.com/nutriflow-storage
-
-resend:
-  smtp_password: re_GM8Vcaat_CnozYN4H8qstL7GJVkdNgauc
-
