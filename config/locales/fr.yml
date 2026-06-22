@@ -255,6 +255,7 @@ fr:
       in_stock_filter: "En stock"
       out_of_stock_filter: "À racheter"
       labels_filter: "Labels"
+      all_categories: "Toutes les catégories"
       no_in_stock:
         title: "Aucun aliment en stock"
         description: "Marque tes aliments disponibles comme « en stock »."
@@ -286,7 +287,7 @@ fr:
         preview_title: "Aperçu"
         preview_empty_hint: "Renseignez les valeurs nutritionnelles pour voir l'aperçu."
         of_which_sugars: "dont sucres :"
-        category: "Rayon"
+        category: "Catégorie"
         category_none: "Aucun"
 
     day_foods:
@@ -1203,4 +1204,5 @@ fr:
         dairy: "Laitiers"
         beverages: "Boissons"
         condiments: "Épices & condiments"
+        supplements: "Compléments"
         other: "Autres"

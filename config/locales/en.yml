@@ -255,6 +255,7 @@ en:
       in_stock_filter: "In stock"
       out_of_stock_filter: "Need to buy"
       labels_filter: "Labels"
+      all_categories: "All categories"
       no_in_stock:
         title: "Nothing in stock"
         description: "Mark your available foods as \"in stock\"."
@@ -285,7 +286,7 @@ en:
         preview_title: "Preview"
         preview_empty_hint: "Fill in the nutritional values to see the preview."
         of_which_sugars: "of which sugars:"
-        category: "Aisle"
+        category: "Category"
         category_none: "None"
         create_labels_hint: "Create food labels in settings"
 
@@ -1205,4 +1206,5 @@ en:
         dairy: "Dairy"
         beverages: "Beverages"
         condiments: "Spices & condiments"
+        supplements: "Supplements"
         other: "Other"

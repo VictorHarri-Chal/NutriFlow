@@ -19,7 +19,10 @@ class ShoppingListsController < ApplicationController
   end
 
   def clear_checked
-    @shopping_list.shopping_list_items.checked.delete_all
+    checked_items = @shopping_list.shopping_list_items.checked
+    food_ids = checked_items.where.not(food_id: nil).pluck(:food_id)
+    current_user.foods.where(id: food_ids).update_all(in_pantry: true) if food_ids.any?
+    checked_items.delete_all
     set_list_state
     flash.now[:notice] = t("views.shopping_lists.cleared_checked")
     respond_to do |format|

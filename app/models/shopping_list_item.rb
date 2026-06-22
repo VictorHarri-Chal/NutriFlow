@@ -1,5 +1,5 @@
 class ShoppingListItem < ApplicationRecord
-  CATEGORIES = %w[proteins grains vegetables fruits dairy beverages condiments other].freeze
+  CATEGORIES = %w[proteins grains vegetables fruits dairy beverages condiments supplements other].freeze
 
   belongs_to :shopping_list
   belongs_to :food, optional: true

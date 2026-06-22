@@ -30,6 +30,11 @@ class FoodsController < ApplicationController
       @selected_label_id = params[:label_id].to_i
     end
 
+    if params[:category].present?
+      @foods = @foods.where(category: params[:category])
+      @selected_category = params[:category]
+    end
+
     if params[:full_result] == "true"
       @foods = @foods.order(created_at: :desc)
       @pagy = nil
