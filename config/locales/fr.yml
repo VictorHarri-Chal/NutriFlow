@@ -1177,6 +1177,7 @@ fr:
       delete_item: "Supprimer"
       clear_checked: "Effacer les cochés"
       clear_checked_confirm: "Supprimer tous les articles cochés ?"
+      clear_checked_modal_label: "Effacer les cochés"
       clear_all: "Vider la liste"
       clear_all_confirm: "Supprimer tous les articles de la liste ?"
       cleared_checked: "Articles cochés supprimés."
