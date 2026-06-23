@@ -66,9 +66,15 @@ en:
         reset_error: "An error occurred while sending the reset email."
       registrations:
         password_updated: "Your password has been updated successfully."
+        email_updated: "Your email address has been updated successfully."
 
   activerecord:
     attributes:
+      user:
+        current_password: "Current password"
+        password: "Password"
+        password_confirmation: "Password confirmation"
+        email: "Email address"
       food:
         name: "Name"
         brand: "Brand"
@@ -487,7 +493,12 @@ en:
         save: "Save"
       security:
         title: "Account security"
-        description: "Manage your password and account access."
+        description: "Manage your email address, password and account access."
+        change_email: "Change email address"
+        current_email_hint: "Current address: %{email}"
+        new_email: "New email address"
+        new_email_placeholder: "new@email.com"
+        update_email: "Update email"
         change_password: "Change password"
         current_password: "Current password"
         current_password_placeholder: "Enter your current password"
@@ -1209,3 +1220,51 @@ en:
         condiments: "Spices & condiments"
         supplements: "Supplements"
         other: "Other"
+
+    devise:
+      shared:
+        email: "Email address"
+        email_placeholder: "your@email.com"
+        password: "Password"
+        back_to_login: "Back to sign in"
+      sessions:
+        title: "Sign in"
+        subtitle: "Welcome to NutriFlow"
+        forgot_password: "Forgot your password?"
+        remember_me: "Remember me"
+        submit: "Sign in"
+        no_account: "No account yet?"
+        sign_up_link: "Create an account"
+      registrations:
+        title: "Create an account"
+        subtitle: "Start tracking your nutrition"
+        password_hint: "%{count} characters minimum"
+        password_confirm: "Confirm password"
+        submit: "Create my account"
+        already_account: "Already have an account?"
+        sign_in_link: "Sign in"
+      passwords:
+        new:
+          title: "Forgot your password?"
+          subtitle: "Enter your email to receive a reset link"
+          submit: "Send reset link"
+        edit:
+          title: "New password"
+          subtitle: "Choose a secure password"
+          new_password: "New password"
+          confirm_password: "Confirm password"
+          submit: "Reset password"
+      mailer:
+        reset_password:
+          greeting: "Hello %{email}!"
+          intro: "Someone has requested a link to change your password. You can do this through the link below."
+          action: "Change my password"
+          ignore: "If you didn't request this, please ignore this email."
+          no_change: "Your password won't change until you access the link above and create a new one."
+        password_changed:
+          greeting: "Hello %{email}!"
+          body: "Your password has been changed successfully."
+        email_changed:
+          greeting: "Hello %{email}!"
+          body_pending: "Your email address is being changed to %{new_email}."
+          body_confirmed: "Your email address has been changed to %{new_email}."

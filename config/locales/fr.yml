@@ -66,9 +66,15 @@ fr:
         reset_error: "Une erreur est survenue lors de l'envoi de l'email de réinitialisation."
       registrations:
         password_updated: "Votre mot de passe a été mis à jour avec succès."
+        email_updated: "Votre adresse e-mail a été mise à jour avec succès."
 
   activerecord:
     attributes:
+      user:
+        current_password: "Mot de passe actuel"
+        password: "Mot de passe"
+        password_confirmation: "Confirmation du mot de passe"
+        email: "Adresse e-mail"
       food:
         name: "Nom"
         brand: "Marque"
@@ -485,7 +491,12 @@ fr:
         save: "Sauvegarder"
       security:
         title: "Sécurité du compte"
-        description: "Gérez votre mot de passe et les accès à votre compte."
+        description: "Gérez votre adresse e-mail, votre mot de passe et les accès à votre compte."
+        change_email: "Changer l'adresse e-mail"
+        current_email_hint: "Adresse actuelle : %{email}"
+        new_email: "Nouvelle adresse e-mail"
+        new_email_placeholder: "nouvelle@email.com"
+        update_email: "Mettre à jour l'email"
         change_password: "Changer le mot de passe"
         current_password: "Mot de passe actuel"
         current_password_placeholder: "Entrez votre mot de passe actuel"
@@ -1207,3 +1218,51 @@ fr:
         condiments: "Épices & condiments"
         supplements: "Compléments"
         other: "Autres"
+
+    devise:
+      shared:
+        email: "Adresse e-mail"
+        email_placeholder: "ton@email.com"
+        password: "Mot de passe"
+        back_to_login: "Retour à la connexion"
+      sessions:
+        title: "Connexion"
+        subtitle: "Bienvenue sur NutriFlow"
+        forgot_password: "Mot de passe oublié ?"
+        remember_me: "Se souvenir de moi"
+        submit: "Se connecter"
+        no_account: "Pas encore de compte ?"
+        sign_up_link: "Créer un compte"
+      registrations:
+        title: "Créer un compte"
+        subtitle: "Commencez à suivre votre nutrition"
+        password_hint: "%{count} caractères minimum"
+        password_confirm: "Confirmer le mot de passe"
+        submit: "Créer mon compte"
+        already_account: "Déjà un compte ?"
+        sign_in_link: "Se connecter"
+      passwords:
+        new:
+          title: "Mot de passe oublié ?"
+          subtitle: "Saisissez votre email pour recevoir un lien de réinitialisation"
+          submit: "Envoyer le lien"
+        edit:
+          title: "Nouveau mot de passe"
+          subtitle: "Choisissez un mot de passe sécurisé"
+          new_password: "Nouveau mot de passe"
+          confirm_password: "Confirmer le mot de passe"
+          submit: "Réinitialiser le mot de passe"
+      mailer:
+        reset_password:
+          greeting: "Bonjour %{email} !"
+          intro: "Quelqu'un a demandé un lien pour changer votre mot de passe. Vous pouvez le faire via le lien ci-dessous."
+          action: "Changer mon mot de passe"
+          ignore: "Si vous n'avez pas fait cette demande, ignorez cet email."
+          no_change: "Votre mot de passe ne changera pas tant que vous n'aurez pas cliqué sur le lien ci-dessus."
+        password_changed:
+          greeting: "Bonjour %{email} !"
+          body: "Votre mot de passe a été modifié avec succès."
+        email_changed:
+          greeting: "Bonjour %{email} !"
+          body_pending: "Votre adresse e-mail est en cours de modification vers %{new_email}."
+          body_confirmed: "Votre adresse e-mail a été modifiée vers %{new_email}."

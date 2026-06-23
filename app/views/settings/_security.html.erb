@@ -8,10 +8,55 @@
     <p class="text-sm text-ink-subtle mt-1"><%= t("views.settings.security.description") %></p>
   </div>
 
+  <%# ── Changement d'email ── %>
+  <div class="border-t border-surface-border/40 pt-6">
+    <h3 class="text-sm font-semibold text-ink-primary mb-1"><%= t("views.settings.security.change_email") %></h3>
+    <p class="text-xs text-ink-subtle mb-4"><%= t("views.settings.security.current_email_hint", email: current_user.email) %></p>
+    <% if (email_errors = session.delete(:email_errors)).present? %>
+      <div class="mb-4 p-3 rounded-lg bg-status-danger/10 border border-status-danger/30">
+        <% email_errors.each do |field, messages| %>
+          <% messages.each do |message| %>
+            <p class="text-sm text-status-danger"><%= "#{current_user.class.human_attribute_name(field)} #{message}" %></p>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+    <%= form_with(model: current_user, url: registration_path(current_user), local: true, method: :patch, class: "space-y-4") do |form| %>
+      <%= hidden_field_tag :change_type, 'email' %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="label-dark"><%= t("views.settings.security.new_email") %></label>
+          <%= form.email_field :email, required: true, autocomplete: "email",
+                               class: "input-dark mt-1",
+                               placeholder: t("views.settings.security.new_email_placeholder") %>
+        </div>
+        <div>
+          <label class="label-dark"><%= t("views.settings.security.current_password") %></label>
+          <%= form.password_field :current_password, required: true, autocomplete: "current-password",
+                                  class: "input-dark mt-1",
+                                  placeholder: t("views.settings.security.current_password_placeholder") %>
+        </div>
+      </div>
+      <div>
+        <%= form.submit t("views.settings.security.update_email"), class: "btn-primary cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+
   <%# ── Changement de mot de passe ── %>
   <div class="border-t border-surface-border/40 pt-6">
     <h3 class="text-sm font-semibold text-ink-primary mb-4"><%= t("views.settings.security.change_password") %></h3>
+    <% if (password_errors = session.delete(:password_errors)).present? %>
+      <div class="mb-4 p-3 rounded-lg bg-status-danger/10 border border-status-danger/30">
+        <% password_errors.each do |field, messages| %>
+          <% messages.each do |message| %>
+            <p class="text-sm text-status-danger"><%= "#{current_user.class.human_attribute_name(field)} #{message}" %></p>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
     <%= form_with(model: current_user, url: registration_path(current_user), local: true, method: :patch, class: "space-y-4") do |form| %>
+      <%= hidden_field_tag :change_type, 'password' %>
       <div>
         <label class="label-dark"><%= t("views.settings.security.current_password") %></label>
         <%= form.password_field :current_password, required: true, autocomplete: "current-password",
@@ -39,28 +84,19 @@
     <% end %>
   </div>
 
-  <%# ── Réinitialisation par email ── %>
-  <div class="border-t border-surface-border/40 pt-6 flex items-start justify-between gap-6">
-    <div>
-      <h3 class="text-sm font-semibold text-ink-primary"><%= t("views.settings.security.forgot_password") %></h3>
-      <p class="text-xs text-ink-subtle mt-1 max-w-sm"><%= t("views.settings.security.forgot_password_hint") %></p>
-    </div>
-    <%= form_with(model: User.new, url: password_path(:user), local: true, method: :post) do |form| %>
-      <%= form.hidden_field :email, value: current_user.email %>
-      <%= form.submit t("views.settings.security.send_reset_link"), class: "btn-secondary cursor-pointer shrink-0 text-sm" %>
-    <% end %>
-  </div>
-
   <%# ── Suppression du compte ── %>
   <div class="border-t border-surface-border/40 pt-6">
-    <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-status-danger/20 bg-status-danger_dim/5">
+    <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-status-danger/20 bg-status-danger/5">
       <div>
         <h3 class="text-sm font-semibold text-status-danger"><%= t("views.settings.security.delete_account") %></h3>
         <p class="text-xs text-ink-subtle mt-0.5"><%= t("views.settings.security.delete_account_warning") %></p>
       </div>
-      <button class="btn-danger shrink-0 text-sm">
-        <%= t("views.settings.security.delete_account_button") %>
-      </button>
+      <%= delete_button_with_confirm(
+            registration_path(:user),
+            confirm: t("views.settings.security.delete_account_warning"),
+            text: t("views.settings.security.delete_account_button"),
+            class: "btn-danger shrink-0 text-sm cursor-pointer"
+          ) %>
     </div>
   </div>
 
