@@ -1,12 +1,12 @@
 <thead>
   <tr>
-    <th class="whitespace-nowrap"><%= food_sort_link(:name, t("views.foods.table.name_col")) %></th>
+    <th class="whitespace-nowrap"><%= food_sort_link(:name, t("views.foods.table.name_col"), default_order: :asc) %></th>
     <th class="whitespace-nowrap"><%= t("views.foods.labels_col") %></th>
     <th class="whitespace-nowrap text-right"><%= food_sort_link(:calories, t("views.foods.table.calories_col")) %></th>
     <th class="whitespace-nowrap text-right"><%= food_sort_link(:proteins, t("views.foods.table.proteins_col")) %></th>
     <th class="whitespace-nowrap text-right"><%= food_sort_link(:carbs, t("views.foods.table.carbs_col")) %></th>
     <th class="whitespace-nowrap text-right"><%= food_sort_link(:fats, t("views.foods.table.fats_col")) %></th>
-    <th class="text-center whitespace-nowrap"><%= t("views.foods.usages_col") %></th>
+    <th class="text-center whitespace-nowrap"><%= food_usages_sort_link(t("views.foods.usages_col")) %></th>
     <th></th>
   </tr>
 </thead>

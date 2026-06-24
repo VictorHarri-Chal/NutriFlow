@@ -35,11 +35,17 @@ class FoodsController < ApplicationController
       @selected_category = params[:category]
     end
 
-    if params[:full_result] == "true"
+    if params[:sort_usages].present?
+      dir = params[:sort_usages] == "asc" ? "ASC" : "DESC"
+      @foods = @foods.reorder(Arel.sql("(SELECT COUNT(*) FROM day_foods WHERE day_foods.food_id = foods.id) #{dir}"))
+    elsif params.dig(:q, :s).blank?
       @foods = @foods.order(created_at: :desc)
+    end
+
+    if params[:full_result] == "true"
       @pagy = nil
     else
-      @pagy, @foods = pagy(@foods.order(created_at: :desc), items: 10)
+      @pagy, @foods = pagy(@foods, items: 10)
     end
 
     food_ids = @foods.pluck(:id)
