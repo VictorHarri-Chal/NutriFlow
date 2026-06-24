@@ -8,11 +8,11 @@ local:
 
 amazon:
   service: S3
-  access_key_id: <%= Rails.application.credentials.dig(:s3, :access_key_id) %>
-  secret_access_key: <%= Rails.application.credentials.dig(:s3, :secret_access_key) %>
+  access_key_id: <%= ENV["ACCESS_KEY_ID"] %>
+  secret_access_key: <%= ENV["SECRET_ACCESS_KEY"] %>
   region: auto
   bucket: nutriflow-storage
-  endpoint: <%= Rails.application.credentials.dig(:s3, :endpoint) %>
+  endpoint: <%= ENV["S3_ENDPOINT"] %>
   force_path_style: true
 
 # Remember not to checkin your GCS keyfile to a repository
