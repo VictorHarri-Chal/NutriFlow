@@ -15,8 +15,6 @@ amazon:
   endpoint: <%= ENV["S3_ENDPOINT"] %>
   force_path_style: true
   request_checksum_calculation: "when_required"
-  upload:
-    checksum_algorithm: ~
 
 # Remember not to checkin your GCS keyfile to a repository
 # google:
