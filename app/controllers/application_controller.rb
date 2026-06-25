@@ -6,8 +6,14 @@ class ApplicationController < ActionController::Base
 
   before_action :authenticate_user!
   before_action :set_locale
+  before_action :set_sentry_context
 
   private
+
+  def set_sentry_context
+    return unless current_user
+    Sentry.set_user(id: current_user.id, email: current_user.email)
+  end
 
   def set_locale
     I18n.locale = if user_signed_in? && I18n.available_locales.include?(current_user.locale.to_sym)

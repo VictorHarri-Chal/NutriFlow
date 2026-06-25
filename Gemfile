@@ -73,3 +73,6 @@ gem "devise", "~> 4.9"
 gem 'dentaku'
 
 gem "rails-i18n", "~> 8.1"
+
+gem "sentry-ruby"
+gem "sentry-rails"

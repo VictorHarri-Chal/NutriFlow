@@ -36,6 +36,7 @@ env:
     - ACCESS_KEY_ID
     - SECRET_ACCESS_KEY
     - S3_ENDPOINT
+    - SENTRY_DSN
   clear:
     SOLID_QUEUE_IN_PUMA: true
     DB_HOST: nutri_flow-db

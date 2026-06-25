@@ -273,6 +273,13 @@ GEM
       actionpack (>= 5.2)
       railties (>= 5.2)
     securerandom (0.4.1)
+    sentry-rails (6.6.2)
+      railties (>= 5.2.0)
+      sentry-ruby (~> 6.6.2)
+    sentry-ruby (6.6.2)
+      bigdecimal
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      logger
     simple_form (5.3.1)
       actionpack (>= 5.2)
       activemodel (>= 5.2)
@@ -370,6 +377,8 @@ DEPENDENCIES
   rails (~> 8.0.2)
   rails-i18n (~> 8.1)
   ransack
+  sentry-rails
+  sentry-ruby
   simple_form
   solid_cable
   solid_cache
