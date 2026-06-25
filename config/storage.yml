@@ -7,13 +7,16 @@ local:
   root: <%= Rails.root.join("storage") %>
 
 amazon:
-  service: S3
+  service: CloudflareR2
+  cdn_host: <%= ENV["CDN_HOST"] %>
+  key_prefix: storage
   access_key_id: <%= ENV["ACCESS_KEY_ID"] %>
   secret_access_key: <%= ENV["SECRET_ACCESS_KEY"] %>
   region: auto
   bucket: nutriflow-storage
   endpoint: <%= ENV["S3_ENDPOINT"] %>
   force_path_style: true
+  public: true
   request_checksum_calculation: "when_required"
 
 # Remember not to checkin your GCS keyfile to a repository

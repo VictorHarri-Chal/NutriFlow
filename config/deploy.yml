@@ -40,6 +40,7 @@ env:
   clear:
     SOLID_QUEUE_IN_PUMA: true
     DB_HOST: nutri_flow-db
+    CDN_HOST: https://cdn.nutriflow.in
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal logs -r job" will tail logs from the first server in the job section.

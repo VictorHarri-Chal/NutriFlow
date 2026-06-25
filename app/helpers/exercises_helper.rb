@@ -34,11 +34,14 @@ module ExercisesHelper
   end
 
   # Returns the display image URL: Active Storage upload first, then gif_url fallback.
-  # Pass variant: :thumbnail or :medium to serve a resized version.
+  # Variants are served via direct CDN URL (bypasses the Rails redirect controller).
   def exercise_image_url(exercise, variant: nil)
     if exercise.image.attached?
-      blob = variant ? exercise.image.variant(variant) : exercise.image
-      url_for(blob)
+      if variant
+        exercise.image.variant(variant).processed.url
+      else
+        exercise.image.url
+      end
     elsif exercise.gif_url.present?
       exercise.gif_url
     end

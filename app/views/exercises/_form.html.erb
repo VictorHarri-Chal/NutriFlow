@@ -37,7 +37,7 @@
           <div class="relative inline-block mb-3"
                data-remove-image-target="preview">
             <div class="w-20 h-20 rounded-xl overflow-hidden border border-surface-border/40">
-              <%= image_tag url_for(exercise.image.variant(:thumbnail)), class: "w-full h-full object-cover" %>
+              <%= image_tag exercise_image_url(exercise, variant: :thumbnail), class: "w-full h-full object-cover" %>
             </div>
             <button type="button"
                     class="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-status-danger/80 hover:bg-status-danger text-white flex items-center justify-center transition-colors shadow"
