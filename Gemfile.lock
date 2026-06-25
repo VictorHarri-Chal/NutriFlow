@@ -123,6 +123,13 @@ GEM
       tzinfo
     faker (3.5.1)
       i18n (>= 1.8.11, < 2)
+    ffi (1.17.4-aarch64-linux-gnu)
+    ffi (1.17.4-aarch64-linux-musl)
+    ffi (1.17.4-arm-linux-gnu)
+    ffi (1.17.4-arm-linux-musl)
+    ffi (1.17.4-arm64-darwin)
+    ffi (1.17.4-x86_64-linux-gnu)
+    ffi (1.17.4-x86_64-linux-musl)
     fugit (1.11.1)
       et-orbi (~> 1, >= 1.2.11)
       raabro (~> 1.4)
@@ -130,6 +137,9 @@ GEM
       activesupport (>= 6.1)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
+    image_processing (1.14.0)
+      mini_magick (>= 4.9.5, < 6)
+      ruby-vips (>= 2.0.17, < 3)
     importmap-rails (2.1.0)
       actionpack (>= 6.0.0)
       activesupport (>= 6.0.0)
@@ -165,6 +175,8 @@ GEM
       net-smtp
     marcel (1.0.4)
     method_source (1.1.0)
+    mini_magick (5.3.1)
+      logger
     mini_mime (1.1.5)
     minitest (5.25.5)
     msgpack (1.8.0)
@@ -272,6 +284,9 @@ GEM
     responders (3.1.1)
       actionpack (>= 5.2)
       railties (>= 5.2)
+    ruby-vips (2.3.0)
+      ffi (~> 1.12)
+      logger
     securerandom (0.4.1)
     sentry-rails (6.6.2)
       railties (>= 5.2.0)
@@ -366,6 +381,7 @@ DEPENDENCIES
   dotenv
   enumerize
   faker
+  image_processing (~> 1.2)
   importmap-rails
   jbuilder
   kamal

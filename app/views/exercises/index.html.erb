@@ -255,8 +255,9 @@
                      alt="<%= exercise.name %>"
                      class="hidden absolute inset-0 w-full h-full object-cover">
               <% elsif has_image %>
-                <img src="<%= url_for(exercise.image) %>"
+                <img src="<%= url_for(exercise.image.variant(:thumbnail)) %>"
                      alt="<%= exercise.name %>"
+                     loading="lazy"
                      class="absolute inset-0 w-full h-full object-cover">
               <% else %>
                 <div class="w-full h-full flex items-center justify-center bg-surface-raised">

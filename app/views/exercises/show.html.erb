@@ -39,7 +39,7 @@
 
     <!-- Image / GIF (2/5) -->
     <div class="lg:col-span-2 card p-0 overflow-hidden self-start rounded-xl">
-      <% img_url = exercise_image_url(@exercise) %>
+      <% img_url = exercise_image_url(@exercise, variant: :medium) %>
       <% if img_url.present? %>
         <img src="<%= img_url %>"
              alt="<%= exercise_name(@exercise) %>"

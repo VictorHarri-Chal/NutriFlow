@@ -34,9 +34,11 @@ module ExercisesHelper
   end
 
   # Returns the display image URL: Active Storage upload first, then gif_url fallback.
-  def exercise_image_url(exercise)
+  # Pass variant: :thumbnail or :medium to serve a resized version.
+  def exercise_image_url(exercise, variant: nil)
     if exercise.image.attached?
-      url_for(exercise.image)
+      blob = variant ? exercise.image.variant(variant) : exercise.image
+      url_for(blob)
     elsif exercise.gif_url.present?
       exercise.gif_url
     end

@@ -2,7 +2,10 @@ class Exercise < ApplicationRecord
   include PgSearch::Model
 
   belongs_to :custom_user, class_name: "User", foreign_key: :custom_user_id, optional: true
-  has_one_attached :image
+  has_one_attached :image do |attachable|
+    attachable.variant :thumbnail, resize_to_fill: [400, 400]
+    attachable.variant :medium,    resize_to_limit: [800, 800]
+  end
   has_many :exercise_favorites, dependent: :destroy
 
   validates :exercise_id, presence: true, uniqueness: true
