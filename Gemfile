@@ -76,3 +76,5 @@ gem "rails-i18n", "~> 8.1"
 
 gem "sentry-ruby"
 gem "sentry-rails"
+
+gem "rack-attack"

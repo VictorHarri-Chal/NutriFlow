@@ -20,6 +20,10 @@ servers:
 proxy:
   ssl: true
   host: nutriflow.in
+  healthcheck:
+    path: /up
+    interval: 3
+    timeout: 3
 
 # Credentials for your image host.
 registry:
