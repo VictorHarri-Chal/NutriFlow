@@ -1,0 +1,11 @@
+[Unit]
+Description=NutriFlow PostgreSQL backup to Cloudflare R2
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/backup_nutriflow.sh
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nutriflow-backup
