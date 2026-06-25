@@ -123,14 +123,10 @@
         <% end %>
       <% else %>
         <p class="text-2xl font-bold text-ink-subtle">—</p>
-        <div class="mt-2">
-          <%= link_to edit_profile_path,
-                class: "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium bg-brand/10 border border-brand/25 text-brand hover:bg-brand/15 hover:border-brand/40 transition-colors" do %>
-            <i class="fas fa-circle-user text-[9px]"></i>
-            <%= t("views.weight_entries.stats.set_goal") %>
-            <i class="fas fa-arrow-right text-[9px] opacity-60"></i>
-          <% end %>
-        </div>
+        <%= link_to edit_profile_path,
+              class: "inline-block mt-2 text-[10px] font-medium text-brand hover:text-brand-hover underline underline-offset-2 transition-colors" do %>
+          <%= t("views.weight_entries.stats.set_goal") %>
+        <% end %>
       <% end %>
     </div>
 

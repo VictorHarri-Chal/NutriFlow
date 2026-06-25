@@ -36,7 +36,7 @@
           <% end %>
         <% end %>
 
-        <% ex_truly_empty = @exercises.empty? && params[:query].blank? && params[:body_part].blank? && params[:equipment].blank? && params[:difficulty].blank? %>
+        <% ex_truly_empty = @exercises.empty? && params[:query].blank? && params[:body_part].blank? && params[:equipment].blank? && params[:difficulty].blank? && params[:source].blank? %>
         <%= link_to new_exercise_path, class: "btn-primary flex-shrink-0 #{ex_truly_empty ? 'invisible pointer-events-none' : ''}" do %>
           <i class="fas fa-plus text-xs"></i>
           <%= t("views.exercises.custom.btn_new") %>
@@ -192,11 +192,7 @@
       </div>
       <% if params[:source] == "custom" %>
         <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.exercises.custom.empty.title") %></h3>
-        <p class="text-ink-muted mb-4"><%= t("views.exercises.custom.empty.description") %></p>
-        <%= link_to new_exercise_path, class: "btn-primary", data: { turbo_frame: "_top" } do %>
-          <i class="fas fa-plus"></i>
-          <%= t("views.exercises.custom.btn_new") %>
-        <% end %>
+        <p class="text-ink-muted"><%= t("views.exercises.custom.empty.description") %></p>
       <% elsif params[:source] == "favorites" %>
         <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.exercises.favorites_empty.title") %></h3>
         <p class="text-ink-muted mb-4"><%= t("views.exercises.favorites_empty.description") %></p>

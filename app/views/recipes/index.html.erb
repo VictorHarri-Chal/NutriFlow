@@ -57,7 +57,7 @@
       ].each do |tab| %>
         <% active = tab[:source].nil? ? @source.blank? : @source == tab[:source] %>
         <%= link_to recipes_path(source: tab[:source], sort: params[:sort], query: params[:query]),
-            class: "inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-sm font-medium border transition-colors #{ active ? 'bg-brand text-surface-base border-brand' : 'bg-surface-raised border-surface-border/40 text-ink-muted hover:text-ink-primary hover:border-surface-border/70' }" do %>
+            class: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors #{ active ? 'bg-brand/20 text-brand border-brand/50' : 'bg-surface-hover text-ink-muted border-surface-border hover:border-brand/30 hover:text-ink-primary' }" do %>
           <i class="fas <%= tab[:icon] %> text-xs"></i>
           <%= tab[:label] %>
         <% end %>
@@ -84,7 +84,7 @@
           arrow    = active ? (current_dir == "asc" ? " ↑" : " ↓") : ""
         %>
         <%= link_to recipes_path(sort: key, direction: next_dir, source: @source, query: params[:query]),
-              class: "inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors #{active ? 'bg-brand text-surface-base border-brand' : 'bg-surface-raised border-surface-border/40 text-ink-muted hover:text-ink-primary hover:border-surface-border/70'}" do %>
+              class: "inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border transition-colors #{active ? 'bg-brand/20 text-brand border-brand/50' : 'bg-surface-hover text-ink-muted border-surface-border hover:border-brand/30 hover:text-ink-primary'}" do %>
           <%= label %><%= arrow %>
         <% end %>
       <% end %>

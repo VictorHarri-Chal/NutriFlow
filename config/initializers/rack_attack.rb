@@ -1,3 +1,5 @@
+return unless Rails.env.production?
+
 Rack::Attack.cache.store = Rails.cache
 
 # All traffic goes through Cloudflare — real visitor IP is in HTTP_CF_CONNECTING_IP,

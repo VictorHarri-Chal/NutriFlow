@@ -5,7 +5,7 @@ class WeightEntriesController < ApplicationController
     @entries     = current_user.weight_entries.ordered
     @profile     = current_user.profile
     @today_entry = current_user.weight_entries.find_or_initialize_by(date: Date.today)
-    @period      = VALID_PERIODS.include?(params[:period]&.to_i) ? params[:period].to_i : 90
+    @period      = VALID_PERIODS.include?(params[:period]&.to_i) ? params[:period].to_i : 30
 
     build_chart_data
     build_stats
@@ -23,7 +23,7 @@ class WeightEntriesController < ApplicationController
       @entries     = current_user.weight_entries.ordered
       @profile     = current_user.profile
       @today_entry = @weight_entry
-      @period      = 90
+      @period      = 30
       build_chart_data
       build_stats
       render :index, status: :unprocessable_entity
