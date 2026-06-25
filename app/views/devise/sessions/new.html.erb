@@ -11,8 +11,6 @@
       </div>
 
       <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "space-y-5" }) do |f| %>
-        <%= f.error_notification %>
-
         <div>
           <label class="label-dark"><%= t("views.devise.shared.email") %></label>
           <%= f.input :email,
