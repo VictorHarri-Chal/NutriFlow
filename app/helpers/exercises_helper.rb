@@ -35,6 +35,7 @@ module ExercisesHelper
 
   # Returns the display image URL: Active Storage upload first, then gif_url fallback.
   # Variants are served via direct CDN URL (bypasses the Rails redirect controller).
+  # Returns nil if the blob is missing from storage (e.g. manually deleted from R2).
   def exercise_image_url(exercise, variant: nil)
     if exercise.image.attached?
       if variant
@@ -45,6 +46,8 @@ module ExercisesHelper
     elsif exercise.gif_url.present?
       exercise.gif_url
     end
+  rescue ActiveStorage::Error, Aws::S3::Errors::ServiceError
+    nil
   end
 
   # Exercise names are always kept in English (universal gym terminology).
