@@ -2,18 +2,30 @@ import { Controller } from "@hotwired/stimulus"
 
 const VALID_NUTRISCORE = new Set(["a", "b", "c", "d", "e"])
 
+const NUTRISCORE_LABELS = {
+  a: "Nutri-Score A — Excellente qualité nutritionnelle",
+  b: "Nutri-Score B — Bonne qualité nutritionnelle",
+  c: "Nutri-Score C — Qualité nutritionnelle moyenne",
+  d: "Nutri-Score D — Qualité nutritionnelle insuffisante",
+  e: "Nutri-Score E — Mauvaise qualité nutritionnelle"
+}
+
 export default class extends Controller {
   static targets = [
     "input", "results", "searchIcon",
-    "typeHint", "emptyState",
+    "typeHint", "emptyState", "emptyFilter",
     "offIdField", "nutriscoreField", "novaGroupField",
-    "badge"
+    "badge", "ciqualBadge",
+    "filterBtn"
   ]
   static values = { url: String }
 
   connect() {
-    this._timeout  = null
-    this._products = new Map()
+    this._timeout     = null
+    this._products    = new Map()
+    this._allProducts = []
+    this._hasSearched = false
+    this._filter      = "all"
   }
 
   disconnect() {
@@ -30,20 +42,36 @@ export default class extends Controller {
     this._timeout = setTimeout(() => this._fetch(q), 300)
   }
 
+  setFilter({ params: { filter } }) {
+    this._filter = filter
+    this._updateFilterBtns()
+    if (this._hasSearched) {
+      this._renderResults(this._allProducts)
+    }
+  }
+
   selectProduct({ params: { index } }) {
     const product = this._products.get(String(index))
     if (!product) return
 
-    this.offIdFieldTarget.value      = product.off_id     || ""
-    this.nutriscoreFieldTarget.value = product.nutriscore || ""
-    this.novaGroupFieldTarget.value  = product.nova_group || ""
+    if (product.source === "off") {
+      this.offIdFieldTarget.value      = product.off_id     || ""
+      this.nutriscoreFieldTarget.value = product.nutriscore || ""
+      this.novaGroupFieldTarget.value  = product.nova_group || ""
+      if (this.hasCiqualBadgeTarget) this.ciqualBadgeTarget.classList.replace("flex", "hidden")
+      if (this.hasBadgeTarget)       this.badgeTarget.classList.replace("hidden", "flex")
+    } else {
+      this.offIdFieldTarget.value      = ""
+      this.nutriscoreFieldTarget.value = ""
+      this.novaGroupFieldTarget.value  = ""
+      if (this.hasBadgeTarget)       this.badgeTarget.classList.replace("flex", "hidden")
+      if (this.hasCiqualBadgeTarget) this.ciqualBadgeTarget.classList.replace("hidden", "flex")
+    }
 
     document.dispatchEvent(new CustomEvent("food-off-search:import", {
       detail: { product },
       bubbles: true
     }))
-
-    if (this.hasBadgeTarget) this.badgeTarget.classList.replace("hidden", "flex")
 
     const manualTab = document.querySelector("[data-tab='manual']")
     if (manualTab) manualTab.click()
@@ -51,6 +79,7 @@ export default class extends Controller {
 
   async _fetch(query) {
     this._showSpinner()
+    this._hasSearched = true
     try {
       const res  = await fetch(`${this.urlValue}?q=${encodeURIComponent(query)}`)
       const data = await res.json()
@@ -63,21 +92,34 @@ export default class extends Controller {
   }
 
   _renderResults(products) {
+    this._allProducts = products
+
+    const filtered = this._filter === "all"
+      ? products
+      : products.filter(p => p.source === this._filter)
+
     this._products.clear()
     this.resultsTarget.innerHTML = ""
 
-    if (products.length === 0) {
+    if (filtered.length === 0) {
       this.resultsTarget.classList.add("hidden")
       this.typeHintTarget.classList.add("hidden")
-      this.emptyStateTarget.classList.remove("hidden")
+      if (products.length > 0) {
+        this.emptyFilterTarget.classList.remove("hidden")
+        this.emptyStateTarget.classList.add("hidden")
+      } else {
+        this.emptyStateTarget.classList.remove("hidden")
+        this.emptyFilterTarget.classList.add("hidden")
+      }
       return
     }
 
     this.emptyStateTarget.classList.add("hidden")
+    this.emptyFilterTarget.classList.add("hidden")
     this.typeHintTarget.classList.add("hidden")
     this.resultsTarget.classList.remove("hidden")
 
-    products.forEach((product, i) => {
+    filtered.forEach((product, i) => {
       this._products.set(String(i), product)
       const wrapper = document.createElement("div")
       wrapper.innerHTML = this._productHTML(product, i)
@@ -90,13 +132,18 @@ export default class extends Controller {
       ? `<img src="${product.image_url}" alt="" class="w-full h-full object-cover" loading="lazy">`
       : `<i class="fas fa-bowl-food text-surface-border text-sm"></i>`
 
+    const sourceBadge = product.source === "ciqual"
+      ? `<span class="shrink-0 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Générique</span>`
+      : `<span class="shrink-0 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/30">Emballé</span>`
+
     const grade = product.nutriscore?.toLowerCase()
-    const badge = grade && VALID_NUTRISCORE.has(grade)
-      ? `<span class="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold uppercase shrink-0 ${this._nutriscoreColor(grade)}">${grade.toUpperCase()}</span>`
+    const nutriscore = grade && VALID_NUTRISCORE.has(grade)
+      ? `<span class="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold uppercase shrink-0 ${this._nutriscoreColor(grade)}" data-tooltip="${NUTRISCORE_LABELS[grade]}">${grade.toUpperCase()}</span>`
       : ""
 
-    const brand = product.brand
-      ? `<div class="text-xs text-ink-muted truncate">${this._escape(product.brand)}</div>`
+    const subtitle = product.brand || product.category
+    const brand = subtitle
+      ? `<div class="text-xs text-ink-muted truncate">${this._escape(subtitle)}</div>`
       : ""
 
     return `
@@ -111,7 +158,8 @@ export default class extends Controller {
           <div class="font-medium text-ink-primary text-sm truncate group-hover:text-brand transition-colors">${this._escape(product.name)}</div>
           ${brand}
         </div>
-        ${badge}
+        ${sourceBadge}
+        ${nutriscore}
         <div class="text-right shrink-0 ml-2">
           <div class="text-sm font-semibold text-brand">${product.calories} kcal</div>
           <div class="text-xs text-ink-subtle">P:${product.proteins}g · G:${product.carbs}g · L:${product.fats}g</div>
@@ -131,7 +179,19 @@ export default class extends Controller {
     return d.innerHTML
   }
 
-  // Swap l'icône de loupe en spinner sur le même élément — pas de double élément
+  _updateFilterBtns() {
+    if (!this.hasFilterBtnTarget) return
+    this.filterBtnTargets.forEach(btn => {
+      const isActive = btn.dataset.foodOffSearchFilterParam === this._filter
+      btn.classList.toggle("bg-brand/20",              isActive)
+      btn.classList.toggle("text-brand",               isActive)
+      btn.classList.toggle("border-brand/50",          isActive)
+      btn.classList.toggle("bg-transparent",           !isActive)
+      btn.classList.toggle("text-ink-muted",           !isActive)
+      btn.classList.toggle("border-surface-border/40", !isActive)
+    })
+  }
+
   _showSpinner() {
     if (!this.hasSearchIconTarget) return
     const icon = this.searchIconTarget
@@ -147,10 +207,13 @@ export default class extends Controller {
   }
 
   _reset() {
+    this._hasSearched = false
+    this._allProducts = []
     this._products.clear()
     this.resultsTarget.innerHTML = ""
     this.resultsTarget.classList.add("hidden")
     this.emptyStateTarget.classList.add("hidden")
+    this.emptyFilterTarget.classList.add("hidden")
     this.typeHintTarget.classList.remove("hidden")
     this._hideSpinner()
   }

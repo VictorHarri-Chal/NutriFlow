@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_25_202027) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_25_214306) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -63,6 +63,21 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_25_202027) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["day_id"], name: "index_cardio_sessions_on_day_id"
+  end
+
+  create_table "ciqual_foods", force: :cascade do |t|
+    t.string "alim_code", null: false
+    t.string "name", null: false
+    t.string "food_group"
+    t.decimal "calories", precision: 6, scale: 2, default: "0.0"
+    t.decimal "proteins", precision: 6, scale: 2, default: "0.0"
+    t.decimal "carbs", precision: 6, scale: 2, default: "0.0"
+    t.decimal "fats", precision: 6, scale: 2, default: "0.0"
+    t.decimal "sugars", precision: 6, scale: 2, default: "0.0"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["alim_code"], name: "index_ciqual_foods_on_alim_code", unique: true
+    t.index ["name"], name: "index_ciqual_foods_on_name"
   end
 
   create_table "day_food_groups", force: :cascade do |t|

@@ -1,6 +1,6 @@
 <div class="max-w-6xl mx-auto mt-16 card p-8"
      data-controller="food-off-search"
-     data-food-off-search-url-value="<%= search_off_foods_path %>">
+     data-food-off-search-url-value="<%= search_import_foods_path %>">
 
   <div data-controller="tabs" data-tabs-active-tab-value="off">
 
@@ -8,7 +8,10 @@
     <div class="flex items-center justify-between mb-8">
       <h1 class="text-2xl font-bold text-ink-primary"><%= t("views.foods.add_food") %></h1>
 
-      <div class="flex gap-1 p-1 bg-surface-base rounded-xl border border-surface-border/40">
+      <div class="flex items-center gap-2">
+        <i class="fas fa-circle-info text-sm text-ink-muted hover:text-ink-primary transition-colors cursor-default"
+           data-tooltip="Aliments génériques : base officielle ANSES Ciqual (fruits, légumes, viandes, produits laitiers…) · Produits emballés : Open Food Facts, 3M+ références communautaires"></i>
+        <div class="flex gap-1 p-1 bg-surface-base rounded-xl border border-surface-border/40">
         <button type="button"
                 data-tabs-target="tab"
                 data-tab="off"
@@ -29,6 +32,7 @@
           <i class="fas fa-pen-to-square text-xs"></i>
           <%= t("views.foods.new.tab_manual") %>
         </button>
+        </div>
       </div>
     </div>
 
@@ -48,16 +52,47 @@
                data-action="input->food-off-search#search">
       </div>
 
-      <%# Type hint (état initial) %>
-      <div data-food-off-search-target="typeHint" class="text-center py-16">
-        <i class="fas fa-magnifying-glass text-surface-border text-4xl mb-4 block"></i>
-        <p class="text-sm text-ink-subtle"><%= t("views.foods.off_search.type_hint") %></p>
+      <%# Filter pills %>
+      <div class="flex items-center gap-2 mb-5">
+        <button type="button"
+                class="rounded-full text-xs font-medium border transition-colors px-3 py-1 bg-brand/20 text-brand border-brand/50"
+                data-food-off-search-target="filterBtn"
+                data-action="click->food-off-search#setFilter"
+                data-food-off-search-filter-param="all">
+          <%= t("views.foods.off_search.filter_all") %>
+        </button>
+        <button type="button"
+                class="rounded-full text-xs font-medium border transition-colors px-3 py-1 bg-transparent text-ink-muted border-surface-border/40"
+                data-food-off-search-target="filterBtn"
+                data-action="click->food-off-search#setFilter"
+                data-food-off-search-filter-param="ciqual">
+          <%= t("views.foods.off_search.filter_ciqual") %>
+        </button>
+        <button type="button"
+                class="rounded-full text-xs font-medium border transition-colors px-3 py-1 bg-transparent text-ink-muted border-surface-border/40"
+                data-food-off-search-target="filterBtn"
+                data-action="click->food-off-search#setFilter"
+                data-food-off-search-filter-param="off">
+          <%= t("views.foods.off_search.filter_off") %>
+        </button>
       </div>
 
-      <%# Aucun résultat %>
+      <%# Type hint (état initial) %>
+      <div data-food-off-search-target="typeHint" class="text-center py-14">
+        <p class="text-sm text-ink-muted mb-1"><%= t("views.foods.off_search.type_hint") %></p>
+        <p class="text-xs text-ink-subtle"><%= t("views.foods.off_search.type_hint_sub") %></p>
+      </div>
+
+      <%# Aucun résultat (API vide) %>
       <div data-food-off-search-target="emptyState" class="hidden text-center py-16">
         <i class="fas fa-circle-exclamation text-surface-border text-4xl mb-4 block"></i>
         <p class="text-sm text-ink-subtle"><%= t("views.foods.off_search.empty") %></p>
+      </div>
+
+      <%# Aucun résultat pour ce filtre (résultats existent mais filtrés) %>
+      <div data-food-off-search-target="emptyFilter" class="hidden text-center py-16">
+        <i class="fas fa-filter text-surface-border text-4xl mb-4 block"></i>
+        <p class="text-sm text-ink-subtle"><%= t("views.foods.off_search.empty_filter") %></p>
       </div>
 
       <%# Liste des résultats %>

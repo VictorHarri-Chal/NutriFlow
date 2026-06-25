@@ -31,9 +31,16 @@ class OpenFoodFactsService
   # Prioritise les produits dont le nom contient les termes de la recherche.
   # Les autres (match sur ingrédients, codes-barres, etc.) restent mais passent en dernier.
   def self.sort_by_relevance(products, query)
-    terms = query.downcase.split(/\s+/)
+    # Normalise les pluriels simples (chien/chiens, suisse/suisses) pour aligner
+    # les requêtes utilisateur avec les noms de produits OFF qui peuvent différer en nombre.
+    terms = query.downcase.split(/\s+/).map { |t| t.sub(/s+\z/, "") }.reject { |t| t.length < 3 }
+    return products if terms.empty?
+
     products
-      .select { |p| terms.any? { |t| "#{p[:name]} #{p[:brand]}".downcase.include?(t) } }
+      .select { |p|
+        text = "#{p[:name]} #{p[:brand]}".downcase
+        terms.all? { |t| text.include?(t) }
+      }
       .sort_by { |p| -terms.count { |t| p[:name].downcase.include?(t) } }
   end
 

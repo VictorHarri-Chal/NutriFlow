@@ -80,3 +80,4 @@ gem "sentry-rails"
 gem "rack-attack"
 
 gem "faraday", "~> 2.14"
+gem "csv"

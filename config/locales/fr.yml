@@ -299,10 +299,16 @@ fr:
         tab_manual: "Manuel"
         tab_off: "Import rapide"
       off_badge: "Importé via Open Food Facts"
+      ciqual_badge: "Données officielles Ciqual / ANSES"
       off_search:
         placeholder: "Rechercher un aliment..."
         empty: "Aucun résultat pour cette recherche"
-        type_hint: "Tapez au moins 2 caractères pour lancer la recherche"
+        type_hint: "Tapez pour rechercher un aliment ou un produit"
+        type_hint_sub: "Aliments génériques (Ciqual ANSES) · Produits emballés (Open Food Facts)"
+        filter_all: "Tout"
+        filter_ciqual: "Aliments génériques"
+        filter_off: "Produits emballés"
+        empty_filter: "Aucun résultat pour ce filtre — essayez «Tout»"
 
     day_foods:
       new:

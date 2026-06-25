@@ -299,10 +299,16 @@ en:
         tab_manual: "Manual"
         tab_off: "Quick import"
       off_badge: "Imported via Open Food Facts"
+      ciqual_badge: "Official Ciqual / ANSES data"
       off_search:
         placeholder: "Search for a food..."
         empty: "No results for this search"
-        type_hint: "Type at least 2 characters to search"
+        type_hint: "Type to search for a food or a product"
+        type_hint_sub: "Generic foods (Ciqual ANSES) · Packaged products (Open Food Facts)"
+        filter_all: "All"
+        filter_ciqual: "Generic foods"
+        filter_off: "Packaged products"
+        empty_filter: "No results for this filter — try «All»"
 
     day_foods:
       new:

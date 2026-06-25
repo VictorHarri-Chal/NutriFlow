@@ -143,14 +143,22 @@ class FoodsController < ApplicationController
     end
   end
 
-  def search_off
+  def search_import
     query = params[:q].to_s.strip
     return render json: { products: [] } if query.length < 2
 
-    products = Rails.cache.fetch("off_search:#{query.downcase}", expires_in: 30.minutes) do
-      OpenFoodFactsService.search(query)
+    ciqual = CiqualFood.search_by_name(query).limit(10).map do |f|
+      { source: "ciqual", name: f.name, brand: nil, category: f.food_group,
+        calories: f.calories.to_f.round(1), proteins: f.proteins.to_f.round(1),
+        carbs: f.carbs.to_f.round(1), fats: f.fats.to_f.round(1),
+        sugars: f.sugars.to_f.round(1) }
     end
-    render json: { products: products }
+
+    off = Rails.cache.fetch("off_search:#{query.downcase}", expires_in: 30.minutes) do
+      OpenFoodFactsService.search(query)
+    end.first(10).map { |p| p.merge(source: "off") }
+
+    render json: { products: ciqual + off }
   end
 
   def duplicate

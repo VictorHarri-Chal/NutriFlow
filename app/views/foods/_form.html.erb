@@ -8,6 +8,11 @@
     <%= t("views.foods.off_badge") %>
   </div>
 
+  <div data-food-off-search-target="ciqualBadge" class="hidden items-center gap-2 px-3 py-2 mb-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm">
+    <i class="fas fa-database"></i>
+    <%= t("views.foods.ciqual_badge") %>
+  </div>
+
   <div data-controller="food-preview" data-action="input->food-preview#update food-off-search:import@document->food-preview#fillFromOff">
 
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
