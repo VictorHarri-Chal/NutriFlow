@@ -47,9 +47,15 @@
   <% end %>
 
   <div class="mt-8 pt-6 border-t border-surface-border/40">
-    <%= delete_button_with_confirm(registration_path(resource_name),
-                                  confirm: t("views.settings.security.delete_account_warning"),
-                                  text: t("views.settings.security.delete_account_button"),
-                                  class: "text-sm font-medium text-status-danger hover:text-red-400 transition-colors") %>
+    <%= button_to t("views.settings.security.delete_account_button"),
+                  registration_path(resource_name),
+                  method: :delete,
+                  class: "text-sm font-medium text-status-danger hover:text-red-400 transition-colors",
+                  data: {
+                    action: "click->confirm#show",
+                    confirm_message: t("views.settings.security.delete_account_warning"),
+                    url: registration_path(resource_name),
+                    method: "delete"
+                  } %>
   </div>
 </div>

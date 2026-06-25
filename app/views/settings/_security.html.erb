@@ -91,12 +91,16 @@
         <h3 class="text-sm font-semibold text-status-danger"><%= t("views.settings.security.delete_account") %></h3>
         <p class="text-xs text-ink-subtle mt-0.5"><%= t("views.settings.security.delete_account_warning") %></p>
       </div>
-      <%= delete_button_with_confirm(
-            registration_path(:user),
-            confirm: t("views.settings.security.delete_account_warning"),
-            text: t("views.settings.security.delete_account_button"),
-            class: "btn-danger shrink-0 text-sm cursor-pointer"
-          ) %>
+      <%= button_to t("views.settings.security.delete_account_button"),
+                    registration_path(:user),
+                    method: :delete,
+                    class: "btn-danger shrink-0 text-sm cursor-pointer",
+                    data: {
+                      action: "click->confirm#show",
+                      confirm_message: t("views.settings.security.delete_account_warning"),
+                      url: registration_path(:user),
+                      method: "delete"
+                    } %>
     </div>
   </div>
 
