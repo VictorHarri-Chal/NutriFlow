@@ -4,6 +4,13 @@ class Users::RegistrationsController < Devise::RegistrationsController
   skip_before_action :authenticate_user!, only: [:new, :create]
   before_action :configure_account_update_params, only: [:update]
 
+  def destroy
+    resource.destroy
+    Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name)
+    flash[:notice] = t("devise.registrations.destroyed")
+    redirect_to root_path, status: :see_other
+  end
+
   def update
     self.resource = resource_class.to_adapter.get!(send(:"current_#{resource_name}").to_key)
     resource_updated = update_resource(resource, account_update_params)
