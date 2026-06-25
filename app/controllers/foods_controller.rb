@@ -143,6 +143,16 @@ class FoodsController < ApplicationController
     end
   end
 
+  def search_off
+    query = params[:q].to_s.strip
+    return render json: { products: [] } if query.length < 2
+
+    products = Rails.cache.fetch("off_search:#{query.downcase}", expires_in: 30.minutes) do
+      OpenFoodFactsService.search(query)
+    end
+    render json: { products: products }
+  end
+
   def duplicate
     copy = @food.dup
     copy.name = t("controllers.foods.duplicate_name", name: @food.name)
@@ -160,6 +170,6 @@ class FoodsController < ApplicationController
   end
 
   def food_params
-    params.require(:food).permit(:name, :brand, :fats, :carbs, :sugars, :proteins, :calories, :category, food_label_ids: [])
+    params.require(:food).permit(:name, :brand, :fats, :carbs, :sugars, :proteins, :calories, :category, :off_id, :nutriscore_grade, :nova_group, food_label_ids: [])
   end
 end

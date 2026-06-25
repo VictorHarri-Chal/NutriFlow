@@ -1,5 +1,14 @@
 <%= simple_form_for(food) do |f| %>
-  <div data-controller="food-preview" data-action="input->food-preview#update">
+  <%= f.hidden_field :off_id, data: { "food-off-search-target": "offIdField" } %>
+  <%= f.hidden_field :nutriscore_grade, data: { "food-off-search-target": "nutriscoreField" } %>
+  <%= f.hidden_field :nova_group, data: { "food-off-search-target": "novaGroupField" } %>
+
+  <div data-food-off-search-target="badge" class="<%= food.off_id.present? ? 'flex' : 'hidden' %> items-center gap-2 px-3 py-2 mb-4 rounded-lg bg-brand/10 border border-brand/30 text-brand text-sm">
+    <i class="fas fa-cloud-download-alt"></i>
+    <%= t("views.foods.off_badge") %>
+  </div>
+
+  <div data-controller="food-preview" data-action="input->food-preview#update food-off-search:import@document->food-preview#fillFromOff">
 
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
 
@@ -10,12 +19,12 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <%= f.input :name,
                       label: t("activerecord.attributes.food.name"),
-                      input_html: { class: "input-dark", autocomplete: "off", autofocus: true },
+                      input_html: { class: "input-dark", autocomplete: "off", autofocus: true, data: { "food-preview-target": "nameField" } },
                       label_html: { class: "label-dark" } %>
           <%= f.input :brand,
                       label: t("activerecord.attributes.food.brand"),
                       required: false,
-                      input_html: { class: "input-dark", autocomplete: "off" },
+                      input_html: { class: "input-dark", autocomplete: "off", data: { "food-preview-target": "brandField" } },
                       label_html: { class: "label-dark" } %>
         </div>
 

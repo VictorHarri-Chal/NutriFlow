@@ -295,6 +295,14 @@ fr:
         of_which_sugars: "dont sucres :"
         category: "Catégorie"
         category_none: "Aucun"
+      new:
+        tab_manual: "Manuel"
+        tab_off: "Import rapide"
+      off_badge: "Importé via Open Food Facts"
+      off_search:
+        placeholder: "Rechercher un aliment..."
+        empty: "Aucun résultat pour cette recherche"
+        type_hint: "Tapez au moins 2 caractères pour lancer la recherche"
 
     day_foods:
       new:

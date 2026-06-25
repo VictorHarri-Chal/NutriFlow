@@ -4,10 +4,24 @@ export default class extends Controller {
   static targets = [
     "calories", "proteins", "carbs", "fats", "sugars",
     "previewCalories", "previewProteins", "previewCarbs", "previewFats", "previewSugars",
-    "emptyPanel", "statsPanel", "barProteins", "barCarbs", "barFats"
+    "emptyPanel", "statsPanel", "barProteins", "barCarbs", "barFats",
+    "nameField", "brandField"
   ]
 
   connect() {
+    this.update()
+  }
+
+  fillFromOff({ detail: { product } }) {
+    if (this.hasNameFieldTarget)  this.nameFieldTarget.value  = product.name  || ""
+    if (this.hasBrandFieldTarget) this.brandFieldTarget.value = product.brand || ""
+
+    this.caloriesTarget.value = product.calories || ""
+    this.proteinsTarget.value = product.proteins || ""
+    this.carbsTarget.value    = product.carbs    || ""
+    this.fatsTarget.value     = product.fats     || ""
+    this.sugarsTarget.value   = product.sugars   || ""
+
     this.update()
   }
 

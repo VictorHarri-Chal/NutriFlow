@@ -1,4 +1,76 @@
-<div class="max-w-6xl mx-auto mt-16 card p-8">
-  <h1 class="text-2xl font-bold text-ink-primary mb-6"><%= t("views.foods.add_food") %></h1>
-  <%= render "form", food: @food %>
+<div class="max-w-6xl mx-auto mt-16 card p-8"
+     data-controller="food-off-search"
+     data-food-off-search-url-value="<%= search_off_foods_path %>">
+
+  <div data-controller="tabs" data-tabs-active-tab-value="off">
+
+    <%# ── En-tête : titre + tab nav sur la même ligne ── %>
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-2xl font-bold text-ink-primary"><%= t("views.foods.add_food") %></h1>
+
+      <div class="flex gap-1 p-1 bg-surface-base rounded-xl border border-surface-border/40">
+        <button type="button"
+                data-tabs-target="tab"
+                data-tab="off"
+                data-action="click->tabs#switchTab"
+                data-active-classes="bg-surface-raised text-ink-primary shadow-sm"
+                data-inactive-classes="text-ink-muted hover:text-ink-primary"
+                class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all bg-surface-raised text-ink-primary shadow-sm">
+          <i class="fas fa-magnifying-glass text-xs"></i>
+          <%= t("views.foods.new.tab_off") %>
+        </button>
+        <button type="button"
+                data-tabs-target="tab"
+                data-tab="manual"
+                data-action="click->tabs#switchTab"
+                data-active-classes="bg-surface-raised text-ink-primary shadow-sm"
+                data-inactive-classes="text-ink-muted hover:text-ink-primary"
+                class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all text-ink-muted hover:text-ink-primary">
+          <i class="fas fa-pen-to-square text-xs"></i>
+          <%= t("views.foods.new.tab_manual") %>
+        </button>
+      </div>
+    </div>
+
+    <%# ── Panel OFF (affiché par défaut) ── %>
+    <div id="off-tab" data-tabs-target="content">
+
+      <%# Search bar %>
+      <div class="relative mb-6">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <i class="fas fa-magnifying-glass text-ink-subtle text-sm" data-food-off-search-target="searchIcon"></i>
+        </div>
+        <input type="text"
+               class="input-dark w-full pl-10 text-sm"
+               autocomplete="off"
+               placeholder="<%= t("views.foods.off_search.placeholder") %>"
+               data-food-off-search-target="input"
+               data-action="input->food-off-search#search">
+      </div>
+
+      <%# Type hint (état initial) %>
+      <div data-food-off-search-target="typeHint" class="text-center py-16">
+        <i class="fas fa-magnifying-glass text-surface-border text-4xl mb-4 block"></i>
+        <p class="text-sm text-ink-subtle"><%= t("views.foods.off_search.type_hint") %></p>
+      </div>
+
+      <%# Aucun résultat %>
+      <div data-food-off-search-target="emptyState" class="hidden text-center py-16">
+        <i class="fas fa-circle-exclamation text-surface-border text-4xl mb-4 block"></i>
+        <p class="text-sm text-ink-subtle"><%= t("views.foods.off_search.empty") %></p>
+      </div>
+
+      <%# Liste des résultats %>
+      <div data-food-off-search-target="results"
+           class="hidden max-h-[32rem] overflow-y-auto rounded-xl border border-surface-border/40 divide-y divide-surface-border/20">
+      </div>
+
+    </div>
+
+    <%# ── Panel manuel (masqué par défaut) ── %>
+    <div id="manual-tab" data-tabs-target="content" class="hidden">
+      <%= render "form", food: @food %>
+    </div>
+
+  </div>
 </div>

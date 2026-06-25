@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   end
   resources :foods, except: [:show] do
     collection do
+      get   :search_off
       patch :bulk_pantry
       post  :add_missing_to_shopping_list
     end
