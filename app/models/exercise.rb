@@ -12,7 +12,7 @@ class Exercise < ApplicationRecord
   validates :name, presence: true
 
   pg_search_scope :search_by_name,
-    against: [:name, :name_fr],
+    against: [:name],
     using: {
       tsearch: { prefix: true }
     }
