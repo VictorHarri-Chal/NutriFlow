@@ -308,7 +308,9 @@ en:
         filter_all: "All"
         filter_ciqual: "Generic foods"
         filter_off: "Packaged products"
-        empty_filter: "No results for this filter — try «All»"
+        empty_filter: "No results for this filter"
+        see_ciqual: "See Generic foods"
+        see_off: "See Packaged products"
 
     day_foods:
       new:

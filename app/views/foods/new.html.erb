@@ -15,7 +15,7 @@
         <button type="button"
                 data-tabs-target="tab"
                 data-tab="off"
-                data-action="click->tabs#switchTab"
+                data-action="click->tabs#switchTab click->food-off-search#focusInput"
                 data-active-classes="bg-surface-raised text-ink-primary shadow-sm"
                 data-inactive-classes="text-ink-muted hover:text-ink-primary"
                 class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all bg-surface-raised text-ink-primary shadow-sm">
@@ -45,11 +45,17 @@
           <i class="fas fa-magnifying-glass text-ink-subtle text-sm" data-food-off-search-target="searchIcon"></i>
         </div>
         <input type="text"
-               class="input-dark w-full pl-10 text-sm"
+               class="input-dark w-full pl-10 pr-9 text-sm"
                autocomplete="off"
                placeholder="<%= t("views.foods.off_search.placeholder") %>"
                data-food-off-search-target="input"
                data-action="input->food-off-search#search">
+        <button type="button"
+                class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-ink-subtle hover:text-ink-muted transition-colors"
+                data-food-off-search-target="clearBtn"
+                data-action="click->food-off-search#clearSearch">
+          <i class="fas fa-times text-sm"></i>
+        </button>
       </div>
 
       <%# Filter pills %>
@@ -90,14 +96,29 @@
       </div>
 
       <%# Aucun résultat pour ce filtre (résultats existent mais filtrés) %>
-      <div data-food-off-search-target="emptyFilter" class="hidden text-center py-16">
-        <i class="fas fa-filter text-surface-border text-4xl mb-4 block"></i>
-        <p class="text-sm text-ink-subtle"><%= t("views.foods.off_search.empty_filter") %></p>
+      <div data-food-off-search-target="emptyFilter" class="hidden text-center py-12">
+        <i class="fas fa-filter text-surface-border text-2xl mb-3 block"></i>
+        <p class="text-sm text-ink-muted mb-4"><%= t("views.foods.off_search.empty_filter") %></p>
+        <button type="button"
+                class="rounded-full text-xs font-medium border transition-colors px-3 py-1.5 bg-transparent text-ink-muted border-surface-border/40 hover:text-brand hover:border-brand/50"
+                data-food-off-search-target="emptyFilterBtn"
+                data-action="click->food-off-search#setFilter"
+                data-food-off-search-filter-param="all"
+                data-label-ciqual="<%= t('views.foods.off_search.see_ciqual') %>"
+                data-label-off="<%= t('views.foods.off_search.see_off') %>"
+                data-label-all="<%= t('views.foods.off_search.filter_all') %>">
+          <%= t("views.foods.off_search.filter_all") %>
+        </button>
       </div>
 
       <%# Liste des résultats %>
       <div data-food-off-search-target="results"
            class="hidden max-h-[32rem] overflow-y-auto rounded-xl border border-surface-border/40 divide-y divide-surface-border/20">
+      </div>
+
+      <%# Actions %>
+      <div class="flex justify-center mt-10 pt-6 border-t border-surface-border/40">
+        <%= link_to t("shared.cancel"), foods_path, class: "btn-ghost" %>
       </div>
 
     </div>

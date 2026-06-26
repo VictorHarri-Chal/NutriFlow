@@ -12,8 +12,8 @@ const NUTRISCORE_LABELS = {
 
 export default class extends Controller {
   static targets = [
-    "input", "results", "searchIcon",
-    "typeHint", "emptyState", "emptyFilter",
+    "input", "results", "searchIcon", "clearBtn",
+    "typeHint", "emptyState", "emptyFilter", "emptyFilterBtn",
     "offIdField", "nutriscoreField", "novaGroupField",
     "badge", "ciqualBadge",
     "filterBtn"
@@ -35,11 +35,24 @@ export default class extends Controller {
   search() {
     clearTimeout(this._timeout)
     const q = this.inputTarget.value.trim()
+    if (this.hasClearBtnTarget) this.clearBtnTarget.classList.toggle("hidden", q.length === 0)
     if (q.length < 2) {
       this._reset()
       return
     }
     this._timeout = setTimeout(() => this._fetch(q), 300)
+  }
+
+  clearSearch() {
+    this.inputTarget.value = ""
+    if (this.hasClearBtnTarget) this.clearBtnTarget.classList.add("hidden")
+    this._filter = "all"
+    this._updateFilterBtns()
+    this._reset()
+  }
+
+  focusInput() {
+    if (this.hasInputTarget) this.inputTarget.focus()
   }
 
   setFilter({ params: { filter } }) {
@@ -105,6 +118,7 @@ export default class extends Controller {
       this.resultsTarget.classList.add("hidden")
       this.typeHintTarget.classList.add("hidden")
       if (products.length > 0) {
+        this._updateEmptyFilterBtn(products)
         this.emptyFilterTarget.classList.remove("hidden")
         this.emptyStateTarget.classList.add("hidden")
       } else {
@@ -190,6 +204,21 @@ export default class extends Controller {
       btn.classList.toggle("text-ink-muted",           !isActive)
       btn.classList.toggle("border-surface-border/40", !isActive)
     })
+  }
+
+  _updateEmptyFilterBtn(products) {
+    if (!this.hasEmptyFilterBtnTarget) return
+    const btn = this.emptyFilterBtnTarget
+    const otherSource = this._filter === "ciqual" ? "off" : "ciqual"
+    const hasOther    = products.some(p => p.source === otherSource)
+
+    if (this._filter !== "all" && hasOther) {
+      btn.dataset.foodOffSearchFilterParam = otherSource
+      btn.textContent = btn.dataset[`label${otherSource.charAt(0).toUpperCase()}${otherSource.slice(1)}`]
+    } else {
+      btn.dataset.foodOffSearchFilterParam = "all"
+      btn.textContent = btn.dataset.labelAll
+    }
   }
 
   _showSpinner() {

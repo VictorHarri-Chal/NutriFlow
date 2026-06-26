@@ -4,7 +4,7 @@
   <%= f.hidden_field :nova_group, data: { "food-off-search-target": "novaGroupField" } %>
 
   <div data-food-off-search-target="badge" class="<%= food.off_id.present? ? 'flex' : 'hidden' %> items-center gap-2 px-3 py-2 mb-4 rounded-lg bg-brand/10 border border-brand/30 text-brand text-sm">
-    <i class="fas fa-cloud-download-alt"></i>
+    <i class="fas fa-cloud-arrow-down"></i>
     <%= t("views.foods.off_badge") %>
   </div>
 

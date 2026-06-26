@@ -308,7 +308,9 @@ fr:
         filter_all: "Tout"
         filter_ciqual: "Aliments génériques"
         filter_off: "Produits emballés"
-        empty_filter: "Aucun résultat pour ce filtre — essayez «Tout»"
+        empty_filter: "Aucun résultat pour ce filtre"
+        see_ciqual: "Voir Aliments génériques"
+        see_off: "Voir Produits emballés"
 
     day_foods:
       new:
