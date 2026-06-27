@@ -174,8 +174,9 @@ class FoodsController < ApplicationController
 
   def duplicate
     copy = @food.dup
-    copy.name = t("controllers.foods.duplicate_name", name: @food.name)
+    copy.name = unique_copy_name
     if copy.save
+      copy.food_labels = @food.food_labels
       redirect_to edit_food_path(copy), notice: t("controllers.foods.duplicated")
     else
       redirect_to foods_path, alert: t("controllers.foods.duplicate_error")
@@ -183,6 +184,18 @@ class FoodsController < ApplicationController
   end
 
   private
+
+  def unique_copy_name
+    base = t("controllers.foods.duplicate_name", name: @food.name)
+    return base unless current_user.foods.where("LOWER(name) = LOWER(?)", base).exists?
+
+    n = 2
+    loop do
+      candidate = "#{base} (#{n})"
+      return candidate unless current_user.foods.where("LOWER(name) = LOWER(?)", candidate).exists?
+      n += 1
+    end
+  end
 
   def set_food
     @food = current_user.foods.find(params[:id])
