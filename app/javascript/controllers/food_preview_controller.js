@@ -16,11 +16,11 @@ export default class extends Controller {
     if (this.hasNameFieldTarget)  this.nameFieldTarget.value  = product.name  || ""
     if (this.hasBrandFieldTarget) this.brandFieldTarget.value = product.brand || ""
 
-    this.caloriesTarget.value = product.calories || ""
-    this.proteinsTarget.value = product.proteins || ""
-    this.carbsTarget.value    = product.carbs    || ""
-    this.fatsTarget.value     = product.fats     || ""
-    this.sugarsTarget.value   = product.sugars   || ""
+    this.caloriesTarget.value = product.calories ?? 0
+    this.proteinsTarget.value = product.proteins ?? 0
+    this.carbsTarget.value    = product.carbs    ?? 0
+    this.fatsTarget.value     = product.fats     ?? 0
+    this.sugarsTarget.value   = product.sugars   ?? 0
 
     this.update()
   }

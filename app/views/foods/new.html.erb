@@ -3,7 +3,7 @@
      data-food-off-search-url-value="<%= search_import_foods_path %>"
      data-action="barcode-scanner:product@document->food-off-search#handleBarcodeProduct">
 
-  <div data-controller="tabs" data-tabs-active-tab-value="off">
+  <div data-controller="tabs" data-tabs-active-tab-value="<%= @food.errors.any? ? 'manual' : 'off' %>">
 
     <%# ── En-tête ── %>
     <div class="flex items-center justify-between mb-8">
