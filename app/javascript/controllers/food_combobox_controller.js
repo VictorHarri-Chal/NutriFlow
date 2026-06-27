@@ -31,7 +31,6 @@ export default class extends Controller {
 
   disconnect() {
     document.removeEventListener("click", this._boundClose)
-    this._returnToParent()
   }
 
   // ── Open / filter ───────────────────────────────────────────────
@@ -40,8 +39,6 @@ export default class extends Controller {
     // Lazy build in case connect() ran before the data script was in the DOM
     if (!this._optionsBuilt) this._buildOptions()
 
-    this._portalToBody()
-    this._positionDropdown()
     this._dd.classList.remove("hidden")
     this.filter()
     document.addEventListener("click", this._boundClose)
@@ -184,35 +181,9 @@ export default class extends Controller {
     dropdown.appendChild(empty)
   }
 
-  _positionDropdown() {
-    const rect = this.inputTarget.getBoundingClientRect()
-    this._dd.style.position = "fixed"
-    this._dd.style.top      = `${rect.bottom + 4}px`
-    this._dd.style.left     = `${rect.left}px`
-    this._dd.style.width    = `${rect.width}px`
-    this._dd.style.zIndex   = "9999"
-  }
-
   _close() {
     this._dd.classList.add("hidden")
-    this._returnToParent()
     document.removeEventListener("click", this._boundClose)
-  }
-
-  // Portal: move dropdown to <body> to escape any stacking context (transform, etc.)
-  _portalToBody() {
-    if (this._dd.parentElement !== document.body) {
-      this._ddParent      = this._dd.parentElement
-      this._ddNextSibling = this._dd.nextSibling
-      document.body.appendChild(this._dd)
-    }
-  }
-
-  // Restore dropdown to its original DOM position (Turbo cache safety)
-  _returnToParent() {
-    if (this._ddParent && this._dd && document.body.contains(this._dd)) {
-      this._ddParent.insertBefore(this._dd, this._ddNextSibling || null)
-    }
   }
 
   _onOutsideClick(event) {

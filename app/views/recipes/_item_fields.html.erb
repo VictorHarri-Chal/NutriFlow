@@ -2,7 +2,7 @@
      data-nested-form-target="item">
 
   <%# ── Combobox aliment ── %>
-  <div class="flex-1 min-w-0"
+  <div class="flex-1 min-w-0 relative"
        data-controller="food-combobox"
        data-food-combobox-selected-id-value="<%= f.object.food_id.to_i %>"
        data-food-combobox-food-name-value="<%= f.object.food&.name.to_s %>"
@@ -28,8 +28,7 @@
       </p>
     <% end %>
 
-    <%# Dropdown (positionné en fixed par le controller JS) %>
-    <div class="hidden max-h-52 overflow-y-auto bg-surface-raised border border-surface-border/60 rounded-lg shadow-2xl"
+    <div class="hidden absolute z-50 w-full mt-1 max-h-52 overflow-y-auto bg-surface-raised border border-surface-border/60 rounded-lg shadow-2xl"
          data-food-combobox-target="dropdown">
     </div>
   </div>

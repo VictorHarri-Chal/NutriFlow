@@ -20,14 +20,11 @@ export default class extends Controller {
 
   disconnect() {
     document.removeEventListener("click", this._boundClose)
-    this._returnToParent()
   }
 
   // ── Open on focus ───────────────────────────────────────────────
 
   focus() {
-    this._portalToBody()
-    this._positionDropdown()
     this._dd.classList.remove("hidden")
     this._applyFilter(this.inputTarget.value.trim())
     document.addEventListener("click", this._boundClose)
@@ -41,8 +38,6 @@ export default class extends Controller {
     this.hiddenFoodIdTarget.value = ""
     if (this.hasHiddenCategoryTarget) this.hiddenCategoryTarget.value = ""
 
-    this._portalToBody()
-    this._positionDropdown()
     this._dd.classList.remove("hidden")
     document.addEventListener("click", this._boundClose)
     this._applyFilter(query)
@@ -179,34 +174,8 @@ export default class extends Controller {
     if (empty) empty.classList.toggle("hidden", visible > 0)
   }
 
-  // Portal: move dropdown to <body> on open to escape any stacking context.
-  _portalToBody() {
-    if (this._dd.parentElement !== document.body) {
-      this._ddParent = this._dd.parentElement
-      this._ddNextSibling = this._dd.nextSibling
-      document.body.appendChild(this._dd)
-    }
-  }
-
-  // Restore dropdown to its original DOM position (Turbo cache safety).
-  _returnToParent() {
-    if (this._ddParent && document.body.contains(this._dd)) {
-      this._ddParent.insertBefore(this._dd, this._ddNextSibling || null)
-    }
-  }
-
-  _positionDropdown() {
-    const rect = this.inputTarget.getBoundingClientRect()
-    this._dd.style.position = "fixed"
-    this._dd.style.top      = `${rect.bottom + 4}px`
-    this._dd.style.left     = `${rect.left}px`
-    this._dd.style.width    = `${rect.width}px`
-    this._dd.style.zIndex   = "9999"
-  }
-
   _close() {
     this._dd.classList.add("hidden")
-    this._returnToParent()
     document.removeEventListener("click", this._boundClose)
   }
 

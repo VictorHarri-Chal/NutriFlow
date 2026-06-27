@@ -24,7 +24,8 @@
              data-food-combobox-recent-ids-value="<%= (@recent_recipe_ids || []).to_json %>"
              data-food-combobox-favorites-label-value="<%= t('views.foods.favorites_section') %>"
              data-food-combobox-recents-label-value="<%= t('views.foods.recents_section') %>"
-             data-food-combobox-all-label-value="<%= t('views.day_recipes.all_section') %>">
+             data-food-combobox-all-label-value="<%= t('views.day_recipes.all_section') %>"
+             class="relative">
           <%= f.hidden_field :recipe_id, data: {
                 "food-combobox-target": "hiddenId",
                 "day-recipe-preview-target": "recipeId"
@@ -38,7 +39,7 @@
                    data-action="focus->food-combobox#open input->food-combobox#filter keydown->food-combobox#keydown">
             <i class="fas fa-search absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-subtle text-xs pointer-events-none"></i>
           </div>
-          <div class="hidden max-h-52 overflow-y-auto bg-surface-raised border border-surface-border/60 rounded-lg shadow-2xl"
+          <div class="hidden absolute z-50 w-full mt-1 max-h-52 overflow-y-auto bg-surface-raised border border-surface-border/60 rounded-lg shadow-2xl"
                data-food-combobox-target="dropdown"></div>
         </div>
       <% else %>

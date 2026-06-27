@@ -25,7 +25,6 @@ export default class extends Controller {
 
   disconnect() {
     document.removeEventListener("click", this._handleOutsideClick)
-    this._returnToParent()
   }
 
   // ── Public actions ───────────────────────────────────────────────────────
@@ -80,49 +79,25 @@ export default class extends Controller {
     } catch { this._renderItems([]) }
   }
 
-  // Portal: move dropdown to <body> on open to escape any stacking context.
-  _portalToBody() {
-    if (this._dd.parentElement !== document.body) {
-      this._ddParent = this._dd.parentElement
-      this._ddNextSibling = this._dd.nextSibling
-      document.body.appendChild(this._dd)
-    }
-  }
-
-  // Restore dropdown to its original DOM position (Turbo cache safety).
-  _returnToParent() {
-    if (this._ddParent && document.body.contains(this._dd)) {
-      this._ddParent.insertBefore(this._dd, this._ddNextSibling || null)
-    }
-  }
-
   _positionDropdown() {
     const rect       = this.inputTarget.getBoundingClientRect()
     const spaceAbove = rect.top
     const spaceBelow = window.innerHeight - rect.bottom
     const el         = this._dd
 
-    el.style.position = "fixed"
-    el.style.left     = `${rect.left}px`
-    el.style.width    = `${Math.max(rect.width, 260)}px`
-    el.style.zIndex   = "9999"
-
     if (spaceAbove >= 100 || spaceAbove >= spaceBelow) {
-      // Show ABOVE: pin the BOTTOM edge to the input's top
-      el.style.bottom    = `${window.innerHeight - rect.top + 4}px`
-      el.style.top       = ""
+      el.style.top       = "auto"
+      el.style.bottom    = "calc(100% + 4px)"
       el.style.maxHeight = `${Math.min(280, spaceAbove - 12)}px`
     } else {
-      // Show BELOW: pin the TOP edge to the input's bottom
-      el.style.top       = `${rect.bottom + 4}px`
-      el.style.bottom    = ""
+      el.style.bottom    = "auto"
+      el.style.top       = "calc(100% + 4px)"
       el.style.maxHeight = `${Math.min(280, spaceBelow - 12)}px`
     }
   }
 
   _renderItems(items, label = null) {
     this._dd.innerHTML = ""
-    this._portalToBody()
     this._positionDropdown()
     this._dd.classList.remove("hidden")
     this.#highlighted = -1
@@ -192,7 +167,6 @@ export default class extends Controller {
   _close() {
     this._dd.classList.add("hidden")
     this._dd.innerHTML = ""
-    this._returnToParent()
     this.#highlighted = -1
   }
 
