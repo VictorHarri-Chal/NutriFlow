@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   resources :foods, except: [:show] do
     collection do
       get   :search_import
+      get   :barcode_import
       patch :bulk_pantry
       post  :add_missing_to_shopping_list
     end

@@ -30,6 +30,7 @@ fr:
       missing_added:
         one: "%{count} aliment ajouté à la liste de courses."
         other: "%{count} aliments ajoutés à la liste de courses."
+      barcode_not_found: "Aucun produit trouvé pour ce code-barre."
     shopping_list_items:
       created: "%{name} ajouté à la liste."
       merged: "Quantité de %{name} mise à jour."
@@ -298,19 +299,26 @@ fr:
       new:
         tab_manual: "Manuel"
         tab_off: "Import rapide"
+        info_tooltip: "Aliments génériques : base officielle ANSES Ciqual (fruits, légumes, viandes, produits laitiers…) · Produits emballés : scannez le code-barre du produit"
       off_badge: "Importé via Open Food Facts"
       ciqual_badge: "Données officielles Ciqual / ANSES"
       off_search:
         placeholder: "Rechercher un aliment..."
         empty: "Aucun résultat pour cette recherche"
-        type_hint: "Tapez pour rechercher un aliment ou un produit"
-        type_hint_sub: "Aliments génériques (Ciqual ANSES) · Produits emballés (Open Food Facts)"
-        filter_all: "Tout"
-        filter_ciqual: "Aliments génériques"
-        filter_off: "Produits emballés"
-        empty_filter: "Aucun résultat pour ce filtre"
-        see_ciqual: "Voir Aliments génériques"
-        see_off: "Voir Produits emballés"
+        type_hint: "Tapez pour rechercher un aliment générique"
+        type_hint_sub: "Base officielle Ciqual / ANSES"
+        or_barcode: "ou par code-barre"
+      barcode_scanner:
+        btn: "Scanner avec la caméra"
+        manual_label: "Code-barre"
+        submit: "Rechercher"
+        not_found: "Aucun produit trouvé pour ce code-barre."
+        camera_denied: "Accès à la caméra refusé."
+        camera_error: "Impossible d'accéder à la caméra."
+        camera_hint: "Pointez la caméra vers le code-barre"
+        close_camera: "Fermer"
+        searching: "Recherche du produit..."
+        network_error: "Erreur réseau, réessayez."
 
     day_foods:
       new:

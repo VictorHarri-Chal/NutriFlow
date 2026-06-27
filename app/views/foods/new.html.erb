@@ -1,129 +1,160 @@
 <div class="max-w-6xl mx-auto mt-16 card p-8"
      data-controller="food-off-search"
-     data-food-off-search-url-value="<%= search_import_foods_path %>">
+     data-food-off-search-url-value="<%= search_import_foods_path %>"
+     data-action="barcode-scanner:product@document->food-off-search#handleBarcodeProduct">
 
   <div data-controller="tabs" data-tabs-active-tab-value="off">
 
-    <%# ── En-tête : titre + tab nav sur la même ligne ── %>
+    <%# ── En-tête ── %>
     <div class="flex items-center justify-between mb-8">
       <h1 class="text-2xl font-bold text-ink-primary"><%= t("views.foods.add_food") %></h1>
 
       <div class="flex items-center gap-2">
         <i class="fas fa-circle-info text-sm text-ink-muted hover:text-ink-primary transition-colors cursor-default"
-           data-tooltip="Aliments génériques : base officielle ANSES Ciqual (fruits, légumes, viandes, produits laitiers…) · Produits emballés : Open Food Facts, 3M+ références communautaires"></i>
+           data-tooltip="<%= t('views.foods.new.info_tooltip') %>"></i>
         <div class="flex gap-1 p-1 bg-surface-base rounded-xl border border-surface-border/40">
-        <button type="button"
-                data-tabs-target="tab"
-                data-tab="off"
-                data-action="click->tabs#switchTab click->food-off-search#focusInput"
-                data-active-classes="bg-surface-raised text-ink-primary shadow-sm"
-                data-inactive-classes="text-ink-muted hover:text-ink-primary"
-                class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all bg-surface-raised text-ink-primary shadow-sm">
-          <i class="fas fa-magnifying-glass text-xs"></i>
-          <%= t("views.foods.new.tab_off") %>
-        </button>
-        <button type="button"
-                data-tabs-target="tab"
-                data-tab="manual"
-                data-action="click->tabs#switchTab"
-                data-active-classes="bg-surface-raised text-ink-primary shadow-sm"
-                data-inactive-classes="text-ink-muted hover:text-ink-primary"
-                class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all text-ink-muted hover:text-ink-primary">
-          <i class="fas fa-pen-to-square text-xs"></i>
-          <%= t("views.foods.new.tab_manual") %>
-        </button>
+          <button type="button"
+                  data-tabs-target="tab"
+                  data-tab="off"
+                  data-action="click->tabs#switchTab click->food-off-search#focusInput"
+                  data-active-classes="bg-surface-raised text-ink-primary shadow-sm"
+                  data-inactive-classes="text-ink-muted hover:text-ink-primary"
+                  class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all bg-surface-raised text-ink-primary shadow-sm">
+            <i class="fas fa-magnifying-glass text-xs"></i>
+            <%= t("views.foods.new.tab_off") %>
+          </button>
+          <button type="button"
+                  data-tabs-target="tab"
+                  data-tab="manual"
+                  data-action="click->tabs#switchTab"
+                  data-active-classes="bg-surface-raised text-ink-primary shadow-sm"
+                  data-inactive-classes="text-ink-muted hover:text-ink-primary"
+                  class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all text-ink-muted hover:text-ink-primary">
+            <i class="fas fa-pen-to-square text-xs"></i>
+            <%= t("views.foods.new.tab_manual") %>
+          </button>
         </div>
       </div>
     </div>
 
-    <%# ── Panel OFF (affiché par défaut) ── %>
-    <div id="off-tab" data-tabs-target="content">
+    <%# ── Panel import rapide ── %>
+    <div id="off-tab" data-tabs-target="content"
+         data-controller="barcode-scanner"
+         data-barcode-scanner-url-value="<%= barcode_import_foods_path %>"
+         data-barcode-scanner-camera-denied-text="<%= t('views.foods.barcode_scanner.camera_denied') %>"
+         data-barcode-scanner-camera-error-text="<%= t('views.foods.barcode_scanner.camera_error') %>"
+         data-barcode-scanner-searching-text="<%= t('views.foods.barcode_scanner.searching') %>"
+         data-barcode-scanner-not-found-text="<%= t('views.foods.barcode_scanner.not_found') %>"
+         data-barcode-scanner-network-error-text="<%= t('views.foods.barcode_scanner.network_error') %>">
 
-      <%# Search bar %>
-      <div class="relative mb-6">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <i class="fas fa-magnifying-glass text-ink-subtle text-sm" data-food-off-search-target="searchIcon"></i>
+      <%# ── Contenu par défaut (caché quand la caméra est ouverte) ── %>
+      <div data-barcode-scanner-target="defaultContent">
+
+        <%# Recherche Ciqual %>
+        <div class="relative mb-5">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fas fa-magnifying-glass text-ink-subtle text-sm" data-food-off-search-target="searchIcon"></i>
+          </div>
+          <input type="text"
+                 class="input-dark w-full pl-10 pr-9 text-sm"
+                 autocomplete="off"
+                 placeholder="<%= t("views.foods.off_search.placeholder") %>"
+                 data-food-off-search-target="input"
+                 data-action="input->food-off-search#search">
+          <button type="button"
+                  class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-ink-subtle hover:text-ink-muted transition-colors"
+                  data-food-off-search-target="clearBtn"
+                  data-action="click->food-off-search#clearSearch">
+            <i class="fas fa-times text-sm"></i>
+          </button>
         </div>
-        <input type="text"
-               class="input-dark w-full pl-10 pr-9 text-sm"
-               autocomplete="off"
-               placeholder="<%= t("views.foods.off_search.placeholder") %>"
-               data-food-off-search-target="input"
-               data-action="input->food-off-search#search">
+
+        <%# Type hint %>
+        <div data-food-off-search-target="typeHint" class="text-center py-6">
+          <p class="text-sm text-ink-muted mb-1"><%= t("views.foods.off_search.type_hint") %></p>
+          <p class="text-xs text-ink-subtle"><%= t("views.foods.off_search.type_hint_sub") %></p>
+        </div>
+
+        <%# Aucun résultat %>
+        <div data-food-off-search-target="emptyState" class="hidden text-center py-8">
+          <i class="fas fa-circle-exclamation text-surface-border text-3xl mb-3 block"></i>
+          <p class="text-sm text-ink-subtle"><%= t("views.foods.off_search.empty") %></p>
+        </div>
+
+        <%# Résultats %>
+        <div data-food-off-search-target="results"
+             class="hidden max-h-[16rem] overflow-y-auto rounded-xl border border-surface-border/40 divide-y divide-surface-border/20 mb-5">
+        </div>
+
+        <%# Séparateur %>
+        <div class="flex items-center gap-3 my-6">
+          <div class="flex-1 h-px bg-surface-border/40"></div>
+          <span class="text-xs text-ink-subtle uppercase tracking-wider"><%= t("views.foods.off_search.or_barcode") %></span>
+          <div class="flex-1 h-px bg-surface-border/40"></div>
+        </div>
+
+        <%# Bouton caméra %>
         <button type="button"
-                class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-ink-subtle hover:text-ink-muted transition-colors"
-                data-food-off-search-target="clearBtn"
-                data-action="click->food-off-search#clearSearch">
-          <i class="fas fa-times text-sm"></i>
+                class="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl border border-surface-border/50 bg-surface-hover text-ink-primary hover:border-brand/50 hover:text-brand transition-colors text-sm font-medium mb-3"
+                data-action="click->barcode-scanner#openCamera">
+          <i class="fas fa-camera"></i>
+          <%= t("views.foods.barcode_scanner.btn") %>
+        </button>
+
+      </div><%# /defaultContent %>
+
+      <%# ── Panel caméra (remplace le contenu par défaut) ── %>
+      <div data-barcode-scanner-target="cameraPanel" class="hidden mb-3">
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-sm text-ink-muted"><%= t("views.foods.barcode_scanner.camera_hint") %></p>
+          <button type="button" class="btn-ghost text-xs flex items-center gap-1.5"
+                  data-action="click->barcode-scanner#closeCamera">
+            <i class="fas fa-times text-xs"></i>
+            <%= t("views.foods.barcode_scanner.close_camera") %>
+          </button>
+        </div>
+        <div class="relative rounded-xl overflow-hidden bg-surface-base border border-surface-border/40 h-[calc(100vh-23rem)] min-h-48">
+          <video data-barcode-scanner-target="video" class="w-full h-full object-cover" playsinline muted></video>
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div class="w-2/3 h-2/5 border-2 border-brand/60 rounded-xl shadow-[0_0_0_9999px_rgba(0,0,0,0.35)]"></div>
+          </div>
+        </div>
+      </div>
+
+      <%# ── Saisie manuelle (toujours visible) ── %>
+      <div class="flex gap-2">
+        <div class="relative flex-1">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fas fa-barcode text-ink-subtle text-sm"></i>
+          </div>
+          <input type="text"
+                 inputmode="numeric"
+                 autocomplete="off"
+                 class="input-dark w-full pl-10 text-sm"
+                 data-barcode-scanner-target="manualInput"
+                 data-action="input->barcode-scanner#validateManualInput keydown.enter->barcode-scanner#submitManual">
+        </div>
+        <button type="button"
+                class="btn-secondary shrink-0 text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                disabled
+                data-barcode-scanner-target="submitBtn"
+                data-action="click->barcode-scanner#submitManual">
+          <%= t("views.foods.barcode_scanner.submit") %>
         </button>
       </div>
 
-      <%# Filter pills %>
-      <div class="flex items-center gap-2 mb-5">
-        <button type="button"
-                class="rounded-full text-xs font-medium border transition-colors px-3 py-1 bg-brand/20 text-brand border-brand/50"
-                data-food-off-search-target="filterBtn"
-                data-action="click->food-off-search#setFilter"
-                data-food-off-search-filter-param="all">
-          <%= t("views.foods.off_search.filter_all") %>
-        </button>
-        <button type="button"
-                class="rounded-full text-xs font-medium border transition-colors px-3 py-1 bg-transparent text-ink-muted border-surface-border/40"
-                data-food-off-search-target="filterBtn"
-                data-action="click->food-off-search#setFilter"
-                data-food-off-search-filter-param="ciqual">
-          <%= t("views.foods.off_search.filter_ciqual") %>
-        </button>
-        <button type="button"
-                class="rounded-full text-xs font-medium border transition-colors px-3 py-1 bg-transparent text-ink-muted border-surface-border/40"
-                data-food-off-search-target="filterBtn"
-                data-action="click->food-off-search#setFilter"
-                data-food-off-search-filter-param="off">
-          <%= t("views.foods.off_search.filter_off") %>
-        </button>
-      </div>
-
-      <%# Type hint (état initial) %>
-      <div data-food-off-search-target="typeHint" class="text-center py-14">
-        <p class="text-sm text-ink-muted mb-1"><%= t("views.foods.off_search.type_hint") %></p>
-        <p class="text-xs text-ink-subtle"><%= t("views.foods.off_search.type_hint_sub") %></p>
-      </div>
-
-      <%# Aucun résultat (API vide) %>
-      <div data-food-off-search-target="emptyState" class="hidden text-center py-16">
-        <i class="fas fa-circle-exclamation text-surface-border text-4xl mb-4 block"></i>
-        <p class="text-sm text-ink-subtle"><%= t("views.foods.off_search.empty") %></p>
-      </div>
-
-      <%# Aucun résultat pour ce filtre (résultats existent mais filtrés) %>
-      <div data-food-off-search-target="emptyFilter" class="hidden text-center py-12">
-        <i class="fas fa-filter text-surface-border text-2xl mb-3 block"></i>
-        <p class="text-sm text-ink-muted mb-4"><%= t("views.foods.off_search.empty_filter") %></p>
-        <button type="button"
-                class="rounded-full text-xs font-medium border transition-colors px-3 py-1.5 bg-transparent text-ink-muted border-surface-border/40 hover:text-brand hover:border-brand/50"
-                data-food-off-search-target="emptyFilterBtn"
-                data-action="click->food-off-search#setFilter"
-                data-food-off-search-filter-param="all"
-                data-label-ciqual="<%= t('views.foods.off_search.see_ciqual') %>"
-                data-label-off="<%= t('views.foods.off_search.see_off') %>"
-                data-label-all="<%= t('views.foods.off_search.filter_all') %>">
-          <%= t("views.foods.off_search.filter_all") %>
-        </button>
-      </div>
-
-      <%# Liste des résultats %>
-      <div data-food-off-search-target="results"
-           class="hidden max-h-[32rem] overflow-y-auto rounded-xl border border-surface-border/40 divide-y divide-surface-border/20">
-      </div>
+      <%# Feedback ── %>
+      <p data-barcode-scanner-target="status" class="hidden mt-3 text-sm text-ink-muted text-center"></p>
+      <p data-barcode-scanner-target="error" class="hidden mt-3 text-sm text-status-danger text-center"></p>
 
       <%# Actions %>
-      <div class="flex justify-center mt-10 pt-6 border-t border-surface-border/40">
+      <div data-barcode-scanner-target="cancelBtn" class="flex justify-center mt-8 pt-6 border-t border-surface-border/40">
         <%= link_to t("shared.cancel"), foods_path, class: "btn-ghost" %>
       </div>
 
     </div>
 
-    <%# ── Panel manuel (masqué par défaut) ── %>
+    <%# ── Panel manuel ── %>
     <div id="manual-tab" data-tabs-target="content" class="hidden">
       <%= render "form", food: @food %>
     </div>

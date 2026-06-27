@@ -30,6 +30,7 @@ en:
       missing_added:
         one: "%{count} food added to shopping list."
         other: "%{count} foods added to shopping list."
+      barcode_not_found: "No product found for this barcode."
     shopping_list_items:
       created: "%{name} added to the list."
       merged: "%{name} quantity updated."
@@ -298,19 +299,26 @@ en:
       new:
         tab_manual: "Manual"
         tab_off: "Quick import"
+        info_tooltip: "Generic foods: official ANSES Ciqual database (fruits, vegetables, meats, dairy…) · Packaged products: scan the product's barcode"
       off_badge: "Imported via Open Food Facts"
       ciqual_badge: "Official Ciqual / ANSES data"
       off_search:
         placeholder: "Search for a food..."
         empty: "No results for this search"
-        type_hint: "Type to search for a food or a product"
-        type_hint_sub: "Generic foods (Ciqual ANSES) · Packaged products (Open Food Facts)"
-        filter_all: "All"
-        filter_ciqual: "Generic foods"
-        filter_off: "Packaged products"
-        empty_filter: "No results for this filter"
-        see_ciqual: "See Generic foods"
-        see_off: "See Packaged products"
+        type_hint: "Type to search for a generic food"
+        type_hint_sub: "Official Ciqual / ANSES database"
+        or_barcode: "or by barcode"
+      barcode_scanner:
+        btn: "Scan with camera"
+        manual_label: "Barcode"
+        submit: "Search"
+        not_found: "No product found for this barcode."
+        camera_denied: "Camera access denied."
+        camera_error: "Unable to access the camera."
+        camera_hint: "Point the camera at the barcode"
+        close_camera: "Close"
+        searching: "Looking up product..."
+        network_error: "Network error, please try again."
 
     day_foods:
       new:

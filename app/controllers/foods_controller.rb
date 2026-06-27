@@ -147,18 +147,29 @@ class FoodsController < ApplicationController
     query = params[:q].to_s.strip
     return render json: { products: [] } if query.length < 2
 
-    ciqual = CiqualFood.search_by_name(query).limit(10).map do |f|
+    products = CiqualFood.search_by_name(query).limit(15).map do |f|
       { source: "ciqual", name: f.name, brand: nil, category: f.food_group,
         calories: f.calories.to_f.round(1), proteins: f.proteins.to_f.round(1),
         carbs: f.carbs.to_f.round(1), fats: f.fats.to_f.round(1),
         sugars: f.sugars.to_f.round(1) }
     end
 
-    off = Rails.cache.fetch("off_search:#{query.downcase}", expires_in: 30.minutes) do
-      OpenFoodFactsService.search(query)
-    end.first(10).map { |p| p.merge(source: "off") }
+    render json: { products: }
+  end
 
-    render json: { products: ciqual + off }
+  def barcode_import
+    code = params[:code].to_s.gsub(/\D/, "")
+    return render json: { error: t("controllers.foods.barcode_not_found") }, status: :not_found if code.blank?
+
+    product = Rails.cache.fetch("off_barcode:#{code}", expires_in: 24.hours) do
+      OpenFoodFactsService.by_barcode(code)
+    end
+
+    if product
+      render json: { product: product.merge(source: "off") }
+    else
+      render json: { error: t("controllers.foods.barcode_not_found") }, status: :not_found
+    end
   end
 
   def duplicate
