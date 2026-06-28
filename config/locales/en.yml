@@ -453,6 +453,8 @@ en:
       sort_date: "Date"
       sort_calories: "Calories"
       sort_proteins: "Proteins"
+      sort_carbs: "Carbs"
+      sort_fats: "Fats"
       source_all: "All recipes"
       source_favorites: "Favorites"
       no_favorites: "No favorite recipes"

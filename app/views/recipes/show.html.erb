@@ -142,7 +142,7 @@
             </div>
             <div class="text-xs text-ink-subtle mt-1">
               <span data-nutrition-toggle-target="totalVal">kcal</span>
-              <span data-nutrition-toggle-target="per100Val" class="hidden">kcal/100g</span>
+              <span data-nutrition-toggle-target="per100Val" class="hidden">kcal</span>
             </div>
           </div>
           <div class="w-px h-10 bg-surface-border/50 shrink-0"></div>
@@ -175,7 +175,7 @@
         </div>
 
         <%# Macros étendus (fibres, ac. saturés, sel) %>
-        <div class="grid grid-cols-3 gap-2 mt-2 pt-2 border-t border-surface-border/20">
+        <div class="grid grid-cols-3 gap-2 mt-2">
           <% [
             { total: @recipe.total_fiber,         per100: per100[:fiber],         label: t("views.recipes.show.fiber_short") },
             { total: @recipe.total_saturated_fat, per100: per100[:saturated_fat], label: t("views.recipes.show.saturated_fat_short") },

@@ -453,6 +453,8 @@ fr:
       sort_date: "Date"
       sort_calories: "Calories"
       sort_proteins: "Protéines"
+      sort_carbs: "Glucides"
+      sort_fats: "Lipides"
       source_all: "Toutes les recettes"
       source_favorites: "Favoris"
       no_favorites: "Aucune recette favorite"

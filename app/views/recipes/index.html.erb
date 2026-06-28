@@ -67,7 +67,7 @@
     <%# Séparateur %>
     <% unless params[:query].present? %>
       <%
-        sort_defaults = { "name" => "asc", "date" => "desc", "calories" => "desc", "proteins" => "desc" }
+        sort_defaults = { "name" => "asc", "date" => "desc", "calories" => "desc", "proteins" => "desc", "carbs" => "desc", "fats" => "desc" }
         current_sort  = params[:sort].presence || "name"
         current_dir   = params[:direction].presence || sort_defaults[current_sort]
       %>
@@ -76,7 +76,9 @@
         ["name",     t("views.recipes.sort_name")],
         ["date",     t("views.recipes.sort_date")],
         ["calories", t("views.recipes.sort_calories")],
-        ["proteins", t("views.recipes.sort_proteins")]
+        ["proteins", t("views.recipes.sort_proteins")],
+        ["carbs",    t("views.recipes.sort_carbs")],
+        ["fats",     t("views.recipes.sort_fats")]
       ].each do |key, label| %>
         <%
           active   = current_sort == key

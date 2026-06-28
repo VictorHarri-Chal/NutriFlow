@@ -10,7 +10,7 @@ class RecipesController < ApplicationController
     if params[:query].present?
       @recipes = @recipes.search_by_name(params[:query])
       @pagy, @recipes = pagy(@recipes, items: 12)
-    elsif %w[calories proteins].include?(params[:sort])
+    elsif %w[calories proteins carbs fats].include?(params[:sort])
       sorted = @recipes.to_a.sort_by { |r| r.public_send(:"total_#{params[:sort]}") }
       sorted.reverse! unless params[:direction] == "asc"
       @pagy, @recipes = pagy_array(sorted, items: 12)
