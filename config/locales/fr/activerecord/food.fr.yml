@@ -12,3 +12,9 @@ fr:
         sugars: "Sucres"
         proteins: "Protéines"
         calories: "Calories"
+    errors:
+      models:
+        food:
+          attributes:
+            name:
+              taken: "est déjà utilisé pour un de vos aliments"

@@ -1,226 +1,299 @@
 <%= simple_form_for(food) do |f| %>
-  <%= f.hidden_field :off_id, data: { "food-off-search-target": "offIdField" } %>
+  <%# ── Hidden fields : données importées ── %>
+  <%= f.hidden_field :off_id,          data: { "food-off-search-target": "offIdField" } %>
   <%= f.hidden_field :nutriscore_grade, data: { "food-off-search-target": "nutriscoreField" } %>
-  <%= f.hidden_field :nova_group, data: { "food-off-search-target": "novaGroupField" } %>
+  <%= f.hidden_field :nova_group,       data: { "food-off-search-target": "novaGroupField" } %>
+  <%= f.hidden_field :ecoscore_grade,   data: { "food-off-search-target": "ecoscoreField" } %>
+  <%= hidden_field_tag "food[micronutrients]", (food.micronutrients || {}).to_json, data: { "food-off-search-target": "micronutrientsField" } %>
 
-  <div data-food-off-search-target="badge" class="<%= food.off_id.present? ? 'flex' : 'hidden' %> items-center gap-2 px-3 py-2 mb-4 rounded-lg bg-brand/10 border border-brand/30 text-brand text-sm">
+  <%# ── Badge source ── %>
+  <div data-food-off-search-target="badge" class="<%= food.off_id.present? ? 'flex' : 'hidden' %> items-center gap-2 px-3 py-2 mb-6 rounded-lg bg-brand/10 border border-brand/30 text-brand text-sm">
     <i class="fas fa-cloud-arrow-down"></i>
     <%= t("views.foods.off_badge") %>
   </div>
-
-  <div data-food-off-search-target="ciqualBadge" class="hidden items-center gap-2 px-3 py-2 mb-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm">
+  <div data-food-off-search-target="ciqualBadge" class="<%= food.source == :ciqual ? 'flex' : 'hidden' %> items-center gap-2 px-3 py-2 mb-6 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm">
     <i class="fas fa-database"></i>
     <%= t("views.foods.ciqual_badge") %>
   </div>
 
-  <div data-controller="food-preview" data-action="input->food-preview#update food-off-search:import@document->food-preview#fillFromOff">
+  <div data-controller="food-preview" data-action="food-off-search:import@document->food-preview#fillFromOff">
 
-    <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
-
-      <%# ══════════════════ COLONNE GAUCHE ══════════════════ %>
-      <div class="lg:col-span-3 space-y-5">
-
-        <%# Nom + Marque côte à côte %>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <%= f.input :name,
-                      label: t("activerecord.attributes.food.name"),
-                      input_html: { class: "input-dark", autocomplete: "off", autofocus: true, data: { "food-preview-target": "nameField" } },
-                      label_html: { class: "label-dark" } %>
-          <%= f.input :brand,
-                      label: t("activerecord.attributes.food.brand"),
-                      required: false,
-                      input_html: { class: "input-dark", autocomplete: "off", data: { "food-preview-target": "brandField" } },
-                      label_html: { class: "label-dark" } %>
-        </div>
-
-        <%# Séparateur macros %>
-        <div class="border-t border-surface-border/40 pt-5">
-          <div class="flex items-center gap-2 mb-4">
-            <span class="text-sm font-semibold text-ink-primary"><%= t("views.foods.form.macros_section") %></span>
-            <span class="text-xs text-ink-subtle">(<%= t("views.foods.form.per_100g") %>)</span>
-          </div>
-
-          <%# Calories — pleine largeur %>
-          <div class="mb-4">
-            <%= f.input :calories,
-                        label: t("activerecord.attributes.food.calories"),
-                        step: 1,
-                        input_html: {
-                          class: "input-dark",
-                          data: { "food-preview-target": "calories" }
-                        },
-                        label_html: { class: "label-dark" },
-                        append: "kcal" %>
-          </div>
-
-          <%# Macros 2x2 %>
-          <div class="grid grid-cols-2 gap-4">
-            <%= f.input :proteins,
-                        label: t("activerecord.attributes.food.proteins"),
-                        step: 0.1,
-                        input_html: {
-                          class: "input-dark",
-                          data: { "food-preview-target": "proteins" }
-                        },
-                        label_html: { class: "label-dark" },
-                        append: "g" %>
-            <%= f.input :carbs,
-                        label: t("activerecord.attributes.food.carbs"),
-                        step: 0.1,
-                        input_html: {
-                          class: "input-dark",
-                          data: { "food-preview-target": "carbs" }
-                        },
-                        label_html: { class: "label-dark" },
-                        append: "g" %>
-            <%= f.input :fats,
-                        label: t("activerecord.attributes.food.fats"),
-                        step: 0.1,
-                        input_html: {
-                          class: "input-dark",
-                          data: { "food-preview-target": "fats" }
-                        },
-                        label_html: { class: "label-dark" },
-                        append: "g" %>
-            <%= f.input :sugars,
-                        label: t("activerecord.attributes.food.sugars"),
-                        step: 0.1,
-                        required: false,
-                        input_html: {
-                          class: "input-dark",
-                          data: { "food-preview-target": "sugars" }
-                        },
-                        label_html: { class: "label-dark" },
-                        append: "g" %>
-          </div>
-        </div>
-
-        <%# Catégorie rayon %>
-        <div class="border-t border-surface-border/40 pt-5">
-          <label class="label-dark block mb-3"><%= t("views.foods.form.category") %></label>
-          <div class="flex flex-wrap gap-2">
-            <%
-              effective_category = food.category.presence || "other"
-              category_options = [
-                { value: "other",      icon: "fa-box",              key: "other"      },
-                { value: "proteins",   icon: "fa-drumstick-bite",  key: "proteins"   },
-                { value: "grains",     icon: "fa-bread-slice",     key: "grains"     },
-                { value: "vegetables", icon: "fa-carrot",           key: "vegetables" },
-                { value: "fruits",     icon: "fa-apple-whole",      key: "fruits"     },
-                { value: "dairy",      icon: "fa-cheese",           key: "dairy"      },
-                { value: "beverages",  icon: "fa-glass-water",      key: "beverages"  },
-                { value: "condiments",  icon: "fa-mortar-pestle",    key: "condiments"  },
-                { value: "supplements", icon: "fa-capsules",          key: "supplements" },
-              ]
-            %>
-            <% category_options.each do |opt| %>
-              <label class="cursor-pointer">
-                <%= f.radio_button :category, opt[:value], checked: effective_category == opt[:value], class: "sr-only peer" %>
-                <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-colors
-                             bg-surface-hover border-surface-border/50 text-ink-muted
-                             hover:border-brand/30 hover:text-ink-primary
-                             peer-checked:bg-brand/15 peer-checked:border-brand/50 peer-checked:text-brand">
-                  <i class="fas <%= opt[:icon] %> text-[10px]"></i>
-                  <%= t("views.shopping_lists.categories.#{opt[:key]}") %>
-                </span>
-              </label>
-            <% end %>
-          </div>
-        </div>
-
-        <%# Labels ── section compacte %>
-        <% if @food_labels.any? %>
-          <div class="border-t border-surface-border/40 pt-5">
-            <label class="label-dark block mb-3"><%= t("views.foods.form.food_labels") %></label>
-            <div class="flex flex-wrap gap-2">
-              <% @food_labels.each do |label| %>
-                <label class="cursor-pointer">
-                  <%= check_box_tag "food[food_label_ids][]", label.id, food.food_labels.include?(label),
-                      class: "sr-only peer" %>
-                  <span class="flex items-center gap-2 px-3 py-1.5 rounded-full border transition-colors
-                               bg-surface-hover border-surface-border/50 text-ink-muted
-                               hover:border-brand/30 hover:text-ink-primary
-                               peer-checked:bg-brand/15 peer-checked:border-brand/50 peer-checked:text-brand">
-                    <i class="fas fa-tag text-xs"></i>
-                    <span class="text-sm font-medium"><%= label.name %></span>
-                  </span>
-                </label>
-              <% end %>
-            </div>
-            <%= hidden_field_tag "food[food_label_ids][]", "" %>
-          </div>
-        <% end %>
-
-      </div>
-
-      <%# ══════════════════ COLONNE DROITE — Aperçu live ══════════════════ %>
-      <div class="lg:col-span-2">
-        <div class="sticky top-8 card p-5 space-y-4">
-
-          <h3 class="text-sm font-semibold text-ink-subtle uppercase tracking-wide flex items-center gap-2">
-            <i class="fas fa-circle-info text-brand text-xs"></i>
-            <%= t("views.foods.form.preview_title") %>
-          </h3>
-
-          <%# État vide %>
-          <div data-food-preview-target="emptyPanel" class="text-center py-6">
-            <i class="fas fa-bowl-food text-surface-border text-3xl mb-3 block"></i>
-            <p class="text-xs text-ink-subtle leading-relaxed"><%= t("views.foods.form.preview_empty_hint") %></p>
-          </div>
-
-          <%# Stats live %>
-          <div data-food-preview-target="statsPanel" class="hidden space-y-4">
-
-            <%# Calories %>
-            <div class="text-center py-2 bg-surface-base rounded-lg border border-surface-border/40">
-              <div class="text-3xl font-bold text-brand" data-food-preview-target="previewCalories">0</div>
-              <div class="text-xs text-ink-subtle mt-0.5">kcal / 100g</div>
-            </div>
-
-            <%# Barres proportionnelles %>
-            <div class="space-y-2">
-              <div class="flex items-center gap-2">
-                <span class="text-xs text-ink-subtle w-16 shrink-0"><%= t("views.recipes.show.proteins_short") %></span>
-                <div class="flex-1 bg-surface-hover rounded-full h-2 overflow-hidden">
-                  <div class="h-full bg-macro-proteins rounded-full transition-all duration-300" data-food-preview-target="barProteins" style="width: 0%"></div>
-                </div>
-                <span class="text-xs font-semibold text-ink-primary w-10 text-right" data-food-preview-target="previewProteins">0</span>
-                <span class="text-xs text-ink-subtle">g</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span class="text-xs text-ink-subtle w-16 shrink-0"><%= t("views.recipes.show.fats_short") %></span>
-                <div class="flex-1 bg-surface-hover rounded-full h-2 overflow-hidden">
-                  <div class="h-full bg-macro-fats rounded-full transition-all duration-300" data-food-preview-target="barFats" style="width: 0%"></div>
-                </div>
-                <span class="text-xs font-semibold text-ink-primary w-10 text-right" data-food-preview-target="previewFats">0</span>
-                <span class="text-xs text-ink-subtle">g</span>
-              </div>
-              <div>
-                <div class="flex items-center gap-2">
-                  <span class="text-xs text-ink-subtle w-16 shrink-0"><%= t("views.recipes.show.carbs_short") %></span>
-                  <div class="flex-1 bg-surface-hover rounded-full h-2 overflow-hidden">
-                    <div class="h-full bg-macro-carbs rounded-full transition-all duration-300" data-food-preview-target="barCarbs" style="width: 0%"></div>
-                  </div>
-                  <span class="text-xs font-semibold text-ink-primary w-10 text-right" data-food-preview-target="previewCarbs">0</span>
-                  <span class="text-xs text-ink-subtle">g</span>
-                </div>
-                <div class="flex items-center justify-end gap-1 mt-0.5 pr-0.5">
-                  <span class="text-xs text-ink-subtle/60 italic"><%= t("views.foods.form.of_which_sugars") %></span>
-                  <span class="text-xs text-ink-subtle/60 font-medium" data-food-preview-target="previewSugars">0</span>
-                  <span class="text-xs text-ink-subtle/60">g</span>
-                </div>
-              </div>
-            </div>
-
-
-          </div>
-        </div>
-      </div>
-
+    <%# ── Identification ── %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+      <%= f.input :name,
+                  label: t("activerecord.attributes.food.name"),
+                  input_html: { class: "input-dark", autocomplete: "off", autofocus: true,
+                                data: { "food-preview-target": "nameField" } },
+                  label_html: { class: "label-dark" } %>
+      <%= f.input :brand,
+                  label: t("activerecord.attributes.food.brand"),
+                  required: false,
+                  input_html: { class: "input-dark", autocomplete: "off",
+                                data: { "food-preview-target": "brandField" } },
+                  label_html: { class: "label-dark" } %>
     </div>
 
+    <%# ── Valeurs nutritionnelles ── %>
+    <div class="border-t border-surface-border/40 pt-5 mb-6 space-y-4">
+      <div class="flex items-center gap-2">
+        <span class="text-sm font-semibold text-ink-primary"><%= t("views.foods.form.macros_section") %></span>
+        <span class="text-xs text-ink-subtle">(<%= t("views.foods.form.per_100g") %>)</span>
+      </div>
+
+      <%# Calories ── pleine largeur %>
+      <%= f.input :calories,
+                  label: t("activerecord.attributes.food.calories"),
+                  input_html: { class: "input-dark", step: 1, data: { "food-preview-target": "calories" } },
+                  label_html: { class: "label-dark" },
+                  append: "kcal" %>
+
+      <%# Macros 2×2 %>
+      <div class="grid grid-cols-2 gap-4">
+        <%= f.input :proteins,
+                    label: t("activerecord.attributes.food.proteins"),
+                    required: false,
+                    input_html: { class: "input-dark", step: 0.1, data: { "food-preview-target": "proteins" } },
+                    label_html: { class: "label-dark" },
+                    append: "g" %>
+        <%= f.input :carbs,
+                    label: t("activerecord.attributes.food.carbs"),
+                    required: false,
+                    input_html: { class: "input-dark", step: 0.1, data: { "food-preview-target": "carbs" } },
+                    label_html: { class: "label-dark" },
+                    append: "g" %>
+        <%= f.input :fats,
+                    label: t("activerecord.attributes.food.fats"),
+                    required: false,
+                    input_html: { class: "input-dark", step: 0.1, data: { "food-preview-target": "fats" } },
+                    label_html: { class: "label-dark" },
+                    append: "g" %>
+        <%= f.input :sugars,
+                    label: t("activerecord.attributes.food.sugars"),
+                    required: false,
+                    input_html: { class: "input-dark", step: 0.1, data: { "food-preview-target": "sugars" } },
+                    label_html: { class: "label-dark" },
+                    append: "g" %>
+      </div>
+
+      <%# Étiquette étendue : Fibres / Graisses sat. / Sel en 3 colonnes %>
+      <p class="text-xs text-ink-subtle -mb-1"><%= t("views.foods.show.extended_label") %></p>
+      <div class="grid grid-cols-3 gap-4">
+        <%= f.input :fiber,
+                    label: t("views.foods.show.nutrients.fiber"),
+                    required: false,
+                    input_html: { class: "input-dark", step: 0.1,
+                                  data: { "food-off-search-target": "fiberField" } },
+                    label_html: { class: "label-dark" },
+                    append: "g" %>
+        <%= f.input :saturated_fat,
+                    label: t("views.foods.show.nutrients.saturated_fat"),
+                    required: false,
+                    input_html: { class: "input-dark", step: 0.1,
+                                  data: { "food-off-search-target": "saturatedFatField" } },
+                    label_html: { class: "label-dark" },
+                    append: "g" %>
+        <%= f.input :salt,
+                    label: t("views.foods.show.nutrients.salt"),
+                    required: false,
+                    input_html: { class: "input-dark", step: 0.01,
+                                  data: { "food-off-search-target": "saltField" } },
+                    label_html: { class: "label-dark" },
+                    append: "g" %>
+      </div>
+    </div>
+
+    <%# ── Qualité OFF ── toujours dans le DOM, JS la montre après import barcode %>
+    <%
+      ns_colors   = { "a" => "#038141", "b" => "#85BB2F", "c" => "#FECB02", "d" => "#EE8100", "e" => "#E63E11" }
+      eco_colors  = { "a-plus" => "#006400", "a" => "#038141", "b" => "#85BB2F", "c" => "#FECB02", "d" => "#EE8100", "e" => "#E63E11", "f" => "#8B1A1A" }
+      eco_labels  = { "a-plus" => "A+" }
+      nova_colors = { 1 => "#038141", 2 => "#85BB2F", 3 => "#EE8100", 4 => "#E63E11" }
+      ns_grade    = food.nutriscore_grade&.downcase
+      nova_num    = food.nova_group.present? ? food.nova_group.to_i : nil
+      eco_grade   = food.ecoscore_grade&.downcase&.presence
+      has_quality = ns_grade.present? || nova_num.present? || eco_grade.present?
+    %>
+    <div class="border-t border-surface-border/40 pt-5 mb-6 <%= 'hidden' unless has_quality %>"
+         data-food-off-search-target="qualitySection">
+      <span class="text-sm font-semibold text-ink-primary block mb-3"><%= t("views.foods.show.tabs.quality") %></span>
+      <div class="space-y-2">
+
+        <div class="<%= ns_grade.present? ? 'flex' : 'hidden' %> items-center gap-3 px-4 py-3 rounded-xl border border-surface-border/40 bg-surface-base"
+             data-food-off-search-target="nutriscoreWrapper">
+          <div class="w-9 h-9 rounded-lg flex items-center justify-center text-white text-lg font-black shrink-0"
+               style="background-color: <%= ns_colors[ns_grade] || '#52525B' %>;"
+               data-food-off-search-target="nutriscoreBadge">
+            <%= ns_grade&.upcase %>
+          </div>
+          <div class="min-w-0">
+            <div class="text-xs font-semibold text-ink-primary">Nutri-Score</div>
+            <div class="text-[11px] text-ink-muted mt-0.5 leading-tight" data-food-off-search-target="nutriscoreDesc">
+              <%= ns_grade.present? ? t("views.foods.show.nutriscore_description.#{ns_grade}", default: "") : "" %>
+            </div>
+          </div>
+        </div>
+
+        <div class="<%= nova_num.present? ? 'flex' : 'hidden' %> items-center gap-3 px-4 py-3 rounded-xl border border-surface-border/40 bg-surface-base"
+             data-food-off-search-target="novaWrapper">
+          <div class="w-9 h-9 rounded-lg flex items-center justify-center text-white text-lg font-black shrink-0"
+               style="background-color: <%= nova_colors[nova_num] || '#52525B' %>;"
+               data-food-off-search-target="novaBadge">
+            <%= nova_num %>
+          </div>
+          <div class="min-w-0">
+            <div class="text-xs font-semibold text-ink-primary">NOVA</div>
+            <div class="text-[11px] text-ink-muted mt-0.5 leading-tight" data-food-off-search-target="novaDesc">
+              <%= nova_num.present? ? t("views.foods.show.nova_description.#{nova_num}", default: "") : "" %>
+            </div>
+          </div>
+        </div>
+
+        <div class="<%= eco_grade.present? ? 'flex' : 'hidden' %> items-center gap-3 px-4 py-3 rounded-xl border border-surface-border/40 bg-surface-base"
+             data-food-off-search-target="ecoscoreWrapper">
+          <div class="w-9 h-9 rounded-lg flex items-center justify-center text-white text-lg font-black shrink-0"
+               style="background-color: <%= eco_colors[eco_grade] || '#52525B' %>;"
+               data-food-off-search-target="ecoscoreBadge">
+            <%= eco_labels[eco_grade] || eco_grade&.upcase %>
+          </div>
+          <div class="min-w-0">
+            <div class="text-xs font-semibold text-ink-primary">Éco-Score</div>
+            <div class="text-[11px] text-ink-muted mt-0.5 leading-tight" data-food-off-search-target="ecoscoreDesc">
+              <%= eco_grade.present? ? t("views.foods.show.ecoscore_description.#{eco_grade}", default: "") : "" %>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <%# ── Données avancées (dépliable, lecture seule) ── %>
+    <div class="border-t border-surface-border/40 pt-5 mb-6" data-controller="collapsible">
+      <button type="button"
+              class="flex items-center justify-between w-full group"
+              data-action="click->collapsible#toggle">
+        <span class="text-sm font-semibold text-ink-primary group-hover:text-ink-muted transition-colors">
+          <%= t("views.foods.form.advanced_section") %>
+        </span>
+        <i class="fas fa-chevron-down text-ink-subtle text-xs transition-transform duration-200 group-hover:text-ink-muted"
+           data-collapsible-target="icon"></i>
+      </button>
+
+      <div class="hidden mt-5 space-y-5" data-collapsible-target="content">
+
+          <%# Allergènes & Traces en 2 colonnes, readonly %>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="label-dark block mb-1.5" for="food_allergens_raw"><%= t("views.foods.show.allergens") %></label>
+              <input type="text" id="food_allergens_raw" name="food[allergens_raw]"
+                     value="<%= food.allergens.join(", ") %>"
+                     readonly tabindex="-1"
+                     class="input-dark w-full text-sm opacity-60 cursor-not-allowed"
+                     data-food-off-search-target="allergensField">
+            </div>
+            <div>
+              <label class="label-dark block mb-1.5" for="food_traces_raw"><%= t("views.foods.show.traces") %></label>
+              <input type="text" id="food_traces_raw" name="food[traces_raw]"
+                     value="<%= food.traces.join(", ") %>"
+                     readonly tabindex="-1"
+                     class="input-dark w-full text-sm opacity-60 cursor-not-allowed"
+                     data-food-off-search-target="tracesField">
+            </div>
+          </div>
+
+          <%# Micronutriments ── lecture seule %>
+          <%
+            mn = (food.micronutrients || {}).transform_keys(&:to_s)
+            all_nutrients = %w[calcium iron magnesium potassium sodium zinc cholesterol vitamin_c vitamin_d vitamin_b12 vitamin_a vitamin_b9 epa dha]
+            mn_units = { "calcium" => "mg", "iron" => "mg", "magnesium" => "mg", "potassium" => "mg",
+                         "sodium" => "mg", "zinc" => "mg", "cholesterol" => "mg",
+                         "vitamin_c" => "mg", "vitamin_d" => "µg", "vitamin_b12" => "µg",
+                         "vitamin_a" => "µg", "vitamin_b9" => "µg", "epa" => "g", "dha" => "g" }
+          %>
+          <div>
+            <p class="text-sm font-medium text-ink-muted mb-3"><%= t("views.foods.show.minerals") %> & <%= t("views.foods.show.vitamins") %></p>
+            <div class="divide-y divide-surface-border/20">
+              <% all_nutrients.each do |key| %>
+                <div class="flex items-center justify-between py-2">
+                  <span class="text-xs text-ink-muted"><%= t("views.foods.show.nutrients.#{key}") %></span>
+                  <% if mn[key].present? %>
+                    <span class="text-xs font-semibold text-ink-primary"
+                          data-food-preview-target="micronutrientDisplay"
+                          data-nutrient="<%= key %>"
+                          data-unit="<%= mn_units[key] %>">
+                      <%= mn[key] %> <%= mn_units[key] %>
+                    </span>
+                  <% else %>
+                    <span class="text-xs text-ink-subtle"
+                          data-food-preview-target="micronutrientDisplay"
+                          data-nutrient="<%= key %>"
+                          data-unit="<%= mn_units[key] %>">—</span>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <%# ── Catégorie ── %>
+    <div class="border-t border-surface-border/40 pt-5 mb-6">
+      <label class="label-dark block mb-3"><%= t("views.foods.form.category") %></label>
+      <div class="flex flex-wrap gap-2">
+        <%
+          effective_category = food.category.presence || "other"
+          category_options = [
+            { value: "other",       icon: "fa-box",             key: "other"       },
+            { value: "proteins",    icon: "fa-drumstick-bite",  key: "proteins"    },
+            { value: "grains",      icon: "fa-bread-slice",     key: "grains"      },
+            { value: "vegetables",  icon: "fa-carrot",          key: "vegetables"  },
+            { value: "fruits",      icon: "fa-apple-whole",     key: "fruits"      },
+            { value: "dairy",       icon: "fa-cheese",          key: "dairy"       },
+            { value: "beverages",   icon: "fa-glass-water",     key: "beverages"   },
+            { value: "condiments",  icon: "fa-mortar-pestle",   key: "condiments"  },
+            { value: "supplements", icon: "fa-capsules",        key: "supplements" },
+          ]
+        %>
+        <% category_options.each do |opt| %>
+          <label class="cursor-pointer">
+            <%= f.radio_button :category, opt[:value], checked: effective_category == opt[:value], class: "sr-only peer" %>
+            <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-colors
+                         bg-surface-hover border-surface-border/50 text-ink-muted
+                         hover:border-brand/30 hover:text-ink-primary
+                         peer-checked:bg-brand/15 peer-checked:border-brand/50 peer-checked:text-brand">
+              <i class="fas <%= opt[:icon] %> text-[10px]"></i>
+              <%= t("views.shopping_lists.categories.#{opt[:key]}") %>
+            </span>
+          </label>
+        <% end %>
+      </div>
+    </div>
+
+    <%# ── Labels ── %>
+    <% if @food_labels.any? %>
+      <div class="border-t border-surface-border/40 pt-5 mb-6">
+        <label class="label-dark block mb-3"><%= t("views.foods.form.food_labels") %></label>
+        <div class="flex flex-wrap gap-2">
+          <% @food_labels.each do |label| %>
+            <label class="cursor-pointer">
+              <%= check_box_tag "food[food_label_ids][]", label.id, food.food_labels.include?(label), class: "sr-only peer" %>
+              <span class="flex items-center gap-2 px-3 py-1.5 rounded-full border transition-colors
+                           bg-surface-hover border-surface-border/50 text-ink-muted
+                           hover:border-brand/30 hover:text-ink-primary
+                           peer-checked:bg-brand/15 peer-checked:border-brand/50 peer-checked:text-brand">
+                <i class="fas fa-tag text-xs"></i>
+                <span class="text-sm font-medium"><%= label.name %></span>
+              </span>
+            </label>
+          <% end %>
+        </div>
+        <%= hidden_field_tag "food[food_label_ids][]", "" %>
+      </div>
+    <% end %>
+
     <%# ── Actions ── %>
-    <div class="flex justify-center gap-4 mt-10 pt-6 border-t border-surface-border/40">
+    <div class="flex justify-center gap-4 pt-6 border-t border-surface-border/40">
       <%= link_to t("shared.cancel"), foods_path, class: "btn-ghost" %>
       <%= f.button :submit, t("shared.save"), class: "btn-primary px-8" %>
     </div>

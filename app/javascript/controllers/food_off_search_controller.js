@@ -4,9 +4,23 @@ export default class extends Controller {
   static targets = [
     "input", "results", "searchIcon", "clearBtn",
     "typeHint", "emptyState",
-    "offIdField", "nutriscoreField", "novaGroupField",
-    "badge", "ciqualBadge"
+    "offIdField", "nutriscoreField", "novaGroupField", "ecoscoreField",
+    "allergensField", "tracesField", "fiberField", "saturatedFatField", "saltField",
+    "micronutrientsField",
+    "badge", "ciqualBadge",
+    "qualitySection",
+    "nutriscoreWrapper", "nutriscoreBadge", "nutriscoreDesc",
+    "novaWrapper", "novaBadge", "novaDesc",
+    "ecoscoreWrapper", "ecoscoreBadge", "ecoscoreDesc"
   ]
+
+  static NS_COLORS   = { a: "#038141", b: "#85BB2F", c: "#FECB02", d: "#EE8100", e: "#E63E11" }
+  static NOVA_COLORS = { 1: "#038141", 2: "#85BB2F", 3: "#EE8100", 4: "#E63E11" }
+  static ECO_COLORS  = { "a-plus": "#006400", a: "#038141", b: "#85BB2F", c: "#FECB02", d: "#EE8100", e: "#E63E11", f: "#8B1A1A" }
+  static ECO_LABELS  = { "a-plus": "A+" }
+  static NS_DESCS    = { a: "Excellente qualité nutritionnelle", b: "Bonne qualité nutritionnelle", c: "Qualité nutritionnelle moyenne", d: "Qualité nutritionnelle médiocre", e: "Mauvaise qualité nutritionnelle" }
+  static NOVA_DESCS  = { 1: "Non transformé ou peu transformé", 2: "Ingrédient culinaire transformé", 3: "Aliment transformé", 4: "Produit ultra-transformé" }
+  static ECO_DESCS   = { "a-plus": "Impact environnemental minimal", a: "Impact environnemental très faible", b: "Faible impact environnemental", c: "Impact environnemental modéré", d: "Fort impact environnemental", e: "Très fort impact environnemental", f: "Impact environnemental extrême" }
   static values = { url: String }
 
   connect() {
@@ -43,9 +57,9 @@ export default class extends Controller {
     const product = this._products.get(String(index))
     if (!product) return
 
-    this.offIdFieldTarget.value      = ""
-    this.nutriscoreFieldTarget.value = ""
-    this.novaGroupFieldTarget.value  = ""
+    this._clearOffFields()
+    this._fillExtendedFields(product)
+    this._updateQualitySection(product)
     if (this.hasBadgeTarget)       this.badgeTarget.classList.replace("flex", "hidden")
     if (this.hasCiqualBadgeTarget) this.ciqualBadgeTarget.classList.replace("hidden", "flex")
 
@@ -61,6 +75,12 @@ export default class extends Controller {
     this.offIdFieldTarget.value      = product.off_id     || ""
     this.nutriscoreFieldTarget.value = product.nutriscore || ""
     this.novaGroupFieldTarget.value  = product.nova_group || ""
+    if (this.hasEcoscoreFieldTarget)    this.ecoscoreFieldTarget.value    = product.ecoscore_grade || ""
+    if (this.hasAllergensFieldTarget)   this.allergensFieldTarget.value   = (product.allergens  || []).join(",")
+    if (this.hasTracesFieldTarget)      this.tracesFieldTarget.value      = (product.traces     || []).join(",")
+    this._fillExtendedFields(product)
+
+    this._updateQualitySection(product)
     if (this.hasCiqualBadgeTarget) this.ciqualBadgeTarget.classList.replace("flex", "hidden")
     if (this.hasBadgeTarget)       this.badgeTarget.classList.replace("hidden", "flex")
 
@@ -70,6 +90,69 @@ export default class extends Controller {
     }))
 
     document.querySelector("[data-tab='manual']")?.click()
+  }
+
+  _clearOffFields() {
+    this.offIdFieldTarget.value      = ""
+    this.nutriscoreFieldTarget.value = ""
+    this.novaGroupFieldTarget.value  = ""
+    if (this.hasEcoscoreFieldTarget)    this.ecoscoreFieldTarget.value    = ""
+    if (this.hasAllergensFieldTarget)   this.allergensFieldTarget.value   = ""
+    if (this.hasTracesFieldTarget)      this.tracesFieldTarget.value      = ""
+    if (this.hasQualitySectionTarget)   this.qualitySectionTarget.classList.add("hidden")
+  }
+
+  _updateQualitySection(product) {
+    if (!this.hasQualitySectionTarget) return
+
+    const ns      = product.nutriscore?.toLowerCase() || null
+    const novaRaw = parseInt(product.nova_group)
+    const nova    = (!isNaN(novaRaw) && novaRaw >= 1 && novaRaw <= 4) ? novaRaw : null
+    const eco     = product.ecoscore_grade?.toLowerCase() || null
+
+    if (!ns && !nova && !eco) {
+      this.qualitySectionTarget.classList.add("hidden")
+      return
+    }
+    this.qualitySectionTarget.classList.remove("hidden")
+
+    this._setBadge(this.hasNutriscoreWrapperTarget && this.nutriscoreWrapperTarget,
+                   this.hasNutriscoreBadgeTarget   && this.nutriscoreBadgeTarget,
+                   ns, ns?.toUpperCase(), this.constructor.NS_COLORS)
+    if (this.hasNutriscoreDescTarget) this.nutriscoreDescTarget.textContent = this.constructor.NS_DESCS[ns] || ""
+
+    this._setBadge(this.hasNovaWrapperTarget && this.novaWrapperTarget,
+                   this.hasNovaBadgeTarget   && this.novaBadgeTarget,
+                   nova, nova ? String(nova) : null, this.constructor.NOVA_COLORS)
+    if (this.hasNovaDescTarget) this.novaDescTarget.textContent = this.constructor.NOVA_DESCS[nova] || ""
+
+    const ecoLetter = eco ? (this.constructor.ECO_LABELS[eco] || eco.toUpperCase()) : null
+    this._setBadge(this.hasEcoscoreWrapperTarget && this.ecoscoreWrapperTarget,
+                   this.hasEcoscoreBadgeTarget   && this.ecoscoreBadgeTarget,
+                   eco, ecoLetter, this.constructor.ECO_COLORS)
+    if (this.hasEcoscoreDescTarget) this.ecoscoreDescTarget.textContent = this.constructor.ECO_DESCS[eco] || ""
+  }
+
+  _setBadge(wrapper, badge, value, label, colorsMap) {
+    if (!wrapper || !badge) return
+    if (value) {
+      wrapper.classList.remove("hidden")
+      wrapper.classList.add("flex")
+      badge.textContent = label || String(value).toUpperCase()
+      badge.style.backgroundColor = colorsMap[value] || "#52525B"
+    } else {
+      wrapper.classList.add("hidden")
+      wrapper.classList.remove("flex")
+    }
+  }
+
+  _fillExtendedFields(product) {
+    if (this.hasFiberFieldTarget)        this.fiberFieldTarget.value        = product.fiber         ?? ""
+    if (this.hasSaturatedFatFieldTarget) this.saturatedFatFieldTarget.value = product.saturated_fat ?? ""
+    if (this.hasSaltFieldTarget)         this.saltFieldTarget.value         = product.salt          ?? ""
+    if (this.hasMicronutrientsFieldTarget) {
+      this.micronutrientsFieldTarget.value = JSON.stringify(product.micronutrients || {})
+    }
   }
 
   async _fetch(query) {

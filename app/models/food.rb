@@ -26,4 +26,10 @@ class Food < ApplicationRecord
   def self.ransackable_attributes(auth_object = nil)
     ["brand", "calories", "carbs", "fats", "name", "proteins", "sugars"]
   end
+
+  def source
+    return :off    if off_id.present?
+    return :ciqual if micronutrients.present? && off_id.blank?
+    :manual
+  end
 end

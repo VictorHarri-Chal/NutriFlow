@@ -1,5 +1,5 @@
 class FoodsController < ApplicationController
-  before_action :set_food, only: [:edit, :update, :destroy, :duplicate, :toggle_favorite, :toggle_pantry]
+  before_action :set_food, only: [:show, :edit, :update, :destroy, :duplicate, :toggle_favorite, :toggle_pantry]
 
   def index
     @food_labels = current_user.food_labels.order(:name)
@@ -51,6 +51,10 @@ class FoodsController < ApplicationController
     food_ids = @foods.pluck(:id)
     @usage_counts = food_ids.any? ? DayFood.where(food_id: food_ids).group(:food_id).count : {}
     @missing_count = current_user.foods.where(in_pantry: false).count
+  end
+
+  def show
+    @usage_count = @food.day_foods.count
   end
 
   def new
@@ -151,7 +155,9 @@ class FoodsController < ApplicationController
       { source: "ciqual", name: f.name, brand: nil, category: f.food_group,
         calories: f.calories.to_f.round(1), proteins: f.proteins.to_f.round(1),
         carbs: f.carbs.to_f.round(1), fats: f.fats.to_f.round(1),
-        sugars: f.sugars.to_f.round(1) }
+        sugars: f.sugars.to_f.round(1),
+        fiber: f.fiber&.to_f&.round(1), saturated_fat: f.saturated_fat&.to_f&.round(1),
+        salt: f.salt&.to_f&.round(1), micronutrients: f.micronutrients.presence || {} }
     end
 
     render json: { products: }
@@ -202,6 +208,32 @@ class FoodsController < ApplicationController
   end
 
   def food_params
-    params.require(:food).permit(:name, :brand, :fats, :carbs, :sugars, :proteins, :calories, :category, :off_id, :nutriscore_grade, :nova_group, food_label_ids: [])
+    params.require(:food).permit(
+      :name, :brand, :fats, :carbs, :sugars, :proteins, :calories, :category,
+      :off_id, :nutriscore_grade, :nova_group,
+      :fiber, :saturated_fat, :salt, :ecoscore_grade, :allergens_raw, :traces_raw, :micronutrients,
+      food_label_ids: [],
+      allergens: [],
+      traces: []
+    ).tap do |p|
+      if p[:allergens_raw].present?
+        p[:allergens] = p.delete(:allergens_raw).split(",").map(&:strip).reject(&:blank?)
+      else
+        p.delete(:allergens_raw)
+      end
+      if p[:traces_raw].present?
+        p[:traces] = p.delete(:traces_raw).split(",").map(&:strip).reject(&:blank?)
+      else
+        p.delete(:traces_raw)
+      end
+      # micronutrients arrives as a JSON string from the hidden field
+      if p[:micronutrients].is_a?(String)
+        begin
+          p[:micronutrients] = JSON.parse(p[:micronutrients]).transform_keys(&:to_s).presence || {}
+        rescue JSON::ParserError
+          p[:micronutrients] = {}
+        end
+      end
+    end
   end
 end

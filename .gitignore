@@ -63,3 +63,5 @@ node_modules
 .claude
 public/exercise_gifs
 mise.toml
+
+ciqual_off_fields/

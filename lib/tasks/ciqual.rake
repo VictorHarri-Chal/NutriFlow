@@ -28,6 +28,27 @@ namespace :ciqual do
     col_fats     = headers.find { |h| h.to_s.include?("Lipides") }
     col_sugars   = headers.find { |h| h.to_s.include?("Sucres") }
 
+    # Extended nutrition label columns
+    col_fiber         = headers.find { |h| h.to_s.include?("Fibres") }
+    col_saturated_fat = headers.find { |h| h.to_s.include?("saturés") }
+    col_salt          = headers.find { |h| h.to_s.include?("Sel") && h.to_s.include?("sodium") }
+
+    # Micronutrient columns
+    col_calcium    = headers.find { |h| h.to_s.include?("Calcium") }
+    col_iron       = headers.find { |h| h.to_s.include?("Fer (") }
+    col_magnesium  = headers.find { |h| h.to_s.include?("Magnésium") }
+    col_potassium  = headers.find { |h| h.to_s.include?("Potassium") }
+    col_sodium     = headers.find { |h| h.to_s.include?("Sodium") }
+    col_zinc       = headers.find { |h| h.to_s.include?("Zinc") }
+    col_vitamin_c  = headers.find { |h| h.to_s.include?("Vitamine C") }
+    col_vitamin_d  = headers.find { |h| h.to_s.include?("Vitamine D (") }
+    col_vitamin_b12 = headers.find { |h| h.to_s.include?("Vitamine B12") }
+    col_vitamin_a  = headers.find { |h| h.to_s.include?("équivalents rétinol") }
+    col_vitamin_b9 = headers.find { |h| h.to_s.include?("Folates totaux (µg") }
+    col_cholesterol = headers.find { |h| h.to_s.include?("Cholestérol") }
+    col_epa        = headers.find { |h| h.to_s.include?("EPA") }
+    col_dha        = headers.find { |h| h.to_s.include?("DHA") }
+
     missing = [col_code, col_name_fr, col_calories].select(&:nil?)
     if missing.any?
       abort "ERROR: Colonnes introuvables dans le CSV. Vérifiez le format du fichier Ciqual.\nEn-têtes détectés : #{headers.first(10).join(', ')}"
@@ -35,6 +56,8 @@ namespace :ciqual do
 
     puts "Import Ciqual depuis #{path}"
     puts "Colonnes détectées : calories=#{col_calories}, protéines=#{col_proteins}, glucides=#{col_carbs}, lipides=#{col_fats}, sucres=#{col_sugars}"
+    puts "Colonnes étendues  : fibres=#{col_fiber ? 'oui' : 'non'}, AG_sat=#{col_saturated_fat ? 'oui' : 'non'}, sel=#{col_salt ? 'oui' : 'non'}"
+    puts "Micronutriments    : calcium=#{col_calcium ? 'oui' : 'non'}, fer=#{col_iron ? 'oui' : 'non'}, magnésium=#{col_magnesium ? 'oui' : 'non'}, EPA=#{col_epa ? 'oui' : 'non'}, DHA=#{col_dha ? 'oui' : 'non'}"
 
     created = 0
     updated = 0
@@ -50,14 +73,35 @@ namespace :ciqual do
         next
       end
 
+      micronutrients = {
+        calcium:    col_calcium    ? parse_ciqual_value(row[col_calcium])    : nil,
+        iron:       col_iron       ? parse_ciqual_value(row[col_iron])       : nil,
+        magnesium:  col_magnesium  ? parse_ciqual_value(row[col_magnesium])  : nil,
+        potassium:  col_potassium  ? parse_ciqual_value(row[col_potassium])  : nil,
+        sodium:     col_sodium     ? parse_ciqual_value(row[col_sodium])     : nil,
+        zinc:       col_zinc       ? parse_ciqual_value(row[col_zinc])       : nil,
+        vitamin_c:  col_vitamin_c  ? parse_ciqual_value(row[col_vitamin_c])  : nil,
+        vitamin_d:  col_vitamin_d  ? parse_ciqual_value(row[col_vitamin_d])  : nil,
+        vitamin_b12: col_vitamin_b12 ? parse_ciqual_value(row[col_vitamin_b12]) : nil,
+        vitamin_a:  col_vitamin_a  ? parse_ciqual_value(row[col_vitamin_a])  : nil,
+        vitamin_b9: col_vitamin_b9 ? parse_ciqual_value(row[col_vitamin_b9]) : nil,
+        cholesterol: col_cholesterol ? parse_ciqual_value(row[col_cholesterol]) : nil,
+        epa:        col_epa        ? parse_ciqual_value(row[col_epa])        : nil,
+        dha:        col_dha        ? parse_ciqual_value(row[col_dha])        : nil
+      }.compact.reject { |_, v| v == 0.0 }
+
       attrs = {
-        name:       name,
-        food_group: col_group ? row[col_group].to_s.strip : nil,
-        calories:   parse_ciqual_value(row[col_calories]),
-        proteins:   col_proteins ? parse_ciqual_value(row[col_proteins]) : 0,
-        carbs:      col_carbs    ? parse_ciqual_value(row[col_carbs])    : 0,
-        fats:       col_fats     ? parse_ciqual_value(row[col_fats])     : 0,
-        sugars:     col_sugars   ? parse_ciqual_value(row[col_sugars])   : 0
+        name:          name,
+        food_group:    col_group ? row[col_group].to_s.strip : nil,
+        calories:      parse_ciqual_value(row[col_calories]),
+        proteins:      col_proteins ? parse_ciqual_value(row[col_proteins]) : 0,
+        carbs:         col_carbs    ? parse_ciqual_value(row[col_carbs])    : 0,
+        fats:          col_fats     ? parse_ciqual_value(row[col_fats])     : 0,
+        sugars:        col_sugars   ? parse_ciqual_value(row[col_sugars])   : 0,
+        fiber:         col_fiber         ? parse_ciqual_value(row[col_fiber])         : nil,
+        saturated_fat: col_saturated_fat ? parse_ciqual_value(row[col_saturated_fat]) : nil,
+        salt:          col_salt          ? parse_ciqual_value(row[col_salt])          : nil,
+        micronutrients: micronutrients
       }
 
       record = CiqualFood.find_by(alim_code: alim_code)
@@ -81,7 +125,7 @@ namespace :ciqual do
   end
 
   def parse_ciqual_value(val)
-    return 0.0 if val.nil?
+    return nil if val.nil?
     # Gère "< 0,1", "traces", "–", "-", valeurs vides → 0
     # Gère "3,2" → 3.2
     cleaned = val.to_s.strip.gsub(",", ".").gsub(/[^0-9.]/, "")

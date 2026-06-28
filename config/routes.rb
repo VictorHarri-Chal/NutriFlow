@@ -13,7 +13,7 @@ Rails.application.routes.draw do
       post :copy_yesterday
     end
   end
-  resources :foods, except: [:show] do
+  resources :foods do
     collection do
       get   :search_import
       get   :barcode_import

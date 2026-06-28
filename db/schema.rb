@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_25_214306) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_27_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -76,6 +76,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_25_214306) do
     t.decimal "sugars", precision: 6, scale: 2, default: "0.0"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "fiber", precision: 6, scale: 2
+    t.decimal "saturated_fat", precision: 6, scale: 2
+    t.decimal "salt", precision: 6, scale: 2
+    t.jsonb "micronutrients", default: {}
     t.index ["alim_code"], name: "index_ciqual_foods_on_alim_code", unique: true
     t.index ["name"], name: "index_ciqual_foods_on_name"
   end
@@ -200,6 +204,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_25_214306) do
     t.string "off_id"
     t.string "nutriscore_grade"
     t.integer "nova_group"
+    t.decimal "fiber", precision: 6, scale: 2
+    t.decimal "saturated_fat", precision: 6, scale: 2
+    t.decimal "salt", precision: 6, scale: 2
+    t.string "ecoscore_grade"
+    t.string "allergens", default: [], array: true
+    t.string "traces", default: [], array: true
+    t.jsonb "micronutrients", default: {}
     t.index ["brand"], name: "index_foods_on_brand"
     t.index ["name"], name: "index_foods_on_name"
     t.index ["off_id"], name: "index_foods_on_off_id"

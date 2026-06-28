@@ -1,0 +1,301 @@
+<%= turbo_frame_tag "food_detail" do %>
+  <div class="flex flex-col h-full min-h-screen" data-controller="tabs">
+
+    <%# ── Header ── %>
+    <div class="flex items-start justify-between gap-4 p-5 border-b border-surface-border/50 shrink-0">
+      <div class="min-w-0">
+        <h2 class="text-base font-bold text-ink-primary leading-tight truncate"><%= @food.name %></h2>
+        <div class="flex items-center flex-wrap gap-2 mt-1.5">
+          <% case @food.source
+             when :off %>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-brand/10 text-brand border border-brand/30">
+              <i class="fas fa-barcode text-[9px]"></i>
+              <%= t("views.foods.show.source.off") %>
+            </span>
+          <% when :ciqual %>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+              <i class="fas fa-database text-[9px]"></i>
+              <%= t("views.foods.show.source.ciqual") %>
+            </span>
+          <% else %>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-surface-hover text-ink-subtle border border-surface-border/50">
+              <i class="fas fa-pencil text-[9px]"></i>
+              <%= t("views.foods.show.source.manual") %>
+            </span>
+          <% end %>
+        </div>
+      </div>
+      <div class="flex items-center gap-1 shrink-0">
+        <%= link_to edit_food_path(@food),
+              class: "w-8 h-8 flex items-center justify-center rounded-lg text-ink-subtle hover:text-ink-primary hover:bg-surface-hover transition-colors",
+              data: { turbo_frame: "_top" } do %>
+          <i class="fas fa-pen text-sm"></i>
+        <% end %>
+        <button type="button"
+                class="w-8 h-8 flex items-center justify-center rounded-lg text-ink-subtle hover:text-ink-primary hover:bg-surface-hover transition-colors"
+                data-action="click->food-detail-panel#close">
+          <i class="fas fa-xmark text-sm"></i>
+        </button>
+      </div>
+    </div>
+
+    <%
+      _ns_grade  = @food.nutriscore_grade&.downcase
+      _nova_num  = @food.nova_group.present? ? @food.nova_group.to_i : nil
+      _eco_grade = @food.ecoscore_grade&.downcase&.presence
+      _has_quality = _ns_grade.present? || _nova_num.present? || _eco_grade.present?
+    %>
+
+    <%# ── Tabs ── %>
+    <div class="shrink-0 border-b border-surface-border/50 px-5">
+      <div class="flex gap-1 -mb-px">
+        <button type="button"
+                class="px-3 py-3 text-sm font-medium border-b-2 transition-colors"
+                data-tabs-target="tab"
+                data-action="click->tabs#switchTab"
+                data-tab="nutrition"
+                data-active-classes="border-brand text-brand"
+                data-inactive-classes="border-transparent text-ink-muted hover:text-ink-primary">
+          <%= t("views.foods.show.tabs.nutrition") %>
+        </button>
+        <% if _has_quality %>
+          <button type="button"
+                  class="px-3 py-3 text-sm font-medium border-b-2 transition-colors"
+                  data-tabs-target="tab"
+                  data-action="click->tabs#switchTab"
+                  data-tab="quality"
+                  data-active-classes="border-brand text-brand"
+                  data-inactive-classes="border-transparent text-ink-muted hover:text-ink-primary">
+            <%= t("views.foods.show.tabs.quality") %>
+          </button>
+        <% end %>
+        <button type="button"
+                class="px-3 py-3 text-sm font-medium border-b-2 transition-colors"
+                data-tabs-target="tab"
+                data-action="click->tabs#switchTab"
+                data-tab="info"
+                data-active-classes="border-brand text-brand"
+                data-inactive-classes="border-transparent text-ink-muted hover:text-ink-primary">
+          <%= t("views.foods.show.tabs.info") %>
+        </button>
+      </div>
+    </div>
+
+    <%# ── Tab panels ── %>
+    <div class="flex-1 overflow-y-auto">
+
+      <%# ── Tab Nutrition ── %>
+      <div id="nutrition-tab" data-tabs-target="content" class="p-5 space-y-5">
+
+        <%# Calories %>
+        <div class="text-center py-4 bg-surface-base rounded-xl border border-surface-border/40">
+          <div class="text-4xl font-bold text-brand leading-none"><%= format_macro(@food.calories) %></div>
+          <div class="text-xs text-ink-subtle mt-1.5">kcal / 100g</div>
+        </div>
+
+        <%# Macros principales %>
+        <div>
+          <h3 class="text-xs font-semibold text-ink-subtle uppercase tracking-wide mb-3"><%= t("views.foods.show.macros") %></h3>
+          <div class="bg-surface-base rounded-xl border border-surface-border/40 divide-y divide-surface-border/30">
+            <% [
+              { value: @food.proteins, label: t("activerecord.attributes.food.proteins") },
+              { value: @food.carbs,    label: t("activerecord.attributes.food.carbs") },
+              { value: @food.fats,     label: t("activerecord.attributes.food.fats") },
+              { value: @food.sugars,   label: t("activerecord.attributes.food.sugars") }
+            ].each do |macro| %>
+              <div class="flex items-center justify-between px-4 py-2.5">
+                <span class="text-sm text-ink-muted"><%= macro[:label] %></span>
+                <span class="text-sm font-semibold text-ink-primary"><%= format_macro(macro[:value]) %> <span class="text-xs font-normal text-ink-subtle">g</span></span>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <%# Étiquette étendue — toujours affichée %>
+        <div>
+          <h3 class="text-xs font-semibold text-ink-subtle uppercase tracking-wide mb-3"><%= t("views.foods.show.extended_label") %></h3>
+          <div class="bg-surface-base rounded-xl border border-surface-border/40 divide-y divide-surface-border/30">
+            <% [
+              { field: @food.fiber,         key: "fiber",         unit: "g" },
+              { field: @food.saturated_fat, key: "saturated_fat", unit: "g" },
+              { field: @food.salt,          key: "salt",          unit: "g" }
+            ].each do |row| %>
+              <div class="flex items-center justify-between px-4 py-2.5">
+                <span class="text-sm text-ink-muted"><%= t("views.foods.show.nutrients.#{row[:key]}") %></span>
+                <% if row[:field].present? %>
+                  <span class="text-sm font-semibold text-ink-primary"><%= format_macro(row[:field]) %> <span class="text-xs font-normal text-ink-subtle"><%= row[:unit] %></span></span>
+                <% else %>
+                  <span class="text-sm text-ink-subtle">—</span>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <%# Minéraux — toujours affichés %>
+        <%
+          mn = (@food.micronutrients || {}).transform_keys(&:to_s)
+          minerals = %w[calcium iron magnesium potassium sodium zinc cholesterol]
+          vitamins = %w[vitamin_c vitamin_d vitamin_b12 vitamin_a vitamin_b9 epa dha]
+          units = { "calcium" => "mg", "iron" => "mg", "magnesium" => "mg", "potassium" => "mg",
+                    "sodium" => "mg", "zinc" => "mg", "cholesterol" => "mg",
+                    "vitamin_c" => "mg", "vitamin_d" => "µg", "vitamin_b12" => "µg",
+                    "vitamin_a" => "µg", "vitamin_b9" => "µg", "epa" => "g", "dha" => "g" }
+        %>
+        <div>
+          <h3 class="text-xs font-semibold text-ink-subtle uppercase tracking-wide mb-3"><%= t("views.foods.show.minerals") %></h3>
+          <div class="bg-surface-base rounded-xl border border-surface-border/40 divide-y divide-surface-border/30">
+            <% minerals.each do |key| %>
+              <div class="flex items-center justify-between px-4 py-2.5">
+                <span class="text-sm text-ink-muted"><%= t("views.foods.show.nutrients.#{key}") %></span>
+                <% if mn[key].present? %>
+                  <span class="text-sm font-semibold text-ink-primary"><%= mn[key] %> <span class="text-xs font-normal text-ink-subtle"><%= units[key] %></span></span>
+                <% else %>
+                  <span class="text-sm text-ink-subtle">—</span>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <%# Vitamines — toujours affichées %>
+        <div>
+          <h3 class="text-xs font-semibold text-ink-subtle uppercase tracking-wide mb-3"><%= t("views.foods.show.vitamins") %></h3>
+          <div class="bg-surface-base rounded-xl border border-surface-border/40 divide-y divide-surface-border/30">
+            <% vitamins.each do |key| %>
+              <div class="flex items-center justify-between px-4 py-2.5">
+                <span class="text-sm text-ink-muted"><%= t("views.foods.show.nutrients.#{key}") %></span>
+                <% if mn[key].present? %>
+                  <span class="text-sm font-semibold text-ink-primary"><%= mn[key] %> <span class="text-xs font-normal text-ink-subtle"><%= units[key] %></span></span>
+                <% else %>
+                  <span class="text-sm text-ink-subtle">—</span>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <%# Allergènes & Traces %>
+        <div>
+          <h3 class="text-xs font-semibold text-ink-subtle uppercase tracking-wide mb-3"><%= t("views.foods.show.allergens_and_traces") %></h3>
+          <div class="bg-surface-base rounded-xl border border-surface-border/40 divide-y divide-surface-border/30">
+            <div class="px-4 py-3">
+              <span class="text-xs text-ink-muted block mb-2"><%= t("views.foods.show.allergens") %></span>
+              <% if @food.allergens.present? %>
+                <div class="flex flex-wrap gap-1.5">
+                  <% @food.allergens.each do |allergen| %>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-status-danger/10 border border-status-danger/30 text-status-danger">
+                      <i class="fas fa-triangle-exclamation text-[9px]"></i>
+                      <%= translate_allergen(allergen) %>
+                    </span>
+                  <% end %>
+                </div>
+              <% else %>
+                <span class="text-sm text-ink-subtle">—</span>
+              <% end %>
+            </div>
+            <div class="px-4 py-3">
+              <span class="text-xs text-ink-muted block mb-2"><%= t("views.foods.show.traces") %></span>
+              <% if @food.traces.present? %>
+                <div class="flex flex-wrap gap-1.5">
+                  <% @food.traces.each do |trace| %>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-status-danger/10 border border-status-danger/30 text-status-danger">
+                      <i class="fas fa-triangle-exclamation text-[9px]"></i>
+                      <%= translate_allergen(trace) %>
+                    </span>
+                  <% end %>
+                </div>
+              <% else %>
+                <span class="text-sm text-ink-subtle">—</span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <%# ── Tab Qualité ── %>
+      <% if _has_quality %>
+      <div id="quality-tab" data-tabs-target="content" class="hidden p-5 space-y-4">
+
+        <%
+          ns_colors  = { "a" => "#038141", "b" => "#85BB2F", "c" => "#FECB02", "d" => "#EE8100", "e" => "#E63E11" }
+          nova_colors = { 1 => "#038141", 2 => "#85BB2F", 3 => "#EE8100", 4 => "#E63E11" }
+          eco_colors = { "a-plus" => "#006400", "a" => "#038141", "b" => "#85BB2F", "c" => "#FECB02", "d" => "#EE8100", "e" => "#E63E11", "f" => "#8B1A1A" }
+          eco_labels = { "a-plus" => "A+" }
+
+          scores = [
+            {
+              label:       "Nutri-Score",
+              color:       ns_colors[_ns_grade],
+              badge_text:  _ns_grade&.upcase,
+              description: _ns_grade.present? ? t("views.foods.show.nutriscore_description.#{_ns_grade}", default: "") : nil
+            },
+            {
+              label:       "NOVA#{_nova_num ? " #{_nova_num}" : ""}",
+              color:       nova_colors[_nova_num],
+              badge_text:  _nova_num&.to_s,
+              description: _nova_num ? t("views.foods.show.nova_description.#{_nova_num}", default: "") : nil
+            },
+            {
+              label:       "Éco-Score",
+              color:       eco_colors[_eco_grade],
+              badge_text:  eco_labels[_eco_grade] || _eco_grade&.upcase,
+              description: _eco_grade.present? ? t("views.foods.show.ecoscore_description.#{_eco_grade}", default: _eco_grade.upcase) : nil
+            }
+          ].select { |s| s[:badge_text].present? }
+        %>
+
+        <% scores.each do |score| %>
+          <div class="bg-surface-base rounded-xl border border-surface-border/40 p-4">
+            <div class="flex items-center gap-4">
+              <div class="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 text-white text-2xl font-black"
+                   style="background-color: <%= score[:color] || '#52525B' %>;">
+                <%= score[:badge_text] %>
+              </div>
+              <div>
+                <div class="text-sm font-semibold text-ink-primary"><%= score[:label] %></div>
+                <div class="text-xs text-ink-muted mt-0.5"><%= score[:description] %></div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+      </div>
+      <% end %>
+
+      <%# ── Tab Infos ── %>
+      <div id="info-tab" data-tabs-target="content" class="hidden p-5 space-y-5">
+
+        <%# Métadonnées %>
+        <div class="bg-surface-base rounded-xl border border-surface-border/40 divide-y divide-surface-border/30">
+          <% if @food.brand.present? %>
+            <div class="flex items-center justify-between px-4 py-3">
+              <span class="text-sm text-ink-muted"><%= t("activerecord.attributes.food.brand") %></span>
+              <span class="text-sm font-medium text-ink-primary"><%= @food.brand %></span>
+            </div>
+          <% end %>
+          <% if @food.category.present? %>
+            <div class="flex items-center justify-between px-4 py-3">
+              <span class="text-sm text-ink-muted"><%= t("views.foods.form.category") %></span>
+              <span class="text-sm font-medium text-ink-primary"><%= t("views.shopping_lists.categories.#{@food.category}") %></span>
+            </div>
+          <% end %>
+          <div class="flex items-center justify-between px-4 py-3">
+            <span class="text-sm text-ink-muted"><%= t("views.foods.show.logged_count") %></span>
+            <span class="text-sm font-medium text-ink-primary"><%= @usage_count %> <%= t("views.foods.show.times") %></span>
+          </div>
+          <% if @food.off_id.present? %>
+            <div class="flex items-center justify-between px-4 py-3">
+              <span class="text-sm text-ink-muted">Open Food Facts ID</span>
+              <span class="text-xs font-mono text-ink-subtle truncate max-w-[140px]"><%= @food.off_id %></span>
+            </div>
+          <% end %>
+        </div>
+
+
+      </div>
+
+    </div>
+  </div>
+<% end %>

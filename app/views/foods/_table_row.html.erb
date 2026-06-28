@@ -3,12 +3,15 @@
 
 <tr class="group" id="food_<%= food.id %>">
 
-  <%# Aliment + Marque %>
+  <%# Aliment + Marque + chips Nutri-Score/NOVA %>
   <td>
-    <div class="font-medium text-ink-primary leading-tight"><%= food.name %></div>
+    <%= link_to food.name, food_path(food),
+          class: "font-medium text-ink-primary hover:text-brand transition-colors leading-tight",
+          data: { turbo_frame: "food_detail" } %>
     <% if food.brand.present? %>
       <div class="text-xs text-ink-subtle mt-0.5"><%= food.brand %></div>
     <% end %>
+
   </td>
 
   <%# Labels %>
