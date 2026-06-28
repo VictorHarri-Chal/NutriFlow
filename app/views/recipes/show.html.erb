@@ -94,39 +94,104 @@
     <div class="lg:col-span-3 space-y-4">
 
       <%# Nutrition -%>
-      <div class="card p-5">
-        <p class="text-xs font-semibold text-ink-subtle uppercase tracking-wider mb-4">
-          <%= t("views.recipes.show.nutritional_values") %>
-        </p>
+      <%
+        total_weight = @recipe.total_weight.to_f
+        factor       = total_weight > 0 ? (100.0 / total_weight) : 0
+        per100 = {
+          calories:      (@recipe.total_calories      * factor).round(1),
+          proteins:      (@recipe.total_proteins      * factor).round(1),
+          carbs:         (@recipe.total_carbs         * factor).round(1),
+          fats:          (@recipe.total_fats          * factor).round(1),
+          sugars:        (@recipe.total_sugars        * factor).round(1),
+          fiber:         (@recipe.total_fiber         * factor).round(1),
+          saturated_fat: (@recipe.total_saturated_fat * factor).round(1),
+          salt:          (@recipe.total_salt          * factor).round(1)
+        }
+      %>
+      <div class="card p-5" data-controller="nutrition-toggle">
+
+        <%# Header %>
+        <div class="flex items-center justify-between mb-4">
+          <p class="text-xs font-semibold text-ink-subtle uppercase tracking-wider">
+            <%= t("views.recipes.show.nutritional_values") %>
+          </p>
+          <% if total_weight > 0 %>
+            <div class="flex items-center gap-0.5 p-0.5 bg-surface-base rounded-lg border border-surface-border/40">
+              <button type="button"
+                      data-action="click->nutrition-toggle#showTotal"
+                      data-nutrition-toggle-target="totalBtn"
+                      class="px-2.5 py-1 text-[11px] font-medium rounded-md bg-surface-raised text-ink-primary shadow-sm transition-colors">
+                <%= t("views.recipes.show.total_label") %>
+              </button>
+              <button type="button"
+                      data-action="click->nutrition-toggle#showPer100"
+                      data-nutrition-toggle-target="per100Btn"
+                      class="px-2.5 py-1 text-[11px] font-medium rounded-md text-ink-subtle transition-colors">
+                <%= t("views.recipes.show.per_100g_label") %>
+              </button>
+            </div>
+          <% end %>
+        </div>
+
+        <%# Calories + Poids %>
         <div class="flex items-center justify-center gap-8 mb-4">
           <div class="text-center">
-            <div class="text-3xl font-bold text-brand leading-none"><%= @recipe.total_calories %></div>
-            <div class="text-xs text-ink-subtle mt-1">kcal</div>
+            <div class="text-3xl font-bold text-brand leading-none">
+              <span data-nutrition-toggle-target="totalVal"><%= @recipe.total_calories %></span>
+              <span data-nutrition-toggle-target="per100Val" class="hidden"><%= per100[:calories] %></span>
+            </div>
+            <div class="text-xs text-ink-subtle mt-1">
+              <span data-nutrition-toggle-target="totalVal">kcal</span>
+              <span data-nutrition-toggle-target="per100Val" class="hidden">kcal/100g</span>
+            </div>
           </div>
           <div class="w-px h-10 bg-surface-border/50 shrink-0"></div>
           <div class="text-center">
-            <div class="text-3xl font-bold text-ink-muted leading-none"><%= @recipe.total_weight %></div>
+            <div class="text-3xl font-bold text-ink-muted leading-none">
+              <span data-nutrition-toggle-target="totalVal"><%= @recipe.total_weight %></span>
+              <span data-nutrition-toggle-target="per100Val" class="hidden">100</span>
+            </div>
             <div class="text-xs text-ink-subtle mt-1"><%= t("views.recipes.show.total_weight_short") %> (g)</div>
           </div>
         </div>
+
+        <%# Macros principaux %>
         <div class="grid grid-cols-4 gap-2 pt-3 border-t border-surface-border/30">
-          <div class="text-center p-2 bg-surface-hover/50 rounded-lg">
-            <div class="font-bold text-ink-primary text-sm"><%= @recipe.total_proteins %>g</div>
-            <div class="text-[10px] text-ink-subtle mt-0.5"><%= t("views.recipes.show.proteins_short") %></div>
-          </div>
-          <div class="text-center p-2 bg-surface-hover/50 rounded-lg">
-            <div class="font-bold text-ink-primary text-sm"><%= @recipe.total_carbs %>g</div>
-            <div class="text-[10px] text-ink-subtle mt-0.5"><%= t("views.recipes.show.carbs_short") %></div>
-          </div>
-          <div class="text-center p-2 bg-surface-hover/50 rounded-lg">
-            <div class="font-bold text-ink-primary text-sm"><%= @recipe.total_fats %>g</div>
-            <div class="text-[10px] text-ink-subtle mt-0.5"><%= t("views.recipes.show.fats_short") %></div>
-          </div>
-          <div class="text-center p-2 bg-surface-hover/50 rounded-lg">
-            <div class="font-bold text-ink-primary text-sm"><%= @recipe.total_sugars %>g</div>
-            <div class="text-[10px] text-ink-subtle mt-0.5"><%= t("views.recipes.show.sugars_short") %></div>
-          </div>
+          <% [
+            { total: @recipe.total_proteins,      per100: per100[:proteins],      label: t("views.recipes.show.proteins_short") },
+            { total: @recipe.total_carbs,         per100: per100[:carbs],         label: t("views.recipes.show.carbs_short") },
+            { total: @recipe.total_fats,          per100: per100[:fats],          label: t("views.recipes.show.fats_short") },
+            { total: @recipe.total_sugars,        per100: per100[:sugars],        label: t("views.recipes.show.sugars_short") }
+          ].each do |m| %>
+            <div class="text-center p-2 bg-surface-hover/50 rounded-lg">
+              <div class="font-bold text-ink-primary text-sm">
+                <span data-nutrition-toggle-target="totalVal"><%= m[:total] %></span>
+                <span data-nutrition-toggle-target="per100Val" class="hidden"><%= m[:per100] %></span>
+                g
+              </div>
+              <div class="text-[10px] text-ink-subtle mt-0.5"><%= m[:label] %></div>
+            </div>
+          <% end %>
         </div>
+
+        <%# Macros étendus (fibres, ac. saturés, sel) %>
+        <div class="grid grid-cols-3 gap-2 mt-2 pt-2 border-t border-surface-border/20">
+          <% [
+            { total: @recipe.total_fiber,         per100: per100[:fiber],         label: t("views.recipes.show.fiber_short") },
+            { total: @recipe.total_saturated_fat, per100: per100[:saturated_fat], label: t("views.recipes.show.saturated_fat_short") },
+            { total: @recipe.total_salt,          per100: per100[:salt],          label: t("views.recipes.show.salt_short") }
+          ].each do |m| %>
+            <div class="text-center px-2 py-1.5 rounded-lg bg-surface-base/60">
+              <div class="text-xs font-semibold text-ink-muted">
+                <span data-nutrition-toggle-target="totalVal"><%= m[:total] %></span>
+                <span data-nutrition-toggle-target="per100Val" class="hidden"><%= m[:per100] %></span>
+                g
+              </div>
+              <div class="text-[10px] text-ink-subtle/80 mt-0.5"><%= m[:label] %></div>
+            </div>
+          <% end %>
+        </div>
+
       </div>
 
       <%# Ingrédients -%>

@@ -2,17 +2,43 @@
      data-controller="recipe-rating"
      data-recipe-rating-current-rating-value="<%= existing_rating.present? && existing_rating > 0 ? existing_rating : 1 %>">
 
-  <h3 class="text-sm font-semibold text-ink-subtle uppercase tracking-wide mb-4 flex items-center gap-2">
-    <i class="fas fa-book-open text-brand text-xs"></i>
-    <%= t("views.components.recipe_rating_form.title") %>
-  </h3>
+  <%# ── Header ── %>
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-sm font-semibold text-ink-subtle uppercase tracking-wide flex items-center gap-2">
+      <i class="fas fa-book-open text-brand text-xs"></i>
+      <%= t("views.components.recipe_rating_form.title") %>
+    </h3>
+    <% if existing_rating && existing_rating > 0 %>
+      <%# Bouton crayon (vue lecture) %>
+      <button type="button"
+              data-action="click->recipe-rating#edit"
+              data-recipe-rating-target="editTrigger"
+              class="w-7 h-7 flex items-center justify-center rounded-lg text-ink-subtle hover:text-ink-primary hover:bg-surface-hover transition-colors">
+        <i class="fas fa-pen text-[11px]"></i>
+      </button>
+      <%# Boutons cancel + submit (vue édition, cachés par défaut) %>
+      <div data-recipe-rating-target="editActions" class="hidden flex items-center gap-1">
+        <button type="button"
+                data-action="click->recipe-rating#cancel"
+                class="w-7 h-7 flex items-center justify-center rounded-lg text-status-danger hover:bg-status-danger/10 transition-colors">
+          <i class="fas fa-times text-sm"></i>
+        </button>
+        <button type="submit"
+                form="rating-edit-form"
+                disabled
+                data-recipe-rating-target="submitBtn"
+                class="w-7 h-7 flex items-center justify-center rounded-lg bg-status-success/10 text-status-success hover:bg-status-success/20 transition-colors disabled:opacity-25 disabled:cursor-not-allowed disabled:hover:bg-status-success/10">
+          <i class="fas fa-check text-sm"></i>
+        </button>
+      </div>
+    <% end %>
+  </div>
 
   <% if existing_rating && existing_rating > 0 %>
 
     <%# ── MODE LECTURE ── %>
     <div data-recipe-rating-target="viewMode">
 
-      <%# Étoiles en lecture seule %>
       <div class="flex items-center gap-1 mb-3">
         <% 5.times do |i| %>
           <i class="fas fa-star text-base <%= i < existing_rating ? 'text-brand' : 'text-surface-border' %>"></i>
@@ -20,21 +46,12 @@
         <span class="text-xs text-ink-subtle ml-1.5"><%= existing_rating %>/5</span>
       </div>
 
-      <%# Commentaire en lecture seule %>
       <% if existing_comment.present? %>
-        <div class="bg-surface-base rounded-lg border border-surface-border/40 px-4 py-3 mb-3">
-          <p class="text-sm text-ink-muted leading-relaxed"><%= existing_comment %></p>
-        </div>
+        <p class="text-sm text-ink-muted leading-relaxed"><%= existing_comment %></p>
       <% else %>
-        <p class="text-xs text-ink-subtle italic mb-3"><%= t("views.components.recipe_rating_form.no_comment") %></p>
+        <p class="text-xs text-ink-subtle italic"><%= t("views.components.recipe_rating_form.no_comment") %></p>
       <% end %>
 
-      <button type="button"
-              data-action="click->recipe-rating#edit"
-              class="text-xs text-ink-subtle hover:text-ink-primary flex items-center gap-1.5 transition-colors">
-        <i class="fas fa-pen text-xs"></i>
-        <%= t("views.components.recipe_rating_form.edit_btn") %>
-      </button>
     </div>
 
     <%# ── MODE ÉDITION (caché par défaut) ── %>
@@ -42,40 +59,32 @@
       <%= form_with model: [recipe, current_user_rating || RecipeRating.new],
                     url: recipe_recipe_ratings_path(recipe),
                     method: :post,
-                    class: "space-y-3" do |f| %>
+                    html: { id: "rating-edit-form" } do |f| %>
 
+        <%# Étoiles en premier %>
+        <div class="flex items-center gap-1 mb-3"
+             data-recipe-rating-target="starContainer"
+             data-action="mouseleave->recipe-rating#leaveStars">
+          <% 5.times do |i| %>
+            <button type="button"
+                    class="text-lg transition-transform hover:scale-110"
+                    data-rating="<%= i + 1 %>"
+                    data-recipe-rating-target="star"
+                    data-action="click->recipe-rating#selectRating mouseenter->recipe-rating#hoverRating">
+              <i class="fas fa-star text-ink-subtle"></i>
+            </button>
+          <% end %>
+          <%= f.hidden_field :rating, value: existing_rating, data: { recipe_rating_target: "ratingInput" } %>
+        </div>
+
+        <%# Commentaire ensuite %>
         <%= f.text_area :comment,
                         value: existing_comment,
-                        rows: 4,
-                        class: "input-dark resize-none text-sm",
-                        placeholder: t("views.components.recipe_rating_form.comment_placeholder") %>
+                        rows: 3,
+                        class: "input-dark resize-none text-sm w-full",
+                        data: { recipe_rating_target: "commentInput", action: "input->recipe-rating#checkDirty" } %>
 
-        <div class="flex items-center justify-between gap-3">
-          <div class="flex items-center gap-1"
-               data-recipe-rating-target="starContainer"
-               data-action="mouseleave->recipe-rating#leaveStars">
-            <% 5.times do |i| %>
-              <button type="button"
-                      class="text-lg transition-transform hover:scale-110"
-                      data-rating="<%= i + 1 %>"
-                      data-recipe-rating-target="star"
-                      data-action="click->recipe-rating#selectRating mouseenter->recipe-rating#hoverRating">
-                <i class="fas fa-star text-ink-subtle"></i>
-              </button>
-            <% end %>
-            <%= f.hidden_field :rating, value: existing_rating, data: { recipe_rating_target: "ratingInput" } %>
-          </div>
 
-          <div class="flex items-center gap-2">
-            <button type="button"
-                    data-action="click->recipe-rating#cancel"
-                    class="text-xs text-ink-subtle hover:text-ink-primary px-3 py-1.5 rounded-lg hover:bg-surface-hover transition-colors">
-              <%= t("shared.cancel") %>
-            </button>
-            <%= f.submit t("views.components.recipe_rating_form.update_btn"),
-                          class: "text-xs font-medium text-ink-muted hover:text-ink-primary bg-surface-hover hover:bg-surface-border px-3 py-1.5 rounded-lg transition-colors cursor-pointer" %>
-          </div>
-        </div>
       <% end %>
     </div>
 
@@ -85,33 +94,37 @@
     <div data-recipe-rating-target="editMode">
       <%= form_with model: [recipe, RecipeRating.new],
                     url: recipe_recipe_ratings_path(recipe),
-                    method: :post,
-                    class: "space-y-3" do |f| %>
+                    method: :post do |f| %>
 
-        <%= f.text_area :comment,
-                        rows: 4,
-                        class: "input-dark resize-none text-sm",
-                        placeholder: t("views.components.recipe_rating_form.comment_placeholder") %>
-
-        <div class="flex items-center justify-between gap-3">
-          <div class="flex items-center gap-1"
-               data-recipe-rating-target="starContainer"
-               data-action="mouseleave->recipe-rating#leaveStars">
-            <% 5.times do |i| %>
-              <button type="button"
-                      class="text-lg transition-transform hover:scale-110"
-                      data-rating="<%= i + 1 %>"
-                      data-recipe-rating-target="star"
-                      data-action="click->recipe-rating#selectRating mouseenter->recipe-rating#hoverRating">
-                <i class="fas fa-star text-ink-subtle"></i>
-              </button>
-            <% end %>
-            <%= f.hidden_field :rating, value: 1, data: { recipe_rating_target: "ratingInput" } %>
-          </div>
-
-          <%= f.submit t("views.components.recipe_rating_form.rate_btn"),
-                        class: "text-xs font-medium text-ink-muted hover:text-ink-primary bg-surface-hover hover:bg-surface-border px-3 py-1.5 rounded-lg transition-colors cursor-pointer" %>
+        <%# Étoiles en premier %>
+        <div class="flex items-center gap-1 mb-3"
+             data-recipe-rating-target="starContainer"
+             data-action="mouseleave->recipe-rating#leaveStars">
+          <% 5.times do |i| %>
+            <button type="button"
+                    class="text-lg transition-transform hover:scale-110"
+                    data-rating="<%= i + 1 %>"
+                    data-recipe-rating-target="star"
+                    data-action="click->recipe-rating#selectRating mouseenter->recipe-rating#hoverRating">
+              <i class="fas fa-star text-ink-subtle"></i>
+            </button>
+          <% end %>
+          <%= f.hidden_field :rating, value: 1, data: { recipe_rating_target: "ratingInput" } %>
         </div>
+
+        <%# Commentaire ensuite %>
+        <%= f.text_area :comment,
+                        rows: 3,
+                        class: "input-dark resize-none text-sm w-full" %>
+
+        <%# Submit %>
+        <div class="flex items-center justify-end mt-3">
+          <button type="submit"
+                  class="w-8 h-8 flex items-center justify-center rounded-lg bg-status-success/10 text-status-success hover:bg-status-success/20 transition-colors">
+            <i class="fas fa-check text-sm"></i>
+          </button>
+        </div>
+
       <% end %>
     </div>
 

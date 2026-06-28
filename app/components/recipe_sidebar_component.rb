@@ -1,6 +1,15 @@
 # frozen_string_literal: true
 
 class RecipeSidebarComponent < ApplicationComponent
+  MICRONUTRIENT_ORDER = %w[calcium iron magnesium potassium sodium zinc cholesterol
+                            vitamin_c vitamin_d vitamin_b12 vitamin_a vitamin_b9 epa dha].freeze
+  MICRONUTRIENT_UNITS = {
+    "calcium" => "mg", "iron" => "mg", "magnesium" => "mg", "potassium" => "mg",
+    "sodium" => "mg", "zinc" => "mg", "cholesterol" => "mg",
+    "vitamin_c" => "mg", "vitamin_d" => "µg", "vitamin_b12" => "µg",
+    "vitamin_a" => "µg", "vitamin_b9" => "µg", "epa" => "g", "dha" => "g"
+  }.freeze
+
   def initialize(recipe:, current_user:)
     @recipe = recipe
     @current_user = current_user
@@ -29,10 +38,24 @@ class RecipeSidebarComponent < ApplicationComponent
     (recipe.total_fats * 9 / total_macro_kcal * 100).round
   end
 
-  # Grams of protein per 100 kcal — key fitness metric
-  def protein_density
-    return 0 if recipe.total_calories.zero?
-    (recipe.total_proteins / recipe.total_calories * 100).round(1)
+  def micronutrients
+    @micronutrients ||= recipe.aggregated_micronutrients
+  end
+
+  def ordered_micronutrients
+    MICRONUTRIENT_ORDER.filter_map do |key|
+      value = micronutrients[key]
+      next unless value.present? && value != 0
+      { key: key, value: value, unit: MICRONUTRIENT_UNITS[key] }
+    end
+  end
+
+  def allergens
+    @allergens ||= recipe.aggregated_allergens
+  end
+
+  def traces
+    @traces ||= recipe.aggregated_traces
   end
 
   def times_cooked

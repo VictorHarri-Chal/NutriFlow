@@ -1,8 +1,66 @@
 <%= simple_form_for(recipe) do |f| %>
 
-  <%# ── Données aliments pour les combobox (lues par food_combobox_controller.js) ── %>
+  <%# ── Données aliments pour les combobox (lues par food_combobox_controller.js + recipe_builder_controller.js) ── %>
   <script id="foods-data" type="application/json">
-    <%= json_escape(current_user.foods.order(:name).select(:id, :name, :calories, :proteins, :carbs, :fats, :sugars).to_json).html_safe %>
+    <%= json_escape(current_user.foods.order(:name).select(:id, :name, :calories, :proteins, :carbs, :fats, :sugars, :fiber, :saturated_fat, :salt, :micronutrients, :allergens, :traces).to_json).html_safe %>
+  </script>
+
+  <%# ── Labels i18n pour micronutriments et allergènes (lus par recipe_builder_controller.js) ── %>
+  <script id="recipe-labels-data" type="application/json">
+    <%= json_escape({
+      micronutrients: {
+        calcium: t("views.foods.show.nutrients.calcium"),
+        iron: t("views.foods.show.nutrients.iron"),
+        magnesium: t("views.foods.show.nutrients.magnesium"),
+        potassium: t("views.foods.show.nutrients.potassium"),
+        sodium: t("views.foods.show.nutrients.sodium"),
+        zinc: t("views.foods.show.nutrients.zinc"),
+        cholesterol: t("views.foods.show.nutrients.cholesterol"),
+        vitamin_c: t("views.foods.show.nutrients.vitamin_c"),
+        vitamin_d: t("views.foods.show.nutrients.vitamin_d"),
+        vitamin_b12: t("views.foods.show.nutrients.vitamin_b12"),
+        vitamin_a: t("views.foods.show.nutrients.vitamin_a"),
+        vitamin_b9: t("views.foods.show.nutrients.vitamin_b9"),
+        epa: t("views.foods.show.nutrients.epa"),
+        dha: t("views.foods.show.nutrients.dha")
+      },
+      micronutrient_units: {
+        calcium: "mg", iron: "mg", magnesium: "mg", potassium: "mg",
+        sodium: "mg", zinc: "mg", cholesterol: "mg",
+        vitamin_c: "mg", vitamin_d: "µg", vitamin_b12: "µg",
+        vitamin_a: "µg", vitamin_b9: "µg", epa: "g", dha: "g"
+      },
+      allergens: {
+        milk: t("views.foods.show.allergens_map.milk"),
+        eggs: t("views.foods.show.allergens_map.eggs"),
+        gluten: t("views.foods.show.allergens_map.gluten"),
+        wheat: t("views.foods.show.allergens_map.wheat"),
+        rye: t("views.foods.show.allergens_map.rye"),
+        barley: t("views.foods.show.allergens_map.barley"),
+        oats: t("views.foods.show.allergens_map.oats"),
+        spelt: t("views.foods.show.allergens_map.spelt"),
+        nuts: t("views.foods.show.allergens_map.nuts"),
+        almonds: t("views.foods.show.allergens_map.almonds"),
+        hazelnuts: t("views.foods.show.allergens_map.hazelnuts"),
+        walnuts: t("views.foods.show.allergens_map.walnuts"),
+        cashews: t("views.foods.show.allergens_map.cashews"),
+        pecans: t("views.foods.show.allergens_map.pecans"),
+        brazil_nuts: t("views.foods.show.allergens_map.brazil_nuts"),
+        pistachios: t("views.foods.show.allergens_map.pistachios"),
+        macadamia: t("views.foods.show.allergens_map.macadamia"),
+        peanuts: t("views.foods.show.allergens_map.peanuts"),
+        soybeans: t("views.foods.show.allergens_map.soybeans"),
+        fish: t("views.foods.show.allergens_map.fish"),
+        crustaceans: t("views.foods.show.allergens_map.crustaceans"),
+        celery: t("views.foods.show.allergens_map.celery"),
+        mustard: t("views.foods.show.allergens_map.mustard"),
+        sesame: t("views.foods.show.allergens_map.sesame"),
+        sulphites: t("views.foods.show.allergens_map.sulphites"),
+        sulphur_dioxide_and_sulphites: t("views.foods.show.allergens_map.sulphur_dioxide_and_sulphites"),
+        lupin: t("views.foods.show.allergens_map.lupin"),
+        molluscs: t("views.foods.show.allergens_map.molluscs")
+      }
+    }.to_json).html_safe %>
   </script>
 
   <div data-controller="recipe-builder" data-action="input->recipe-builder#update">
@@ -36,8 +94,7 @@
                         label: false,
                         input_html: {
                           rows: 4,
-                          class: "input-dark resize-none text-sm",
-                          placeholder: t("views.recipes.form.instructions_placeholder")
+                          class: "input-dark resize-y text-sm"
                         } %>
           </div>
         </div>
@@ -119,47 +176,70 @@
           </div>
 
           <%# Stats (cachées au départ) %>
-          <div data-recipe-builder-target="statsPanel" class="hidden space-y-4">
+          <div data-recipe-builder-target="statsPanel" class="hidden">
 
-            <%# Calories principale %>
-            <div class="text-center py-2 bg-surface-base rounded-lg border border-surface-border/40">
-              <div class="text-3xl font-bold text-brand" data-recipe-builder-target="totalCalories">0</div>
-              <div class="text-xs text-ink-subtle mt-0.5">kcal</div>
-            </div>
-
-            <%# Macros %>
-            <div class="grid grid-cols-3 gap-2">
-              <div class="text-center p-2 bg-surface-base rounded-lg border border-surface-border/30">
-                <div class="text-sm font-bold text-ink-primary" data-recipe-builder-target="totalProteins">0</div>
-                <div class="text-xs text-ink-subtle mt-0.5"><%= t("views.recipes.show.proteins_short") %></div>
+            <%# Poids + Calories %>
+            <div class="space-y-1 mb-4 pb-4 border-b border-surface-border/40">
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-ink-subtle"><%= t("views.recipes.show.total_weight_short") %></span>
+                <span class="text-xs font-semibold text-ink-primary tabular-nums">
+                  <span data-recipe-builder-target="totalWeight">0</span> g
+                </span>
               </div>
-              <div class="text-center p-2 bg-surface-base rounded-lg border border-surface-border/30">
-                <div class="text-sm font-bold text-ink-primary" data-recipe-builder-target="totalCarbs">0</div>
-                <div class="text-xs text-ink-subtle mt-0.5"><%= t("views.recipes.show.carbs_short") %></div>
-              </div>
-              <div class="text-center p-2 bg-surface-base rounded-lg border border-surface-border/30">
-                <div class="text-sm font-bold text-ink-primary" data-recipe-builder-target="totalFats">0</div>
-                <div class="text-xs text-ink-subtle mt-0.5"><%= t("views.recipes.show.fats_short") %></div>
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-ink-subtle"><%= t("views.recipes.show.calories") %></span>
+                <span class="text-base font-bold text-brand tabular-nums">
+                  <span data-recipe-builder-target="totalCalories">0</span> kcal
+                </span>
               </div>
             </div>
 
-            <%# Poids total + sucres %>
-            <div class="flex items-center justify-between text-sm border-t border-surface-border/40 pt-3">
-              <span class="text-ink-subtle"><%= t("views.recipes.show.total_weight_short") %></span>
-              <span class="font-semibold text-ink-primary">
-                <span data-recipe-builder-target="totalWeight">0</span> g
-              </span>
+            <%# Macronutriments %>
+            <div class="mb-4">
+              <p class="text-[10px] font-semibold text-ink-subtle uppercase tracking-wider mb-2">
+                <%= t("views.recipes.form.macros_section") %>
+              </p>
+              <div class="space-y-1">
+                <% [
+                  { target: "totalProteins", label: t("views.recipes.show.proteins_short") },
+                  { target: "totalCarbs",    label: t("views.recipes.show.carbs_short") },
+                  { target: "totalFats",     label: t("views.recipes.show.fats_short") },
+                  { target: "totalSugars",   label: t("views.recipes.show.sugars_short") },
+                  { target: "totalFiber",    label: t("views.recipes.show.fiber_short") },
+                  { target: "totalSaturatedFat", label: t("views.recipes.show.saturated_fat_short") },
+                  { target: "totalSalt",     label: t("views.recipes.show.salt_short") }
+                ].each do |row| %>
+                  <div class="flex items-center justify-between py-0.5 border-b border-surface-border/20 last:border-0">
+                    <span class="text-xs text-ink-muted"><%= row[:label] %></span>
+                    <span class="text-xs font-semibold text-ink-primary tabular-nums">
+                      <span data-recipe-builder-target="<%= row[:target] %>">0</span> g
+                    </span>
+                  </div>
+                <% end %>
+              </div>
             </div>
-            <div class="flex items-center justify-between text-xs text-ink-subtle">
-              <span><%= t("views.foods.form.of_which_sugars") %></span>
-              <span><span data-recipe-builder-target="totalSugars">0</span> g</span>
+
+            <%# Micronutriments (affichés si non vides) %>
+            <div data-recipe-builder-target="micronutrientsSection" class="hidden mb-4">
+              <p class="text-[10px] font-semibold text-ink-subtle uppercase tracking-wider mb-2">
+                <%= t("views.recipes.form.micronutrients_section") %>
+              </p>
+              <div data-recipe-builder-target="micronutrientsList" class="space-y-0.5"></div>
+            </div>
+
+            <%# Allergènes (affichés si présents) %>
+            <div data-recipe-builder-target="allergensSection" class="hidden mb-4">
+              <p class="text-[10px] font-semibold text-ink-subtle uppercase tracking-wider mb-2">
+                <%= t("views.recipes.form.allergens_section") %>
+              </p>
+              <div data-recipe-builder-target="allergensList" class="flex flex-wrap gap-1"></div>
             </div>
 
             <%# Détail par ingrédient %>
             <div class="border-t border-surface-border/40 pt-3">
               <div class="flex items-center justify-between mb-2">
-                <span class="text-xs text-ink-subtle font-medium uppercase tracking-wide"><%= t("views.recipes.form.ingredients") %></span>
-                <span class="text-xs font-semibold text-ink-muted" data-recipe-builder-target="ingredientCount">0</span>
+                <span class="text-[10px] font-semibold text-ink-subtle uppercase tracking-wider"><%= t("views.recipes.form.ingredients") %></span>
+                <span class="text-xs font-semibold text-ink-muted tabular-nums" data-recipe-builder-target="ingredientCount">0</span>
               </div>
               <div data-recipe-builder-target="ingredientList" class="space-y-0"></div>
             </div>

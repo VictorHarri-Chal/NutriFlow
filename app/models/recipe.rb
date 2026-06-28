@@ -25,26 +25,49 @@ class Recipe < ApplicationRecord
                     tsearch: { prefix: true }
                   }
 
-  def total_calories = computed_totals[:calories]
-  def total_proteins = computed_totals[:proteins]
-  def total_carbs    = computed_totals[:carbs]
-  def total_fats     = computed_totals[:fats]
-  def total_sugars   = computed_totals[:sugars]
-  def total_weight   = computed_totals[:weight]
+  def total_calories      = computed_totals[:calories]
+  def total_proteins      = computed_totals[:proteins]
+  def total_carbs         = computed_totals[:carbs]
+  def total_fats          = computed_totals[:fats]
+  def total_sugars        = computed_totals[:sugars]
+  def total_weight        = computed_totals[:weight]
+  def total_fiber         = computed_totals[:fiber]
+  def total_saturated_fat = computed_totals[:saturated_fat]
+  def total_salt          = computed_totals[:salt]
+
+  def aggregated_micronutrients
+    @aggregated_micronutrients ||= recipe_items.each_with_object({}) do |item, acc|
+      item.scaled_micronutrients.each do |key, value|
+        acc[key.to_s] = (acc[key.to_s] || 0) + value
+      end
+    end.transform_values { |v| v.round(2) }.reject { |_, v| v.zero? }
+  end
+
+  def aggregated_allergens
+    @aggregated_allergens ||= recipe_items.flat_map { |i| i.food.allergens.to_a }.uniq.sort
+  end
+
+  def aggregated_traces
+    @aggregated_traces ||= recipe_items.flat_map { |i| i.food.traces.to_a }.uniq.sort
+  end
 
 
   private
 
   def computed_totals
     @computed_totals ||= recipe_items.each_with_object(
-      { calories: 0.0, proteins: 0.0, carbs: 0.0, fats: 0.0, sugars: 0.0, weight: 0.0 }
+      { calories: 0.0, proteins: 0.0, carbs: 0.0, fats: 0.0, sugars: 0.0, weight: 0.0,
+        fiber: 0.0, saturated_fat: 0.0, salt: 0.0 }
     ) do |item, acc|
-      acc[:calories] += item.total_calories
-      acc[:proteins] += item.total_proteins
-      acc[:carbs]    += item.total_carbs
-      acc[:fats]     += item.total_fats
-      acc[:sugars]   += item.total_sugars
-      acc[:weight]   += item.grams_equivalent
+      acc[:calories]      += item.total_calories
+      acc[:proteins]      += item.total_proteins
+      acc[:carbs]         += item.total_carbs
+      acc[:fats]          += item.total_fats
+      acc[:sugars]        += item.total_sugars
+      acc[:weight]        += item.grams_equivalent
+      acc[:fiber]         += item.total_fiber
+      acc[:saturated_fat] += item.total_saturated_fat
+      acc[:salt]          += item.total_salt
     end.transform_values { |v| v.round(1) }
   end
 
