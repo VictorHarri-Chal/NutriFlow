@@ -1,6 +1,7 @@
 <div class="max-w-6xl mx-auto mt-16 card p-8"
      data-controller="food-off-search"
      data-food-off-search-url-value="<%= search_import_foods_path %>"
+     data-food-off-search-allergens-map-value="<%= json_escape(I18n.t('views.foods.show.allergens_map').transform_keys(&:to_s).to_json) %>"
      data-action="barcode-scanner:product@document->food-off-search#handleBarcodeProduct">
 
   <div data-controller="tabs" data-tabs-active-tab-value="<%= @food.errors.any? ? 'manual' : 'off' %>">

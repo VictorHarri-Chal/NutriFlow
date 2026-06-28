@@ -93,37 +93,23 @@
           <div class="text-xs text-ink-subtle mt-1.5">kcal / 100g</div>
         </div>
 
-        <%# Macros principales %>
+        <%# Macros principales + étiquette étendue fusionnées %>
         <div>
           <h3 class="text-xs font-semibold text-ink-subtle uppercase tracking-wide mb-3"><%= t("views.foods.show.macros") %></h3>
           <div class="bg-surface-base rounded-xl border border-surface-border/40 divide-y divide-surface-border/30">
             <% [
-              { value: @food.proteins, label: t("activerecord.attributes.food.proteins") },
-              { value: @food.carbs,    label: t("activerecord.attributes.food.carbs") },
-              { value: @food.fats,     label: t("activerecord.attributes.food.fats") },
-              { value: @food.sugars,   label: t("activerecord.attributes.food.sugars") }
-            ].each do |macro| %>
-              <div class="flex items-center justify-between px-4 py-2.5">
-                <span class="text-sm text-ink-muted"><%= macro[:label] %></span>
-                <span class="text-sm font-semibold text-ink-primary"><%= format_macro(macro[:value]) %> <span class="text-xs font-normal text-ink-subtle">g</span></span>
-              </div>
-            <% end %>
-          </div>
-        </div>
-
-        <%# Étiquette étendue — toujours affichée %>
-        <div>
-          <h3 class="text-xs font-semibold text-ink-subtle uppercase tracking-wide mb-3"><%= t("views.foods.show.extended_label") %></h3>
-          <div class="bg-surface-base rounded-xl border border-surface-border/40 divide-y divide-surface-border/30">
-            <% [
-              { field: @food.fiber,         key: "fiber",         unit: "g" },
-              { field: @food.saturated_fat, key: "saturated_fat", unit: "g" },
-              { field: @food.salt,          key: "salt",          unit: "g" }
+              { value: @food.proteins,     label: t("activerecord.attributes.food.proteins"),       unit: "g" },
+              { value: @food.carbs,        label: t("activerecord.attributes.food.carbs"),           unit: "g" },
+              { value: @food.fats,         label: t("activerecord.attributes.food.fats"),            unit: "g" },
+              { value: @food.sugars,       label: t("activerecord.attributes.food.sugars"),          unit: "g" },
+              { value: @food.fiber,        label: t("views.foods.show.nutrients.fiber"),             unit: "g" },
+              { value: @food.saturated_fat, label: t("views.foods.show.nutrients.saturated_fat"),   unit: "g" },
+              { value: @food.salt,         label: t("views.foods.show.nutrients.salt"),              unit: "g" }
             ].each do |row| %>
               <div class="flex items-center justify-between px-4 py-2.5">
-                <span class="text-sm text-ink-muted"><%= t("views.foods.show.nutrients.#{row[:key]}") %></span>
-                <% if row[:field].present? %>
-                  <span class="text-sm font-semibold text-ink-primary"><%= format_macro(row[:field]) %> <span class="text-xs font-normal text-ink-subtle"><%= row[:unit] %></span></span>
+                <span class="text-sm text-ink-muted"><%= row[:label] %></span>
+                <% if row[:value].present? %>
+                  <span class="text-sm font-semibold text-ink-primary"><%= format_macro(row[:value]) %> <span class="text-xs font-normal text-ink-subtle"><%= row[:unit] %></span></span>
                 <% else %>
                   <span class="text-sm text-ink-subtle">—</span>
                 <% end %>

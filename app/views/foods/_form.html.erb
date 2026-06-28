@@ -76,7 +76,6 @@
       </div>
 
       <%# Étiquette étendue : Fibres / Graisses sat. / Sel en 3 colonnes %>
-      <p class="text-xs text-ink-subtle -mb-1"><%= t("views.foods.show.extended_label") %></p>
       <div class="grid grid-cols-3 gap-4">
         <%= f.input :fiber,
                     label: t("views.foods.show.nutrients.fiber"),
@@ -180,23 +179,36 @@
 
       <div class="hidden mt-5 space-y-5" data-collapsible-target="content">
 
-          <%# Allergènes & Traces en 2 colonnes, readonly %>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="label-dark block mb-1.5" for="food_allergens_raw"><%= t("views.foods.show.allergens") %></label>
-              <input type="text" id="food_allergens_raw" name="food[allergens_raw]"
-                     value="<%= food.allergens.join(", ") %>"
-                     readonly tabindex="-1"
-                     class="input-dark w-full text-sm opacity-60 cursor-not-allowed"
-                     data-food-off-search-target="allergensField">
-            </div>
-            <div>
-              <label class="label-dark block mb-1.5" for="food_traces_raw"><%= t("views.foods.show.traces") %></label>
-              <input type="text" id="food_traces_raw" name="food[traces_raw]"
-                     value="<%= food.traces.join(", ") %>"
-                     readonly tabindex="-1"
-                     class="input-dark w-full text-sm opacity-60 cursor-not-allowed"
-                     data-food-off-search-target="tracesField">
+          <%# Allergènes & Traces — lecture seule, même style que micronutriments %>
+          <input type="hidden" name="food[allergens_raw]" value="<%= food.allergens.join(",") %>"
+                 data-food-off-search-target="allergensField">
+          <input type="hidden" name="food[traces_raw]" value="<%= food.traces.join(",") %>"
+                 data-food-off-search-target="tracesField">
+          <div>
+            <p class="text-sm font-medium text-ink-muted mb-3"><%= t("views.foods.show.allergens") %> & <%= t("views.foods.show.traces") %></p>
+            <div class="divide-y divide-surface-border/20">
+              <div class="flex items-center justify-between py-2">
+                <span class="text-xs text-ink-muted"><%= t("views.foods.show.allergens") %></span>
+                <% if food.allergens.present? %>
+                  <span class="text-xs font-semibold text-ink-primary text-right max-w-xs"
+                        data-food-off-search-target="allergensDisplay">
+                    <%= food.allergens.map { |a| translate_allergen(a) }.join(", ") %>
+                  </span>
+                <% else %>
+                  <span class="text-xs text-ink-subtle" data-food-off-search-target="allergensDisplay">—</span>
+                <% end %>
+              </div>
+              <div class="flex items-center justify-between py-2">
+                <span class="text-xs text-ink-muted"><%= t("views.foods.show.traces") %></span>
+                <% if food.traces.present? %>
+                  <span class="text-xs font-semibold text-ink-primary text-right max-w-xs"
+                        data-food-off-search-target="tracesDisplay">
+                    <%= food.traces.map { |a| translate_allergen(a) }.join(", ") %>
+                  </span>
+                <% else %>
+                  <span class="text-xs text-ink-subtle" data-food-off-search-target="tracesDisplay">—</span>
+                <% end %>
+              </div>
             </div>
           </div>
 

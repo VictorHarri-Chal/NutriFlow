@@ -5,7 +5,8 @@ export default class extends Controller {
     "input", "results", "searchIcon", "clearBtn",
     "typeHint", "emptyState",
     "offIdField", "nutriscoreField", "novaGroupField", "ecoscoreField",
-    "allergensField", "tracesField", "fiberField", "saturatedFatField", "saltField",
+    "allergensField", "tracesField", "allergensDisplay", "tracesDisplay",
+    "fiberField", "saturatedFatField", "saltField",
     "micronutrientsField",
     "badge", "ciqualBadge",
     "qualitySection",
@@ -21,7 +22,7 @@ export default class extends Controller {
   static NS_DESCS    = { a: "Excellente qualité nutritionnelle", b: "Bonne qualité nutritionnelle", c: "Qualité nutritionnelle moyenne", d: "Qualité nutritionnelle médiocre", e: "Mauvaise qualité nutritionnelle" }
   static NOVA_DESCS  = { 1: "Non transformé ou peu transformé", 2: "Ingrédient culinaire transformé", 3: "Aliment transformé", 4: "Produit ultra-transformé" }
   static ECO_DESCS   = { "a-plus": "Impact environnemental minimal", a: "Impact environnemental très faible", b: "Faible impact environnemental", c: "Impact environnemental modéré", d: "Fort impact environnemental", e: "Très fort impact environnemental", f: "Impact environnemental extrême" }
-  static values = { url: String }
+  static values = { url: String, allergensMap: Object }
 
   connect() {
     this._timeout  = null
@@ -78,6 +79,7 @@ export default class extends Controller {
     if (this.hasEcoscoreFieldTarget)    this.ecoscoreFieldTarget.value    = product.ecoscore_grade || ""
     if (this.hasAllergensFieldTarget)   this.allergensFieldTarget.value   = (product.allergens  || []).join(",")
     if (this.hasTracesFieldTarget)      this.tracesFieldTarget.value      = (product.traces     || []).join(",")
+    this._updateAllergenDisplays(product.allergens || [], product.traces || [])
     this._fillExtendedFields(product)
 
     this._updateQualitySection(product)
@@ -99,6 +101,7 @@ export default class extends Controller {
     if (this.hasEcoscoreFieldTarget)    this.ecoscoreFieldTarget.value    = ""
     if (this.hasAllergensFieldTarget)   this.allergensFieldTarget.value   = ""
     if (this.hasTracesFieldTarget)      this.tracesFieldTarget.value      = ""
+    this._updateAllergenDisplays([], [])
     if (this.hasQualitySectionTarget)   this.qualitySectionTarget.classList.add("hidden")
   }
 
@@ -146,10 +149,30 @@ export default class extends Controller {
     }
   }
 
+  _updateAllergenDisplays(allergens, traces) {
+    this._setAllergenDisplay(this.hasAllergensDisplayTarget && this.allergensDisplayTarget, allergens)
+    this._setAllergenDisplay(this.hasTracesDisplayTarget   && this.tracesDisplayTarget,    traces)
+  }
+
+  _setAllergenDisplay(el, values) {
+    if (!el) return
+    if (values.length) {
+      const map = this.hasAllergensMapValue ? this.allergensMapValue : {}
+      el.textContent = values.map(v => {
+        const key = v.toLowerCase().replace(/-/g, "_")
+        return map[key] || v
+      }).join(", ")
+      el.className = "text-xs font-semibold text-ink-primary text-right max-w-xs"
+    } else {
+      el.textContent = "—"
+      el.className = "text-xs text-ink-subtle"
+    }
+  }
+
   _fillExtendedFields(product) {
-    if (this.hasFiberFieldTarget)        this.fiberFieldTarget.value        = product.fiber         ?? ""
-    if (this.hasSaturatedFatFieldTarget) this.saturatedFatFieldTarget.value = product.saturated_fat ?? ""
-    if (this.hasSaltFieldTarget)         this.saltFieldTarget.value         = product.salt          ?? ""
+    if (this.hasFiberFieldTarget)        this.fiberFieldTarget.value        = product.fiber         ?? 0
+    if (this.hasSaturatedFatFieldTarget) this.saturatedFatFieldTarget.value = product.saturated_fat ?? 0
+    if (this.hasSaltFieldTarget)         this.saltFieldTarget.value         = product.salt          ?? 0
     if (this.hasMicronutrientsFieldTarget) {
       this.micronutrientsFieldTarget.value = JSON.stringify(product.micronutrients || {})
     }
