@@ -24,9 +24,9 @@
         <%# Compact totals %>
         <div class="hidden md:flex items-center gap-3 text-xs text-ink-subtle">
           <span class="font-semibold text-brand"><%= group_totals[:calories].round(1) %> kcal</span>
-          <span><%= group_totals[:proteins].round(1) %> g prot</span>
-          <span><%= group_totals[:carbs].round(1) %> g glu</span>
-          <span><%= group_totals[:fats].round(1) %> g lip</span>
+          <span><%= group_totals[:proteins].round(1) %> g <%= t("views.components.day_food_group.proteins_abbr") %></span>
+          <span><%= group_totals[:carbs].round(1) %> g <%= t("views.components.day_food_group.carbs_abbr") %></span>
+          <span><%= group_totals[:fats].round(1) %> g <%= t("views.components.day_food_group.fats_abbr") %></span>
         </div>
 
         <%# + buttons %>
@@ -61,7 +61,7 @@
             <th class="text-left hidden sm:table-cell"><%= Food.human_attribute_name(:brand) %></th>
             <th class="text-left"><%= t("views.components.day_food_group.quantity_col") %></th>
             <th class="text-left"><%= Food.human_attribute_name(:calories) %></th>
-            <th class="text-right"><%= t("views.components.day_food_group.actions_col") %></th>
+            <th class="text-center w-24"><%= t("views.components.day_food_group.actions_col") %></th>
           </tr>
         </thead>
         <tbody>
@@ -84,8 +84,8 @@
               <td class="font-semibold text-brand"><%= item.total_calories %> kcal</td>
 
               <%# Actions: edit + delete with clear separation %>
-              <td class="text-right">
-                <div class="flex items-center justify-end gap-3">
+              <td class="text-center w-24">
+                <div class="flex items-center justify-center gap-3">
                   <%= link_to edit_path(item),
                         class: "w-8 h-8 inline-flex items-center justify-center rounded-lg text-ink-subtle hover:text-brand hover:bg-surface-hover transition-colors",
                         data: { turbo_frame: "item_form" },

@@ -810,6 +810,9 @@ en:
         ungrouped_title: "Ungrouped items"
         delete_recipe_confirm: "Are you sure you want to delete this dish?"
         delete_food_confirm: "Are you sure you want to delete this food?"
+        proteins_abbr: "prot"
+        carbs_abbr: "carb"
+        fats_abbr: "fat"
       food_labels:
         no_labels: "No labels"
     workout_programs:

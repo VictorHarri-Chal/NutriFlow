@@ -808,6 +808,9 @@ fr:
         ungrouped_title: "Éléments sans groupe"
         delete_recipe_confirm: "Es-tu sûr de vouloir supprimer cette recette ?"
         delete_food_confirm: "Es-tu sûr de vouloir supprimer cet aliment ?"
+        proteins_abbr: "prot"
+        carbs_abbr: "glu"
+        fats_abbr: "lip"
       food_labels:
         no_labels: "Aucun label"
     workout_programs:
