@@ -19,10 +19,7 @@ export default class extends Controller {
   static NOVA_COLORS = { 1: "#038141", 2: "#85BB2F", 3: "#EE8100", 4: "#E63E11" }
   static ECO_COLORS  = { "a-plus": "#006400", a: "#038141", b: "#85BB2F", c: "#FECB02", d: "#EE8100", e: "#E63E11", f: "#8B1A1A" }
   static ECO_LABELS  = { "a-plus": "A+" }
-  static NS_DESCS    = { a: "Excellente qualité nutritionnelle", b: "Bonne qualité nutritionnelle", c: "Qualité nutritionnelle moyenne", d: "Qualité nutritionnelle médiocre", e: "Mauvaise qualité nutritionnelle" }
-  static NOVA_DESCS  = { 1: "Non transformé ou peu transformé", 2: "Ingrédient culinaire transformé", 3: "Aliment transformé", 4: "Produit ultra-transformé" }
-  static ECO_DESCS   = { "a-plus": "Impact environnemental minimal", a: "Impact environnemental très faible", b: "Faible impact environnemental", c: "Impact environnemental modéré", d: "Fort impact environnemental", e: "Très fort impact environnemental", f: "Impact environnemental extrême" }
-  static values = { url: String, allergensMap: Object }
+  static values = { url: String, allergensMap: Object, nsDescs: Object, novaDescs: Object, ecoDescs: Object }
 
   connect() {
     this._timeout  = null
@@ -125,18 +122,18 @@ export default class extends Controller {
     this._setBadge(this.hasNutriscoreWrapperTarget && this.nutriscoreWrapperTarget,
                    this.hasNutriscoreBadgeTarget   && this.nutriscoreBadgeTarget,
                    ns, ns?.toUpperCase(), this.constructor.NS_COLORS)
-    if (this.hasNutriscoreDescTarget) this.nutriscoreDescTarget.textContent = this.constructor.NS_DESCS[ns] || ""
+    if (this.hasNutriscoreDescTarget) this.nutriscoreDescTarget.textContent = this.nsDescsValue[ns] || ""
 
     this._setBadge(this.hasNovaWrapperTarget && this.novaWrapperTarget,
                    this.hasNovaBadgeTarget   && this.novaBadgeTarget,
                    nova, nova ? String(nova) : null, this.constructor.NOVA_COLORS)
-    if (this.hasNovaDescTarget) this.novaDescTarget.textContent = this.constructor.NOVA_DESCS[nova] || ""
+    if (this.hasNovaDescTarget) this.novaDescTarget.textContent = this.novaDescsValue[String(nova)] || ""
 
     const ecoLetter = eco ? (this.constructor.ECO_LABELS[eco] || eco.toUpperCase()) : null
     this._setBadge(this.hasEcoscoreWrapperTarget && this.ecoscoreWrapperTarget,
                    this.hasEcoscoreBadgeTarget   && this.ecoscoreBadgeTarget,
                    eco, ecoLetter, this.constructor.ECO_COLORS)
-    if (this.hasEcoscoreDescTarget) this.ecoscoreDescTarget.textContent = this.constructor.ECO_DESCS[eco] || ""
+    if (this.hasEcoscoreDescTarget) this.ecoscoreDescTarget.textContent = this.ecoDescsValue[eco] || ""
   }
 
   _setBadge(wrapper, badge, value, label, colorsMap) {
