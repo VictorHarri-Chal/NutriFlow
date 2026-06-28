@@ -1,5 +1,6 @@
 <%= simple_form_for(food) do |f| %>
   <%# ── Hidden fields : données importées ── %>
+  <%= f.hidden_field :source,           data: { "food-off-search-target": "sourceField" } %>
   <%= f.hidden_field :off_id,          data: { "food-off-search-target": "offIdField" } %>
   <%= f.hidden_field :nutriscore_grade, data: { "food-off-search-target": "nutriscoreField" } %>
   <%= f.hidden_field :nova_group,       data: { "food-off-search-target": "novaGroupField" } %>

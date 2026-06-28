@@ -4,7 +4,7 @@ export default class extends Controller {
   static targets = [
     "input", "results", "searchIcon", "clearBtn",
     "typeHint", "emptyState",
-    "offIdField", "nutriscoreField", "novaGroupField", "ecoscoreField",
+    "sourceField", "offIdField", "nutriscoreField", "novaGroupField", "ecoscoreField",
     "allergensField", "tracesField", "allergensDisplay", "tracesDisplay",
     "fiberField", "saturatedFatField", "saltField",
     "micronutrientsField",
@@ -61,6 +61,7 @@ export default class extends Controller {
     this._clearOffFields()
     this._fillExtendedFields(product)
     this._updateQualitySection(product)
+    if (this.hasSourceFieldTarget)  this.sourceFieldTarget.value = "ciqual"
     if (this.hasBadgeTarget)       this.badgeTarget.classList.replace("flex", "hidden")
     if (this.hasCiqualBadgeTarget) this.ciqualBadgeTarget.classList.replace("hidden", "flex")
 
@@ -83,6 +84,7 @@ export default class extends Controller {
     this._fillExtendedFields(product)
 
     this._updateQualitySection(product)
+    if (this.hasSourceFieldTarget)  this.sourceFieldTarget.value = "off"
     if (this.hasCiqualBadgeTarget) this.ciqualBadgeTarget.classList.replace("flex", "hidden")
     if (this.hasBadgeTarget)       this.badgeTarget.classList.replace("hidden", "flex")
 
@@ -101,6 +103,7 @@ export default class extends Controller {
     if (this.hasEcoscoreFieldTarget)    this.ecoscoreFieldTarget.value    = ""
     if (this.hasAllergensFieldTarget)   this.allergensFieldTarget.value   = ""
     if (this.hasTracesFieldTarget)      this.tracesFieldTarget.value      = ""
+    if (this.hasSourceFieldTarget)      this.sourceFieldTarget.value      = "manual"
     this._updateAllergenDisplays([], [])
     if (this.hasQualitySectionTarget)   this.qualitySectionTarget.classList.add("hidden")
   }

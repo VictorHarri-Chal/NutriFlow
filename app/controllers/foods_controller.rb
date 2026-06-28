@@ -165,7 +165,7 @@ class FoodsController < ApplicationController
 
   def barcode_import
     code = params[:code].to_s.gsub(/\D/, "")
-    return render json: { error: t("controllers.foods.barcode_not_found") }, status: :not_found if code.blank?
+    return render json: { error: t("controllers.foods.barcode_not_found") }, status: :not_found unless [8, 12, 13].include?(code.length)
 
     product = Rails.cache.fetch("off_barcode:#{code}", expires_in: 24.hours) do
       OpenFoodFactsService.by_barcode(code)
@@ -193,14 +193,14 @@ class FoodsController < ApplicationController
 
   def unique_copy_name
     base = t("controllers.foods.duplicate_name", name: @food.name)
-    return base unless current_user.foods.where("LOWER(name) = LOWER(?)", base).exists?
-
+    taken = current_user.foods
+      .where("LOWER(name) = LOWER(?) OR LOWER(name) LIKE LOWER(?)",
+             base, "#{ActiveRecord::Base.sanitize_sql_like(base)} (%)")
+      .pluck(Arel.sql("LOWER(name)")).to_set
+    return base unless taken.include?(base.downcase)
     n = 2
-    loop do
-      candidate = "#{base} (#{n})"
-      return candidate unless current_user.foods.where("LOWER(name) = LOWER(?)", candidate).exists?
-      n += 1
-    end
+    n += 1 while taken.include?("#{base.downcase} (#{n})")
+    "#{base} (#{n})"
   end
 
   def set_food
@@ -210,7 +210,7 @@ class FoodsController < ApplicationController
   def food_params
     params.require(:food).permit(
       :name, :brand, :fats, :carbs, :sugars, :proteins, :calories, :category,
-      :off_id, :nutriscore_grade, :nova_group,
+      :off_id, :nutriscore_grade, :nova_group, :source,
       :fiber, :saturated_fat, :salt, :ecoscore_grade, :allergens_raw, :traces_raw, :micronutrients,
       food_label_ids: [],
       allergens: [],

@@ -11,6 +11,7 @@ export default class extends Controller {
   }
 
   disconnect() {
+    clearTimeout(this._closeTimer)
     document.removeEventListener("turbo:frame-load", this._onFrameLoad)
     document.removeEventListener("keydown", this._onKeydown)
   }
@@ -27,15 +28,16 @@ export default class extends Controller {
     this.overlayTarget.classList.add("opacity-0")
     this.panelTarget.classList.add("translate-x-full")
     document.body.style.overflow = ""
-    setTimeout(() => {
+    this._closeTimer = setTimeout(() => {
+      if (!this.hasOverlayTarget) return
       this.overlayTarget.classList.add("pointer-events-none")
-      const frame = document.getElementById("food_detail")
+      const frame = document.getElementById("food_show_panel")
       if (frame) frame.innerHTML = ""
     }, 300)
   }
 
   _handleFrameLoad(event) {
-    if (event.target.id === "food_detail") this.open()
+    if (event.target.id === "food_show_panel") this.open()
   }
 
   _handleKeydown(event) {

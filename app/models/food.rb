@@ -28,8 +28,6 @@ class Food < ApplicationRecord
   end
 
   def source
-    return :off    if off_id.present?
-    return :ciqual if micronutrients.present? && off_id.blank?
-    :manual
+    self[:source]&.to_sym || :manual
   end
 end
