@@ -15,39 +15,41 @@ namespace :ciqual do
 
     rows     = CSV.read(path, headers: true, col_sep: ";", encoding: "UTF-8", row_sep: "\r\n")
     headers  = rows.headers
+    # Les en-têtes Ciqual contiennent des \n dans les cellules quotées — normaliser avant toute comparaison
+    norm = ->(h) { h.to_s.gsub("\n", " ").strip }
 
     # Trouver les indices de colonnes par correspondance partielle (les noms Ciqual sont longs)
-    col_code     = headers.find { |h| h.to_s.strip == "alim_code" }
-    col_name_fr  = headers.find { |h| h.to_s.strip == "alim_nom_fr" }
-    col_group    = headers.find { |h| h.to_s.strip == "alim_grp_nom_fr" }
+    col_code     = headers.find { |h| norm.(h) == "alim_code" }
+    col_name_fr  = headers.find { |h| norm.(h) == "alim_nom_fr" }
+    col_group    = headers.find { |h| norm.(h) == "alim_grp_nom_fr" }
     # Calories UE N°1169 en kcal (index 10) — "kcal" apparaît aussi à l'index 12, find() prend le premier
-    col_calories = headers.find { |h| h.to_s.include?("kcal") }
+    col_calories = headers.find { |h| norm.(h).include?("kcal") }
     # Protéines N×6.25 (index 15) — "6.25" est unique à cette colonne
-    col_proteins = headers.find { |h| h.to_s.include?("6.25") }
-    col_carbs    = headers.find { |h| h.to_s.include?("Glucides") }
-    col_fats     = headers.find { |h| h.to_s.include?("Lipides") }
-    col_sugars   = headers.find { |h| h.to_s.include?("Sucres") }
+    col_proteins = headers.find { |h| norm.(h).include?("6.25") }
+    col_carbs    = headers.find { |h| norm.(h).include?("Glucides") }
+    col_fats     = headers.find { |h| norm.(h).include?("Lipides") }
+    col_sugars   = headers.find { |h| norm.(h).include?("Sucres") }
 
     # Extended nutrition label columns
-    col_fiber         = headers.find { |h| h.to_s.include?("Fibres") }
-    col_saturated_fat = headers.find { |h| h.to_s.include?("saturés") }
-    col_salt          = headers.find { |h| h.to_s.include?("Sel") && h.to_s.include?("sodium") }
+    col_fiber         = headers.find { |h| norm.(h).include?("Fibres") }
+    col_saturated_fat = headers.find { |h| norm.(h).include?("saturés") }
+    col_salt          = headers.find { |h| norm.(h).include?("Sel") && norm.(h).include?("sodium") }
 
     # Micronutrient columns
-    col_calcium    = headers.find { |h| h.to_s.include?("Calcium") }
-    col_iron       = headers.find { |h| h.to_s.include?("Fer (") }
-    col_magnesium  = headers.find { |h| h.to_s.include?("Magnésium") }
-    col_potassium  = headers.find { |h| h.to_s.include?("Potassium") }
-    col_sodium     = headers.find { |h| h.to_s.include?("Sodium") }
-    col_zinc       = headers.find { |h| h.to_s.include?("Zinc") }
-    col_vitamin_c  = headers.find { |h| h.to_s.include?("Vitamine C") }
-    col_vitamin_d  = headers.find { |h| h.to_s.include?("Vitamine D (") }
-    col_vitamin_b12 = headers.find { |h| h.to_s.include?("Vitamine B12") }
-    col_vitamin_a  = headers.find { |h| h.to_s.include?("équivalents rétinol") }
-    col_vitamin_b9 = headers.find { |h| h.to_s.include?("Folates totaux (µg") }
-    col_cholesterol = headers.find { |h| h.to_s.include?("Cholestérol") }
-    col_epa        = headers.find { |h| h.to_s.include?("EPA") }
-    col_dha        = headers.find { |h| h.to_s.include?("DHA") }
+    col_calcium    = headers.find { |h| norm.(h).include?("Calcium") }
+    col_iron       = headers.find { |h| norm.(h).include?("Fer (") }
+    col_magnesium  = headers.find { |h| norm.(h).include?("Magnésium") }
+    col_potassium  = headers.find { |h| norm.(h).include?("Potassium") }
+    col_sodium     = headers.find { |h| norm.(h).include?("Sodium") }
+    col_zinc       = headers.find { |h| norm.(h).include?("Zinc") }
+    col_vitamin_c  = headers.find { |h| norm.(h).include?("Vitamine C") }
+    col_vitamin_d  = headers.find { |h| norm.(h).include?("Vitamine D (") }
+    col_vitamin_b12 = headers.find { |h| norm.(h).include?("Vitamine B12") }
+    col_vitamin_a  = headers.find { |h| norm.(h).include?("équivalents rétinol") }
+    col_vitamin_b9 = headers.find { |h| norm.(h).include?("Folates totaux (µg") }
+    col_cholesterol = headers.find { |h| norm.(h).include?("Cholestérol") }
+    col_epa        = headers.find { |h| norm.(h).include?("EPA") }
+    col_dha        = headers.find { |h| norm.(h).include?("DHA") }
 
     missing = [col_code, col_name_fr, col_calories].select(&:nil?)
     if missing.any?
