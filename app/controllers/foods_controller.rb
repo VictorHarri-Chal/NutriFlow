@@ -80,6 +80,7 @@ class FoodsController < ApplicationController
     if @food.update(food_params)
       redirect_to foods_path, notice: t("controllers.foods.updated")
     else
+      @food_labels = current_user.food_labels
       render :edit, status: :unprocessable_entity
     end
   end
@@ -167,6 +168,10 @@ class FoodsController < ApplicationController
     code = params[:code].to_s.gsub(/\D/, "")
     return render json: { error: t("controllers.foods.barcode_not_found") }, status: :not_found unless [8, 12, 13].include?(code.length)
 
+    if (existing = current_user.foods.find_by(off_id: code))
+      return render json: { existing_food: { id: existing.id } }
+    end
+
     product = Rails.cache.fetch("off_barcode:#{code}", expires_in: 24.hours) do
       OpenFoodFactsService.by_barcode(code)
     end
@@ -211,20 +216,22 @@ class FoodsController < ApplicationController
     params.require(:food).permit(
       :name, :brand, :fats, :carbs, :sugars, :proteins, :calories, :category,
       :off_id, :nutriscore_grade, :nova_group, :source,
-      :fiber, :saturated_fat, :salt, :ecoscore_grade, :allergens_raw, :traces_raw, :micronutrients,
+      :fiber, :saturated_fat, :salt, :ecoscore_grade,
+      :allergens_raw, :traces_raw, :additives_raw, :labels_raw, :ingredients_text,
+      :micronutrients,
       food_label_ids: [],
       allergens: [],
-      traces: []
+      traces: [],
+      additives: [],
+      labels: []
     ).tap do |p|
-      if p[:allergens_raw].present?
-        p[:allergens] = p.delete(:allergens_raw).split(",").map(&:strip).reject(&:blank?)
-      else
-        p.delete(:allergens_raw)
-      end
-      if p[:traces_raw].present?
-        p[:traces] = p.delete(:traces_raw).split(",").map(&:strip).reject(&:blank?)
-      else
-        p.delete(:traces_raw)
+      %i[allergens traces additives labels].each do |field|
+        raw_key = :"#{field}_raw"
+        if p[raw_key].present?
+          p[field] = p.delete(raw_key).split(",").map(&:strip).reject(&:blank?)
+        else
+          p.delete(raw_key)
+        end
       end
       # micronutrients arrives as a JSON string from the hidden field
       if p[:micronutrients].is_a?(String)

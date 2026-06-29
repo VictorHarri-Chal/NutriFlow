@@ -6,20 +6,25 @@ export default class extends Controller {
     "typeHint", "emptyState",
     "sourceField", "offIdField", "nutriscoreField", "novaGroupField", "ecoscoreField",
     "allergensField", "tracesField", "allergensDisplay", "tracesDisplay",
+    "additivesField", "additivesDisplay",
+    "labelsField", "labelsDisplay",
     "fiberField", "saturatedFatField", "saltField",
     "micronutrientsField",
     "badge", "ciqualBadge",
     "qualitySection",
     "nutriscoreWrapper", "nutriscoreBadge", "nutriscoreDesc",
     "novaWrapper", "novaBadge", "novaDesc",
-    "ecoscoreWrapper", "ecoscoreBadge", "ecoscoreDesc"
+    "ecoscoreWrapper", "ecoscoreBadge", "ecoscoreDesc",
+    "additivesSection", "labelsSection",
+    "allergensSection", "tracesSection",
+    "advancedSection"
   ]
 
   static NS_COLORS   = { a: "#038141", b: "#85BB2F", c: "#FECB02", d: "#EE8100", e: "#E63E11" }
   static NOVA_COLORS = { 1: "#038141", 2: "#85BB2F", 3: "#EE8100", 4: "#E63E11" }
   static ECO_COLORS  = { "a-plus": "#006400", a: "#038141", b: "#85BB2F", c: "#FECB02", d: "#EE8100", e: "#E63E11", f: "#8B1A1A" }
   static ECO_LABELS  = { "a-plus": "A+" }
-  static values = { url: String, allergensMap: Object, nsDescs: Object, novaDescs: Object, ecoDescs: Object }
+  static values = { url: String, allergensMap: Object, labelsMap: Object, nsDescs: Object, novaDescs: Object, ecoDescs: Object }
 
   connect() {
     this._timeout  = null
@@ -58,6 +63,7 @@ export default class extends Controller {
     this._clearOffFields()
     this._fillExtendedFields(product)
     this._updateQualitySection(product)
+    this._toggleAdvancedSection(product)
     if (this.hasSourceFieldTarget)  this.sourceFieldTarget.value = "ciqual"
     if (this.hasBadgeTarget)       this.badgeTarget.classList.replace("flex", "hidden")
     if (this.hasCiqualBadgeTarget) this.ciqualBadgeTarget.classList.replace("hidden", "flex")
@@ -77,10 +83,19 @@ export default class extends Controller {
     if (this.hasEcoscoreFieldTarget)    this.ecoscoreFieldTarget.value    = product.ecoscore_grade || ""
     if (this.hasAllergensFieldTarget)   this.allergensFieldTarget.value   = (product.allergens  || []).join(",")
     if (this.hasTracesFieldTarget)      this.tracesFieldTarget.value      = (product.traces     || []).join(",")
+    if (this.hasAdditivesFieldTarget)   this.additivesFieldTarget.value   = (product.additives  || []).join(",")
+    if (this.hasLabelsFieldTarget)      this.labelsFieldTarget.value      = (product.labels     || []).join(",")
     this._updateAllergenDisplays(product.allergens || [], product.traces || [])
+    this._toggleTagSection(this.hasAllergensSectionTarget && this.allergensSectionTarget, product.allergens || [])
+    this._toggleTagSection(this.hasTracesSectionTarget    && this.tracesSectionTarget,    product.traces    || [])
+    this._updateTagDisplay(this.hasAdditivesDisplayTarget && this.additivesDisplayTarget, product.additives || [], {})
+    this._updateTagDisplay(this.hasLabelsDisplayTarget    && this.labelsDisplayTarget,    product.labels    || [], this.hasLabelsMapValue ? this.labelsMapValue : {})
+    this._toggleTagSection(this.hasAdditivesSectionTarget && this.additivesSectionTarget, product.additives || [])
+    this._toggleTagSection(this.hasLabelsSectionTarget    && this.labelsSectionTarget,    product.labels    || [])
     this._fillExtendedFields(product)
 
     this._updateQualitySection(product)
+    this._toggleAdvancedSection(product)
     if (this.hasSourceFieldTarget)  this.sourceFieldTarget.value = "off"
     if (this.hasCiqualBadgeTarget) this.ciqualBadgeTarget.classList.replace("flex", "hidden")
     if (this.hasBadgeTarget)       this.badgeTarget.classList.replace("hidden", "flex")
@@ -100,9 +115,18 @@ export default class extends Controller {
     if (this.hasEcoscoreFieldTarget)    this.ecoscoreFieldTarget.value    = ""
     if (this.hasAllergensFieldTarget)   this.allergensFieldTarget.value   = ""
     if (this.hasTracesFieldTarget)      this.tracesFieldTarget.value      = ""
+    if (this.hasAdditivesFieldTarget)   this.additivesFieldTarget.value   = ""
+    if (this.hasLabelsFieldTarget)      this.labelsFieldTarget.value      = ""
     if (this.hasSourceFieldTarget)      this.sourceFieldTarget.value      = "manual"
     this._updateAllergenDisplays([], [])
+    this._toggleTagSection(this.hasAllergensSectionTarget && this.allergensSectionTarget, [])
+    this._toggleTagSection(this.hasTracesSectionTarget    && this.tracesSectionTarget,    [])
+    this._updateTagDisplay(this.hasAdditivesDisplayTarget && this.additivesDisplayTarget, [], {})
+    this._updateTagDisplay(this.hasLabelsDisplayTarget    && this.labelsDisplayTarget,    [], {})
+    this._toggleTagSection(this.hasAdditivesSectionTarget && this.additivesSectionTarget, [])
+    this._toggleTagSection(this.hasLabelsSectionTarget    && this.labelsSectionTarget,    [])
     if (this.hasQualitySectionTarget)   this.qualitySectionTarget.classList.add("hidden")
+    if (this.hasAdvancedSectionTarget)  this.advancedSectionTarget.classList.add("hidden")
   }
 
   _updateQualitySection(product) {
@@ -151,22 +175,64 @@ export default class extends Controller {
 
   _updateAllergenDisplays(allergens, traces) {
     this._setAllergenDisplay(this.hasAllergensDisplayTarget && this.allergensDisplayTarget, allergens)
-    this._setAllergenDisplay(this.hasTracesDisplayTarget   && this.tracesDisplayTarget,    traces)
+    const map = this.hasAllergensMapValue ? this.allergensMapValue : {}
+    this._updateTagDisplay(this.hasTracesDisplayTarget && this.tracesDisplayTarget, traces, map)
   }
 
   _setAllergenDisplay(el, values) {
     if (!el) return
+    el.innerHTML = ""
     if (values.length) {
+      el.className = "flex flex-wrap gap-1.5"
       const map = this.hasAllergensMapValue ? this.allergensMapValue : {}
-      el.textContent = values.map(v => {
+      values.forEach(v => {
+        const key   = v.toLowerCase().replace(/-/g, "_")
+        const label = map[key] || v.replace(/-/g, " ")
+        const span  = document.createElement("span")
+        span.className = "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-status-danger/10 border border-status-danger/30 text-status-danger"
+        span.innerHTML = `<i class="fas fa-triangle-exclamation text-[9px]"></i>${this._escape(label)}`
+        el.appendChild(span)
+      })
+    } else {
+      el.innerHTML = `<span class="text-xs text-ink-subtle">—</span>`
+      el.className = ""
+    }
+  }
+
+  _updateTagDisplay(el, values, map) {
+    if (!el) return
+    el.innerHTML = ""
+    if (values.length) {
+      el.className = "flex flex-wrap gap-1.5"
+      values.forEach(v => {
         const key = v.toLowerCase().replace(/-/g, "_")
-        return map[key] || v
-      }).join(", ")
-      el.className = "text-xs font-semibold text-ink-primary text-right max-w-xs"
+        const label = (map && map[key]) || v.replace(/-/g, " ")
+        const span = document.createElement("span")
+        span.className = "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-surface-hover border border-surface-border/50 text-ink-muted"
+        span.textContent = label
+        el.appendChild(span)
+      })
     } else {
       el.textContent = "—"
       el.className = "text-xs text-ink-subtle"
     }
+  }
+
+  _toggleTagSection(el, values) {
+    if (!el) return
+    el.classList.toggle("hidden", values.length === 0)
+  }
+
+  _toggleAdvancedSection(product) {
+    if (!this.hasAdvancedSectionTarget) return
+    const hasAllergens     = (product.allergens  || []).length > 0
+    const hasTraces        = (product.traces     || []).length > 0
+    const hasAdditives     = (product.additives  || []).length > 0
+    const hasLabels        = (product.labels     || []).length > 0
+    const hasMicronutrients = product.micronutrients &&
+      Object.values(product.micronutrients).some(v => v != null && v !== 0)
+    const hasAny = hasAllergens || hasTraces || hasAdditives || hasLabels || hasMicronutrients
+    this.advancedSectionTarget.classList.toggle("hidden", !hasAny)
   }
 
   _fillExtendedFields(product) {

@@ -6,6 +6,7 @@ class Food < ApplicationRecord
   belongs_to :user
   has_many :day_foods, dependent: :destroy
   has_many :days, through: :day_foods
+  has_many :recipe_items, dependent: :destroy
   has_many :shopping_list_items, dependent: :nullify
   has_and_belongs_to_many :food_labels, join_table: 'food_labels_foods'
 

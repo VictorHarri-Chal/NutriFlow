@@ -2,6 +2,7 @@
      data-controller="food-off-search"
      data-food-off-search-url-value="<%= search_import_foods_path %>"
      data-food-off-search-allergens-map-value="<%= json_escape(I18n.t('views.foods.show.allergens_map').transform_keys(&:to_s).to_json) %>"
+     data-food-off-search-labels-map-value="<%= json_escape(I18n.t('views.foods.show.labels_map').transform_keys(&:to_s).to_json) %>"
      data-food-off-search-ns-descs-value="<%= json_escape(I18n.t('views.foods.show.nutriscore_description').transform_keys(&:to_s).to_json) %>"
      data-food-off-search-nova-descs-value="<%= json_escape(I18n.t('views.foods.show.nova_description').transform_keys(&:to_s).to_json) %>"
      data-food-off-search-eco-descs-value="<%= json_escape(I18n.t('views.foods.show.ecoscore_description').transform_keys(&:to_s).to_json) %>"

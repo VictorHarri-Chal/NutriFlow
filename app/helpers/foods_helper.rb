@@ -49,6 +49,11 @@ module FoodsHelper
     t("views.foods.show.allergens_map.#{key}", default: allergen.tr("-", " ").capitalize)
   end
 
+  def translate_label(label)
+    key = label.to_s.downcase.tr("-", "_")
+    t("views.foods.show.labels_map.#{key}", default: label.tr("-", " ").capitalize)
+  end
+
   private
 
   def sortable_food_params

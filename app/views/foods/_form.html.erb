@@ -12,7 +12,7 @@
     <i class="fas fa-cloud-arrow-down"></i>
     <%= t("views.foods.off_badge") %>
   </div>
-  <div data-food-off-search-target="ciqualBadge" class="<%= food.source == :ciqual ? 'flex' : 'hidden' %> items-center gap-2 px-3 py-2 mb-6 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm">
+  <div data-food-off-search-target="ciqualBadge" class="<%= food.source == :ciqual ? 'flex' : 'hidden' %> items-center gap-2 px-3 py-2 mb-6 rounded-lg bg-status-success/10 border border-status-success/30 text-status-success text-sm">
     <i class="fas fa-database"></i>
     <%= t("views.foods.ciqual_badge") %>
   </div>
@@ -167,7 +167,14 @@
     </div>
 
     <%# ── Données avancées (dépliable, lecture seule) ── %>
-    <div class="border-t border-surface-border/40 pt-5 mb-6" data-controller="collapsible">
+    <%
+      _has_advanced = food.allergens.present? || food.traces.present? ||
+                      food.additives.present? || food.labels.present? ||
+                      (food.micronutrients.present? && food.micronutrients.any?)
+    %>
+    <div class="border-t border-surface-border/40 pt-5 mb-6 <%= 'hidden' unless _has_advanced %>"
+         data-controller="collapsible"
+         data-food-off-search-target="advancedSection">
       <button type="button"
               class="flex items-center justify-between w-full group"
               data-action="click->collapsible#toggle">
@@ -180,40 +187,68 @@
 
       <div class="hidden mt-5 space-y-5" data-collapsible-target="content">
 
-          <%# Allergènes & Traces — lecture seule, même style que micronutriments %>
+          <%# Allergènes & Traces — lecture seule %>
           <input type="hidden" name="food[allergens_raw]" value="<%= food.allergens.join(",") %>"
                  data-food-off-search-target="allergensField">
           <input type="hidden" name="food[traces_raw]" value="<%= food.traces.join(",") %>"
                  data-food-off-search-target="tracesField">
-          <div>
-            <p class="text-sm font-medium text-ink-muted mb-3"><%= t("views.foods.show.allergens") %> & <%= t("views.foods.show.traces") %></p>
-            <div class="divide-y divide-surface-border/20">
-              <div class="flex items-center justify-between py-2">
-                <span class="text-xs text-ink-muted"><%= t("views.foods.show.allergens") %></span>
-                <% if food.allergens.present? %>
-                  <span class="text-xs font-semibold text-ink-primary text-right max-w-xs"
-                        data-food-off-search-target="allergensDisplay">
-                    <%= food.allergens.map { |a| translate_allergen(a) }.join(", ") %>
-                  </span>
-                <% else %>
-                  <span class="text-xs text-ink-subtle" data-food-off-search-target="allergensDisplay">—</span>
-                <% end %>
-              </div>
-              <div class="flex items-center justify-between py-2">
-                <span class="text-xs text-ink-muted"><%= t("views.foods.show.traces") %></span>
-                <% if food.traces.present? %>
-                  <span class="text-xs font-semibold text-ink-primary text-right max-w-xs"
-                        data-food-off-search-target="tracesDisplay">
-                    <%= food.traces.map { |a| translate_allergen(a) }.join(", ") %>
-                  </span>
-                <% else %>
-                  <span class="text-xs text-ink-subtle" data-food-off-search-target="tracesDisplay">—</span>
-                <% end %>
-              </div>
+          <input type="hidden" name="food[additives_raw]" value="<%= food.additives.join(",") %>"
+                 data-food-off-search-target="additivesField">
+          <input type="hidden" name="food[labels_raw]" value="<%= food.labels.join(",") %>"
+                 data-food-off-search-target="labelsField">
+          <input type="hidden" name="food[ingredients_text]" value="<%= food.ingredients_text %>">
+          <div class="<%= food.allergens.empty? ? 'hidden' : '' %>"
+               data-food-off-search-target="allergensSection">
+            <p class="text-sm font-medium text-ink-muted mb-2"><%= t("views.foods.show.allergens") %></p>
+            <div class="flex flex-wrap gap-1.5" data-food-off-search-target="allergensDisplay">
+              <% food.allergens.each do |allergen| %>
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-status-danger/10 border border-status-danger/30 text-status-danger">
+                  <i class="fas fa-triangle-exclamation text-[9px]"></i>
+                  <%= translate_allergen(allergen) %>
+                </span>
+              <% end %>
             </div>
           </div>
 
-          <%# Micronutriments ── lecture seule %>
+          <div class="<%= food.traces.empty? ? 'hidden' : '' %>"
+               data-food-off-search-target="tracesSection">
+            <p class="text-sm font-medium text-ink-muted mb-2"><%= t("views.foods.show.traces") %></p>
+            <div class="flex flex-wrap gap-1.5" data-food-off-search-target="tracesDisplay">
+              <% food.traces.each do |trace| %>
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-surface-hover border border-surface-border/50 text-ink-muted">
+                  <%= translate_allergen(trace) %>
+                </span>
+              <% end %>
+            </div>
+          </div>
+
+          <%# Additifs — lecture seule, visible uniquement si présents %>
+          <div class="<%= food.additives.empty? ? 'hidden' : '' %>"
+               data-food-off-search-target="additivesSection">
+            <p class="text-sm font-medium text-ink-muted mb-2"><%= t("views.foods.show.additives") %></p>
+            <div class="flex flex-wrap gap-1.5" data-food-off-search-target="additivesDisplay">
+              <% food.additives.each do |additive| %>
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-surface-hover border border-surface-border/50 text-ink-muted">
+                  <%= additive.gsub("-", " ") %>
+                </span>
+              <% end %>
+            </div>
+          </div>
+
+          <%# Labels & Certifications — lecture seule, visible uniquement si présents %>
+          <div class="<%= food.labels.empty? ? 'hidden' : '' %>"
+               data-food-off-search-target="labelsSection">
+            <p class="text-sm font-medium text-ink-muted mb-2"><%= t("views.foods.show.labels") %></p>
+            <div class="flex flex-wrap gap-1.5" data-food-off-search-target="labelsDisplay">
+              <% food.labels.each do |label| %>
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-surface-hover border border-surface-border/50 text-ink-muted">
+                  <%= translate_label(label) %>
+                </span>
+              <% end %>
+            </div>
+          </div>
+
+          <%# Micronutriments ── lecture seule. Toujours dans le DOM (targets JS), wrapper masqué si vide. %>
           <%
             mn = (food.micronutrients || {}).transform_keys(&:to_s)
             all_nutrients = %w[calcium iron magnesium potassium sodium zinc cholesterol vitamin_c vitamin_d vitamin_b12 vitamin_a vitamin_b9 epa dha]
@@ -221,12 +256,13 @@
                          "sodium" => "mg", "zinc" => "mg", "cholesterol" => "mg",
                          "vitamin_c" => "mg", "vitamin_d" => "µg", "vitamin_b12" => "µg",
                          "vitamin_a" => "µg", "vitamin_b9" => "µg", "epa" => "g", "dha" => "g" }
+            present_nutrients = all_nutrients.select { |key| mn[key].present? }
           %>
-          <div>
+          <div class="<%= 'hidden' if present_nutrients.empty? %>" data-food-preview-target="micronutrientsSection">
             <p class="text-sm font-medium text-ink-muted mb-3"><%= t("views.foods.show.minerals") %> & <%= t("views.foods.show.vitamins") %></p>
             <div class="divide-y divide-surface-border/20">
               <% all_nutrients.each do |key| %>
-                <div class="flex items-center justify-between py-2">
+                <div class="flex items-center justify-between py-2 <%= 'hidden' if mn[key].blank? %>" data-nutrient-row>
                   <span class="text-xs text-ink-muted"><%= t("views.foods.show.nutrients.#{key}") %></span>
                   <% if mn[key].present? %>
                     <span class="text-xs font-semibold text-ink-primary"

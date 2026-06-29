@@ -183,6 +183,16 @@ export default class extends Controller {
         return
       }
 
+      if (data.existing_food) {
+        const foodId = data.existing_food.id
+        document.addEventListener("turbo:load", () => {
+          const frame = document.getElementById("food_show_panel")
+          if (frame) frame.src = `/foods/${foodId}`
+        }, { once: true })
+        Turbo.visit("/foods")
+        return
+      }
+
       this.manualInputTarget.value = ""
       this.submitBtnTarget.disabled = true
       document.dispatchEvent(new CustomEvent("barcode-scanner:product", {
