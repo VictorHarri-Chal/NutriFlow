@@ -10,13 +10,12 @@ class Food < ApplicationRecord
   has_many :shopping_list_items, dependent: :nullify
   has_and_belongs_to_many :food_labels, join_table: 'food_labels_foods'
 
+  before_validation :default_optional_macros_to_zero
+
   validates :name,     presence: true, uniqueness: { scope: :user_id, case_sensitive: false }
   validates :category, inclusion: { in: CATEGORIES }, allow_nil: true
-  validates :fats, presence: true, numericality: { greater_than_or_equal_to: 0 }
-  validates :carbs, presence: true, numericality: { greater_than_or_equal_to: 0 }
-  validates :sugars, presence: true, numericality: { greater_than_or_equal_to: 0 }
-  validates :proteins, presence: true, numericality: { greater_than_or_equal_to: 0 }
-  validates :calories, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :calories, :proteins, :fats, :carbs, :sugars, :fiber, :saturated_fat, :salt,
+            numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
 
   pg_search_scope :search_by_name,
   against: [:name],
@@ -30,5 +29,18 @@ class Food < ApplicationRecord
 
   def source
     self[:source]&.to_sym || :manual
+  end
+
+  private
+
+  def default_optional_macros_to_zero
+    self.calories      ||= 0
+    self.proteins      ||= 0
+    self.fats          ||= 0
+    self.carbs         ||= 0
+    self.sugars        ||= 0
+    self.fiber         ||= 0
+    self.saturated_fat ||= 0
+    self.salt          ||= 0
   end
 end
