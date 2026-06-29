@@ -263,6 +263,12 @@ en:
       out_of_stock_filter: "Need to buy"
       labels_filter: "Labels"
       all_categories: "All categories"
+      source_filter: "Source"
+      all_sources: "All sources"
+      sources:
+        ciqual: "Ciqual / ANSES"
+        "off": "Open Food Facts"
+        manual: "Manual"
       no_in_stock:
         title: "Nothing in stock"
         description: "Mark your available foods as \"in stock\"."

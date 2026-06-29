@@ -35,6 +35,11 @@ class FoodsController < ApplicationController
       @selected_category = params[:category]
     end
 
+    if params[:source].present?
+      @foods = @foods.where(source: params[:source])
+      @selected_source = params[:source]
+    end
+
     if params[:sort_usages].present?
       dir = params[:sort_usages] == "asc" ? "ASC" : "DESC"
       @foods = @foods.reorder(Arel.sql("(SELECT COUNT(*) FROM day_foods WHERE day_foods.food_id = foods.id) #{dir}"))

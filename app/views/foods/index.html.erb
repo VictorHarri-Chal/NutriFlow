@@ -23,6 +23,7 @@
           <% end %>
           <%= hidden_field_tag :label_id,     params[:label_id]     if params[:label_id].present? %>
           <%= hidden_field_tag :category,     params[:category]     if params[:category].present? %>
+          <%= hidden_field_tag :source,       params[:source]       if params[:source].present? %>
           <%= hidden_field_tag :favorites,    params[:favorites]    if params[:favorites].present? %>
           <%= hidden_field_tag :in_stock,     params[:in_stock]     if params[:in_stock].present? %>
           <%= hidden_field_tag :out_of_stock, params[:out_of_stock] if params[:out_of_stock].present? %>
@@ -61,11 +62,12 @@
     filter_params = {
       label_id:     params[:label_id].presence,
       category:     params[:category].presence,
+      source:       params[:source].presence,
       favorites:    params[:favorites].presence,
       in_stock:     params[:in_stock].presence,
       out_of_stock: params[:out_of_stock].presence
     }.compact
-    active_filter = @filtering_favorites || @filtering_in_stock || @filtering_out_of_stock || @selected_label_id || @selected_category
+    active_filter = @filtering_favorites || @filtering_in_stock || @filtering_out_of_stock || @selected_label_id || @selected_category || @selected_source
   %>
   <div class="flex items-center justify-between gap-3 mb-5">
 
@@ -73,27 +75,27 @@
     <div class="flex flex-wrap items-center gap-2">
       <%# Tous les aliments — préserve les filtres actifs %>
       <% no_semantic_filter = !@filtering_favorites && !@filtering_in_stock && !@filtering_out_of_stock %>
-      <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, label_id: params[:label_id], category: params[:category]),
+      <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, label_id: params[:label_id], category: params[:category], source: params[:source].presence),
             class: "inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border transition-colors #{no_semantic_filter ? 'bg-brand/20 text-brand border-brand/50' : 'bg-surface-hover text-ink-muted border-surface-border hover:border-brand/30 hover:text-ink-primary'}" do %>
         <%= t("views.foods.all_foods") %>
       <% end %>
 
       <%# Favoris %>
-      <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, favorites: "true", label_id: params[:label_id], category: params[:category]),
+      <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, favorites: "true", label_id: params[:label_id], category: params[:category], source: params[:source].presence),
             class: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors #{@filtering_favorites ? 'bg-amber-400/15 text-amber-400 border-amber-400/40' : 'bg-surface-hover text-ink-muted border-surface-border hover:border-amber-400/30 hover:text-amber-400'}" do %>
         <i class="fas fa-star text-xs"></i>
         <%= t("views.foods.favorites_filter") %>
       <% end %>
 
       <%# En stock %>
-      <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, in_stock: "true", label_id: params[:label_id], category: params[:category]),
+      <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, in_stock: "true", label_id: params[:label_id], category: params[:category], source: params[:source].presence),
             class: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors #{@filtering_in_stock ? 'bg-status-success/10 text-status-success border-status-success/30' : 'bg-surface-hover text-ink-muted border-surface-border hover:border-status-success/30 hover:text-status-success'}" do %>
         <i class="fas fa-check text-xs"></i>
         <%= t("views.foods.in_stock_filter") %>
       <% end %>
 
       <%# À racheter %>
-      <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, out_of_stock: "true", label_id: params[:label_id], category: params[:category]),
+      <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, out_of_stock: "true", label_id: params[:label_id], category: params[:category], source: params[:source].presence),
             class: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors #{@filtering_out_of_stock ? 'bg-status-danger/10 text-status-danger border-status-danger/30' : 'bg-surface-hover text-ink-muted border-surface-border hover:border-status-danger/30 hover:text-status-danger'}" do %>
         <i class="fas fa-circle-xmark text-xs"></i>
         <%= t("views.foods.out_of_stock_filter") %>
@@ -131,14 +133,14 @@
 
         <div data-filter-dropdown-target="dropdown"
              class="hidden absolute left-0 top-full mt-1.5 min-w-44 bg-surface-raised border border-surface-border/50 rounded-xl shadow-xl overflow-hidden z-50 py-1">
-          <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, label_id: params[:label_id].presence, favorites: params[:favorites].presence, in_stock: params[:in_stock].presence, out_of_stock: params[:out_of_stock].presence),
+          <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, label_id: params[:label_id].presence, source: params[:source].presence, favorites: params[:favorites].presence, in_stock: params[:in_stock].presence, out_of_stock: params[:out_of_stock].presence),
                 class: "flex items-center gap-2 px-3 py-2 text-xs transition-colors #{@selected_category.nil? ? 'text-ink-primary bg-surface-hover' : 'text-ink-muted hover:text-ink-primary hover:bg-surface-hover'}" do %>
             <span class="w-1.5 h-1.5 rounded-full bg-ink-subtle/50 shrink-0"></span>
             <%= t("views.foods.all_categories") %>
           <% end %>
           <div class="mx-2 my-1 h-px bg-surface-border/40"></div>
           <% Food::CATEGORIES.each do |cat| %>
-            <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, category: cat, label_id: params[:label_id].presence, favorites: params[:favorites].presence, in_stock: params[:in_stock].presence, out_of_stock: params[:out_of_stock].presence),
+            <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, category: cat, label_id: params[:label_id].presence, source: params[:source].presence, favorites: params[:favorites].presence, in_stock: params[:in_stock].presence, out_of_stock: params[:out_of_stock].presence),
                   class: "flex items-center gap-2 px-3 py-2 text-xs transition-colors #{@selected_category == cat ? 'text-ink-primary bg-surface-hover' : 'text-ink-muted hover:text-ink-primary hover:bg-surface-hover'}" do %>
               <i class="fas <%= category_icons[cat] %> text-xs w-3 text-center"></i>
               <%= t("views.shopping_lists.categories.#{cat}") %>
@@ -166,7 +168,7 @@
 
           <div data-filter-dropdown-target="dropdown"
                class="hidden absolute left-0 top-full mt-1.5 min-w-40 bg-surface-raised border border-surface-border/50 rounded-xl shadow-xl overflow-hidden z-50 py-1">
-            <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, category: params[:category].presence, favorites: params[:favorites].presence, in_stock: params[:in_stock].presence, out_of_stock: params[:out_of_stock].presence),
+            <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, category: params[:category].presence, source: params[:source].presence, favorites: params[:favorites].presence, in_stock: params[:in_stock].presence, out_of_stock: params[:out_of_stock].presence),
                   class: "flex items-center gap-2 px-3 py-2 text-xs transition-colors #{@selected_label_id.nil? ? 'text-ink-primary bg-surface-hover' : 'text-ink-muted hover:text-ink-primary hover:bg-surface-hover'}" do %>
               <span class="w-1.5 h-1.5 rounded-full bg-ink-subtle/50 shrink-0"></span>
               <%= t("views.foods.all_labels") %>
@@ -174,7 +176,7 @@
             <div class="mx-2 my-1 h-px bg-surface-border/40"></div>
             <% @food_labels.each do |label| %>
               <% style = label.color_style %>
-              <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, label_id: label.id, category: params[:category].presence, favorites: params[:favorites].presence, in_stock: params[:in_stock].presence, out_of_stock: params[:out_of_stock].presence),
+              <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, label_id: label.id, category: params[:category].presence, source: params[:source].presence, favorites: params[:favorites].presence, in_stock: params[:in_stock].presence, out_of_stock: params[:out_of_stock].presence),
                     class: "flex items-center gap-2 px-3 py-2 text-xs transition-colors #{@selected_label_id == label.id ? 'text-ink-primary bg-surface-hover' : 'text-ink-muted hover:text-ink-primary hover:bg-surface-hover'}" do %>
                 <span class="w-1.5 h-1.5 rounded-full <%= style[:dot] %> shrink-0"></span>
                 <%= label.name %>
@@ -183,6 +185,48 @@
           </div>
         </div>
       <% end %>
+
+      <%# Dropdown source %>
+      <%
+        source_icons = {
+          "ciqual"  => "fa-database",
+          "off"     => "fa-globe",
+          "manual"  => "fa-pen"
+        }
+        sources = %w[ciqual off manual]
+      %>
+      <div data-controller="filter-dropdown" class="relative">
+        <button type="button"
+                data-action="click->filter-dropdown#toggle"
+                data-filter-dropdown-target="trigger"
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors <%= @selected_source ? 'bg-surface-hover text-ink-primary border-surface-border' : 'bg-surface-hover text-ink-muted border-surface-border hover:text-ink-primary' %>">
+          <% if @selected_source %>
+            <i class="fas <%= source_icons[@selected_source] %> text-xs"></i>
+            <span data-filter-dropdown-target="label"><%= t("views.foods.sources.#{@selected_source}") %></span>
+          <% else %>
+            <i class="fas fa-database text-xs"></i>
+            <span data-filter-dropdown-target="label"><%= t("views.foods.source_filter") %></span>
+          <% end %>
+          <i class="fas fa-chevron-down text-xs transition-transform duration-150" data-filter-dropdown-target="icon"></i>
+        </button>
+
+        <div data-filter-dropdown-target="dropdown"
+             class="hidden absolute left-0 top-full mt-1.5 min-w-44 bg-surface-raised border border-surface-border/50 rounded-xl shadow-xl overflow-hidden z-50 py-1">
+          <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, label_id: params[:label_id].presence, category: params[:category].presence, favorites: params[:favorites].presence, in_stock: params[:in_stock].presence, out_of_stock: params[:out_of_stock].presence),
+                class: "flex items-center gap-2 px-3 py-2 text-xs transition-colors #{@selected_source.nil? ? 'text-ink-primary bg-surface-hover' : 'text-ink-muted hover:text-ink-primary hover:bg-surface-hover'}" do %>
+            <span class="w-1.5 h-1.5 rounded-full bg-ink-subtle/50 shrink-0"></span>
+            <%= t("views.foods.all_sources") %>
+          <% end %>
+          <div class="mx-2 my-1 h-px bg-surface-border/40"></div>
+          <% sources.each do |src| %>
+            <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, source: src, label_id: params[:label_id].presence, category: params[:category].presence, favorites: params[:favorites].presence, in_stock: params[:in_stock].presence, out_of_stock: params[:out_of_stock].presence),
+                  class: "flex items-center gap-2 px-3 py-2 text-xs transition-colors #{@selected_source == src ? 'text-ink-primary bg-surface-hover' : 'text-ink-muted hover:text-ink-primary hover:bg-surface-hover'}" do %>
+              <i class="fas <%= source_icons[src] %> text-xs w-3 text-center"></i>
+              <%= t("views.foods.sources.#{src}") %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
     </div>
 
     <!-- Actions bulk : tout en stock + tout à racheter + cart (icônes seules, style cohérent) -->

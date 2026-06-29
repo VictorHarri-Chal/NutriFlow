@@ -263,6 +263,12 @@ fr:
       out_of_stock_filter: "À racheter"
       labels_filter: "Labels"
       all_categories: "Toutes les catégories"
+      source_filter: "Source"
+      all_sources: "Toutes les sources"
+      sources:
+        ciqual: "Ciqual / ANSES"
+        "off": "Open Food Facts"
+        manual: "Manuel"
       no_in_stock:
         title: "Aucun aliment en stock"
         description: "Marque tes aliments disponibles comme « en stock »."
