@@ -35,6 +35,9 @@ class OpenFoodFactsService
     dha:         "docosahexaenoic-acid_100g"
   }.freeze
 
+  VALID_NS_GRADES  = %w[a b c d e].freeze
+  VALID_ECO_GRADES = %w[a-plus a b c d e f].freeze
+
   # Champs tableau OFF (pattern: "{field}_tags" → colonne foods.{field})
   TAG_FIELDS = %i[allergens traces additives labels].freeze
 
@@ -81,9 +84,9 @@ class OpenFoodFactsService
       off_id:           product["_id"] || product["id"],
       name:             product["product_name"].to_s.strip,
       brand:            product["brands"].to_s.split(",").first.to_s.strip.presence,
-      nutriscore:       product["nutriscore_grade"],
-      nova_group:       product["nova_group"]&.to_i,
-      ecoscore_grade:   product["ecoscore_grade"],
+      nutriscore:       VALID_NS_GRADES.include?(product["nutriscore_grade"]&.downcase) ? product["nutriscore_grade"].downcase : nil,
+      nova_group:       (1..4).include?(product["nova_group"]&.to_i) ? product["nova_group"].to_i : nil,
+      ecoscore_grade:   VALID_ECO_GRADES.include?(product["ecoscore_grade"]&.downcase) ? product["ecoscore_grade"].downcase : nil,
       ingredients_text: product["ingredients_text"].to_s.strip.presence,
       micronutrients:   micronutrients.presence || {},
       **required,

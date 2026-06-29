@@ -50,7 +50,8 @@
          data-barcode-scanner-camera-error-text="<%= t('views.foods.barcode_scanner.camera_error') %>"
          data-barcode-scanner-searching-text="<%= t('views.foods.barcode_scanner.searching') %>"
          data-barcode-scanner-not-found-text="<%= t('views.foods.barcode_scanner.not_found') %>"
-         data-barcode-scanner-network-error-text="<%= t('views.foods.barcode_scanner.network_error') %>">
+         data-barcode-scanner-network-error-text="<%= t('views.foods.barcode_scanner.network_error') %>"
+         data-barcode-scanner-url-invalid-text="<%= t('views.foods.barcode_scanner.url_invalid') %>">
 
       <%# ── Contenu par défaut (caché quand la caméra est ouverte) ── %>
       <div data-barcode-scanner-target="defaultContent">
@@ -112,10 +113,10 @@
       <div data-barcode-scanner-target="cameraPanel" class="hidden mb-3">
         <div class="flex items-center justify-between mb-3">
           <p class="text-sm text-ink-muted"><%= t("views.foods.barcode_scanner.camera_hint") %></p>
-          <button type="button" class="btn-ghost text-xs flex items-center gap-1.5"
-                  data-action="click->barcode-scanner#closeCamera">
-            <i class="fas fa-times text-xs"></i>
-            <%= t("views.foods.barcode_scanner.close_camera") %>
+          <button type="button" class="btn-ghost"
+                  data-action="click->barcode-scanner#closeCamera"
+                  data-tooltip="<%= t('views.foods.barcode_scanner.close_camera_tooltip') %>">
+            <i class="fas fa-times text-sm"></i>
           </button>
         </div>
         <div class="relative rounded-xl overflow-hidden bg-surface-base border border-surface-border/40 h-[calc(100vh-23rem)] min-h-48">
@@ -140,11 +141,41 @@
                  data-action="input->barcode-scanner#validateManualInput keydown.enter->barcode-scanner#submitManual">
         </div>
         <button type="button"
-                class="btn-secondary shrink-0 text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                class="shrink-0 w-10 h-10 flex items-center justify-center rounded-lg border border-surface-border/50 bg-surface-hover text-ink-subtle hover:border-brand/50 hover:text-brand hover:bg-brand/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-surface-border/50 disabled:hover:text-ink-subtle disabled:hover:bg-surface-hover"
                 disabled
                 data-barcode-scanner-target="submitBtn"
-                data-action="click->barcode-scanner#submitManual">
-          <%= t("views.foods.barcode_scanner.submit") %>
+                data-action="click->barcode-scanner#submitManual"
+                data-tooltip="<%= t('views.foods.barcode_scanner.submit_tooltip') %>">
+          <i class="fas fa-magnifying-glass text-sm"></i>
+        </button>
+      </div>
+
+      <%# ── Saisie URL Open Food Facts ── %>
+      <div class="flex items-center gap-3 my-4">
+        <div class="flex-1 h-px bg-surface-border/40"></div>
+        <span class="text-xs text-ink-subtle uppercase tracking-wider"><%= t("views.foods.barcode_scanner.url_separator") %></span>
+        <div class="flex-1 h-px bg-surface-border/40"></div>
+      </div>
+
+      <div class="flex gap-2">
+        <div class="relative flex-1">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fas fa-link text-ink-subtle text-sm"></i>
+          </div>
+          <input type="text"
+                 autocomplete="off"
+                 class="input-dark w-full pl-10 text-sm"
+                 placeholder="<%= t("views.foods.barcode_scanner.url_placeholder") %>"
+                 data-barcode-scanner-target="urlInput"
+                 data-action="input->barcode-scanner#validateUrlInput keydown.enter->barcode-scanner#submitUrl">
+        </div>
+        <button type="button"
+                class="shrink-0 w-10 h-10 flex items-center justify-center rounded-lg border border-surface-border/50 bg-surface-hover text-ink-subtle hover:border-brand/50 hover:text-brand hover:bg-brand/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-surface-border/50 disabled:hover:text-ink-subtle disabled:hover:bg-surface-hover"
+                disabled
+                data-barcode-scanner-target="urlSubmitBtn"
+                data-action="click->barcode-scanner#submitUrl"
+                data-tooltip="<%= t('views.foods.barcode_scanner.submit_tooltip') %>">
+          <i class="fas fa-magnifying-glass text-sm"></i>
         </button>
       </div>
 

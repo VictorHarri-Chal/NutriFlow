@@ -302,7 +302,7 @@ en:
       new:
         tab_manual: "Manual"
         tab_off: "Quick import"
-        info_tooltip: "Generic foods: official ANSES Ciqual database (fruits, vegetables, meats, dairy…) · Packaged products: scan the product's barcode"
+        info_tooltip: "Generic foods: official ANSES Ciqual database (fruits, vegetables, meats, dairy…) · Packaged products: scan the barcode or paste an Open Food Facts URL"
       off_badge: "Imported via Open Food Facts"
       ciqual_badge: "Official Ciqual / ANSES data"
       off_search:
@@ -322,6 +322,11 @@ en:
         close_camera: "Close"
         searching: "Looking up product..."
         network_error: "Network error, please try again."
+        url_separator: "or by URL"
+        url_placeholder: "https://world.openfoodfacts.org/product/..."
+        url_invalid: "Invalid URL: no barcode found."
+        submit_tooltip: "Search"
+        close_camera_tooltip: "Close camera"
       show:
         tabs:
           nutrition: "Nutrition"

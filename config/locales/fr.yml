@@ -302,7 +302,7 @@ fr:
       new:
         tab_manual: "Manuel"
         tab_off: "Import rapide"
-        info_tooltip: "Aliments génériques : base officielle ANSES Ciqual (fruits, légumes, viandes, produits laitiers…) · Produits emballés : scannez le code-barre du produit"
+        info_tooltip: "Aliments génériques : base officielle ANSES Ciqual (fruits, légumes, viandes, produits laitiers…) · Produits emballés : scannez le code-barre ou collez une URL Open Food Facts"
       off_badge: "Importé via Open Food Facts"
       ciqual_badge: "Données officielles Ciqual / ANSES"
       off_search:
@@ -322,6 +322,11 @@ fr:
         close_camera: "Fermer"
         searching: "Recherche du produit..."
         network_error: "Erreur réseau, réessayez."
+        url_separator: "ou par URL"
+        url_placeholder: "https://world.openfoodfacts.org/product/..."
+        url_invalid: "URL invalide : aucun code-barre trouvé."
+        submit_tooltip: "Rechercher"
+        close_camera_tooltip: "Fermer la caméra"
       show:
         tabs:
           nutrition: "Nutrition"

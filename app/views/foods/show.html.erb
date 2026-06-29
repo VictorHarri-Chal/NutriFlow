@@ -40,9 +40,9 @@
     </div>
 
     <%
-      _ns_grade  = @food.nutriscore_grade&.downcase
-      _nova_num  = @food.nova_group.present? ? @food.nova_group.to_i : nil
-      _eco_grade = @food.ecoscore_grade&.downcase&.presence
+      _ns_grade  = %w[a b c d e].include?(@food.nutriscore_grade&.downcase) ? @food.nutriscore_grade.downcase : nil
+      _nova_num  = @food.nova_group.present? && (1..4).include?(@food.nova_group.to_i) ? @food.nova_group.to_i : nil
+      _eco_grade = %w[a-plus a b c d e f].include?(@food.ecoscore_grade&.downcase) ? @food.ecoscore_grade.downcase : nil
       _has_quality = _ns_grade.present? || _nova_num.present? || _eco_grade.present? ||
                     @food.additives.present? || @food.labels.present? ||
                     @food.allergens.present? || @food.traces.present?

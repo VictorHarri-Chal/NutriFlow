@@ -6,7 +6,8 @@ const EAN_FORMATS = ["ean_13", "ean_8", "upc_a", "upc_e"]
 export default class extends Controller {
   static targets = [
     "defaultContent", "cameraPanel", "video",
-    "manualInput", "submitBtn", "status", "error", "cancelBtn"
+    "manualInput", "submitBtn", "status", "error", "cancelBtn",
+    "urlInput", "urlSubmitBtn"
   ]
 
   static VALID_LENGTHS = [8, 12, 13]
@@ -169,6 +170,30 @@ export default class extends Controller {
     })
   }
 
+  validateUrlInput() {
+    const input = this.urlInputTarget.value.trim()
+    this.urlSubmitBtnTarget.disabled = !this._isValidOffUrl(input)
+  }
+
+  submitUrl() {
+    this._clearError()
+    const input = this.urlInputTarget.value.trim()
+    if (!this._isValidOffUrl(input)) {
+      this._showError(this.element.dataset.barcodeScannerUrlInvalidText || "")
+      return
+    }
+    this._lookupBarcode(this._extractBarcode(input))
+  }
+
+  _isValidOffUrl(input) {
+    return input.includes("openfoodfacts.org") && !!this._extractBarcode(input)
+  }
+
+  _extractBarcode(input) {
+    const match = input.match(/(?<!\d)(\d{8,13})(?!\d)/)
+    return match ? match[1] : null
+  }
+
   async _lookupBarcode(code) {
     this._clearError()
     this._setStatus(this.element.dataset.barcodeScannerSearchingText || "")
@@ -195,6 +220,8 @@ export default class extends Controller {
 
       this.manualInputTarget.value = ""
       this.submitBtnTarget.disabled = true
+      if (this.hasUrlInputTarget)       this.urlInputTarget.value = ""
+      if (this.hasUrlSubmitBtnTarget)   this.urlSubmitBtnTarget.disabled = true
       document.dispatchEvent(new CustomEvent("barcode-scanner:product", {
         detail: { product: data.product },
         bubbles: true

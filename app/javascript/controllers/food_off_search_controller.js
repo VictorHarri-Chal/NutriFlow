@@ -132,10 +132,12 @@ export default class extends Controller {
   _updateQualitySection(product) {
     if (!this.hasQualitySectionTarget) return
 
-    const ns      = product.nutriscore?.toLowerCase() || null
+    const nsRaw   = product.nutriscore?.toLowerCase()
+    const ns      = nsRaw && this.constructor.NS_COLORS[nsRaw] ? nsRaw : null
     const novaRaw = parseInt(product.nova_group)
     const nova    = (!isNaN(novaRaw) && novaRaw >= 1 && novaRaw <= 4) ? novaRaw : null
-    const eco     = product.ecoscore_grade?.toLowerCase() || null
+    const ecoRaw  = product.ecoscore_grade?.toLowerCase()
+    const eco     = ecoRaw && this.constructor.ECO_COLORS[ecoRaw] ? ecoRaw : null
 
     if (!ns && !nova && !eco) {
       this.qualitySectionTarget.classList.add("hidden")

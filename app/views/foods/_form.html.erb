@@ -108,9 +108,9 @@
       eco_colors  = { "a-plus" => "#006400", "a" => "#038141", "b" => "#85BB2F", "c" => "#FECB02", "d" => "#EE8100", "e" => "#E63E11", "f" => "#8B1A1A" }
       eco_labels  = { "a-plus" => "A+" }
       nova_colors = { 1 => "#038141", 2 => "#85BB2F", 3 => "#EE8100", 4 => "#E63E11" }
-      ns_grade    = food.nutriscore_grade&.downcase
-      nova_num    = food.nova_group.present? ? food.nova_group.to_i : nil
-      eco_grade   = food.ecoscore_grade&.downcase&.presence
+      ns_grade    = %w[a b c d e].include?(food.nutriscore_grade&.downcase) ? food.nutriscore_grade.downcase : nil
+      nova_num    = food.nova_group.present? && (1..4).include?(food.nova_group.to_i) ? food.nova_group.to_i : nil
+      eco_grade   = %w[a-plus a b c d e f].include?(food.ecoscore_grade&.downcase) ? food.ecoscore_grade.downcase : nil
       has_quality = ns_grade.present? || nova_num.present? || eco_grade.present?
     %>
     <div class="border-t border-surface-border/40 pt-5 mb-6 <%= 'hidden' unless has_quality %>"
@@ -288,7 +288,7 @@
 
     <%# ── Catégorie ── %>
     <div class="border-t border-surface-border/40 pt-5 mb-6">
-      <label class="label-dark block mb-3"><%= t("views.foods.form.category") %></label>
+      <span class="text-sm font-semibold text-ink-primary block mb-3"><%= t("views.foods.form.category") %></span>
       <div class="flex flex-wrap gap-2">
         <%
           effective_category = food.category.presence || "other"
@@ -322,17 +322,17 @@
     <%# ── Labels ── %>
     <% if @food_labels.any? %>
       <div class="border-t border-surface-border/40 pt-5 mb-6">
-        <label class="label-dark block mb-3"><%= t("views.foods.form.food_labels") %></label>
+        <span class="text-sm font-semibold text-ink-primary block mb-3"><%= t("views.foods.form.food_labels") %></span>
         <div class="flex flex-wrap gap-2">
           <% @food_labels.each do |label| %>
             <label class="cursor-pointer">
               <%= check_box_tag "food[food_label_ids][]", label.id, food.food_labels.include?(label), class: "sr-only peer" %>
-              <span class="flex items-center gap-2 px-3 py-1.5 rounded-full border transition-colors
+              <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-colors
                            bg-surface-hover border-surface-border/50 text-ink-muted
                            hover:border-brand/30 hover:text-ink-primary
                            peer-checked:bg-brand/15 peer-checked:border-brand/50 peer-checked:text-brand">
-                <i class="fas fa-tag text-xs"></i>
-                <span class="text-sm font-medium"><%= label.name %></span>
+                <i class="fas fa-tag text-[10px]"></i>
+                <%= label.name %>
               </span>
             </label>
           <% end %>
