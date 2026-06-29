@@ -242,16 +242,9 @@
         <div class="overflow-y-auto max-h-[15.5rem] divide-y divide-surface-border/30 pr-1 scrollbar-thin">
           <% recent.each_with_index do |entry, idx| %>
             <div class="flex items-center justify-between py-2.5 group">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-surface-hover flex items-center justify-center shrink-0">
-                  <i class="fas fa-weight-scale text-xs text-ink-subtle"></i>
-                </div>
-                <div>
-                  <p class="text-sm font-medium text-ink-primary">
-                    <%= entry.weight_kg %> kg
-                  </p>
-                  <p class="text-xs text-ink-subtle"><%= l(entry.date, format: :long) %></p>
-                </div>
+              <div class="flex items-center gap-6">
+                <p class="text-sm font-semibold text-ink-primary w-20"><%= entry.weight_kg %> kg</p>
+                <p class="text-sm text-ink-muted"><%= l(entry.date, format: :long) %></p>
               </div>
               <div class="flex items-center gap-3">
                 <% if idx < recent.size - 1 %>
