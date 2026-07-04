@@ -68,6 +68,7 @@ json.workout_sessions day_with_foods.workout_sessions do |ws|
     json.reps          s.reps
     json.position      s.position
     json.rest_seconds  s.rest_seconds
+    json.notes         s.notes
     json.is_pr         s.is_pr
   end
 end

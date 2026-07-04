@@ -1,6 +1,7 @@
 is_fav = defined?(@favorited_ids) ? @favorited_ids.include?(exercise.id) : current_user.exercise_favorites.exists?(exercise: exercise)
 
 json.id                exercise.id
+json.exercise_id       exercise.exercise_id
 json.name              exercise.name
 json.body_part         exercise.body_part
 json.equipment         exercise.equipment

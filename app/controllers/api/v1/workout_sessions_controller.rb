@@ -87,6 +87,7 @@ class Api::V1::WorkoutSessionsController < Api::V1::BaseController
           reps:        ws.reps,
           position:    ws.position,
           rest_seconds: ws.rest_seconds,
+          notes:       ws.notes,
           is_pr:       ws.is_pr
         }
       }

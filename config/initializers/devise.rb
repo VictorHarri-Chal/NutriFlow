@@ -283,13 +283,17 @@ Devise.setup do |config|
     scope: "email profile"
 
   # ==> Warden configuration
-  # If you want to use other strategies, that are not supported by Devise, or
-  # change the failure app, you can configure them inside the config.warden block.
-  #
-  # config.warden do |manager|
-  #   manager.intercept_401 = false
-  #   manager.default_strategies(scope: :user).unshift :some_external_strategy
-  # end
+  # Custom failure app: for /api/* requests return a clean JSON 401 instead of Devise's
+  # default HTML redirect or verbose "You need to sign in..." message.
+  config.warden do |manager|
+    manager.failure_app = ->(env) do
+      if env["PATH_INFO"].to_s.start_with?("/api/")
+        [401, { "Content-Type" => "application/json" }, [{ error: "Unauthorized" }.to_json]]
+      else
+        Devise::FailureApp.call(env)
+      end
+    end
+  end
 
   # ==> Mountable engine configurations
   # When using Devise inside an engine, let's call it `MyEngine`, and this engine

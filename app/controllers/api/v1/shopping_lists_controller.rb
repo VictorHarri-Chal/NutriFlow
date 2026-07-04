@@ -2,7 +2,9 @@ class Api::V1::ShoppingListsController < Api::V1::BaseController
   before_action :set_shopping_list, only: [:show, :update, :destroy, :clear_checked, :clear_all]
 
   def index
-    @shopping_lists = current_user.shopping_lists.order(updated_at: :desc)
+    @shopping_lists = current_user.shopping_lists
+                                  .includes(:shopping_list_items)
+                                  .order(updated_at: :desc)
     render :index
   end
 

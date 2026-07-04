@@ -33,13 +33,14 @@ class Api::V1::AuthController < Api::V1::BaseController
 
   def find_or_create_from_sso(provider, uid, email)
     identity = Identity.find_or_initialize_by(provider: provider, uid: uid)
-    if identity.persisted?
-      identity.user
-    else
-      user = User.find_or_create_by(email: email) { |u| u.password = Devise.friendly_token }
-      identity.update!(user: user, email: email)
-      user
-    end
+    return identity.user if identity.persisted?
+
+    # Apple omits email after first sign-in — require it for new identities
+    raise "Email required for new SSO user" if email.blank?
+
+    user = User.find_or_create_by(email: email) { |u| u.password = Devise.friendly_token }
+    identity.update!(user: user, email: email)
+    user
   end
 
   def generate_jwt_for(user)

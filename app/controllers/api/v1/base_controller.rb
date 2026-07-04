@@ -14,6 +14,10 @@ class Api::V1::BaseController < ApplicationController
     render json: { errors: e.record.errors }, status: :unprocessable_entity
   end
 
+  rescue_from ActionController::ParameterMissing do |e|
+    render json: { error: e.message }, status: :bad_request
+  end
+
   private
 
   def pagy_meta(pagy)

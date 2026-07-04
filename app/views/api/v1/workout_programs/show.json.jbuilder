@@ -10,7 +10,7 @@ json.program_days @program.program_days.includes(program_exercises: :exercise).o
   json.duration_minutes pd.duration_minutes
   json.notes            pd.notes
 
-  json.program_exercises pd.program_exercises.order(:position) do |pe|
+  json.program_exercises pd.program_exercises.sort_by(&:position) do |pe|
     json.id            pe.id
     json.exercise_id   pe.exercise_id
     json.exercise_name pe.exercise&.name

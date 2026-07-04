@@ -152,13 +152,15 @@ class Api::V1::StatisticsController < Api::V1::BaseController
       { exercise_name: exercise_names[eid], estimated_1rm_kg: orm }
     }
 
-    # Training streak (weeks)
-    session_dates = workout_sessions.map { |s| s.day.date }
-    all_weeks = range.group_by(&:beginning_of_week)
-    current_training_streak_weeks = all_weeks.count { |_, wds|
-      wds.any? { |d| session_dates.include?(d) }
-    }
-    best_training_streak_weeks = all_weeks.size
+    # Training streak (weeks with at least one session, consecutive from most recent)
+    session_dates      = workout_sessions.map { |s| s.day.date }.to_set
+    active_weeks       = range.group_by(&:beginning_of_week)
+                              .select { |_, wds| wds.any? { |d| session_dates.include?(d) } }
+                              .keys
+                              .sort
+
+    current_training_streak_weeks = calc_current_streak_weeks(active_weeks)
+    best_training_streak_weeks    = calc_best_streak_weeks(active_weeks)
 
     {
       session_count:                   workout_sessions.size,
@@ -372,5 +374,39 @@ class Api::V1::StatisticsController < Api::V1::BaseController
   def avg_val(arr)
     return nil if arr.empty?
     (arr.sum.to_f / arr.size).round(1)
+  end
+
+  def calc_current_streak_weeks(sorted_week_starts)
+    return 0 if sorted_week_starts.empty?
+    current_week = Date.today.beginning_of_week
+    streak = 0
+    # Walk backwards from current week
+    check = current_week
+    loop do
+      if sorted_week_starts.include?(check)
+        streak += 1
+        check -= 1.week
+      elsif check == current_week
+        # Allow grace: if this week has no session yet, start from last week
+        check -= 1.week
+      else
+        break
+      end
+    end
+    streak
+  end
+
+  def calc_best_streak_weeks(sorted_week_starts)
+    return 0 if sorted_week_starts.empty?
+    best = current = 1
+    sorted_week_starts.each_cons(2) do |a, b|
+      if (b - a).to_i == 7
+        current += 1
+        best = current if current > best
+      else
+        current = 1
+      end
+    end
+    best
   end
 end
