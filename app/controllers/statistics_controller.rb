@@ -378,6 +378,56 @@ class StatisticsController < ApplicationController
     steps_days  = days_range.select { |d| d.steps.present? }
     @avg_steps  = steps_days.any? ? (steps_days.sum { |d| d.steps.to_i }.to_f / steps_days.size).round : nil
 
+    # Steps enriched metrics
+    @steps_pct = if @avg_steps && @steps_goal > 0
+      [(@avg_steps.to_f / @steps_goal * 100).round, 100].min
+    end
+
+    if @avg_steps && @steps_goal > 0
+      # Streak — consecutive days meeting the goal (date-aware, same logic as hydration).
+      # Start from yesterday if today hasn't been logged yet to avoid wiping streak in the morning.
+      all_days_by_date = current_user.days
+                                     .where(date: (Date.today - 365)..Date.today)
+                                     .index_by(&:date)
+      today_steps_ok = all_days_by_date[Date.today]&.steps.to_i >= @steps_goal
+      streak_start   = today_steps_ok ? Date.today : Date.yesterday
+      streak = 0
+      streak_start.downto(Date.today - 365).each do |date|
+        d = all_days_by_date[date]
+        break if d.nil? || d.steps.to_i < @steps_goal
+        streak += 1
+      end
+      @steps_streak = streak
+
+      # Success rate — days in period where goal was reached vs total period days
+      @steps_success_reached = steps_days.count { |d| d.steps.to_i >= @steps_goal }
+      @steps_success_total   = @period
+
+      # Sport correlation — avg steps on workout/cardio days vs rest days
+      sport_day_ids = current_user.days
+                                  .joins("LEFT JOIN workout_sessions ws ON ws.day_id = days.id LEFT JOIN cardio_sessions cs ON cs.day_id = days.id")
+                                  .where(date: @from..Date.today)
+                                  .where("ws.id IS NOT NULL OR cs.id IS NOT NULL")
+                                  .distinct
+                                  .pluck(:id)
+                                  .to_set
+      sport_step_days = steps_days.select { |d| sport_day_ids.include?(d.id) }
+      rest_step_days  = steps_days.reject { |d| sport_day_ids.include?(d.id) }
+      if sport_step_days.size >= 5 && rest_step_days.size >= 5
+        avg_sport = (sport_step_days.sum { |d| d.steps.to_i }.to_f / sport_step_days.size).round
+        avg_rest  = (rest_step_days.sum  { |d| d.steps.to_i }.to_f / rest_step_days.size).round
+        @steps_sport_diff = avg_sport - avg_rest
+      end
+    end
+
+    # Steps heatmap — reuse week_days and week_data already computed for hydration heatmap above
+    @steps_heatmap = week_days.map do |d|
+      entry = week_data[d]
+      s     = entry&.steps.to_i
+      pct   = @steps_goal > 0 ? [(s.to_f / @steps_goal * 100).round, 100].min : 0
+      { date: d, pct: pct }
+    end
+
     # Evolution chart
     wb_by_date = days_range.index_by(&:date)
     range      = (@from..Date.today).to_a
