@@ -2,9 +2,117 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   devise_for :users, controllers: {
-    registrations: 'users/registrations',
-    passwords: 'users/passwords'
+    registrations:      'users/registrations',
+    passwords:          'users/passwords',
+    omniauth_callbacks: 'users/omniauth_callbacks'
   }
+
+  namespace :api do
+    namespace :v1 do
+      # Auth
+      post   "sessions",      to: "sessions#create"
+      delete "sessions",      to: "sessions#destroy"
+
+      # Registration
+      post   "registrations", to: "registrations#create"
+
+      # Password reset (public — no auth)
+      post   "passwords",     to: "passwords#create"
+
+      # SSO iOS (public — no auth)
+      post "auth/apple",  to: "auth#apple"
+      post "auth/google", to: "auth#google"
+
+      # User (authentifié)
+      resource  :profile,  only: [:show, :update]
+      resource  :password, only: [:update]
+      resource  :account,  only: [:destroy]
+      resource  :settings, only: [:show, :update]
+
+      # Statistics
+      get "statistics", to: "statistics#index"
+
+      # Nutrition
+      resources :foods do
+        collection do
+          get :search
+          get :lookup
+        end
+        member do
+          patch :toggle_favorite
+          patch :toggle_pantry
+        end
+      end
+      resources :food_labels
+      resources :day_food_groups
+      resources :recipes do
+        member do
+          patch :toggle_favorite
+          post  :add_to_shopping_list
+        end
+        resources :recipe_items,   only: [:create, :update, :destroy]
+        resources :recipe_ratings, only: [:create, :update, :destroy]
+      end
+
+      # Calendar
+      resources :days, param: :date, only: [:index, :show, :update] do
+        member do
+          patch :update_water
+          patch :update_steps
+          post  :copy_yesterday
+        end
+        resources :day_foods,   only: [:create, :update, :destroy]
+        resources :day_recipes, only: [:create, :update, :destroy]
+        resources :workout_sessions, only: [:create, :update, :destroy] do
+          resources :workout_sets, only: [:create, :update, :destroy]
+        end
+        resources :cardio_sessions, only: [:create, :update, :destroy] do
+          resources :cardio_blocks, only: [:create, :update, :destroy]
+        end
+      end
+
+      # Fitness — Exercices
+      resources :exercises do
+        collection do
+          get :favorites
+          get :search
+          get :recents
+        end
+        member do
+          post   :favorite
+          delete :unfavorite
+          get    :last_performance
+        end
+      end
+
+      # Fitness — Programmes
+      resources :workout_programs do
+        member do
+          post :activate
+          post :duplicate
+        end
+        resources :program_days, only: [:create, :update, :destroy] do
+          member do
+            post :copy_to
+          end
+          resources :program_exercises, only: [:create, :update, :destroy] do
+            collection { patch :reorder }
+            member     { patch :move }
+          end
+        end
+      end
+
+      # Other
+      resources :weight_entries
+      resources :shopping_lists do
+        member do
+          delete :clear_checked
+          delete :clear_all
+        end
+        resources :shopping_list_items, only: [:create, :update, :destroy]
+      end
+    end
+  end
 
   resource :profile, only: [:show, :edit, :update]
 

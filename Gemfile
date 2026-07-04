@@ -81,3 +81,10 @@ gem "rack-attack"
 
 gem "faraday", "~> 2.14"
 gem "csv"
+
+# API iOS
+gem "devise-jwt"
+gem "rack-cors"
+gem "omniauth-apple"
+gem "omniauth-google-oauth2"
+gem "omniauth-rails_csrf_protection"
