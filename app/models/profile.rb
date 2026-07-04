@@ -26,6 +26,15 @@ class Profile < ApplicationRecord
     muscle_gain:  1.10   # +10 % surplus (lean bulk)
   }.freeze
 
+  # Extra water per day based on physical job activity (hors séances sportives)
+  # Sources: IoM DRI + TrainingPeaks sweat rate data
+  WATER_ACTIVITY_OFFSET_ML = {
+    desk_job:       0,
+    light_activity: 300,
+    standing_job:   500,
+    physical_job:   700
+  }.freeze
+
   enumerize :gender,             in: GENDERS,             predicates: true, scope: true
   enumerize :job_activity_level, in: JOB_ACTIVITY_LEVELS, predicates: true, scope: true
   enumerize :goal,               in: GOALS,               predicates: true, scope: true
@@ -41,6 +50,19 @@ class Profile < ApplicationRecord
   validates :goal_weight,        numericality: { greater_than: 20, less_than: 400 }, allow_blank: true
   validates :water_goal_ml,      numericality: { greater_than: 0, less_than: 10_000 }, allow_blank: true
   validates :default_daily_steps, numericality: { greater_than_or_equal_to: 0, less_than: 100_000 }, allow_blank: true
+
+  # ── Hydration ─────────────────────────────────────────────────────────────
+
+  # Estimated daily water need (ml) based on weight, gender and activity level.
+  # Formula: 33ml/kg × gender coefficient + job activity offset.
+  def computed_water_goal_ml
+    return nil unless weight.present? && weight.to_f > 0
+
+    base     = weight.to_f * 33
+    gendered = gender.to_s == "female" ? base * 0.9 : base
+    offset   = WATER_ACTIVITY_OFFSET_ML[job_activity_level&.to_sym] || 0
+    ((gendered + offset) / 50.0).round * 50
+  end
 
   # ── Calorie calculations ───────────────────────────────────────────────────
 

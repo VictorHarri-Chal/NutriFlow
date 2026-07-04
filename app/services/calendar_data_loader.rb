@@ -10,7 +10,7 @@
 class CalendarDataLoader
   def initialize(user, day)
     @user = user
-    @day  = day
+    @day  = Day.includes(:workout_sessions, cardio_sessions: :cardio_blocks).find(day.id)
   end
 
   def call

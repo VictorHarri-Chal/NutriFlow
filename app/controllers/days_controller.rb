@@ -19,6 +19,8 @@ class DaysController < ApplicationController
                 end
 
     @day.update!(water_ml: new_value)
+    @day = current_user.days.includes(:workout_sessions, cardio_sessions: :cardio_blocks)
+                            .find(@day.id)
     @profile = current_user.profile
 
     respond_to do |format|

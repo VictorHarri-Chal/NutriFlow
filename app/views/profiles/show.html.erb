@@ -126,6 +126,23 @@
               <span class="text-xs text-ink-subtle ml-0.5"><%= t("views.calendars.breakdown.steps_unit") %></span>
             </span>
           </div>
+          <div class="flex items-center justify-between py-3">
+            <div class="flex items-center gap-2 text-sm text-ink-subtle">
+              <i class="fas fa-droplet text-xs w-3 text-center"></i>
+              <%= t("views.profiles.show.water_goal") %>
+            </div>
+            <div class="text-right">
+              <span class="text-sm font-medium text-ink-primary">
+                <%= number_with_delimiter(@profile.water_goal_ml || 2000) %>
+                <span class="text-xs text-ink-subtle ml-0.5">ml</span>
+              </span>
+              <% if (estimated = @profile.computed_water_goal_ml) && estimated != (@profile.water_goal_ml || 2000) %>
+                <div class="text-[10px] text-ink-subtle/50">
+                  <i class="fas fa-droplet text-status-info/50 mr-0.5"></i><%= t("views.profiles.show.water_goal_estimated", ml: number_with_delimiter(estimated)) %>
+                </div>
+              <% end %>
+            </div>
+          </div>
         </div>
       </div>
 
