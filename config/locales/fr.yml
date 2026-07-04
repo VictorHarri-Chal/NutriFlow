@@ -1449,6 +1449,9 @@ fr:
         email_placeholder: "ton@email.com"
         password: "Mot de passe"
         back_to_login: "Retour à la connexion"
+        or_continue_with: "ou continuer avec"
+        continue_with_apple: "Continuer avec Apple"
+        continue_with_google: "Continuer avec Google"
       sessions:
         title: "Connexion"
         subtitle: "Bienvenue sur NutriFlow"
