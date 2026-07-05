@@ -88,6 +88,9 @@ en:
       models:
         recipe:
           at_least_one_ingredient: "At least one ingredient is required"
+          attributes:
+            name:
+              taken: "is already used by one of your recipes"
         workout_session:
           at_least_one_exercise: "Add at least one exercise before saving the session."
         cardio_session:

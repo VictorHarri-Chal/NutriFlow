@@ -1,0 +1,14 @@
+fr:
+  activerecord:
+    models:
+      recipe: "Recette"
+      recipes: "Recettes"
+    attributes:
+      recipe:
+        name: "Nom"
+    errors:
+      models:
+        recipe:
+          attributes:
+            name:
+              taken: "est déjà utilisé pour une de vos recettes"
