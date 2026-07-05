@@ -6,6 +6,7 @@
 <div id="cardio_widget"
      data-controller="collapsible"
      data-collapsible-storage-key="cardio-widget"
+     <%= 'data-collapsible-force-open' if local_assigns[:force_open] %>
      class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-3 mb-4">
 
   <%# Header (click to toggle) %>

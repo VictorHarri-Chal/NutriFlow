@@ -6,8 +6,9 @@ export default class extends Controller {
   connect() {
     const saved = this.storageKey ? localStorage.getItem(this.storageKey) : null
     const openByDefault = this.element.hasAttribute("data-collapsible-open-by-default")
-    if (saved === "open" || (saved === null && openByDefault)) {
-      this._open(false)
+    const forceOpen = this.element.hasAttribute("data-collapsible-force-open")
+    if (forceOpen || saved === "open" || (saved === null && openByDefault)) {
+      this._open(true)
     } else {
       this._close(false)
     }

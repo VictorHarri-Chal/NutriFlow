@@ -1,11 +1,12 @@
 <% fab_class = "inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface-raised border border-surface-border/50 text-sm text-ink-subtle hover:text-ink-primary hover:border-surface-border transition-colors shadow-lg cursor-pointer" %>
 
-<div class="fixed bottom-6 right-6 z-40 flex items-center gap-2">
+<div class="fixed bottom-6 right-6 z-40 flex items-center gap-2"
+     data-controller="exclusive-frame">
   <% if current_user.show_workout_section? %>
     <%= link_to new_day_workout_session_path(day),
           class: fab_class,
           aria: { label: t("views.workout_sessions.widget.add_session") },
-          data: { turbo_frame: "item_form" } do %>
+          data: { turbo_frame: "workout_item_form", action: "click->exclusive-frame#clear" } do %>
       <i class="fas fa-plus text-xs" aria-hidden="true"></i>
       <span class="hidden sm:inline"><%= t("views.workout_sessions.widget.add_session") %></span>
     <% end %>
@@ -15,7 +16,7 @@
     <%= link_to new_day_cardio_session_path(day),
           class: fab_class,
           aria: { label: t("views.cardio_sessions.widget.add") },
-          data: { turbo_frame: "item_form" } do %>
+          data: { turbo_frame: "cardio_item_form", action: "click->exclusive-frame#clear" } do %>
       <i class="fas fa-plus text-xs" aria-hidden="true"></i>
       <span class="hidden sm:inline"><%= t("views.cardio_sessions.widget.add") %></span>
     <% end %>
@@ -24,7 +25,7 @@
   <%= link_to new_day_day_recipe_path(day),
         class: fab_class,
         aria: { label: t("views.calendars.add_recipe") },
-        data: { turbo_frame: "item_form" } do %>
+        data: { turbo_frame: "food_item_form", action: "click->exclusive-frame#clear" } do %>
     <i class="fas fa-plus text-xs" aria-hidden="true"></i>
     <span class="hidden sm:inline"><%= t("views.calendars.add_recipe") %></span>
   <% end %>
@@ -32,7 +33,7 @@
   <%= link_to new_day_day_food_path(day),
         class: fab_class,
         aria: { label: t("views.calendars.add_food") },
-        data: { turbo_frame: "item_form" } do %>
+        data: { turbo_frame: "food_item_form", action: "click->exclusive-frame#clear" } do %>
     <i class="fas fa-plus text-xs" aria-hidden="true"></i>
     <span class="hidden sm:inline"><%= t("views.calendars.add_food") %></span>
   <% end %>

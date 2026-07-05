@@ -2,7 +2,7 @@ class WorkoutProgram < ApplicationRecord
   belongs_to :user
   has_many :program_days, -> { order(:day_of_week) }, dependent: :destroy, inverse_of: :workout_program
 
-  validates :name, presence: true
+  validates :name, presence: true, uniqueness: { scope: :user_id, case_sensitive: false }
   validates :split_type, presence: true, inclusion: { in: %w[ppl upper_lower fullbody push_pull bro_split custom] }
 
   SPLIT_TYPES = %w[ppl upper_lower fullbody push_pull bro_split custom].freeze

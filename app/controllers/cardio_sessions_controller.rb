@@ -25,7 +25,7 @@ class CardioSessionsController < ApplicationController
       respond_to do |format|
         format.turbo_stream do
           render turbo_stream: turbo_stream.update(
-            "item_form",
+            "cardio_item_form",
             partial: "cardio_sessions/form",
             locals: { day: @day, cardio_session: @cardio_session }
           ), status: :unprocessable_entity
@@ -53,7 +53,7 @@ class CardioSessionsController < ApplicationController
       respond_to do |format|
         format.turbo_stream do
           render turbo_stream: turbo_stream.update(
-            "item_form",
+            "cardio_item_form",
             partial: "cardio_sessions/form",
             locals: { day: @day, cardio_session: @cardio_session }
           ), status: :unprocessable_entity

@@ -32,7 +32,7 @@ class DayRecipesController < ApplicationController
       @day_food_groups = current_user.day_food_groups.order(:name)
       @recipes         = current_user.recipes.includes(recipe_items: :food).order(:name)
       respond_to do |format|
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("item_form", partial: "day_recipes/form", locals: { day: @day, day_recipe: @day_recipe, submit_text: t("shared.add") }) }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("food_item_form", partial: "day_recipes/form", locals: { day: @day, day_recipe: @day_recipe, submit_text: t("shared.add") }) }
         format.html         { render :new, status: :unprocessable_entity }
       end
     end
@@ -57,7 +57,7 @@ class DayRecipesController < ApplicationController
       @day_food_groups = current_user.day_food_groups.order(:name)
       @recipes         = current_user.recipes.includes(recipe_items: :food).order(:name)
       respond_to do |format|
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("item_form", partial: "day_recipes/form", locals: { day: @day, day_recipe: @day_recipe, submit_text: t("shared.update") }) }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("food_item_form", partial: "day_recipes/form", locals: { day: @day, day_recipe: @day_recipe, submit_text: t("shared.update") }) }
         format.html         { render :edit, status: :unprocessable_entity }
       end
     end

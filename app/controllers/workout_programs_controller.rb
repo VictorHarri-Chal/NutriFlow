@@ -3,7 +3,7 @@ class WorkoutProgramsController < ApplicationController
 
   def index
     programs = current_user.workout_programs.includes(:program_days).order(created_at: :asc)
-    @pagy, @programs = pagy(programs, items: 15)
+    @pagy, @programs = pagy(programs, items: 6)
   end
 
   def show

@@ -65,7 +65,7 @@ class WorkoutSessionsController < ApplicationController
       respond_to do |format|
         format.turbo_stream do
           render turbo_stream: turbo_stream.update(
-            "item_form",
+            "workout_item_form",
             partial: "workout_sessions/form",
             locals: { day: @day, workout_session: @workout_session }
           ), status: :unprocessable_entity
@@ -91,7 +91,7 @@ class WorkoutSessionsController < ApplicationController
       respond_to do |format|
         format.turbo_stream do
           render turbo_stream: turbo_stream.update(
-            "item_form",
+            "workout_item_form",
             partial: "workout_sessions/form",
             locals: { day: @day, workout_session: @workout_session }
           ), status: :unprocessable_entity

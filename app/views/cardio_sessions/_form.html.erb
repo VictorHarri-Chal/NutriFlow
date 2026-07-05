@@ -1,5 +1,5 @@
-<%# Cardio session form — rendered inside turbo_frame "item_form" %>
-<%= turbo_frame_tag "item_form" do %>
+<%# Cardio session form — rendered inside turbo_frame "cardio_item_form" %>
+<%= turbo_frame_tag "cardio_item_form" do %>
   <div class="bg-surface-raised border border-surface-border/40 rounded-2xl p-5 mb-4">
 
     <%# Header %>
@@ -27,7 +27,7 @@
     <% end %>
 
     <%= form_with model: (cardio_session.persisted? ? cardio_session : [day, cardio_session]),
-          data: { controller: "cardio-form", turbo_frame: "item_form" },
+          data: { controller: "cardio-form", turbo_frame: "cardio_item_form" },
           class: "space-y-4" do |f| %>
 
       <%# Single block %>
@@ -50,7 +50,7 @@
         <%= link_to t("views.cardio_sessions.form.cancel"),
               calendars_path(date: day.date),
               class: "btn-ghost text-sm",
-              data: { turbo_frame: "item_form" } %>
+              data: { turbo_frame: "cardio_item_form" } %>
         <%= f.submit cardio_session.new_record? ? t("views.cardio_sessions.form.submit_add") : t("views.cardio_sessions.form.submit"), class: "btn-primary text-sm" %>
       </div>
 

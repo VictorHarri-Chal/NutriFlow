@@ -21,7 +21,7 @@ class RecipesController < ApplicationController
   end
 
   def show
-    cooked            = current_user.day_recipes.joins(:day).where(recipe_id: @recipe.id)
+    cooked            = DayRecipe.joins(:day).where(days: { user_id: current_user.id }, recipe_id: @recipe.id)
     @times_cooked     = cooked.count
     @last_cooked_date = cooked.maximum("days.date")
   end

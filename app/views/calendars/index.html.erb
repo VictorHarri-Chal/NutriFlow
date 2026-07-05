@@ -39,15 +39,14 @@
     <%# ── Workout widget ── %>
     <% if current_user.show_workout_section? %>
       <%= render 'calendars/workout_widget', day: @day %>
+      <%= turbo_frame_tag "workout_item_form" %>
     <% end %>
 
     <%# ── Cardio widget ── %>
     <% if current_user.show_cardio_section? %>
       <%= render 'calendars/cardio_widget', day: @day %>
+      <%= turbo_frame_tag "cardio_item_form" %>
     <% end %>
-
-    <%# ── Inline form (turbo frame) ── %>
-    <%= turbo_frame_tag "item_form" %>
 
     <%# ── Food widget ── %>
     <%= render 'calendars/food_widget',
@@ -55,6 +54,7 @@
                day_items_by_group:      @day_items_by_group,
                day_items_without_group: @day_items_without_group,
                day:                     @day %>
+    <%= turbo_frame_tag "food_item_form" %>
 
     <%# ── Daily note ── %>
     <% if current_user.show_day_note? %>
