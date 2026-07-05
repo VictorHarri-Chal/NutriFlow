@@ -10,11 +10,17 @@ export default class extends Controller {
     document.body.style.overflow = "hidden"
   }
 
+  disconnect() {
+    clearTimeout(this._closeTimer)
+    document.body.style.overflow = ""
+  }
+
   close() {
     this.overlayTarget.classList.add("opacity-0")
     this.overlayTarget.classList.remove("opacity-100")
     this.sheetTarget.classList.add("translate-y-full")
-    setTimeout(() => {
+    clearTimeout(this._closeTimer)
+    this._closeTimer = setTimeout(() => {
       this.overlayTarget.classList.add("pointer-events-none")
       document.body.style.overflow = ""
     }, 300)
