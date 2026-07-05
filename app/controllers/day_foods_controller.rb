@@ -1,5 +1,6 @@
 class DayFoodsController < ApplicationController
   include CalendarData
+  include DayScoped
 
   before_action :set_day,      only: [:new, :create]
   before_action :set_day_food, only: [:edit, :update, :destroy]
@@ -81,7 +82,7 @@ class DayFoodsController < ApplicationController
   end
 
   def set_day_food
-    @day_food = DayFood.joins(:day).where(days: { user_id: current_user.id }).find(params[:id])
+    @day_food = find_day_scoped(DayFood, params[:id])
     @day = @day_food.day
   end
 

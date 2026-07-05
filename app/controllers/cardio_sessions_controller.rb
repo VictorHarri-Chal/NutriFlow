@@ -1,5 +1,6 @@
 class CardioSessionsController < ApplicationController
   include CalendarData
+  include DayScoped
 
   before_action :set_day,            only: [:new, :create]
   before_action :set_cardio_session, only: [:edit, :update, :destroy]
@@ -85,9 +86,7 @@ class CardioSessionsController < ApplicationController
   end
 
   def set_cardio_session
-    @cardio_session = CardioSession.joins(:day)
-                                   .where(days: { user_id: current_user.id })
-                                   .find(params[:id])
+    @cardio_session = find_day_scoped(CardioSession, params[:id])
     @day = @cardio_session.day
   end
 

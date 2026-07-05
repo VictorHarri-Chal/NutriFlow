@@ -74,9 +74,8 @@ class WeightEntriesController < ApplicationController
     @delta_30d = ref_30d ? (@current_weight - ref_30d.weight_kg).round(1) : nil
     @delta_90d = ref_90d ? (@current_weight - ref_90d.weight_kg).round(1) : nil
 
-    if @profile&.height.present?
-      height_m     = @profile.height / 100.0
-      @bmi         = (@current_weight / height_m**2).round(1)
+    if (bmi = @profile&.bmi(@current_weight))
+      @bmi         = bmi
       @bmi_category = case @bmi
                       when ...18.5 then :underweight
                       when 18.5...25 then :normal
