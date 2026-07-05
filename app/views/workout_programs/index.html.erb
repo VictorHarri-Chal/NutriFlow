@@ -7,13 +7,13 @@
       <h1 class="text-2xl font-bold text-ink-primary"><%= t("views.workout_programs.title") %></h1>
       <p class="text-xs text-ink-subtle mt-0.5"><%= t("views.workout_programs.subtitle") %></p>
     </div>
-    <%= link_to new_workout_program_path, class: "btn-primary #{@programs.empty? ? 'invisible pointer-events-none' : ''}" do %>
+    <%= link_to new_workout_program_path, class: "btn-primary #{@pagy.count.zero? ? 'invisible pointer-events-none' : ''}" do %>
       <i class="fas fa-plus"></i>
       <%= t("views.workout_programs.new_program") %>
     <% end %>
   </div>
 
-  <% if @programs.any? %>
+  <% if @pagy.count > 0 %>
     <div class="space-y-3">
       <% @programs.each do |program| %>
         <div class="card p-5 flex items-center gap-4 hover:border-surface-border/70 transition-colors group">
@@ -70,6 +70,7 @@
         </div>
       <% end %>
     </div>
+    <%= render PaginationComponent.new(pagy: @pagy) %>
   <% else %>
     <div class="text-center py-16 border-2 border-dashed border-surface-border/50 rounded-xl bg-surface-base">
       <div class="w-14 h-14 mx-auto mb-3 bg-surface-raised rounded-full flex items-center justify-center border border-surface-border/40">

@@ -2,7 +2,8 @@ class WorkoutProgramsController < ApplicationController
   before_action :set_program, only: [:show, :edit, :update, :destroy, :activate, :duplicate]
 
   def index
-    @programs = current_user.workout_programs.includes(:program_days).order(created_at: :asc)
+    programs = current_user.workout_programs.includes(:program_days).order(created_at: :asc)
+    @pagy, @programs = pagy(programs, items: 15)
   end
 
   def show
