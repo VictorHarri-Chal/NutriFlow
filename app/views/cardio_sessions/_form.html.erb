@@ -26,7 +26,7 @@
       </div>
     <% end %>
 
-    <%= form_with model: [day, cardio_session],
+    <%= form_with model: (cardio_session.persisted? ? cardio_session : [day, cardio_session]),
           data: { controller: "cardio-form", turbo_frame: "item_form" },
           class: "space-y-4" do |f| %>
 

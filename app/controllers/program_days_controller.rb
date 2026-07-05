@@ -1,5 +1,4 @@
 class ProgramDaysController < ApplicationController
-  before_action :set_program
   before_action :set_day
 
   def update
@@ -36,12 +35,11 @@ class ProgramDaysController < ApplicationController
 
   private
 
-  def set_program
-    @program = current_user.workout_programs.find(params[:workout_program_id])
-  end
-
   def set_day
-    @day = @program.program_days.find(params[:id])
+    @day = ProgramDay.joins(:workout_program)
+                     .where(workout_programs: { user_id: current_user.id })
+                     .find(params[:id])
+    @program = @day.workout_program
   end
 
   def program_day_params

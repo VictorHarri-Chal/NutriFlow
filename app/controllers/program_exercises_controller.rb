@@ -1,7 +1,6 @@
 class ProgramExercisesController < ApplicationController
-  before_action :set_program
-  before_action :set_day
-  before_action :set_exercise, only: [:update, :destroy, :move]
+  before_action :set_program_day, only: [:create, :reorder]
+  before_action :set_exercise,    only: [:update, :destroy, :move]
 
   def create
     @exercise = @day.program_exercises.build(exercise_params)
@@ -68,16 +67,19 @@ class ProgramExercisesController < ApplicationController
 
   private
 
-  def set_program
-    @program = current_user.workout_programs.find(params[:workout_program_id])
-  end
-
-  def set_day
-    @day = @program.program_days.find(params[:program_day_id])
+  def set_program_day
+    @day = ProgramDay.joins(:workout_program)
+                     .where(workout_programs: { user_id: current_user.id })
+                     .find(params[:program_day_id])
+    @program = @day.workout_program
   end
 
   def set_exercise
-    @exercise = @day.program_exercises.find(params[:id])
+    @exercise = ProgramExercise.joins(program_day: :workout_program)
+                               .where(workout_programs: { user_id: current_user.id })
+                               .find(params[:id])
+    @day     = @exercise.program_day
+    @program = @day.workout_program
   end
 
   def exercise_params

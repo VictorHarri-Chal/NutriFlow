@@ -39,10 +39,10 @@ Rails.application.routes.draw do
       patch :update_water
       patch :update_steps
     end
-    resources :day_foods, only: [:new, :create, :edit, :update, :destroy]
-    resources :day_recipes, only: [:new, :create, :edit, :update, :destroy]
-    resources :workout_sessions, only: [:new, :create, :edit, :update, :destroy]
-    resources :cardio_sessions,  only: [:new, :create, :edit, :update, :destroy]
+    resources :day_foods,        only: [:new, :create, :edit, :update, :destroy], shallow: true
+    resources :day_recipes,      only: [:new, :create, :edit, :update, :destroy], shallow: true
+    resources :workout_sessions, only: [:new, :create, :edit, :update, :destroy], shallow: true
+    resources :cardio_sessions,  only: [:new, :create, :edit, :update, :destroy], shallow: true
   end
 
   resources :workout_programs do
@@ -50,9 +50,9 @@ Rails.application.routes.draw do
       patch :activate
       post  :duplicate
     end
-    resources :program_days, only: [:update] do
+    resources :program_days, only: [:update], shallow: true do
       member { post :copy_to }
-      resources :program_exercises, only: [:create, :update, :destroy] do
+      resources :program_exercises, only: [:create, :update, :destroy], shallow: true do
         collection { patch :reorder }
         member     { patch :move }
       end
@@ -79,7 +79,7 @@ Rails.application.routes.draw do
       patch :toggle_favorite
       post  :add_to_shopping_list
     end
-    resources :recipe_ratings, only: [:create, :destroy]
+    resources :recipe_ratings, only: [:create, :destroy], shallow: true
   end
 
   resources :shopping_lists, only: [:index, :show, :destroy] do
@@ -87,7 +87,7 @@ Rails.application.routes.draw do
       delete :clear_checked
       delete :clear_all
     end
-    resources :shopping_list_items, only: [:create, :update, :destroy]
+    resources :shopping_list_items, only: [:create, :update, :destroy], shallow: true
   end
 
   post 'days/:date/add_food', to: 'days#add_food', as: :add_food_to_day

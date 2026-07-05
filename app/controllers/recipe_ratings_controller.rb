@@ -1,6 +1,6 @@
 class RecipeRatingsController < ApplicationController
-  before_action :set_recipe
-  before_action :set_rating, only: [:destroy]
+  before_action :set_recipe, only: [:create]
+  before_action :set_rating,  only: [:destroy]
 
   def create
     @rating = @recipe.recipe_ratings.find_or_initialize_by(user: current_user)
@@ -25,8 +25,10 @@ class RecipeRatingsController < ApplicationController
   end
 
   def set_rating
-    @rating = @recipe.recipe_ratings.find_by(user: current_user)
-    redirect_to @recipe unless @rating
+    @rating = RecipeRating.joins(:recipe)
+                          .where(recipes: { user_id: current_user.id })
+                          .find(params[:id])
+    @recipe = @rating.recipe
   end
 
   def rating_params

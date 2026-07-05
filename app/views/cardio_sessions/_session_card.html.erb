@@ -16,12 +16,12 @@
 
     <% if defined?(show_actions) && show_actions %>
       <div class="flex items-center gap-0.5 opacity-0 group-hover/card:opacity-100 transition-opacity flex-shrink-0">
-        <%= link_to edit_day_cardio_session_path(cardio_session.day, cardio_session),
+        <%= link_to edit_cardio_session_path(cardio_session),
               class: "p-1.5 text-ink-subtle/50 hover:text-ink-primary transition-colors rounded",
               data: { turbo_frame: "item_form" } do %>
           <i class="fas fa-pen text-[11px]"></i>
         <% end %>
-        <%= link_to day_cardio_session_path(cardio_session.day, cardio_session),
+        <%= link_to cardio_session_path(cardio_session),
               class: "p-1.5 text-ink-subtle/50 hover:text-status-danger transition-colors rounded",
               data: {
                 turbo_method: :delete,

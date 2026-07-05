@@ -2,8 +2,8 @@
 <div class="flex-1 p-2 space-y-1.5 overflow-y-auto"
      id="program_day_exercises_<%= day.id %>"
      data-controller="sortable-list"
-     data-sortable-list-url-value="<%= reorder_workout_program_program_day_program_exercises_path(program, day) %>"
-     data-sortable-list-move-base-value="<%= workout_program_program_day_program_exercises_path(program, day) %>"
+     data-sortable-list-url-value="<%= reorder_program_day_program_exercises_path(day) %>"
+     data-sortable-list-move-base-value="/program_exercises"
      data-sortable-list-group-value="program_<%= program.id %>"
      data-sortable-list-day-id-value="<%= day.id %>">
   <% exercises = day.program_exercises.reload.order(:position).load %>

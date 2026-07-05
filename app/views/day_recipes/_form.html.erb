@@ -7,7 +7,7 @@
   }.to_json).html_safe %>
 </script>
 
-<%= simple_form_for([day, day_recipe]) do |f| %>
+<%= simple_form_for(day_recipe.persisted? ? day_recipe : [day, day_recipe]) do |f| %>
   <div data-controller="day-recipe-preview"
        data-action="input->day-recipe-preview#update"
        class="space-y-4">
