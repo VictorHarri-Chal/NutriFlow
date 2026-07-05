@@ -61,6 +61,7 @@ node_modules
 .deploy_staging_merged_pr_register
 
 .claude
+CLAUDE.md
 public/exercise_gifs
 mise.toml
 
