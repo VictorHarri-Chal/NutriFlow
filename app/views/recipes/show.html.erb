@@ -248,7 +248,7 @@
     <%# ── Sidebar (2/5) ── %>
     <div class="lg:col-span-2">
       <div class="sticky top-6 space-y-4">
-        <%= render RecipeSidebarComponent.new(recipe: @recipe, current_user: current_user) %>
+        <%= render RecipeSidebarComponent.new(recipe: @recipe, current_user: current_user, times_cooked: @times_cooked, last_cooked_date: @last_cooked_date) %>
       </div>
     </div>
 

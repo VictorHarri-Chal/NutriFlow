@@ -10,9 +10,11 @@ class RecipeSidebarComponent < ApplicationComponent
     "vitamin_a" => "µg", "vitamin_b9" => "µg", "epa" => "g", "dha" => "g"
   }.freeze
 
-  def initialize(recipe:, current_user:)
-    @recipe = recipe
-    @current_user = current_user
+  def initialize(recipe:, current_user:, times_cooked: 0, last_cooked_date: nil)
+    @recipe          = recipe
+    @current_user    = current_user
+    @times_cooked    = times_cooked
+    @last_cooked_date = last_cooked_date
   end
 
   private
@@ -58,17 +60,5 @@ class RecipeSidebarComponent < ApplicationComponent
     @traces ||= recipe.aggregated_traces
   end
 
-  def times_cooked
-    @times_cooked ||= DayRecipe
-      .joins(:day)
-      .where(days: { user_id: current_user.id }, recipe_id: recipe.id)
-      .count
-  end
-
-  def last_cooked_date
-    @last_cooked_date ||= DayRecipe
-      .joins(:day)
-      .where(days: { user_id: current_user.id }, recipe_id: recipe.id)
-      .maximum("days.date")
-  end
+  attr_reader :times_cooked, :last_cooked_date
 end

@@ -44,8 +44,9 @@ class StatisticsController < ApplicationController
                          day_recipes: [:day_food_group, { recipe: { recipe_items: :food } }]
                        )
                        .order(:date)
+                       .to_a
 
-    @logged_days = days.select { |d| d.day_foods.any? || d.day_recipes.any? }
+    @logged_days = days.select { |d| d.day_foods.size > 0 || d.day_recipes.size > 0 }
 
     if @logged_days.any?
       totals = @logged_days.map { |d| day_macros(d) }
@@ -299,7 +300,8 @@ class StatisticsController < ApplicationController
   # ── Bien-être ────────────────────────────────────────────────────────────────
 
   def load_wellbeing_stats
-    days_range = current_user.days.where(date: @from..Date.today).order(:date).to_a
+    days_range        = current_user.days.where(date: @from..Date.today).order(:date).to_a
+    days_year_by_date = nil
 
     @wb_days = days_range.select { |d|
       d.energy_level.present? || d.mood.present? || d.sleep_quality.present?
@@ -325,14 +327,14 @@ class StatisticsController < ApplicationController
       # If today hasn't been logged yet we start from yesterday, so the streak
       # isn't wiped out first thing in the morning.
       if @water_goal_ml > 0
-        days_by_date = current_user.days
-                                   .where(date: (Date.today - 365)..Date.today)
-                                   .index_by(&:date)
-        today_ok   = days_by_date[Date.today]&.water_ml.to_i >= @water_goal_ml
+        days_year_by_date ||= current_user.days
+                                          .where(date: (Date.today - 365)..Date.today)
+                                          .index_by(&:date)
+        today_ok   = days_year_by_date[Date.today]&.water_ml.to_i >= @water_goal_ml
         start_date = today_ok ? Date.today : Date.yesterday
         streak = 0
         start_date.downto(Date.today - 365).each do |date|
-          d = days_by_date[date]
+          d = days_year_by_date[date]
           break if d.nil? || d.water_ml.to_i < @water_goal_ml
           streak += 1
         end
@@ -386,14 +388,14 @@ class StatisticsController < ApplicationController
     if @avg_steps && @steps_goal > 0
       # Streak — consecutive days meeting the goal (date-aware, same logic as hydration).
       # Start from yesterday if today hasn't been logged yet to avoid wiping streak in the morning.
-      all_days_by_date = current_user.days
-                                     .where(date: (Date.today - 365)..Date.today)
-                                     .index_by(&:date)
-      today_steps_ok = all_days_by_date[Date.today]&.steps.to_i >= @steps_goal
+      days_year_by_date ||= current_user.days
+                                        .where(date: (Date.today - 365)..Date.today)
+                                        .index_by(&:date)
+      today_steps_ok = days_year_by_date[Date.today]&.steps.to_i >= @steps_goal
       streak_start   = today_steps_ok ? Date.today : Date.yesterday
       streak = 0
       streak_start.downto(Date.today - 365).each do |date|
-        d = all_days_by_date[date]
+        d = days_year_by_date[date]
         break if d.nil? || d.steps.to_i < @steps_goal
         streak += 1
       end
