@@ -3,6 +3,10 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["pill", "tab"]
 
+  disconnect() {
+    clearTimeout(this._navTimer)
+  }
+
   select(event) {
     event.preventDefault()
     const link = event.currentTarget
@@ -16,6 +20,7 @@ export default class extends Controller {
       this.pillTarget.style.right = "4px"
     }
 
-    setTimeout(() => { Turbo.visit(link.href) }, 220)
+    clearTimeout(this._navTimer)
+    this._navTimer = setTimeout(() => { Turbo.visit(link.href) }, 220)
   }
 }

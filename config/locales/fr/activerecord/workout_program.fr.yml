@@ -1,0 +1,14 @@
+fr:
+  activerecord:
+    models:
+      workout_program: "Programme"
+      workout_programs: "Programmes"
+    attributes:
+      workout_program:
+        name: "Nom"
+    errors:
+      models:
+        workout_program:
+          attributes:
+            name:
+              taken: "est déjà utilisé par l'un de vos programmes"

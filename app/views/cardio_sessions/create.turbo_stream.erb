@@ -1,8 +1,8 @@
-<%= turbo_stream.replace "item_form" do %>
-  <%= turbo_frame_tag "item_form" %>
+<%= turbo_stream.replace "cardio_item_form" do %>
+  <%= turbo_frame_tag "cardio_item_form" %>
 <% end %>
 <%= turbo_stream.replace "cardio_widget" do %>
-  <%= render "calendars/cardio_widget", day: @day %>
+  <%= render "calendars/cardio_widget", day: @day, force_open: true %>
 <% end %>
 <%= turbo_stream.replace "daily_panel" do %>
   <%= render "calendars/daily_panel",

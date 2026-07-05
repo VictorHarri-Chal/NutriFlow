@@ -36,7 +36,7 @@
         <% training_days.each do |pd| %>
           <% is_today = pd.day_of_week == calendar_dow %>
           <%= link_to new_day_workout_session_path(day, program_day_id: pd.id),
-                data: { turbo_frame: "item_form" },
+                data: { turbo_frame: "workout_item_form" },
                 class: "#{row_base} #{is_today ? row_today : row_default}" do %>
             <div class="w-0.5 h-8 rounded-full shrink-0 <%= is_today ? bar_today : bar_default %>"></div>
             <div class="flex-1 min-w-0">
@@ -69,7 +69,7 @@
 
     <%# ── Séance personnalisée ── %>
     <%= link_to new_day_workout_session_path(day, mode: "custom"),
-          data: { turbo_frame: "item_form" },
+          data: { turbo_frame: "workout_item_form" },
           class: "#{row_base} #{row_default}" do %>
       <div class="w-0.5 h-8 rounded-full shrink-0 <%= bar_default %>"></div>
       <div class="flex-1">

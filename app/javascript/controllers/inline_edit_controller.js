@@ -20,9 +20,14 @@ export default class extends Controller {
     }
   }
 
+  disconnect() {
+    clearTimeout(this._blurTimer)
+  }
+
   blur() {
     // Delay allows requestSubmit() to fire before blur hides the form
-    setTimeout(() => {
+    clearTimeout(this._blurTimer)
+    this._blurTimer = setTimeout(() => {
       if (this.hasFormTarget && !this.formTarget.classList.contains("hidden")) {
         this._submit()
       }

@@ -28,9 +28,13 @@ class Day < ApplicationRecord
       workout_sessions.sum(:calories_burned).to_i
     end
 
-    cardio_kcal = CardioBlock.joins(:cardio_session)
-                             .where(cardio_sessions: { day_id: id })
-                             .sum(:calories_burned).to_i
+    cardio_kcal = if cardio_sessions.loaded? && cardio_sessions.all? { |cs| cs.cardio_blocks.loaded? }
+      cardio_sessions.sum { |cs| cs.cardio_blocks.sum { |cb| cb.calories_burned.to_i } }
+    else
+      CardioBlock.joins(:cardio_session)
+                 .where(cardio_sessions: { day_id: id })
+                 .sum(:calories_burned).to_i
+    end
 
     strength_kcal + cardio_kcal
   end

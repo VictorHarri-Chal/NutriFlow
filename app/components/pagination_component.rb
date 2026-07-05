@@ -28,30 +28,17 @@ class PaginationComponent < ApplicationComponent
   end
 
   def full_result_path
-    current_path = request.fullpath.dup
-    return current_path if current_path.include?("full_result=true")
-
-    if current_path.include?("?")
-      current_path["?"] = "?full_result=true&"
-    else
-      current_path << "?full_result=true"
-    end
-
-    current_path.sub!(/&page=\d/, "")
-
-    current_path
+    build_path(request.query_parameters.except("page").merge("full_result" => "true"))
   end
 
   def pagy_result_path
-    current_path = request.fullpath.dup
+    build_path(request.query_parameters.except("full_result", "page"))
+  end
 
-    if current_path.include?("&")
-      current_path.sub!("full_result=true&", "")
-    else
-      current_path.sub!("?full_result=true", "")
-    end
-
-    current_path
+  def build_path(query_params)
+    uri = URI.parse(request.path)
+    uri.query = query_params.present? ? URI.encode_www_form(query_params) : nil
+    uri.to_s
   end
 
   def full_result?

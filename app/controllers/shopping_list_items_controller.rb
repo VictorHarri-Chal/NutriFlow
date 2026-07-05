@@ -1,5 +1,6 @@
 class ShoppingListItemsController < ApplicationController
-  before_action :set_shopping_list
+  before_action :set_shopping_list, only: [:create]
+  before_action :set_item_and_list, only: [:update, :destroy]
 
   def create
     p       = params.fetch(:shopping_list_item, {})
@@ -40,7 +41,6 @@ class ShoppingListItemsController < ApplicationController
   end
 
   def update
-    @item = @shopping_list.shopping_list_items.find(params[:id])
     @item.update!(item_params)
     set_list_state
     respond_to do |format|
@@ -50,7 +50,6 @@ class ShoppingListItemsController < ApplicationController
   end
 
   def destroy
-    @item = @shopping_list.shopping_list_items.find(params[:id])
     @item.destroy!
     set_list_state
     respond_to do |format|
@@ -63,6 +62,13 @@ class ShoppingListItemsController < ApplicationController
 
   def set_shopping_list
     @shopping_list = current_user.shopping_lists.find(params[:shopping_list_id])
+  end
+
+  def set_item_and_list
+    @item = ShoppingListItem.joins(:shopping_list)
+                            .where(shopping_lists: { user_id: current_user.id })
+                            .find(params[:id])
+    @shopping_list = @item.shopping_list
   end
 
   def set_list_state

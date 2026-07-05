@@ -6,8 +6,9 @@ export default class extends Controller {
   connect() {
     const saved = this.storageKey ? localStorage.getItem(this.storageKey) : null
     const openByDefault = this.element.hasAttribute("data-collapsible-open-by-default")
-    if (saved === "open" || (saved === null && openByDefault)) {
-      this._open(false)
+    const forceOpen = this.element.hasAttribute("data-collapsible-force-open")
+    if (forceOpen || saved === "open" || (saved === null && openByDefault)) {
+      this._open(true)
     } else {
       this._close(false)
     }
@@ -19,6 +20,7 @@ export default class extends Controller {
   }
 
   disconnect() {
+    clearTimeout(this._outsideClickTimer)
     this._removeOutsideClick()
     if (this._boundGroupClose) {
       document.removeEventListener("collapsible:open", this._boundGroupClose)
@@ -48,7 +50,7 @@ export default class extends Controller {
     if (persist && this.storageKey) localStorage.setItem(this.storageKey, "open")
     if (this.element.hasAttribute("data-collapsible-dismiss-on-outside-click")) {
       this._boundOutsideClick = this._onOutsideClick.bind(this)
-      setTimeout(() => document.addEventListener("click", this._boundOutsideClick), 0)
+      this._outsideClickTimer = setTimeout(() => document.addEventListener("click", this._boundOutsideClick), 0)
     }
     if (this.group) {
       document.dispatchEvent(new CustomEvent("collapsible:open", { detail: { group: this.group, source: this.element } }))

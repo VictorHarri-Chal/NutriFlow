@@ -27,7 +27,7 @@
     <span class="text-xs font-medium text-ink-primary leading-tight line-clamp-2 flex-1">
       <%= pe.exercise.name.capitalize %>
     </span>
-    <%= link_to workout_program_program_day_program_exercise_path(program, day, pe),
+    <%= link_to program_exercise_path(pe),
           data: { turbo_method: :delete, action: "click->confirm#show click->collapsible#stopEvent", confirm_message: t("views.workout_programs.confirm_remove_exercise") },
           class: "opacity-0 group-hover:opacity-100 text-ink-subtle/40 hover:text-red-400 transition-all text-[10px] p-0.5 cursor-pointer shrink-0" do %>
       <i class="fas fa-times"></i>
@@ -58,7 +58,7 @@
        class="<%= expanded ? "mt-2" : "hidden" %>">
 
     <div class="border-t border-surface-border/20 pt-2">
-      <%= form_with url: workout_program_program_day_program_exercise_path(program, day, pe),
+      <%= form_with url: program_exercise_path(pe),
             method: :patch,
             scope: :program_exercise,
             html: { novalidate: true },

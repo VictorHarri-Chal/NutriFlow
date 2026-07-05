@@ -86,8 +86,6 @@ fr:
         sugars: "Sucres"
     errors:
       models:
-        recipe:
-          at_least_one_ingredient: "Au moins un ingrédient est requis"
         workout_session:
           at_least_one_exercise: "Ajoutez au moins un exercice avant d'enregistrer la séance."
         cardio_session:
@@ -137,7 +135,7 @@ fr:
         collapse: "Réduire"
         weight: "Suivi poids"
         exercises: "Entraînement"
-        workout_programs: "Mon programme"
+        workout_programs: "Programmes"
         statistics: "Statistiques"
         shopping_list: "Liste de courses"
 
@@ -506,7 +504,8 @@ fr:
         food_group: "Groupe de repas"
 
     recipes:
-      title: "Mes recettes"
+      title: "Banque de recettes"
+      heading: "Mes recettes"
       new_recipe: "Nouvelle recette"
       search_placeholder: "Rechercher une recette..."
       no_recipes: "Aucune recette"
@@ -916,7 +915,8 @@ fr:
         friday: "Ven"
         saturday: "Sam"
         sunday: "Dim"
-      title: "Mes programmes"
+      title: "Programmes"
+      heading: "Mes programmes"
       subtitle: "Crée tes semaines-types et charge-les directement dans le calendrier."
       new_program: "Nouveau programme"
       active: "Actif"

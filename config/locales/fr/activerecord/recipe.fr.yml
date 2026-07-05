@@ -1,0 +1,15 @@
+fr:
+  activerecord:
+    models:
+      recipe: "Recette"
+      recipes: "Recettes"
+    attributes:
+      recipe:
+        name: "Nom"
+    errors:
+      models:
+        recipe:
+          at_least_one_ingredient: "Au moins un ingrédient est requis"
+          attributes:
+            name:
+              taken: "est déjà utilisé pour une de vos recettes"

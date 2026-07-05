@@ -33,14 +33,14 @@
         <div class="flex items-center gap-1">
           <%= link_to add_food_path,
                 class: "inline-flex items-center gap-1 px-2 py-1 text-xs text-ink-subtle hover:text-brand hover:bg-surface-hover rounded-md transition-colors",
-                data: { turbo_frame: "item_form" },
+                data: { turbo_frame: "food_item_form" },
                 title: t("views.calendars.add_food") do %>
             <i class="fas fa-plus text-xs"></i>
             <span class="hidden sm:inline"><%= t("views.components.day_food_group.add_food") %></span>
           <% end %>
           <%= link_to add_recipe_path,
                 class: "inline-flex items-center gap-1 px-2 py-1 text-xs text-ink-subtle hover:text-brand hover:bg-surface-hover rounded-md transition-colors",
-                data: { turbo_frame: "item_form" },
+                data: { turbo_frame: "food_item_form" },
                 title: t("views.calendars.add_recipe") do %>
             <i class="fas fa-plus text-xs"></i>
             <span class="hidden sm:inline"><%= t("views.components.day_food_group.add_recipe") %></span>
@@ -88,7 +88,7 @@
                 <div class="flex items-center justify-center gap-3">
                   <%= link_to edit_path(item),
                         class: "w-8 h-8 inline-flex items-center justify-center rounded-lg text-ink-subtle hover:text-brand hover:bg-surface-hover transition-colors",
-                        data: { turbo_frame: "item_form" },
+                        data: { turbo_frame: "food_item_form" },
                         title: t("shared.edit") do %>
                     <i class="fas fa-pen text-xs"></i>
                   <% end %>

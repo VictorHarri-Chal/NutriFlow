@@ -25,7 +25,7 @@
       </p>
       <div class="grid grid-cols-3 gap-1">
         <% program.program_days.reject { |d| d.id == day.id }.each do |target| %>
-          <% copy_url = copy_to_workout_program_program_day_path(program, day) %>
+          <% copy_url = copy_to_program_day_path(day) %>
           <% if target.program_exercises.any? %>
             <button type="button"
                     class="text-center py-1 text-[10px] rounded-lg border border-surface-border/40 text-ink-muted hover:bg-surface-hover hover:text-ink-primary hover:border-surface-border/60 transition-colors cursor-pointer"
@@ -52,7 +52,7 @@
     </div>
 
     <%# Inline editable session name %>
-    <%= form_with url: workout_program_program_day_path(program, day),
+    <%= form_with url: program_day_path(day),
           method: :patch,
           scope: :program_day,
           class: "w-full" do |f| %>
@@ -66,7 +66,7 @@
   </div>
 
   <%# ── Duration + Notes metadata ── %>
-  <%= form_with url: workout_program_program_day_path(program, day),
+  <%= form_with url: program_day_path(day),
         method: :patch,
         html: { novalidate: true },
         class: "px-2 pt-2 pb-1 border-b border-surface-border/20 space-y-1" do %>
@@ -101,7 +101,7 @@
          data-program-builder-search-path-value="<%= search_exercises_path %>"
          data-program-builder-favorites-path-value="<%= favorites_exercises_path(format: :json) %>"
          data-program-builder-favorites-label-value="<%= t("views.exercises.source_favorites") %>"
-         data-program-builder-create-path-value="<%= workout_program_program_day_program_exercises_path(program, day) %>"
+         data-program-builder-create-path-value="<%= program_day_program_exercises_path(day) %>"
          data-program-builder-no-results-value="<%= t("views.workout_programs.day.no_exercise_found") %>"
          class="relative">
       <div class="relative">

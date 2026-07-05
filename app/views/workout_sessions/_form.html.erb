@@ -1,4 +1,4 @@
-<%= form_with model: [day, workout_session],
+<%= form_with model: (workout_session.persisted? ? workout_session : [day, workout_session]),
     data: { controller: "workout-form",
             action: "submit->workout-form#validateSubmit",
             workout_form_last_perf_path_value:       last_performance_exercise_path(":id"),

@@ -5,7 +5,7 @@ import "tooltip"
 
 // Auto-scroll to the inline form when it loads with content
 document.addEventListener("turbo:frame-load", (event) => {
-  if (event.target.id === "item_form" && event.target.innerHTML.trim() !== "") {
+  if (["workout_item_form", "cardio_item_form", "food_item_form"].includes(event.target.id) && event.target.innerHTML.trim() !== "") {
     setTimeout(() => {
       event.target.scrollIntoView({ behavior: "smooth", block: "nearest" })
     }, 50)

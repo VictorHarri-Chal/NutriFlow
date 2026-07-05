@@ -2,7 +2,7 @@
   <%= json_escape(@foods.to_json(only: [:id, :name, :calories, :proteins, :carbs, :fats, :sugars, :favorite])).html_safe %>
 </script>
 
-<%= simple_form_for([day, day_food]) do |f| %>
+<%= simple_form_for(day_food.persisted? ? day_food : [day, day_food]) do |f| %>
   <div data-controller="day-food-preview"
        data-action="input->day-food-preview#update"
        class="space-y-4">

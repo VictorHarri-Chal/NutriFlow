@@ -53,11 +53,11 @@ class DayFoodGroupComponent < ApplicationComponent
   end
 
   def edit_path(item)
-    is_recipe?(item) ? edit_day_day_recipe_path(item.day, item) : edit_day_day_food_path(item.day, item)
+    is_recipe?(item) ? edit_day_recipe_path(item) : edit_day_food_path(item)
   end
 
   def delete_path(item)
-    is_recipe?(item) ? day_day_recipe_path(item.day, item) : day_day_food_path(item.day, item)
+    is_recipe?(item) ? day_recipe_path(item) : day_food_path(item)
   end
 
   def delete_confirm_message(item)

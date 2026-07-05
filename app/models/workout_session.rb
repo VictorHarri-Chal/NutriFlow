@@ -47,6 +47,27 @@ class WorkoutSession < ApplicationRecord
     (primary_body_part_met * rpe_multiplier * w * hours).round
   end
 
+  # Flags each set as a PR if its weight beats the user's all-time max for that
+  # exercise (excluding this session so we compare against prior history only).
+  def mark_prs!(user)
+    sets = workout_sets.where.not(weight_kg: nil).to_a
+    return if sets.empty?
+
+    exercise_ids   = sets.map(&:exercise_id).uniq
+    previous_maxes = WorkoutSet
+      .joins(workout_session: :day)
+      .where(exercise_id: exercise_ids, days: { user_id: user.id })
+      .where.not(workout_session_id: id)
+      .group(:exercise_id)
+      .maximum(:weight_kg)
+
+    sets.each do |ws|
+      prev_max = previous_maxes[ws.exercise_id]&.to_f || 0
+      is_pr    = ws.weight_kg.to_f > 0 && ws.weight_kg.to_f > prev_max
+      ws.update_column(:is_pr, is_pr)
+    end
+  end
+
   def total_volume
     workout_sets.sum { |s| (s.weight_kg || 0) * (s.reps || 0) }
   end

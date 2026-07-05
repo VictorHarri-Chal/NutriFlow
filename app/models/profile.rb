@@ -64,6 +64,15 @@ class Profile < ApplicationRecord
     ((gendered + offset) / 50.0).round * 50
   end
 
+  # ── BMI ───────────────────────────────────────────────────────────────────
+
+  def bmi(weight_kg = nil)
+    return nil unless height.present? && height.to_f > 0
+    w = weight_kg || self.weight
+    return nil unless w.present?
+    (w.to_f / ((height.to_f / 100.0)**2)).round(1)
+  end
+
   # ── Calorie calculations ───────────────────────────────────────────────────
 
   # Mifflin-St Jeor BMR (kcal/day at complete rest)

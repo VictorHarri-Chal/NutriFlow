@@ -1,12 +1,12 @@
-<%= turbo_frame_tag "item_form" do %>
-  <div class="bg-surface-raised border border-surface-border/50 rounded-xl shadow-sm p-6 mt-4 mb-2">
+<%= turbo_frame_tag "food_item_form" do %>
+  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl p-5 mt-4 mb-4">
     <div class="flex items-center justify-between mb-5">
-      <h2 class="text-lg font-semibold text-ink-primary"><%= t("views.day_recipes.new.title") %></h2>
+      <h3 class="text-sm font-semibold text-ink-primary"><%= t("views.day_recipes.new.title") %></h3>
       <button type="button"
               data-controller="close-frame"
               data-action="click->close-frame#close"
-              class="text-ink-subtle hover:text-ink-muted transition-colors">
-        <i class="fas fa-times text-lg"></i>
+              class="p-1.5 text-ink-subtle/50 hover:text-ink-primary transition-colors rounded">
+        <i class="fas fa-times text-sm"></i>
       </button>
     </div>
 

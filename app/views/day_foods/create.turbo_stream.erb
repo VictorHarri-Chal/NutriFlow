@@ -1,5 +1,5 @@
-<%= turbo_stream.replace "item_form" do %>
-  <%= turbo_frame_tag "item_form" %>
+<%= turbo_stream.replace "food_item_form" do %>
+  <%= turbo_frame_tag "food_item_form" %>
 <% end %>
 
 <%= turbo_stream.replace "daily_panel" do %>
@@ -25,7 +25,8 @@
              all_day_items:           @all_day_items,
              day_items_by_group:      @day_items_by_group,
              day_items_without_group: @day_items_without_group,
-             day:                     @day %>
+             day:                     @day,
+             force_open:              true %>
 <% end %>
 
 <%= turbo_stream.replace "day_fab" do %>
