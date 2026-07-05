@@ -27,6 +27,7 @@ class RecipeRatingsController < ApplicationController
   def set_rating
     @rating = RecipeRating.joins(:recipe)
                           .where(recipes: { user_id: current_user.id })
+                          .where(recipe_ratings: { user_id: current_user.id })
                           .find(params[:id])
     @recipe = @rating.recipe
   end

@@ -86,8 +86,6 @@ fr:
         sugars: "Sucres"
     errors:
       models:
-        recipe:
-          at_least_one_ingredient: "Au moins un ingrédient est requis"
         workout_session:
           at_least_one_exercise: "Ajoutez au moins un exercice avant d'enregistrer la séance."
         cardio_session:

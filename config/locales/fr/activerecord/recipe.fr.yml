@@ -9,6 +9,7 @@ fr:
     errors:
       models:
         recipe:
+          at_least_one_ingredient: "Au moins un ingrédient est requis"
           attributes:
             name:
               taken: "est déjà utilisé pour une de vos recettes"
