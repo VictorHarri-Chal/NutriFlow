@@ -94,20 +94,7 @@
     <div class="lg:col-span-3 space-y-4">
 
       <%# Nutrition -%>
-      <%
-        total_weight = @recipe.total_weight.to_f
-        factor       = total_weight > 0 ? (100.0 / total_weight) : 0
-        per100 = {
-          calories:      (@recipe.total_calories      * factor).round(1),
-          proteins:      (@recipe.total_proteins      * factor).round(1),
-          carbs:         (@recipe.total_carbs         * factor).round(1),
-          fats:          (@recipe.total_fats          * factor).round(1),
-          sugars:        (@recipe.total_sugars        * factor).round(1),
-          fiber:         (@recipe.total_fiber         * factor).round(1),
-          saturated_fat: (@recipe.total_saturated_fat * factor).round(1),
-          salt:          (@recipe.total_salt          * factor).round(1)
-        }
-      %>
+      <% per100 = @recipe.per_100g %>
       <div class="card p-5" data-controller="nutrition-toggle">
 
         <%# Header %>
@@ -115,7 +102,7 @@
           <p class="text-xs font-semibold text-ink-subtle uppercase tracking-wider">
             <%= t("views.recipes.show.nutritional_values") %>
           </p>
-          <% if total_weight > 0 %>
+          <% if @recipe.total_weight > 0 %>
             <div class="flex items-center gap-0.5 p-0.5 bg-surface-base rounded-lg border border-surface-border/40">
               <button type="button"
                       data-action="click->nutrition-toggle#showTotal"

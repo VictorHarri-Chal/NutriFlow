@@ -25,6 +25,19 @@ class Recipe < ApplicationRecord
                     tsearch: { prefix: true }
                   }
 
+  def per_100g
+    weight = total_weight.to_f
+    factor = weight > 0 ? (100.0 / weight) : 0
+    { calories:      (total_calories      * factor).round(1),
+      proteins:      (total_proteins      * factor).round(1),
+      carbs:         (total_carbs         * factor).round(1),
+      fats:          (total_fats          * factor).round(1),
+      sugars:        (total_sugars        * factor).round(1),
+      fiber:         (total_fiber         * factor).round(1),
+      saturated_fat: (total_saturated_fat * factor).round(1),
+      salt:          (total_salt          * factor).round(1) }
+  end
+
   def total_calories      = computed_totals[:calories]
   def total_proteins      = computed_totals[:proteins]
   def total_carbs         = computed_totals[:carbs]
