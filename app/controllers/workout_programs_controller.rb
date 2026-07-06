@@ -1,4 +1,7 @@
 class WorkoutProgramsController < ApplicationController
+  include FeatureGuard
+
+  before_action :require_workout_section!
   before_action :set_program, only: [:show, :edit, :update, :destroy, :activate, :duplicate]
 
   def index

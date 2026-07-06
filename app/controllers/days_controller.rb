@@ -1,6 +1,9 @@
 class DaysController < ApplicationController
   include DateParseable
   include CalendarData
+  include FeatureGuard
+
+  before_action :require_water_tracking!, only: [:update_water]
   before_action :set_day, only: [:update, :update_water, :update_steps]
 
   def update

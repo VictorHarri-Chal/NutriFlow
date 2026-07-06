@@ -1,6 +1,9 @@
 class WorkoutSessionsController < ApplicationController
   include CalendarData
   include DayScoped
+  include FeatureGuard
+
+  before_action :require_workout_section!
 
   before_action :set_day,             only: [:new, :create]
   before_action :set_workout_session, only: [:edit, :update, :destroy]

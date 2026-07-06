@@ -1,4 +1,7 @@
 class ProgramDaysController < ApplicationController
+  include FeatureGuard
+
+  before_action :require_workout_section!
   before_action :set_day
 
   def update

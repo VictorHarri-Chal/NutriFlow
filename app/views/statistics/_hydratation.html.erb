@@ -1,0 +1,133 @@
+<% period_label = t("views.statistics.period_labels.#{@period}") %>
+
+<% unless @avg_water_ml %>
+  <%= render "statistics/empty_state",
+        icon:  "fa-droplet",
+        title: t("views.statistics.hydratation.no_data_title", period: period_label),
+        hint:  t("views.statistics.hydratation.no_data_hint") %>
+<% else %>
+
+  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-5">
+    <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-3">
+      <%= t("views.statistics.bien_etre.kpi_hydration") %>
+    </p>
+    <%# KPI principal : moyenne + % %>
+      <div class="flex items-end gap-2 mb-2">
+        <p class="text-2xl font-bold text-status-info">
+          <%= number_with_delimiter(@avg_water_ml) %>
+          <span class="text-xs font-normal text-ink-subtle ml-0.5">ml</span>
+        </p>
+        <% if @hydration_pct %>
+          <p class="text-sm font-semibold text-ink-muted mb-0.5"><%= t("views.statistics.bien_etre.hydration_pct", pct: @hydration_pct) %></p>
+        <% end %>
+      </div>
+      <% if @water_goal_ml.to_i > 0 %>
+        <div class="progress-track h-1.5 mb-1.5">
+          <div class="h-full rounded-full bg-status-info" style="width: <%= @hydration_pct || 0 %>%"></div>
+        </div>
+        <p class="text-xs text-ink-subtle mb-4">
+          <%= t("views.statistics.bien_etre.hydration_goal", goal: number_with_delimiter(@water_goal_ml)) %>
+        </p>
+      <% end %>
+
+      <%# Streak + taux de réussite %>
+      <% if @hydration_streak || @hydration_success_total.to_i > 0 %>
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <% if @hydration_streak %>
+            <div class="bg-surface-hover rounded-xl px-3 py-2.5">
+              <p class="text-[10px] font-medium text-ink-subtle uppercase tracking-wider mb-1.5">
+                <%= t("views.statistics.bien_etre.hydration_streak_label") %>
+              </p>
+              <% if @hydration_streak > 0 %>
+                <div class="flex items-baseline gap-1.5 leading-none">
+                  <i class="fas fa-fire text-sm text-brand"></i>
+                  <span class="text-2xl font-bold text-brand"><%= @hydration_streak %></span>
+                  <span class="text-[10px] text-ink-subtle">j</span>
+                </div>
+                <p class="text-[10px] text-ink-subtle mt-1">
+                  <%= t("views.statistics.bien_etre.hydration_streak", count: @hydration_streak) %>
+                </p>
+              <% else %>
+                <p class="text-lg font-bold text-ink-subtle/40 leading-none mb-1">—</p>
+                <p class="text-[10px] text-ink-subtle">
+                  <%= t("views.statistics.bien_etre.hydration_streak_zero") %>
+                </p>
+              <% end %>
+            </div>
+          <% end %>
+          <% if @hydration_success_total.to_i > 0 %>
+            <% success_pct   = (@hydration_success_reached.to_f / @hydration_success_total * 100).round %>
+            <% success_color = success_pct >= 75 ? "text-status-success" : success_pct >= 50 ? "text-status-warning" : "text-status-danger" %>
+            <div class="bg-surface-hover rounded-xl px-3 py-2.5">
+              <p class="text-[10px] font-medium text-ink-subtle uppercase tracking-wider mb-1.5">
+                <%= t("views.statistics.bien_etre.hydration_success_label") %>
+              </p>
+              <div class="flex items-baseline gap-1.5 leading-none">
+                <span class="text-2xl font-bold <%= success_color %>"><%= success_pct %>%</span>
+              </div>
+              <p class="text-[10px] text-ink-subtle mt-1">
+                <%= t("views.statistics.bien_etre.hydration_success_rate",
+                      reached: @hydration_success_reached,
+                      total:   @hydration_success_total) %>
+              </p>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <%# Corrélation sport/hydratation %>
+      <% if @hydration_sport_diff %>
+        <div class="flex items-start gap-2 px-3 py-2 rounded-xl bg-surface-hover text-xs text-ink-muted">
+          <i class="fas fa-dumbbell text-brand text-[10px] mt-0.5 shrink-0"></i>
+          <span>
+            <% diff = @hydration_sport_diff.abs %>
+            <% if @hydration_sport_diff > 50 %>
+              <%= t("views.statistics.bien_etre.hydration_sport_more", ml: number_with_delimiter(diff)) %>
+            <% elsif @hydration_sport_diff < -50 %>
+              <%= t("views.statistics.bien_etre.hydration_sport_less", ml: number_with_delimiter(diff)) %>
+            <% else %>
+              <%= t("views.statistics.bien_etre.hydration_sport_same") %>
+            <% end %>
+          </span>
+        </div>
+      <% end %>
+
+      <%# Heatmap hebdomadaire %>
+      <% if @hydration_heatmap&.any? %>
+        <div class="mt-4">
+          <p class="text-[10px] font-medium text-ink-subtle uppercase tracking-wider mb-2">
+            <%= t("views.statistics.bien_etre.hydration_heatmap_title") %>
+          </p>
+          <%
+            day_abbrs = I18n.t("date.abbr_day_names")
+            ordered_abbrs = day_abbrs.rotate(1)
+          %>
+          <div class="grid grid-cols-7 gap-1.5">
+            <% @hydration_heatmap.each_with_index do |entry, i| %>
+              <%
+                pct = entry[:pct]
+                bg = if pct >= 100
+                  "bg-status-success/70"
+                elsif pct >= 66
+                  "bg-status-info/60"
+                elsif pct >= 33
+                  "bg-status-warning/50"
+                elsif pct > 0
+                  "bg-status-danger/40"
+                else
+                  "bg-surface-hover"
+                end
+              %>
+              <div class="flex flex-col items-center gap-1">
+                <div class="w-full h-5 rounded <%= bg %>"
+                     title="<%= l(entry[:date], format: :short) %> — <%= pct %>%"></div>
+                <span class="text-[9px] text-ink-subtle"><%= ordered_abbrs[i].to_s[0] %></span>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+  </div>
+
+<% end %>

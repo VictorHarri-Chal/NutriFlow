@@ -23,12 +23,12 @@
             <%= render "shared/shopping_badge", count: shopping_unchecked %>
         <% end %>
 
-        <% if current_user.show_workout_section? %>
-          <%= link_to exercises_path, class: current_page?(exercises_path) ? "nav-link-active" : "nav-link" do %>
-              <i class="fas fa-dumbbell w-5 h-5 mr-3"></i>
-              <span class="font-medium pb-1"><%= t("views.shared.sidebar.exercises") %></span>
-          <% end %>
+        <%= link_to exercises_path, class: current_page?(exercises_path) ? "nav-link-active" : "nav-link" do %>
+            <i class="fas fa-dumbbell w-5 h-5 mr-3"></i>
+            <span class="font-medium pb-1"><%= t("views.shared.sidebar.exercises") %></span>
+        <% end %>
 
+        <% if current_user.show_workout_section? %>
           <%= link_to workout_programs_path, class: request.path.start_with?(workout_programs_path) ? "nav-link-active" : "nav-link" do %>
               <i class="fas fa-clipboard-list w-5 h-5 mr-3"></i>
               <span class="font-medium pb-1"><%= t("views.shared.sidebar.workout_programs") %></span>

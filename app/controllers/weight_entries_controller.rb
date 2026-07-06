@@ -1,4 +1,8 @@
 class WeightEntriesController < ApplicationController
+  include FeatureGuard
+
+  before_action :require_weight_tracking!
+
   VALID_PERIODS = [30, 90].freeze
 
   def index

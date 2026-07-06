@@ -1,4 +1,7 @@
 class ProgramExercisesController < ApplicationController
+  include FeatureGuard
+
+  before_action :require_workout_section!
   before_action :set_program_day, only: [:create, :reorder]
   before_action :set_exercise,    only: [:update, :destroy, :move]
 

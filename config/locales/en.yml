@@ -3,6 +3,12 @@ en:
     formats:
       month_year: "%b %Y"
 
+  feature_guard:
+    workout_disabled: "The workout section is disabled in your preferences."
+    cardio_disabled: "The cardio section is disabled in your preferences."
+    weight_disabled: "Weight tracking is disabled in your preferences."
+    water_disabled: "Water tracking is disabled in your preferences."
+
   pagination_component:
     results: "Results"
     to: "to"
@@ -664,20 +670,18 @@ en:
       preferences:
         title: "Preferences"
         description: "Customize the display and behavior of the application."
-        journal_section: "Daily journal"
-        navigation_section: "Navigation"
-        show_day_note: "Notes & well-being section"
-        show_day_note_hint: "Shows the free-text area, as well as the energy, mood and sleep indicators at the bottom of each day."
-        show_workout_section: "Workout section"
-        show_workout_section_hint: "Shows the workout widget and the quick-add button in the calendar."
-        show_cardio_section: "Cardio section"
-        show_cardio_section_hint: "Shows the cardio widget and the quick-add button in the calendar."
+        show_day_note: "Notes & well-being"
+        show_day_note_hint: "Shows the free-text area and energy, mood and sleep indicators in the daily journal, and adds the Well-being tab in statistics."
+        show_workout_section: "Sessions & programs"
+        show_workout_section_hint: "Shows the workout widget and quick-add button in the journal, programs in the navigation, and the Training tab in statistics. Disabled, these pages become inaccessible."
+        show_cardio_section: "Cardio"
+        show_cardio_section_hint: "Shows the cardio widget and quick-add button in the journal, and the Cardio tab in statistics. Disabled, these pages become inaccessible."
         show_water_tracking: "Hydration tracking"
-        show_water_tracking_hint: "Shows the water widget in the journal and hydration data in statistics."
+        show_water_tracking_hint: "Shows the water widget in the daily journal and adds the Hydration tab in statistics. Disabled, both sections become inaccessible."
         show_tdee_breakdown: "Energy expenditure breakdown"
-        show_tdee_breakdown_hint: "Shows the BMR / NEAT / Steps / Workout section below the macro bars in the journal."
+        show_tdee_breakdown_hint: "Shows the BMR · NEAT · Steps · Workout breakdown below the macro bars in the daily journal."
         show_weight_tracking: "Weight tracking"
-        show_weight_tracking_hint: "Shows the weight tracking page and its link in the navigation menu."
+        show_weight_tracking_hint: "Gives access to the body weight tracking page and shows its link in the navigation menu. Disabled, the page becomes inaccessible."
       general:
         title: "General settings"
         description: "Customize your NutriFlow experience."
@@ -1197,6 +1201,7 @@ en:
         training: "Training"
         cardio: "Cardio"
         bien_etre: "Wellbeing"
+        hydratation: "Hydration"
       periods:
         "7": "7 d"
         "30": "30 d"
@@ -1327,6 +1332,9 @@ en:
         days_logged:
           one: "%{count} day logged"
           other: "%{count} days logged"
+      hydratation:
+        no_data_title: "No hydration data for %{period}"
+        no_data_hint: "Log your daily water intake in the calendar to track your hydration."
 
     cardio_sessions:
       confirm_delete: "Delete this cardio session?"

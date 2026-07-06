@@ -1,7 +1,9 @@
 class CardioSessionsController < ApplicationController
   include CalendarData
   include DayScoped
+  include FeatureGuard
 
+  before_action :require_cardio_section!
   before_action :set_day,            only: [:new, :create]
   before_action :set_cardio_session, only: [:edit, :update, :destroy]
 

@@ -3,6 +3,12 @@ fr:
     formats:
       month_year: "%b %Y"
 
+  feature_guard:
+    workout_disabled: "La section entraînement est désactivée dans vos préférences."
+    cardio_disabled: "La section cardio est désactivée dans vos préférences."
+    weight_disabled: "Le suivi de poids est désactivé dans vos préférences."
+    water_disabled: "Le suivi d'hydratation est désactivé dans vos préférences."
+
   pagination_component:
     results: "Résultats"
     to: "à"
@@ -662,20 +668,18 @@ fr:
       preferences:
         title: "Préférences"
         description: "Personnalisez l'affichage et le comportement de l'application."
-        journal_section: "Journal quotidien"
-        navigation_section: "Navigation"
-        show_day_note: "Section notes & bien-être"
-        show_day_note_hint: "Affiche la zone de texte libre, ainsi que les indicateurs d'énergie, d'humeur et de sommeil en bas de chaque journée."
-        show_workout_section: "Section entraînement"
-        show_workout_section_hint: "Affiche le widget de séances et le bouton d'ajout rapide dans le calendrier."
-        show_cardio_section: "Section cardio"
-        show_cardio_section_hint: "Affiche le widget cardio et le bouton d'ajout rapide dans le calendrier."
+        show_day_note: "Notes & bien-être"
+        show_day_note_hint: "Affiche la zone de texte libre et les indicateurs d'énergie, d'humeur et de sommeil dans le journal quotidien, ainsi que l'onglet Bien-être dans les statistiques."
+        show_workout_section: "Séances & programmes"
+        show_workout_section_hint: "Affiche le widget de séances et le bouton d'ajout rapide dans le journal, les programmes dans la navigation et l'onglet Entraînement dans les statistiques. Désactivé, ces pages deviennent inaccessibles."
+        show_cardio_section: "Cardio"
+        show_cardio_section_hint: "Affiche le widget cardio et le bouton d'ajout rapide dans le journal, et l'onglet Cardio dans les statistiques. Désactivé, ces pages deviennent inaccessibles."
         show_water_tracking: "Suivi d'hydratation"
-        show_water_tracking_hint: "Affiche le widget d'eau dans le journal et les données d'hydratation dans les statistiques."
+        show_water_tracking_hint: "Affiche le widget d'eau dans le journal quotidien et ajoute l'onglet Hydratation dans les statistiques. Désactivé, ces deux sections deviennent inaccessibles."
         show_tdee_breakdown: "Détail des dépenses énergétiques"
-        show_tdee_breakdown_hint: "Affiche la section BMR / NEAT / Pas / Entraînement sous les barres de macros du journal."
+        show_tdee_breakdown_hint: "Affiche la décomposition BMR · NEAT · Pas · Entraînement sous les barres de macros dans le journal quotidien."
         show_weight_tracking: "Suivi de poids"
-        show_weight_tracking_hint: "Affiche la page de suivi de poids et son lien dans le menu de navigation."
+        show_weight_tracking_hint: "Donne accès à la page de suivi du poids corporel et affiche son lien dans le menu de navigation. Désactivé, la page devient inaccessible."
       general:
         title: "Paramètres généraux"
         description: "Personnalisez votre expérience NutriFlow."
@@ -1195,6 +1199,7 @@ fr:
         training: "Entraînement"
         cardio: "Cardio"
         bien_etre: "Bien-être"
+        hydratation: "Hydratation"
       periods:
         "7": "7 j"
         "30": "30 j"
@@ -1325,6 +1330,9 @@ fr:
         days_logged:
           one: "%{count} jour enregistré"
           other: "%{count} jours enregistrés"
+      hydratation:
+        no_data_title: "Aucune donnée d'hydratation sur %{period}"
+        no_data_hint: "Ajoute ta consommation d'eau dans le calendrier pour suivre ton hydratation."
 
     cardio_sessions:
       confirm_delete: "Supprimer cette session cardio ?"

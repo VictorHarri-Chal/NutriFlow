@@ -7,9 +7,10 @@ class StatisticsController < ApplicationController
     @period = VALID_PERIODS.include?(params[:period]&.to_i) ? params[:period].to_i : 30
 
     @available_tabs = ["nutrition"]
-    @available_tabs << "training"  if current_user.show_workout_section?
-    @available_tabs << "cardio"    if current_user.show_cardio_section?
-    @available_tabs << "bien_etre" if current_user.show_day_note?
+    @available_tabs << "training"    if current_user.show_workout_section?
+    @available_tabs << "cardio"      if current_user.show_cardio_section?
+    @available_tabs << "bien_etre"   if current_user.show_day_note?
+    @available_tabs << "hydratation" if current_user.show_water_tracking?
 
     requested = params[:tab]
     if @available_tabs.include?(requested)
@@ -25,10 +26,11 @@ class StatisticsController < ApplicationController
     @from = @period.days.ago.to_date
 
     case @tab
-    when "nutrition"  then load_nutrition_stats
-    when "training"   then load_training_stats
-    when "cardio"     then load_cardio_stats
-    when "bien_etre"  then load_wellbeing_stats
+    when "nutrition"    then load_nutrition_stats
+    when "training"     then load_training_stats
+    when "cardio"       then load_cardio_stats
+    when "bien_etre"    then load_wellbeing_stats
+    when "hydratation"  then load_hydratation_stats
     end
   end
 
@@ -300,8 +302,8 @@ class StatisticsController < ApplicationController
   # ── Bien-être ────────────────────────────────────────────────────────────────
 
   def load_wellbeing_stats
-    days_range        = current_user.days.where(date: @from..Date.today).order(:date).to_a
-    days_year_by_date = nil
+    days_range = current_user.days.where(date: @from..Date.today).order(:date).to_a
+    profile    = current_user.profile
 
     @wb_days = days_range.select { |d|
       d.energy_level.present? || d.mood.present? || d.sleep_quality.present?
@@ -315,82 +317,19 @@ class StatisticsController < ApplicationController
     @avg_mood   = mood_vals.any?   ? (mood_vals.sum.to_f   / mood_vals.size).round(1)   : nil
     @avg_sleep  = sleep_vals.any?  ? (sleep_vals.sum.to_f  / sleep_vals.size).round(1)  : nil
 
-    # Hydration
-    profile          = current_user.profile
-    @water_goal_ml   = profile&.water_goal_ml.to_i
-    hydration_days   = days_range.select { |d| d.water_ml.to_i > 0 }
-    if hydration_days.any?
-      @avg_water_ml  = (hydration_days.sum { |d| d.water_ml.to_i }.to_f / hydration_days.size).round
-      @hydration_pct = @water_goal_ml > 0 ? [(@avg_water_ml.to_f / @water_goal_ml * 100).round, 100].min : nil
-
-      # Streak — consecutive days meeting the goal (date-aware, breaks on gaps).
-      # If today hasn't been logged yet we start from yesterday, so the streak
-      # isn't wiped out first thing in the morning.
-      if @water_goal_ml > 0
-        days_year_by_date ||= current_user.days
-                                          .where(date: (Date.today - 365)..Date.today)
-                                          .index_by(&:date)
-        today_ok   = days_year_by_date[Date.today]&.water_ml.to_i >= @water_goal_ml
-        start_date = today_ok ? Date.today : Date.yesterday
-        streak = 0
-        start_date.downto(Date.today - 365).each do |date|
-          d = days_year_by_date[date]
-          break if d.nil? || d.water_ml.to_i < @water_goal_ml
-          streak += 1
-        end
-        @hydration_streak = streak
-      end
-
-      # Success rate — days where goal was reached vs total calendar days in period
-      if @water_goal_ml > 0
-        @hydration_success_reached = hydration_days.count { |d| d.water_ml.to_i >= @water_goal_ml }
-        @hydration_success_total   = @period
-      end
-
-      # Sport correlation — average water on workout days vs rest days
-      days_with_session_ids = current_user.days
-                                          .joins("LEFT JOIN workout_sessions ws ON ws.day_id = days.id LEFT JOIN cardio_sessions cs ON cs.day_id = days.id")
-                                          .where(date: @from..Date.today)
-                                          .where("ws.id IS NOT NULL OR cs.id IS NOT NULL")
-                                          .distinct
-                                          .pluck(:id)
-                                          .to_set
-      sport_days = hydration_days.select { |d| days_with_session_ids.include?(d.id) }
-      rest_days  = hydration_days.reject { |d| days_with_session_ids.include?(d.id) }
-      if sport_days.size >= 5 && rest_days.size >= 5
-        avg_sport = (sport_days.sum { |d| d.water_ml.to_i }.to_f / sport_days.size).round
-        avg_rest  = (rest_days.sum  { |d| d.water_ml.to_i }.to_f / rest_days.size).round
-        @hydration_sport_diff = avg_sport - avg_rest
-      end
-    end
-
-    # Weekly heatmap — current week (Mon → Sun)
-    week_start = Date.today.beginning_of_week
-    week_days  = (0..6).map { |i| week_start + i }
-    week_data  = current_user.days.where(date: week_start..week_days.last).index_by(&:date)
-    @hydration_heatmap = week_days.map do |d|
-      entry = week_data[d]
-      ml    = entry&.water_ml.to_i
-      pct   = @water_goal_ml.to_i > 0 ? [(ml.to_f / @water_goal_ml * 100).round, 100].min : 0
-      { date: d, pct: pct }
-    end
-
     # Steps
     @steps_goal = profile&.default_daily_steps.to_i
     steps_days  = days_range.select { |d| d.steps.present? }
     @avg_steps  = steps_days.any? ? (steps_days.sum { |d| d.steps.to_i }.to_f / steps_days.size).round : nil
 
-    # Steps enriched metrics
     @steps_pct = if @avg_steps && @steps_goal > 0
       [(@avg_steps.to_f / @steps_goal * 100).round, 100].min
     end
 
     if @avg_steps && @steps_goal > 0
-      # Streak — consecutive days meeting the goal (date-aware, same logic as hydration).
-      # Start from yesterday if today hasn't been logged yet to avoid wiping streak in the morning.
-      days_year_by_date ||= current_user.days
-                                        .where(date: (Date.today - 365)..Date.today)
-                                        .index_by(&:date)
+      days_year_by_date = current_user.days
+                                      .where(date: (Date.today - 365)..Date.today)
+                                      .index_by(&:date)
       today_steps_ok = days_year_by_date[Date.today]&.steps.to_i >= @steps_goal
       streak_start   = today_steps_ok ? Date.today : Date.yesterday
       streak = 0
@@ -401,11 +340,9 @@ class StatisticsController < ApplicationController
       end
       @steps_streak = streak
 
-      # Success rate — days in period where goal was reached vs total period days
       @steps_success_reached = steps_days.count { |d| d.steps.to_i >= @steps_goal }
       @steps_success_total   = @period
 
-      # Sport correlation — avg steps on workout/cardio days vs rest days
       sport_day_ids = current_user.days
                                   .joins("LEFT JOIN workout_sessions ws ON ws.day_id = days.id LEFT JOIN cardio_sessions cs ON cs.day_id = days.id")
                                   .where(date: @from..Date.today)
@@ -422,7 +359,10 @@ class StatisticsController < ApplicationController
       end
     end
 
-    # Steps heatmap — reuse week_days and week_data already computed for hydration heatmap above
+    # Steps heatmap
+    week_start = Date.today.beginning_of_week
+    week_days  = (0..6).map { |i| week_start + i }
+    week_data  = current_user.days.where(date: week_start..week_days.last).index_by(&:date)
     @steps_heatmap = week_days.map do |d|
       entry = week_data[d]
       s     = entry&.steps.to_i
@@ -458,6 +398,63 @@ class StatisticsController < ApplicationController
     if @weight_entries.any?
       @weight_labels = @weight_entries.map { |we| l(we.date, format: :short) }
       @weight_data   = @weight_entries.map { |we| we.weight_kg.to_f }
+    end
+  end
+
+  # ── Hydratation ──────────────────────────────────────────────────────────────
+
+  def load_hydratation_stats
+    days_range     = current_user.days.where(date: @from..Date.today).order(:date).to_a
+    profile        = current_user.profile
+    @water_goal_ml = profile&.water_goal_ml.to_i
+    hydration_days = days_range.select { |d| d.water_ml.to_i > 0 }
+
+    return unless hydration_days.any?
+
+    @avg_water_ml  = (hydration_days.sum { |d| d.water_ml.to_i }.to_f / hydration_days.size).round
+    @hydration_pct = @water_goal_ml > 0 ? [(@avg_water_ml.to_f / @water_goal_ml * 100).round, 100].min : nil
+
+    if @water_goal_ml > 0
+      days_year_by_date = current_user.days
+                                      .where(date: (Date.today - 365)..Date.today)
+                                      .index_by(&:date)
+      today_ok   = days_year_by_date[Date.today]&.water_ml.to_i >= @water_goal_ml
+      start_date = today_ok ? Date.today : Date.yesterday
+      streak = 0
+      start_date.downto(Date.today - 365).each do |date|
+        d = days_year_by_date[date]
+        break if d.nil? || d.water_ml.to_i < @water_goal_ml
+        streak += 1
+      end
+      @hydration_streak = streak
+
+      @hydration_success_reached = hydration_days.count { |d| d.water_ml.to_i >= @water_goal_ml }
+      @hydration_success_total   = @period
+    end
+
+    days_with_session_ids = current_user.days
+                                        .joins("LEFT JOIN workout_sessions ws ON ws.day_id = days.id LEFT JOIN cardio_sessions cs ON cs.day_id = days.id")
+                                        .where(date: @from..Date.today)
+                                        .where("ws.id IS NOT NULL OR cs.id IS NOT NULL")
+                                        .distinct
+                                        .pluck(:id)
+                                        .to_set
+    sport_days = hydration_days.select { |d| days_with_session_ids.include?(d.id) }
+    rest_days  = hydration_days.reject { |d| days_with_session_ids.include?(d.id) }
+    if sport_days.size >= 5 && rest_days.size >= 5
+      avg_sport = (sport_days.sum { |d| d.water_ml.to_i }.to_f / sport_days.size).round
+      avg_rest  = (rest_days.sum  { |d| d.water_ml.to_i }.to_f / rest_days.size).round
+      @hydration_sport_diff = avg_sport - avg_rest
+    end
+
+    week_start = Date.today.beginning_of_week
+    week_days  = (0..6).map { |i| week_start + i }
+    week_data  = current_user.days.where(date: week_start..week_days.last).index_by(&:date)
+    @hydration_heatmap = week_days.map do |d|
+      entry = week_data[d]
+      ml    = entry&.water_ml.to_i
+      pct   = @water_goal_ml.to_i > 0 ? [(ml.to_f / @water_goal_ml * 100).round, 100].min : 0
+      { date: d, pct: pct }
     end
   end
 
