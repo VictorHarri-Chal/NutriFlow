@@ -57,6 +57,18 @@ class DayRecipe < ApplicationRecord
     (recipe.total_sugars * gram_factor).round(1)
   end
 
+  def total_fiber
+    (recipe.total_fiber * gram_factor).round(1)
+  end
+
+  def total_saturated_fat
+    (recipe.total_saturated_fat * gram_factor).round(1)
+  end
+
+  def total_salt
+    (recipe.total_salt * gram_factor).round(1)
+  end
+
   def total_weight
     effective_quantity
   end

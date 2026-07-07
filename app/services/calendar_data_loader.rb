@@ -33,20 +33,27 @@ class CalendarDataLoader
     @day_items_by_group      = by_group
 
     totals = @all_items.each_with_object(
-      { calories: 0.0, proteins: 0.0, carbs: 0.0, fats: 0.0, sugars: 0.0 }
+      { calories: 0.0, proteins: 0.0, carbs: 0.0, fats: 0.0, sugars: 0.0,
+        fiber: 0.0, saturated_fat: 0.0, salt: 0.0 }
     ) do |item, acc|
-      acc[:calories] += item.total_calories
-      acc[:proteins] += item.total_proteins
-      acc[:carbs]    += item.total_carbs
-      acc[:fats]     += item.total_fats
-      acc[:sugars]   += item.total_sugars
+      acc[:calories]      += item.total_calories
+      acc[:proteins]      += item.total_proteins
+      acc[:carbs]         += item.total_carbs
+      acc[:fats]          += item.total_fats
+      acc[:sugars]        += item.total_sugars
+      acc[:fiber]         += item.total_fiber
+      acc[:saturated_fat] += item.total_saturated_fat
+      acc[:salt]          += item.total_salt
     end
 
-    @total_calories = totals[:calories].round(1)
-    @total_proteins = totals[:proteins].round(1)
-    @total_carbs    = totals[:carbs].round(1)
-    @total_fats     = totals[:fats].round(1)
-    @total_sugars   = totals[:sugars].round(1)
+    @total_calories      = totals[:calories].round(1)
+    @total_proteins      = totals[:proteins].round(1)
+    @total_carbs         = totals[:carbs].round(1)
+    @total_fats          = totals[:fats].round(1)
+    @total_sugars        = totals[:sugars].round(1)
+    @total_fiber         = totals[:fiber].round(1)
+    @total_saturated_fat = totals[:saturated_fat].round(1)
+    @total_salt          = totals[:salt].round(1)
   end
 
   # ── Profile & goals ──────────────────────────────────────────────────────────
@@ -104,6 +111,9 @@ class CalendarDataLoader
       total_carbs:             @total_carbs,
       total_fats:              @total_fats,
       total_sugars:            @total_sugars,
+      total_fiber:             @total_fiber,
+      total_saturated_fat:     @total_saturated_fat,
+      total_salt:              @total_salt,
       has_foods:               @has_foods,
       has_recipes:             @has_recipes,
       profile:                 @profile,

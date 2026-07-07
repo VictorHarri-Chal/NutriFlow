@@ -30,6 +30,18 @@ class DayFood < ApplicationRecord
     (food.sugars * gram_factor).round(1)
   end
 
+  def total_fiber
+    (food.fiber.to_f * gram_factor).round(1)
+  end
+
+  def total_saturated_fat
+    (food.saturated_fat.to_f * gram_factor).round(1)
+  end
+
+  def total_salt
+    (food.salt.to_f * gram_factor).round(1)
+  end
+
   private
 
   def day_food_group_belongs_to_user

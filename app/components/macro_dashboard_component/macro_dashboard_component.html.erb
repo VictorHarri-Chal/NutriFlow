@@ -1,0 +1,50 @@
+<div class="flex items-center py-2 overflow-x-auto">
+
+  <%# ── Groupe gauche : Protéines/Glucides/Lipides ──
+      flex-1 + justify-end : colle au rond Calories, et garantit une largeur
+      strictement égale au groupe de droite (même flex-1), donc Calories reste
+      toujours pile au centre quel que soit le nombre/la taille des ronds. %>
+  <div class="flex-1 flex items-center justify-end gap-6 sm:gap-8 min-w-0">
+    <%= render RingComponent.new(
+          value: total_proteins, goal: daily_protein_goal, size: :md,
+          color_class: proteins_color_class,
+          label: t("views.calendars.proteins"), unit: "g") %>
+
+    <%= render RingComponent.new(
+          value: total_carbs, goal: daily_carbs_goal, size: :md,
+          color_class: carbs_color_class,
+          label: t("views.calendars.carbs"), unit: "g") %>
+
+    <%= render RingComponent.new(
+          value: total_fats, goal: daily_fats_goal, size: :md,
+          color_class: fats_color_class,
+          label: t("views.calendars.fats"), unit: "g") %>
+  </div>
+
+  <%# ── Centre : Calories, taille fixe, jamais étiré ── %>
+  <div class="flex-shrink-0 px-8 sm:px-12">
+    <%= render RingComponent.new(
+          value: total_calories, goal: daily_calorie_goal, size: :xl,
+          color_class: calories_color_class, value_decimals: 0,
+          label: t("views.calendars.calories"), unit: "kcal") %>
+  </div>
+
+  <%# ── Groupe droite : fibres/sucres/graisses saturées/sel, valeurs informatives ──
+      Une seule couleur neutre partagée : ce sont des repères, pas des jauges,
+      pas besoin d'une teinte par nutriment. ── %>
+  <div class="flex-1 flex items-center justify-start gap-5 min-w-0">
+    <%= render RingComponent.new(
+          value: total_fiber, size: :sm,
+          color_class: NEUTRAL_DETAIL_COLOR, label: t("views.calendars.fiber"), unit: "g") %>
+    <%= render RingComponent.new(
+          value: total_sugars, size: :sm,
+          color_class: NEUTRAL_DETAIL_COLOR, label: t("views.calendars.sugars"), unit: "g") %>
+    <%= render RingComponent.new(
+          value: total_saturated_fat, size: :sm,
+          color_class: NEUTRAL_DETAIL_COLOR, label: t("views.calendars.saturated_fat"), unit: "g") %>
+    <%= render RingComponent.new(
+          value: total_salt, size: :sm,
+          color_class: NEUTRAL_DETAIL_COLOR, label: t("views.calendars.salt"), unit: "g") %>
+  </div>
+
+</div>

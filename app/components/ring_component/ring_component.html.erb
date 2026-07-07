@@ -1,0 +1,44 @@
+<div class="flex flex-col items-center" style="width: <%= viewbox %>px">
+  <div class="relative" style="width: <%= viewbox %>px; height: <%= viewbox %>px">
+    <svg viewBox="0 0 <%= viewbox %> <%= viewbox %>" class="w-full h-full -rotate-90">
+      <% if progress_mode? %>
+        <circle cx="<%= center %>" cy="<%= center %>" r="<%= radius %>"
+                fill="none" class="stroke-surface-hover" stroke-width="<%= stroke_width %>"/>
+        <circle cx="<%= center %>" cy="<%= center %>" r="<%= radius %>"
+                fill="none"
+                class="<%= color_class %> transition-colors duration-500 ease-out"
+                stroke-width="<%= stroke_width %>"
+                stroke-linecap="round"
+                stroke-dasharray="<%= circumference %>"
+                stroke-dashoffset="<%= dashoffset %>"
+                style="transition: stroke-dashoffset 0.7s ease-out"/>
+      <% else %>
+        <%# Pas d'objectif : cercle en pointillés, pas un trait plein — signale visuellement
+            "valeur informative" plutôt que "jauge de progression à l'arrêt". %>
+        <circle cx="<%= center %>" cy="<%= center %>" r="<%= radius %>"
+                fill="none" class="<%= color_class %>" stroke-width="<%= stroke_width %>"
+                stroke-dasharray="1 <%= stroke_width * 1.6 %>" stroke-linecap="round"/>
+      <% end %>
+    </svg>
+    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none gap-0.5 px-1 text-center">
+      <% if content? %>
+        <%= content %>
+      <% else %>
+        <span class="font-bold leading-none text-ink-primary <%= dimensions[:value_text] %>"><%= formatted_value %></span>
+        <% if progress_mode? %>
+          <span class="text-ink-subtle leading-none <%= dimensions[:goal_text] %>">/ <%= formatted_goal %> <%= unit %></span>
+        <% else %>
+          <span class="text-ink-subtle leading-none <%= dimensions[:unit_text] %>"><%= unit %></span>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+  <% if label.present? %>
+    <span class="text-ink-subtle uppercase tracking-wider font-medium mt-1.5 text-center <%= dimensions[:label_text] %>">
+      <%= label %><% if progress_mode? %> · <span class="<%= percentage_color_class %> font-semibold normal-case tracking-normal"><%= percentage.round %>%</span><% end %>
+    </span>
+  <% elsif progress_mode? %>
+    <%# Rond sans label (ex: hydratation) — le pourcentage reste affiché seul %>
+    <span class="font-semibold mt-1 <%= percentage_color_class %> <%= dimensions[:pct_text] %>"><%= percentage.round %>%</span>
+  <% end %>
+</div>

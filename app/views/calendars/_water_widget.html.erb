@@ -21,19 +21,14 @@
   remaining = [effective_goal - water_ml, 0].max
   glasses   = remaining > 0 ? (remaining / 250.0).ceil : 0
 
-  radius        = 42
-  stroke_width  = 7
-  circumference = (2 * Math::PI * radius).round(2)
-  dashoffset    = (circumference * (1 - pct / 100.0)).round(2)
-
-  ring_stroke = if pct >= 100
-    "#22C55E"
+  ring_color_class = if pct >= 100
+    "stroke-status-success"
   elsif pct >= 66
-    "#3B82F6"
+    "stroke-status-info"
   elsif pct >= 33
-    "#F59E0B"
+    "stroke-status-warning"
   else
-    "#EF4444"
+    "stroke-status-danger"
   end
 
   value_color = if pct >= 100
@@ -78,43 +73,28 @@
 
     <div class="flex gap-4 items-center">
 
-      <%# Colonne gauche — SVG ring %>
+      <%# Colonne gauche — Ring %>
       <div class="flex flex-col items-center justify-center flex-shrink-0 w-[38%]">
-        <div class="relative">
-          <svg width="110" height="110" viewBox="0 0 110 110">
-            <circle cx="55" cy="55" r="<%= radius %>"
-                    fill="none" stroke="#3F3F46" stroke-width="<%= stroke_width %>"/>
-            <circle cx="55" cy="55" r="<%= radius %>"
-                    fill="none"
-                    stroke="<%= ring_stroke %>"
-                    stroke-width="<%= stroke_width %>"
-                    stroke-linecap="round"
-                    stroke-dasharray="<%= circumference %>"
-                    stroke-dashoffset="<%= dashoffset %>"
-                    transform="rotate(-90 55 55)"
-                    style="transition: stroke-dashoffset 0.6s ease, stroke 0.4s ease"/>
-          </svg>
-          <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none gap-0.5">
-            <% if water_ml >= 1000 %>
-              <span class="text-lg font-bold leading-none <%= value_color %>">
-                <%= "#{(water_ml / 1000.0).round(1)}L" %>
-              </span>
-            <% else %>
-              <div class="flex items-baseline gap-0.5 leading-none">
-                <span class="text-base font-bold <%= value_color %>"><%= water_ml %></span>
-                <span class="text-[9px] text-ink-subtle">ml</span>
-              </div>
-            <% end %>
-            <span class="text-[9px] text-ink-subtle">
-              <% if effective_goal >= 1000 %>
-                / <%= (effective_goal / 1000.0).round(1) %> L
-              <% else %>
-                / <%= effective_goal %> ml
-              <% end %>
+        <%= render RingComponent.new(value: water_ml, goal: effective_goal, size: :md,
+              color_class: ring_color_class, percentage_color_class: value_color) do %>
+          <% if water_ml >= 1000 %>
+            <span class="text-lg font-bold leading-none <%= value_color %>">
+              <%= "#{(water_ml / 1000.0).round(1)}L" %>
             </span>
-          </div>
-        </div>
-        <span class="text-xs font-semibold <%= value_color %> mt-1"><%= pct.round %>%</span>
+          <% else %>
+            <div class="flex items-baseline gap-0.5 leading-none">
+              <span class="text-base font-bold <%= value_color %>"><%= water_ml %></span>
+              <span class="text-[9px] text-ink-subtle">ml</span>
+            </div>
+          <% end %>
+          <span class="text-[9px] text-ink-subtle">
+            <% if effective_goal >= 1000 %>
+              / <%= (effective_goal / 1000.0).round(1) %> L
+            <% else %>
+              / <%= effective_goal %> ml
+            <% end %>
+          </span>
+        <% end %>
       </div>
 
       <%# Colonne droite %>
