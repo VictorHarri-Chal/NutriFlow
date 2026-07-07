@@ -1,4 +1,4 @@
-json.data @foods do |food|
+json.foods @foods do |food|
   json.partial! "api/v1/foods/food", food: food
 end
 
