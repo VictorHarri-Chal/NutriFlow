@@ -188,7 +188,7 @@
           <div class="space-y-2">
             <% [
               { key: "weight_loss",  kcal: @calories_weight_loss,  icon: "fa-arrow-trend-down", suffix: "−15 %" },
-              { key: "maintenance",  kcal: @calories_maintenance,   icon: "fa-equals",           suffix: t("views.profiles.show.tdee_label") },
+              { key: "maintain",     kcal: @calories_maintenance,   icon: "fa-equals",           suffix: t("views.profiles.show.tdee_label") },
               { key: "muscle_gain",  kcal: @calories_muscle_gain,   icon: "fa-dumbbell",         suffix: "+10 %" }
             ].each do |s| %>
               <% active = @profile.goal.to_s == s[:key] %>

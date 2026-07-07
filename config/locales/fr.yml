@@ -216,7 +216,7 @@ fr:
         total_tdee: "Total dépenses"
         goal_label:
           weight_loss: "Objectif perte de poids (−15 %)"
-          maintenance: "Objectif maintien"
+          maintain: "Objectif maintien"
           muscle_gain: "Objectif prise de muscle (+10 %)"
         goal_intake_hint: "→ à ingérer aujourd'hui"
         no_workout: "Aucun entraînement loggé"
@@ -824,7 +824,7 @@ fr:
       formula_note: "Formule Mifflin-St Jeor"
       bmr_tdee: "BMR × coefficient d'activité"
       weight_loss: "Perte de poids"
-      maintenance: "Maintien"
+      maintain: "Maintien"
       muscle_gain: "Prise de muscle"
       macro_goals_title: "Objectifs macronutriments"
       macro_goals_hint: "Estimés selon votre poids et votre objectif calorique."

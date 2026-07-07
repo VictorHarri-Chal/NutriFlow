@@ -216,7 +216,7 @@ en:
         total_tdee: "Total expenditure"
         goal_label:
           weight_loss: "Weight loss goal (−15 %)"
-          maintenance: "Maintenance goal"
+          maintain: "Maintenance goal"
           muscle_gain: "Muscle gain goal (+10 %)"
         goal_intake_hint: "→ to eat today"
         no_workout: "No workout logged"
@@ -826,7 +826,7 @@ en:
       formula_note: "Mifflin-St Jeor formula"
       bmr_tdee: "BMR × activity coefficient"
       weight_loss: "Weight loss"
-      maintenance: "Maintenance"
+      maintain: "Maintenance"
       muscle_gain: "Muscle gain"
       macro_goals_title: "Macronutrient goals"
       macro_goals_hint: "Estimated from your weight and calorie goal."

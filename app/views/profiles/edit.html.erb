@@ -19,7 +19,7 @@
       <div class="space-y-8"
            data-controller="water-goal-estimator"
            data-water-goal-estimator-activity-labels-value="<%= {
-             desk_job:       t('enumerize.profile.job_activity_level.desk_job'),
+             sedentary:      t('enumerize.profile.job_activity_level.sedentary'),
              light_activity: t('enumerize.profile.job_activity_level.light_activity'),
              standing_job:   t('enumerize.profile.job_activity_level.standing_job'),
              physical_job:   t('enumerize.profile.job_activity_level.physical_job')
@@ -105,7 +105,7 @@
           <p class="text-xs text-ink-subtle mb-4"><%= t("views.profiles.edit.job_activity_level_hint") %></p>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <% [
-              { value: "desk_job",       icon: "fa-laptop",        kcal: 150 },
+              { value: "sedentary",      icon: "fa-laptop",        kcal: 150 },
               { value: "light_activity", icon: "fa-person-walking", kcal: 300 },
               { value: "standing_job",   icon: "fa-person",         kcal: 500 },
               { value: "physical_job",   icon: "fa-hard-hat",       kcal: 800 }
@@ -149,7 +149,7 @@
           <div class="grid grid-cols-3 gap-3">
             <% [
               { value: "weight_loss", icon: "fa-arrow-trend-down", label: t("views.daily_calorie_requirements.weight_loss") },
-              { value: "maintenance", icon: "fa-equals",            label: t("views.daily_calorie_requirements.maintenance") },
+              { value: "maintain",   icon: "fa-equals",            label: t("views.daily_calorie_requirements.maintain") },
               { value: "muscle_gain", icon: "fa-dumbbell",          label: t("views.daily_calorie_requirements.muscle_gain") }
             ].each do |opt| %>
               <label class="cursor-pointer">

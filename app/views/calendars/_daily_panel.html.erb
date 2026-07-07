@@ -203,7 +203,7 @@
                 </span>
               </div>
 
-              <% goal_key = profile&.goal.to_s.presence || "maintenance" %>
+              <% goal_key = profile&.goal.to_s.presence || "maintain" %>
               <div class="flex items-center justify-between">
                 <div>
                   <span class="text-ink-subtle/70 block"><%= t("views.calendars.breakdown.goal_label.#{goal_key}") %></span>

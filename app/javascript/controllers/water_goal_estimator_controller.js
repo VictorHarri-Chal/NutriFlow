@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 const ACTIVITY_OFFSETS = {
-  desk_job:       0,
+  sedentary:      0,
   light_activity: 300,
   standing_job:   500,
   physical_job:   700

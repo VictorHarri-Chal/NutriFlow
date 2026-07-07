@@ -6,11 +6,11 @@ en:
         female: "Female"
         other: "Other"
       job_activity_level:
-        desk_job: "Sedentary"
+        sedentary: "Sedentary"
         light_activity: "Lightly active"
         standing_job: "Moderately active"
         physical_job: "Very active"
       goal:
         weight_loss: "Weight loss"
-        maintenance: "Maintenance"
+        maintain: "Maintenance"
         muscle_gain: "Muscle gain"

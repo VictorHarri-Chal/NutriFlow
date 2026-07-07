@@ -2,14 +2,14 @@ class Profile < ApplicationRecord
   extend Enumerize
 
   GENDERS = %i[male female other].freeze
-  GOALS   = %i[weight_loss maintenance muscle_gain].freeze
+  GOALS   = %i[weight_loss maintain muscle_gain].freeze
 
-  JOB_ACTIVITY_LEVELS = %i[desk_job light_activity standing_job physical_job].freeze
+  JOB_ACTIVITY_LEVELS = %i[sedentary light_activity standing_job physical_job].freeze
 
   # Fixed NEAT offset per job type (kcal/day), excluding steps and workouts
   # Based on Ainsworth Compendium + standard NEAT estimation literature
   JOB_NEAT_KCAL = {
-    desk_job:       150,
+    sedentary:      150,
     light_activity: 300,
     standing_job:   500,
     physical_job:   800
@@ -22,14 +22,14 @@ class Profile < ApplicationRecord
   # Goal multipliers applied to TDEE
   GOAL_MULTIPLIERS = {
     weight_loss:  0.85,  # −15 % deficit
-    maintenance:  1.0,
+    maintain:     1.0,
     muscle_gain:  1.10   # +10 % surplus (lean bulk)
   }.freeze
 
   # Extra water per day based on physical job activity (hors séances sportives)
   # Sources: IoM DRI + TrainingPeaks sweat rate data
   WATER_ACTIVITY_OFFSET_ML = {
-    desk_job:       0,
+    sedentary:      0,
     light_activity: 300,
     standing_job:   500,
     physical_job:   700
