@@ -1,8 +1,13 @@
 class User < ApplicationRecord
   AVAILABLE_LOCALES = %w[fr en].freeze
 
+  include Devise::JWT::RevocationStrategies::JTIMatcher
+
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :validatable,
+         :jwt_authenticatable, :omniauthable,
+         jwt_revocation_strategy: self,
+         omniauth_providers: [:apple, :google_oauth2]
 
   validates :locale, inclusion: { in: AVAILABLE_LOCALES }
 
@@ -17,6 +22,7 @@ class User < ApplicationRecord
   has_many :favorited_exercises,  through: :exercise_favorites, source: :exercise
   has_many :workout_programs,     dependent: :destroy
   has_many :shopping_lists,       dependent: :destroy
+  has_many :identities,           dependent: :destroy
 
   after_create :create_profile
 

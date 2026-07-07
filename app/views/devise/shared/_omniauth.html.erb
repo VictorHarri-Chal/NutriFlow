@@ -1,0 +1,21 @@
+<div class="relative my-6 flex items-center">
+  <div class="flex-1 border-t border-surface-border/40"></div>
+  <span class="px-3 text-xs text-ink-subtle"><%= t("views.devise.shared.or_continue_with") %></span>
+  <div class="flex-1 border-t border-surface-border/40"></div>
+</div>
+
+<div class="space-y-3">
+  <%= form_with url: user_apple_omniauth_authorize_path, data: { turbo: false } do %>
+    <button type="submit" class="btn-secondary w-full justify-center py-3 flex items-center gap-3">
+      <i class="fa-brands fa-apple text-lg leading-none"></i>
+      <span><%= t("views.devise.shared.continue_with_apple") %></span>
+    </button>
+  <% end %>
+
+  <%= form_with url: user_google_oauth2_omniauth_authorize_path, data: { turbo: false } do %>
+    <button type="submit" class="btn-secondary w-full justify-center py-3 flex items-center gap-3">
+      <i class="fa-brands fa-google text-sm leading-none"></i>
+      <span><%= t("views.devise.shared.continue_with_google") %></span>
+    </button>
+  <% end %>
+</div>
