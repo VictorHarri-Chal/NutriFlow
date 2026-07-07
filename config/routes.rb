@@ -20,8 +20,8 @@ Rails.application.routes.draw do
       post   "passwords",     to: "passwords#create"
 
       # SSO iOS (public — no auth)
-      post "auth/apple",  to: "auth#apple"
-      post "auth/google", to: "auth#google"
+      post "sessions/apple",  to: "auth#apple"
+      post "sessions/google", to: "auth#google"
 
       # User (authentifié)
       resource  :profile,  only: [:show, :update]
