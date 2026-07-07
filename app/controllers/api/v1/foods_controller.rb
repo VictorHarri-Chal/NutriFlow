@@ -17,7 +17,7 @@ class Api::V1::FoodsController < Api::V1::BaseController
     scope = scope.where(category: params[:category]) if params[:category].present?
     scope = scope.order(created_at: :desc)
 
-    @pagy, @foods = pagy(scope, items: 25)
+    @pagy, @foods = pagy(scope, items: (params[:per_page].presence || 500).to_i.clamp(1, 500))
     render :index
   end
 
