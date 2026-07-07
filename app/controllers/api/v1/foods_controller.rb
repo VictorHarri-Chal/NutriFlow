@@ -6,6 +6,7 @@ class Api::V1::FoodsController < Api::V1::BaseController
     scope = @q.result
 
     scope = scope.search_by_name(params[:query]) if params[:query].present?
+    scope = scope.where(barcode: params[:barcode]) if params[:barcode].present?
     scope = scope.where(favorite: true) if params[:favorites] == "true"
     scope = scope.where(in_pantry: true) if params[:in_pantry] == "true"
 
@@ -120,6 +121,7 @@ class Api::V1::FoodsController < Api::V1::BaseController
       :name, :brand, :fats, :carbs, :sugars, :proteins, :calories,
       :category, :off_id, :nutriscore_grade, :nova_group, :source,
       :fiber, :saturated_fat, :salt, :ecoscore_grade, :ingredients_text,
+      :barcode,
       food_label_ids: [],
       allergens: [], traces: [], additives: [], labels: [],
       micronutrients: {}
