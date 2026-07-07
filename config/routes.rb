@@ -9,12 +9,14 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      # Auth
-      post   "sessions",      to: "sessions#create"
-      delete "sessions",      to: "sessions#destroy"
+      devise_scope :user do
+        # Auth
+        post   "sessions",      to: "sessions#create"
+        delete "sessions",      to: "sessions#destroy"
 
-      # Registration
-      post   "registrations", to: "registrations#create"
+        # Registration
+        post   "registrations", to: "registrations#create"
+      end
 
       # Password reset (public — no auth)
       post   "passwords",     to: "passwords#create"
