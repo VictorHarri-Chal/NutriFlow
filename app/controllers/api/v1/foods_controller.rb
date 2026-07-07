@@ -117,14 +117,24 @@ class Api::V1::FoodsController < Api::V1::BaseController
   end
 
   def food_params
-    params.permit(
+    permitted = params.permit(
       :name, :brand, :fats, :carbs, :sugars, :proteins, :calories,
       :category, :off_id, :nutriscore_grade, :nova_group, :source,
       :fiber, :saturated_fat, :salt, :ecoscore_grade, :ingredients_text,
-      :barcode,
+      :barcode, :image_url,
       food_label_ids: [],
       allergens: [], traces: [], additives: [], labels: [],
+      allergens_tags: [], traces_tags: [], additives_tags: [], labels_tags: [],
       micronutrients: {}
     )
+
+    # Map iOS's *_tags arrays into the storage columns when the plain key wasn't sent
+    { "allergens_tags" => "allergens", "traces_tags" => "traces",
+      "additives_tags" => "additives", "labels_tags" => "labels" }.each do |tags_key, column|
+      tags_value = permitted.delete(tags_key)
+      permitted[column] = tags_value if tags_value.present? && permitted[column].blank?
+    end
+
+    permitted
   end
 end

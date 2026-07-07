@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_07_163517) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_07_163630) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -216,6 +216,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_163517) do
     t.string "labels", default: [], null: false, array: true
     t.text "ingredients_text"
     t.string "barcode"
+    t.string "image_url"
     t.index ["brand"], name: "index_foods_on_brand"
     t.index ["name"], name: "index_foods_on_name"
     t.index ["off_id"], name: "index_foods_on_off_id"

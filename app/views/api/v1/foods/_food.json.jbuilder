@@ -24,6 +24,20 @@ json.labels           food.labels
 json.ingredients_text food.ingredients_text
 json.micronutrients   food.micronutrients
 
+json.barcode          food.barcode
+json.image_url        food.image_url
+json.food_label_ids   food.food_label_ids
+
+# INTERIM ALIASES — iOS contract expects OFF-style *_tags keys alongside the
+# plain arrays. The DB has a single set of array columns, so both key families
+# serialize the same data for now. Proper dual-column separation (OFF en: tags
+# vs. cleaned backend arrays) is an open design decision with Victor — see the
+# additives/labels/ingredients schema thread.
+json.allergens_tags   food.allergens
+json.traces_tags      food.traces
+json.additives_tags   food.additives
+json.labels_tags      food.labels
+
 json.food_labels food.food_labels do |fl|
   json.id    fl.id
   json.name  fl.name
