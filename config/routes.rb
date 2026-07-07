@@ -39,7 +39,7 @@ Rails.application.routes.draw do
           get :lookup
         end
         member do
-          patch :toggle_favorite
+          post :favorite
           patch :toggle_pantry
         end
       end

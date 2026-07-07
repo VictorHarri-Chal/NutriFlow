@@ -1,5 +1,5 @@
 class Api::V1::FoodsController < Api::V1::BaseController
-  before_action :set_food, only: [:show, :update, :destroy, :toggle_favorite, :toggle_pantry]
+  before_action :set_food, only: [:show, :update, :destroy, :favorite, :toggle_pantry]
 
   def index
     @q = current_user.foods.includes(:food_labels).ransack(params[:q])
@@ -99,9 +99,9 @@ class Api::V1::FoodsController < Api::V1::BaseController
     end
   end
 
-  def toggle_favorite
+  def favorite
     @food.update!(favorite: !@food.favorite)
-    render json: { favorite: @food.favorite }
+    render :show
   end
 
   def toggle_pantry
