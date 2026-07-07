@@ -106,7 +106,7 @@ class Api::V1::FoodsController < Api::V1::BaseController
 
   def toggle_pantry
     @food.update!(in_pantry: !@food.in_pantry)
-    render json: { in_pantry: @food.in_pantry }
+    render :show
   end
 
   private
