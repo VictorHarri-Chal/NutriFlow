@@ -7,7 +7,16 @@ class Api::V1::AuthController < Api::V1::BaseController
   # a constant is fine. The web Services ID stays in credentials.
   IOS_BUNDLE_ID = "com.leif.Nutriflow".freeze
 
-  # POST /api/v1/auth/apple
+  class NeedsPasswordToLink < StandardError
+    attr_reader :email
+
+    def initialize(email)
+      @email = email
+      super()
+    end
+  end
+
+  # POST /api/v1/sessions/apple
   # Body: { identity_token: "eyJ..." }
   def apple
     payload      = verify_apple_token(params[:identity_token])
@@ -16,6 +25,8 @@ class Api::V1::AuthController < Api::V1::BaseController
     user, is_new = find_or_create_from_sso("apple", uid, email)
     token        = generate_jwt_for(user)
     render json: { token: token, user: { id: user.id, email: user.email, locale: user.locale }, is_new_user: is_new }
+  rescue NeedsPasswordToLink => e
+    render json: { error: "needs_password_to_link", email: e.email }, status: :conflict
   rescue JWT::ExpiredSignature
     render json: { error: "Apple token expired" }, status: :unauthorized
   rescue JWT::DecodeError
@@ -24,7 +35,7 @@ class Api::V1::AuthController < Api::V1::BaseController
     render json: { error: e.message }, status: :unprocessable_entity
   end
 
-  # POST /api/v1/auth/google
+  # POST /api/v1/sessions/google
   # Body: { id_token: "eyJ..." }
   def google
     payload      = verify_google_token(params[:id_token])
@@ -33,10 +44,33 @@ class Api::V1::AuthController < Api::V1::BaseController
     user, is_new = find_or_create_from_sso("google", uid, email)
     token        = generate_jwt_for(user)
     render json: { token: token, user: { id: user.id, email: user.email, locale: user.locale }, is_new_user: is_new }
+  rescue NeedsPasswordToLink => e
+    render json: { error: "needs_password_to_link", email: e.email }, status: :conflict
   rescue ArgumentError => e
     render json: { error: e.message }, status: :unprocessable_entity
   rescue StandardError
     render json: { error: "Invalid Google token" }, status: :unauthorized
+  end
+
+  # POST /api/v1/identities/apple/link
+  # Body: { identity_token: "eyJ...", password: "..." }
+  def link_apple
+    payload = verify_apple_token(params[:identity_token])
+    email   = payload["email"]
+    uid     = payload["sub"]
+
+    user = User.find_by(email: email)
+    unless user&.valid_password?(params[:password])
+      return render json: { error: "invalid_credentials" }, status: :unauthorized
+    end
+
+    user.identities.find_or_create_by!(provider: "apple", uid: uid) do |identity|
+      identity.email = email
+    end
+
+    head :no_content
+  rescue JWT::ExpiredSignature, JWT::DecodeError
+    render json: { error: "invalid_token" }, status: :unauthorized
   end
 
   private
@@ -46,6 +80,8 @@ class Api::V1::AuthController < Api::V1::BaseController
     return [identity.user, false] if identity.persisted?
 
     raise ArgumentError, "Email required for new SSO user" if email.blank?
+
+    raise NeedsPasswordToLink, email if User.exists?(email: email)
 
     user = User.find_or_create_by(email: email) { |u| u.password = Devise.friendly_token }
     identity.update!(user: user, email: email)
