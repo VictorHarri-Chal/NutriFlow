@@ -3,6 +3,10 @@ require "open-uri"
 class Api::V1::AuthController < Api::V1::BaseController
   skip_before_action :authenticate_user!
 
+  # Bundle ID is public information (visible in the App Store), not a secret —
+  # a constant is fine. The web Services ID stays in credentials.
+  IOS_BUNDLE_ID = "com.leif.Nutriflow".freeze
+
   # POST /api/v1/auth/apple
   # Body: { identity_token: "eyJ..." }
   def apple
@@ -63,7 +67,7 @@ class Api::V1::AuthController < Api::V1::BaseController
       token, nil, true,
       algorithms: %w[RS256],
       jwks:       fetch_apple_jwks,
-      aud:        Rails.application.credentials.dig(:apple, :client_id),
+      aud:        [Rails.application.credentials.dig(:apple, :client_id), IOS_BUNDLE_ID].compact,
       verify_aud: true
     ).first
   end
