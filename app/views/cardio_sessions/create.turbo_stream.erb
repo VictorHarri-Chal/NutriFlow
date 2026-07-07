@@ -4,6 +4,9 @@
 <%= turbo_stream.replace "cardio_widget" do %>
   <%= render "calendars/cardio_widget", day: @day, force_open: true %>
 <% end %>
+<%= turbo_stream.replace "water_widget" do %>
+  <%= render "calendars/water_widget", day: @day, profile: @profile %>
+<% end %>
 <%= turbo_stream.replace "daily_panel" do %>
   <%= render "calendars/daily_panel",
              total_calories:      @total_calories,
