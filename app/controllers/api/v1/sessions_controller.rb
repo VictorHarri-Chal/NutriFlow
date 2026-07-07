@@ -13,12 +13,12 @@ class Api::V1::SessionsController < Devise::SessionsController
 
   def destroy
     sign_out(resource_name)
-    render json: { message: "Signed out." }
+    head :no_content
   end
 
   private
 
   def respond_to_on_destroy
-    render json: { message: "Signed out." }
+    head :no_content
   end
 end
