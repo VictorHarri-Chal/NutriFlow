@@ -14,7 +14,7 @@ class Api::V1::SettingsController < Api::V1::BaseController
   private
 
   def settings_params
-    params.permit(
+    params.fetch(:user, params).permit(
       :locale,
       :show_day_note,
       :show_workout_section,
