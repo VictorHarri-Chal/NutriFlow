@@ -36,26 +36,19 @@
 
   <%# ── Always-visible summary: label + rest + notes ── %>
   <div id="pe_<%= pe.id %>_meta">
-    <div class="flex items-center gap-2 flex-wrap">
-      <span class="text-[11px] font-semibold text-brand/70"><%= pe.label %></span>
-      <% if pe.rest_seconds.present? %>
-        <% mins = pe.rest_seconds / 60; secs = pe.rest_seconds % 60 %>
-        <% rest_label = mins > 0 ? "#{mins}min#{secs > 0 ? "#{secs}s" : ""}" : "#{secs}s" %>
-        <span class="flex items-center gap-0.5 text-[10px] text-ink-subtle/50">
-          <i class="fas fa-hourglass-half text-[8px]"></i>
-          <%= rest_label %>
-        </span>
-      <% end %>
-    </div>
-    <% if pe.notes.present? %>
-      <p class="text-[10px] text-ink-subtle/40 italic leading-snug mt-0.5"><%= pe.notes %></p>
-    <% end %>
+    <%= render "workout_programs/exercise_meta", pe: pe %>
   </div>
 
   <%# ── Collapsible body: editing inputs (stopEvent prevents clicks here from re-toggling) ── %>
   <div data-collapsible-target="content"
        data-action="click->collapsible#stopEvent"
        class="<%= expanded ? "mt-2" : "hidden" %>">
+
+    <% if pe.errors.any? %>
+      <div class="mb-2 text-[10px] text-status-danger bg-status-danger/10 border border-status-danger/30 rounded-lg px-2 py-1">
+        <%= pe.errors.full_messages.first %>
+      </div>
+    <% end %>
 
     <div class="border-t border-surface-border/20 pt-2">
       <%= form_with url: program_exercise_path(pe),

@@ -24,7 +24,16 @@ class ProgramExercisesController < ApplicationController
         format.html { redirect_to @program }
       end
     else
-      head :unprocessable_entity
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            "program_exercise_#{@exercise.id}",
+            partial: "workout_programs/program_exercise",
+            locals: { program: @program, day: @day, pe: @exercise, open: true }
+          ), status: :unprocessable_entity
+        end
+        format.html { redirect_to @program }
+      end
     end
   end
 
@@ -52,6 +61,10 @@ class ProgramExercisesController < ApplicationController
     @target_day.program_exercises.order(:position).each_with_index do |pe, i|
       pe.update_column(:position, i)
     end
+
+    # Reload with :exercise preloaded for the turbo_stream render below
+    @source_day = ProgramDay.includes(program_exercises: :exercise).find(@source_day.id)
+    @target_day = ProgramDay.includes(program_exercises: :exercise).find(@target_day.id)
 
     respond_to do |format|
       format.turbo_stream

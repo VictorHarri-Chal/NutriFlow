@@ -1,0 +1,12 @@
+en:
+  activerecord:
+    models:
+      program_exercise: "Program exercise"
+      program_exercises: "Program exercises"
+    attributes:
+      program_exercise:
+        sets: "Sets"
+        reps_target: "Reps"
+        weight_target: "Weight"
+        rest_seconds: "Rest time"
+        notes: "Notes"

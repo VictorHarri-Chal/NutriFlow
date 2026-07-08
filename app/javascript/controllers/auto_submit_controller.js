@@ -4,14 +4,26 @@ import { Controller } from "@hotwired/stimulus"
 // Processes Turbo Stream responses so the server can update read-only
 // summary elements (e.g. exercise meta block) without touching input focus.
 // Silent responses (empty body or no <turbo-stream>) are ignored.
+//
+// Several fields of the same form can each carry their own auto-submit
+// controller instance (one per input). Blurring them in quick succession
+// fires independent fetches with no ordering guarantee — a slower earlier
+// request could land after a later one and overwrite it with stale data.
+// Requests for a given form are therefore queued so they always resolve
+// in the order they were fired, one at a time.
 export default class extends Controller {
   submit(event) {
     if (event.type === "keydown") event.preventDefault()
     const form = this.element.closest("form")
     if (!form) return
 
+    const run = () => this._send(form)
+    form._autoSubmitQueue = (form._autoSubmitQueue || Promise.resolve()).then(run, run)
+  }
+
+  _send(form) {
     const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content")
-    fetch(form.action, {
+    return fetch(form.action, {
       method: form.getAttribute("method") || "post",
       body: new FormData(form),
       headers: {

@@ -61,17 +61,7 @@ class WorkoutProgramsController < ApplicationController
         duration_minutes: source_day.duration_minutes,
         notes:            source_day.notes
       )
-      source_day.program_exercises.each do |pe|
-        target_day.program_exercises.create!(
-          exercise_id:   pe.exercise_id,
-          sets:          pe.sets,
-          reps_target:   pe.reps_target,
-          weight_target: pe.weight_target,
-          rest_seconds:  pe.rest_seconds,
-          notes:         pe.notes,
-          position:      pe.position
-        )
-      end
+      source_day.copy_exercises_to!(target_day)
     end
 
     redirect_to copy, notice: t("controllers.workout_programs.duplicated")

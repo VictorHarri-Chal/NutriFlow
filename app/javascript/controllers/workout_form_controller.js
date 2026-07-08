@@ -301,9 +301,14 @@ export default class extends Controller {
     })
   }
 
+  // Starting index for JS-added sets. Existing rows use either a real
+  // WorkoutSet id or a server-generated placeholder (see _form.html.erb),
+  // so the full millisecond timestamp (not truncated) keeps new keys out
+  // of reach of any real database id, avoiding a nested-attributes key
+  // collision — same convention as nested_form_controller.js's NEW_RECORD.
   _countExistingInputs() {
     const existing = this.element.querySelectorAll("[name*='workout_sets_attributes']")
-    return existing.length > 0 ? Date.now() % 100000 : 0
+    return existing.length > 0 ? Date.now() : 0
   }
 
   _syncEmptyHint() {

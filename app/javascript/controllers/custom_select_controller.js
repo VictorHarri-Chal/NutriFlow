@@ -6,6 +6,15 @@ export default class extends Controller {
   connect() {
     this.buildDropdown()
     this.syncLabel()
+    this._boundOutsideClick = this._onOutsideClick.bind(this)
+    this._boundOtherOpen    = this._onOtherOpen.bind(this)
+    document.addEventListener("click", this._boundOutsideClick)
+    document.addEventListener("custom-select:open", this._boundOtherOpen)
+  }
+
+  disconnect() {
+    document.removeEventListener("click", this._boundOutsideClick)
+    document.removeEventListener("custom-select:open", this._boundOtherOpen)
   }
 
   // Build custom dropdown items from native <select> options
@@ -53,22 +62,20 @@ export default class extends Controller {
   }
 
   open() {
-    // Close any other open dropdowns
-    document.querySelectorAll("[data-custom-select-dropdown]").forEach(d => {
-      if (d !== this.dropdownTarget) d.classList.add("hidden")
-    })
-
+    document.dispatchEvent(new CustomEvent("custom-select:open", { detail: { source: this.element } }))
     this.dropdownTarget.classList.remove("hidden")
-    this._handler = (e) => { if (!this.element.contains(e.target)) this.close() }
-    document.addEventListener("click", this._handler)
   }
 
   close() {
     this.dropdownTarget.classList.add("hidden")
-    if (this._handler) {
-      document.removeEventListener("click", this._handler)
-      this._handler = null
-    }
+  }
+
+  _onOtherOpen(event) {
+    if (event.detail.source !== this.element) this.close()
+  }
+
+  _onOutsideClick(event) {
+    if (!this.element.contains(event.target)) this.close()
   }
 
   choose(event) {
@@ -79,9 +86,5 @@ export default class extends Controller {
     this.syncLabel()
     this.buildDropdown()
     this.close()
-  }
-
-  disconnect() {
-    if (this._handler) document.removeEventListener("click", this._handler)
   }
 }

@@ -1,13 +1,12 @@
 class WorkoutProgram < ApplicationRecord
+  SPLIT_TYPES = %w[ppl upper_lower fullbody push_pull bro_split custom].freeze
+  DAY_KEYS    = %w[monday tuesday wednesday thursday friday saturday sunday].freeze
+
   belongs_to :user
   has_many :program_days, -> { order(:day_of_week) }, dependent: :destroy, inverse_of: :workout_program
 
   validates :name, presence: true, uniqueness: { scope: :user_id, case_sensitive: false }
-  validates :split_type, presence: true, inclusion: { in: %w[ppl upper_lower fullbody push_pull bro_split custom] }
-
-  SPLIT_TYPES = %w[ppl upper_lower fullbody push_pull bro_split custom].freeze
-
-  DAY_KEYS  = %w[monday tuesday wednesday thursday friday saturday sunday].freeze
+  validates :split_type, presence: true, inclusion: { in: SPLIT_TYPES }
 
   # Ensure only one active program per user
   before_save :deactivate_others, if: -> { is_active? && is_active_changed? }

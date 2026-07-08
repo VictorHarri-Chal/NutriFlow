@@ -157,10 +157,7 @@ export default class extends Controller {
       },
       body: form,
     }).then(r => r.text()).then(html => {
-      if (html.includes("turbo-stream")) {
-        document.querySelector("turbo-stream-source") // hint turbo to process
-        Turbo.renderStreamMessage(html)
-      }
+      if (html.includes("turbo-stream")) Turbo.renderStreamMessage(html)
     })
   }
 

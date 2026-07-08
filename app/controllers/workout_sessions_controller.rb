@@ -39,7 +39,7 @@ class WorkoutSessionsController < ApplicationController
             set = @workout_session.workout_sets.build(
               exercise_id:  pe.exercise_id,
               weight_kg:    pe.weight_target,
-              reps:         pe.reps_target.presence || 1,
+              reps:         pe.reps_target,
               position:     @workout_session.workout_sets.size,
               rest_seconds: i == 0 ? pe.rest_seconds : nil,
               notes:        i == 0 ? pe.notes.presence : nil

@@ -6,7 +6,7 @@
      data-sortable-list-move-base-value="/program_exercises"
      data-sortable-list-group-value="program_<%= program.id %>"
      data-sortable-list-day-id-value="<%= day.id %>">
-  <% exercises = day.program_exercises.reload.order(:position).load %>
+  <% exercises = day.program_exercises.to_a %>
   <% if exercises.empty? %>
     <div class="py-6 text-center" id="program_day_<%= day.id %>_empty">
       <p class="text-[10px] text-ink-subtle/40 italic"><%= t("views.workout_programs.day.empty_hint") %></p>
