@@ -19,12 +19,27 @@ class Profile < ApplicationRecord
   # Derived from MET 3.5 (walking) × 0.04 kcal/step base
   KCAL_PER_STEP_AT_70KG = 0.04
 
-  # Goal multipliers applied to TDEE
-  GOAL_MULTIPLIERS = {
-    weight_loss:  0.85,  # −15 % deficit
-    maintenance:  1.0,
-    muscle_gain:  1.10   # +10 % surplus (lean bulk)
-  }.freeze
+  # kcal per kg of body fat — standard nutrition estimate, used to convert a
+  # weekly weight-change rate into a daily calorie delta.
+  KCAL_PER_KG = 7700
+
+  # Fallback defaults when TDEE can't be computed yet (incomplete profile).
+  # Otherwise, #default_weight_loss_rate / #default_muscle_gain_rate compute
+  # a per-user default from ±15%/±10% of TDEE, converted to kg/week.
+  FALLBACK_WEIGHT_LOSS_RATE = -0.5
+  FALLBACK_MUSCLE_GAIN_RATE = 0.25
+
+  # Allowed input range for goal_rate_kg_per_week. This is a soft guardrail:
+  # the recommended sub-range (see goal_rate_estimator_controller.js) is only
+  # enforced as a UI warning, not a hard validation limit.
+  GOAL_RATE_RANGE = -1.5..1.0
+
+  # Fat target as a share of total calories rather than a flat g/kg amount,
+  # so it scales with the calorie goal (deficit vs surplus) instead of
+  # dumping every surplus/deficit calorie onto carbs alone. Protein stays
+  # g/kg — sports nutrition guidance ties protein need to bodyweight, not
+  # calorie intake, precisely so it doesn't drop during a deficit.
+  FAT_PERCENT_OF_CALORIES = 0.25
 
   # Extra water per day based on physical job activity (hors séances sportives)
   # Sources: IoM DRI + TrainingPeaks sweat rate data
@@ -42,14 +57,22 @@ class Profile < ApplicationRecord
   belongs_to :user
 
   before_validation :set_default_steps
+  before_validation :set_default_water_goal
+  before_validation :sync_goal_with_target_weight
 
   validates :name,               length: { maximum: 30 }
   validates :weight,             numericality: { greater_than: 0, less_than: 500 }, allow_blank: true
   validates :height,             numericality: { greater_than: 0, less_than: 300 }, allow_blank: true
-  validates :age,                numericality: { greater_than: 0, less_than: 120 }, allow_blank: true
+  validate  :date_of_birth_is_plausible
+  validates :goal_weight,        presence: true, if: :profile_ready_for_goal?
   validates :goal_weight,        numericality: { greater_than: 20, less_than: 400 }, allow_blank: true
   validates :water_goal_ml,      numericality: { greater_than: 0, less_than: 10_000 }, allow_blank: true
   validates :default_daily_steps, numericality: { greater_than_or_equal_to: 0, less_than: 100_000 }, allow_blank: true
+  validates :goal_rate_kg_per_week, numericality: {
+    greater_than_or_equal_to: GOAL_RATE_RANGE.min,
+    less_than_or_equal_to:    GOAL_RATE_RANGE.max
+  }, if: :profile_ready_for_goal?
+  validate :goal_rate_matches_goal_direction, if: :profile_ready_for_goal?
 
   # ── Hydration ─────────────────────────────────────────────────────────────
 
@@ -62,6 +85,19 @@ class Profile < ApplicationRecord
     gendered = gender.to_s == "female" ? base * 0.9 : base
     offset   = WATER_ACTIVITY_OFFSET_ML[job_activity_level&.to_sym] || 0
     ((gendered + offset) / 50.0).round * 50
+  end
+
+  # ── Age ───────────────────────────────────────────────────────────────────
+
+  # Computed from date_of_birth rather than stored as a static integer, so
+  # it stays correct as time passes instead of silently going stale.
+  def age
+    return nil unless date_of_birth.present?
+
+    today = Date.current
+    years = today.year - date_of_birth.year
+    years -= 1 if today < date_of_birth + years.years
+    years
   end
 
   # ── BMI ───────────────────────────────────────────────────────────────────
@@ -108,8 +144,7 @@ class Profile < ApplicationRecord
     base = tdee(day: day)
     return nil unless base
 
-    multiplier = GOAL_MULTIPLIERS[goal.to_sym] || 1.0
-    (base * multiplier).round
+    base + daily_calorie_delta
   end
 
   # TDEE without goal multiplier, using profile's default_daily_steps
@@ -125,8 +160,81 @@ class Profile < ApplicationRecord
   def calories_needed_for_goal
     return nil unless (tdee = base_tdee)
 
-    multiplier = GOAL_MULTIPLIERS[goal.to_sym] || 1.0
-    (tdee * multiplier).round
+    tdee + daily_calorie_delta
+  end
+
+  # Daily kcal delta derived from the weekly rate goal (0 for maintenance,
+  # or if no goal is set)
+  def daily_calorie_delta
+    return 0 unless goal&.weight_loss? || goal&.muscle_gain?
+
+    (goal_rate_kg_per_week.to_f * KCAL_PER_KG / 7.0).round
+  end
+
+  # Default weekly rate for the weight-loss goal, personalised to this
+  # profile's TDEE (≈ -15% of TDEE converted to kg/week). Falls back to a
+  # flat default when TDEE can't be computed yet (incomplete profile).
+  def default_weight_loss_rate
+    return FALLBACK_WEIGHT_LOSS_RATE unless (tdee = base_tdee)
+
+    (-0.15 * tdee / KCAL_PER_KG.to_f * 7).round(2)
+  end
+
+  # Default weekly rate for the muscle-gain goal, personalised to this
+  # profile's TDEE (≈ +10% of TDEE converted to kg/week).
+  def default_muscle_gain_rate
+    return FALLBACK_MUSCLE_GAIN_RATE unless (tdee = base_tdee)
+
+    (0.10 * tdee / KCAL_PER_KG.to_f * 7).round(2)
+  end
+
+  # The 3-scenario preview (weight loss / maintenance / muscle gain) shown
+  # on the profile page and the daily calorie requirements page. The active
+  # goal's real rate is used for its own scenario; the other two fall back
+  # to their personalised defaults, purely as a preview. Returns nil if
+  # base_tdee can't be computed yet (incomplete profile).
+  def calorie_scenarios
+    return nil unless (base = base_tdee)
+
+    weight_loss_rate = goal&.weight_loss? ? goal_rate_kg_per_week.to_f : default_weight_loss_rate
+    muscle_gain_rate = goal&.muscle_gain? ? goal_rate_kg_per_week.to_f : default_muscle_gain_rate
+
+    {
+      maintenance:      base,
+      weight_loss_rate: weight_loss_rate,
+      muscle_gain_rate: muscle_gain_rate,
+      weight_loss:      base + (weight_loss_rate * KCAL_PER_KG / 7.0).round,
+      muscle_gain:      base + (muscle_gain_rate * KCAL_PER_KG / 7.0).round
+    }
+  end
+
+  # Goal direction implied by comparing goal_weight to the current weight:
+  # a lower target means weight_loss, a higher one means muscle_gain, an
+  # equal one means maintenance. Returns nil if either weight is missing —
+  # in that case no direction is implied yet.
+  def implied_goal_direction
+    return nil unless weight.present? && goal_weight.present?
+
+    if goal_weight < weight
+      "weight_loss"
+    elsif goal_weight > weight
+      "muscle_gain"
+    else
+      "maintenance"
+    end
+  end
+
+  # Estimated number of weeks to reach goal_weight at the current rate.
+  # Returns nil if data is missing, the rate is zero, or the rate's
+  # direction doesn't match the direction needed to reach goal_weight.
+  def estimated_weeks_to_goal
+    return nil unless weight.present? && goal_weight.present? && goal_rate_kg_per_week.nonzero?
+
+    weight_delta = goal_weight - weight
+    return nil if weight_delta.zero?
+    return nil unless weight_delta.negative? == goal_rate_kg_per_week.negative?
+
+    (weight_delta.abs / goal_rate_kg_per_week.abs).round
   end
 
   # ── Macro goals ───────────────────────────────────────────────────────────
@@ -136,27 +244,87 @@ class Profile < ApplicationRecord
     weight * 2
   end
 
-  def daily_fats_goal
-    return nil unless weight.present?
-    weight * 1
+  # Percentage of the calorie goal rather than a flat g/kg amount, so it
+  # scales with the size of the deficit/surplus — see FAT_PERCENT_OF_CALORIES.
+  def daily_fats_goal(day: nil)
+    calorie_goal = calorie_goal_for(day)
+    return nil unless calorie_goal
+
+    [(calorie_goal * FAT_PERCENT_OF_CALORIES / 9.0).round(1), 0].max
   end
 
   def daily_carbs_goal(day: nil)
-    calorie_goal = day ? daily_calorie_target(day: day) : calories_needed_for_goal
+    calorie_goal = calorie_goal_for(day)
     return nil unless calorie_goal && weight.present?
 
     protein_kcal = daily_protein_goal * 4
-    fat_kcal     = daily_fats_goal * 9
+    fat_kcal     = daily_fats_goal(day: day) * 9
     remaining    = calorie_goal - protein_kcal - fat_kcal
-    return nil if remaining <= 0
 
-    (remaining / 4.0).round
+    [(remaining / 4.0).round, 0].max
+  end
+
+  # True when protein + fat targets alone already exceed the calorie goal
+  # (a very low calorie target relative to bodyweight) — without this,
+  # carbs silently floors at 0 with no indication of why.
+  def macro_calories_exceed_goal?(day: nil)
+    calorie_goal = calorie_goal_for(day)
+    return false unless calorie_goal && weight.present?
+
+    (daily_protein_goal * 4) + (daily_fats_goal(day: day) * 9) > calorie_goal
+  end
+
+  # The whole goal mechanism (target weight, rate, and their personalised
+  # defaults) needs a computable BMR — i.e. weight, height and age — to mean
+  # anything. Without it, none of these fields are shown in the UI, so none
+  # of them should be enforced either.
+  def profile_ready_for_goal?
+    bmr.present?
   end
 
   private
 
+  def calorie_goal_for(day)
+    day ? daily_calorie_target(day: day) : calories_needed_for_goal
+  end
+
   def set_default_steps
     self.default_daily_steps = 6_000 if default_daily_steps.nil?
+  end
+
+  # water_goal_ml is NOT NULL at the DB level — clearing the field in the
+  # form casts it to nil, which must never reach the database as-is.
+  def set_default_water_goal
+    self.water_goal_ml = 2000 if water_goal_ml.nil?
+  end
+
+  def date_of_birth_is_plausible
+    return if date_of_birth.blank?
+
+    if date_of_birth > Date.current
+      errors.add(:date_of_birth, :cannot_be_in_the_future)
+    elsif date_of_birth < 120.years.ago.to_date
+      errors.add(:date_of_birth, :too_far_in_the_past)
+    end
+  end
+
+  def goal_rate_matches_goal_direction
+    return if goal.blank?
+
+    if goal.weight_loss? && goal_rate_kg_per_week.positive?
+      errors.add(:goal_rate_kg_per_week, :must_be_negative_for_weight_loss)
+    elsif goal.muscle_gain? && goal_rate_kg_per_week.negative?
+      errors.add(:goal_rate_kg_per_week, :must_be_positive_for_muscle_gain)
+    end
+  end
+
+  # Goal is a derived attribute, not a free user choice: it always tracks
+  # the direction implied by comparing goal_weight to weight. This runs
+  # before validation so manual tampering (or a stale client value) can
+  # never persist an inconsistent goal.
+  def sync_goal_with_target_weight
+    implied = implied_goal_direction
+    self.goal = implied if implied.present?
   end
 
   def gender_bmr_constant

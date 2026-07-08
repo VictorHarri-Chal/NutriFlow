@@ -71,7 +71,7 @@ class CalendarDataLoader
     steps_kcal       = @profile.neat_from_steps(effective_steps)
     workout_kcal     = @day.workout_calories_total
     tdee             = @profile.bmr + job_neat + steps_kcal + workout_kcal
-    multiplier       = Profile::GOAL_MULTIPLIERS[@profile.goal.to_sym] || 1.0
+    goal_delta       = @profile.daily_calorie_delta
 
     @tdee_breakdown = {
       bmr:          @profile.bmr,
@@ -81,13 +81,12 @@ class CalendarDataLoader
       steps_custom: @day.steps.present?,
       workout_kcal: workout_kcal,
       tdee:         tdee,
-      multiplier:   multiplier,
-      goal_delta:   (tdee * multiplier - tdee).round
+      goal_delta:   goal_delta
     }
 
-    @daily_calorie_goal = (tdee * multiplier).round
+    @daily_calorie_goal = (tdee + goal_delta).round
     @daily_protein_goal = @profile.daily_protein_goal
-    @daily_fats_goal    = @profile.daily_fats_goal
+    @daily_fats_goal    = @profile.daily_fats_goal(day: @day)
     @daily_carbs_goal   = @profile.daily_carbs_goal(day: @day)
 
     return unless @daily_calorie_goal

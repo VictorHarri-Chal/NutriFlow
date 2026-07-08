@@ -60,7 +60,7 @@ export default class extends Controller {
       const { emoji, label } = CATS[cat] || CATS.other
       lines.push(`${emoji} ${label.toUpperCase()}`)
       grouped[cat].forEach(({ name, quantity }) => {
-        lines.push(`□ ${name}${quantity ? `  —  ${quantity}` : ""}`)
+        lines.push(`□ ${name}${quantity ? `  ·  ${quantity}` : ""}`)
       })
       if (idx < activeCats.length - 1) lines.push("")
     })

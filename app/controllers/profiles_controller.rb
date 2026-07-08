@@ -5,10 +5,12 @@ class ProfilesController < ApplicationController
 
   def show
     @user = current_user
-    if (base = @profile.base_tdee)
-      @calories_maintenance = base
-      @calories_weight_loss = (base * 0.85).round
-      @calories_muscle_gain = (base * 1.10).round
+    if (scenarios = @profile.calorie_scenarios)
+      @calories_maintenance = scenarios[:maintenance]
+      @weight_loss_rate     = scenarios[:weight_loss_rate]
+      @muscle_gain_rate     = scenarios[:muscle_gain_rate]
+      @calories_weight_loss = scenarios[:weight_loss]
+      @calories_muscle_gain = scenarios[:muscle_gain]
     end
     @protein_goal = @profile.daily_protein_goal
     @fats_goal    = @profile.daily_fats_goal
@@ -40,11 +42,11 @@ class ProfilesController < ApplicationController
       :name,
       :weight,
       :height,
-      :age,
+      :date_of_birth,
       :gender,
       :job_activity_level,
       :default_daily_steps,
-      :goal,
+      :goal_rate_kg_per_week,
       :goal_weight,
       :water_goal_ml
     )

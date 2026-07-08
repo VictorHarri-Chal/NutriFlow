@@ -186,7 +186,7 @@
                 %>
                 <div class="flex flex-col items-center gap-1">
                   <div class="w-full h-5 rounded <%= bg %>"
-                       title="<%= l(entry[:date], format: :short) %> — <%= pct %>%"></div>
+                       title="<%= l(entry[:date], format: :short) %> · <%= pct %>%"></div>
                   <span class="text-[9px] text-ink-subtle"><%= ordered_abbrs[i].to_s[0] %></span>
                 </div>
               <% end %>

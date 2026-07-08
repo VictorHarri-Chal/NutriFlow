@@ -26,8 +26,6 @@ Rails.application.routes.draw do
       patch :toggle_pantry
     end
   end
-  resource :daily_calorie_requirement, only: [:show]
-
   resource :setting, only: [:show, :update] do
     patch :update_preferences
   end
