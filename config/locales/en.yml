@@ -183,10 +183,12 @@ en:
       heatmap:
         title: "%{month}"
         open_button: "Monthly view"
+        previous_month: "Previous month"
+        next_month: "Next month"
+        current_month: "Current month"
         legend_goal: "≥ 95%"
         legend_partial: "70–95%"
         legend_low: "< 70%"
-        goal_hint: "Goal: %{goal} kcal / day"
         stats_logged: "days logged"
         stats_goal_reached: "goal reached"
         stats_avg_kcal: "avg kcal"
