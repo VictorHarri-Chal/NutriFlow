@@ -163,7 +163,6 @@ en:
       salt: "Salt"
       nutrition_summary: "Daily nutritional summary"
       complete_profile_hint: "Complete your profile to display your goals"
-      copy_yesterday: "Copy yesterday"
       copy_yesterday_title: "Copy foods from the previous day"
       heatmap:
         title: "%{month}"
@@ -884,11 +883,6 @@ en:
         quantity_col: "Quantity"
         actions_col: "Actions"
         recipe_label: "Dish"
-        add_food: "Food"
-        add_recipe: "Dish"
-        item_count:
-          one: "1 item"
-          other: "%{count} items"
         ungrouped_title: "Ungrouped items"
         delete_recipe_confirm: "Are you sure you want to delete this dish?"
         delete_food_confirm: "Are you sure you want to delete this food?"

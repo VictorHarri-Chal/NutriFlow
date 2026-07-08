@@ -19,8 +19,8 @@
         </span>
       <% end %>
       <% cal = workout_session.estimated_calories(current_user.profile&.weight&.to_f) %>
-      <span class="flex items-center gap-1 text-[11px] text-brand/70 font-medium">
-        <i class="fas fa-bolt text-[9px]"></i>
+      <span class="flex items-center gap-1 text-[11px] text-status-success/80 font-medium">
+        <i class="fas fa-fire-alt text-[9px]"></i>
         ~<%= cal %> kcal
       </span>
     </div>

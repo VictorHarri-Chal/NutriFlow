@@ -163,7 +163,6 @@ fr:
       salt: "Sel"
       nutrition_summary: "Résumé nutritionnel du jour"
       complete_profile_hint: "Complétez votre profil pour afficher vos objectifs"
-      copy_yesterday: "Copier hier"
       copy_yesterday_title: "Copier les aliments du jour précédent"
       heatmap:
         title: "%{month}"
@@ -882,11 +881,6 @@ fr:
         quantity_col: "Quantité"
         actions_col: "Actions"
         recipe_label: "Plat"
-        add_food: "Aliment"
-        add_recipe: "Plat"
-        item_count:
-          one: "1 élément"
-          other: "%{count} éléments"
         ungrouped_title: "Éléments sans groupe"
         delete_recipe_confirm: "Es-tu sûr de vouloir supprimer cette recette ?"
         delete_food_confirm: "Es-tu sûr de vouloir supprimer cet aliment ?"

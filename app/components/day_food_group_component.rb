@@ -19,20 +19,12 @@ class DayFoodGroupComponent < ApplicationComponent
     }
   end
 
-  def item_count_text
-    I18n.t("views.components.day_food_group.item_count", count: day_foods.count)
-  end
-
   def group_title
     day_food_group ? day_food_group.name : I18n.t("views.components.day_food_group.ungrouped_title")
   end
 
-  def group_bg_class
-    day_food_group ? "from-brand-muted/30 to-brand-muted/10" : "from-surface-hover to-surface-hover"
-  end
-
-  def badge_bg_class
-    day_food_group ? "bg-brand-muted text-brand" : "bg-surface-hover text-ink-muted"
+  def accent_border_class
+    day_food_group ? "border-l-brand" : "border-l-surface-border/50"
   end
 
   def storage_key

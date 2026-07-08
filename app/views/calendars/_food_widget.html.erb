@@ -26,11 +26,10 @@
       <%= button_to copy_yesterday_calendars_path,
             params: { date: day.date.to_s },
             method: :post,
-            class: "flex items-center gap-1 text-[11px] text-ink-subtle/50 hover:text-ink-muted transition-colors cursor-pointer",
+            class: "w-7 h-7 inline-flex items-center justify-center rounded-lg text-ink-subtle hover:text-brand hover:bg-surface-hover transition-colors cursor-pointer",
             form: { class: "contents" },
             title: t("views.calendars.copy_yesterday_title") do %>
-        <i class="fas fa-history text-[9px]"></i>
-        <span><%= t("views.calendars.copy_yesterday") %></span>
+        <i class="fas fa-history text-xs"></i>
       <% end %>
     </div>
   </div>
