@@ -79,6 +79,8 @@ RSpec.describe "Api::V1::Foods", type: :request do
       expect(json["allergens_tags"]).to eq(["en:gluten"])
       expect(json["barcode"]).to eq("123456")
       expect(json["image_url"]).to eq("https://example.com/img.jpg")
+      expect(json["calories"]).to be_a(Numeric)
+      expect(json["calories"]).not_to be_a(String)
     end
   end
 

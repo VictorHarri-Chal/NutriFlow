@@ -33,6 +33,10 @@ RSpec.describe "Api::V1::Profile", type: :request do
           %w[bmr job_neat steps_kcal steps_count workout_kcal tdee goal_delta]
         )
         expect(json["goals"].keys).to match_array(%w[calories proteins fats carbs])
+        expect(json["weight"]).to be_a(Numeric)
+        expect(json["weight"]).not_to be_a(String)
+        expect(json["goals"]["proteins"]).to be_a(Numeric)
+        expect(json["goals"]["proteins"]).not_to be_a(String)
       end
 
       it "returns post-Phase-2 enum strings" do
