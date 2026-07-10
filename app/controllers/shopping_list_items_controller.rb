@@ -1,4 +1,6 @@
 class ShoppingListItemsController < ApplicationController
+  include LoadsShoppingListState
+
   before_action :set_shopping_list, only: [:create]
   before_action :set_item_and_list, only: [:update, :destroy]
 
@@ -20,8 +22,9 @@ class ShoppingListItemsController < ApplicationController
     end
 
     if name.blank?
+      set_foods_json
       respond_to do |format|
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("shopping_list_add_form", partial: "shopping_lists/add_form", locals: { shopping_list: @shopping_list, foods_json: foods_json_for_autocomplete }) }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("shopping_list_add_form", partial: "shopping_lists/add_form", locals: { shopping_list: @shopping_list, foods_json: @foods_json }) }
         format.html { redirect_to @shopping_list }
       end
       return
@@ -34,6 +37,7 @@ class ShoppingListItemsController < ApplicationController
       t("controllers.shopping_list_items.created", name: name)
     end
     set_list_state
+    set_foods_json
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to @shopping_list }
@@ -69,19 +73,6 @@ class ShoppingListItemsController < ApplicationController
                             .where(shopping_lists: { user_id: current_user.id })
                             .find(params[:id])
     @shopping_list = @item.shopping_list
-  end
-
-  def set_list_state
-    @items_by_category = @shopping_list.items_by_category
-    @unchecked_count   = @shopping_list.shopping_list_items.unchecked.count
-    @has_checked       = @shopping_list.shopping_list_items.checked.exists?
-    @has_items         = @shopping_list.shopping_list_items.exists?
-  end
-
-  def foods_json_for_autocomplete
-    current_user.foods.order(:name)
-      .select(:id, :name, :category, :favorite)
-      .as_json(only: [:id, :name, :category, :favorite])
   end
 
   def item_params

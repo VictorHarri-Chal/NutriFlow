@@ -1,6 +1,8 @@
 <%# locals: (shopping_list:, unchecked_count:, has_checked:, has_items:) %>
 <%
-  category_order = %w[proteins grains vegetables fruits dairy beverages condiments other]
+  # Ordre dérivé de ShoppingListItem::CATEGORIES pour ne jamais désynchroniser
+  # cette liste de celle du modèle (ex: catégorie "supplements" oubliée ici).
+  category_order = ShoppingListItem::CATEGORIES
   items_by_cat   = shopping_list.shopping_list_items.unchecked.group_by { |i| i.category.presence || "other" }
   export_items   = category_order.flat_map { |cat|
     next [] unless items_by_cat[cat]
@@ -8,14 +10,15 @@
   }
   export_title = t("views.shopping_lists.export_title", date: l(Date.today, format: :long))
   export_categories = {
-    proteins:   { emoji: "🥩", label: t("views.shopping_lists.categories.proteins")   },
-    grains:     { emoji: "🌾", label: t("views.shopping_lists.categories.grains")     },
-    vegetables: { emoji: "🥦", label: t("views.shopping_lists.categories.vegetables") },
-    fruits:     { emoji: "🍎", label: t("views.shopping_lists.categories.fruits")     },
-    dairy:      { emoji: "🥛", label: t("views.shopping_lists.categories.dairy")      },
-    beverages:  { emoji: "🥤", label: t("views.shopping_lists.categories.beverages")  },
-    condiments: { emoji: "🫙", label: t("views.shopping_lists.categories.condiments") },
-    other:      { emoji: "📦", label: t("views.shopping_lists.categories.other")      },
+    proteins:    { emoji: "🥩", label: t("views.shopping_lists.categories.proteins")   },
+    grains:      { emoji: "🌾", label: t("views.shopping_lists.categories.grains")     },
+    vegetables:  { emoji: "🥦", label: t("views.shopping_lists.categories.vegetables") },
+    fruits:      { emoji: "🍎", label: t("views.shopping_lists.categories.fruits")     },
+    dairy:       { emoji: "🥛", label: t("views.shopping_lists.categories.dairy")      },
+    beverages:   { emoji: "🥤", label: t("views.shopping_lists.categories.beverages")  },
+    condiments:  { emoji: "🫙", label: t("views.shopping_lists.categories.condiments") },
+    supplements: { emoji: "💊", label: t("views.shopping_lists.categories.supplements") },
+    other:       { emoji: "📦", label: t("views.shopping_lists.categories.other")      },
   }
 %>
 <div id="shopping_export_bar"

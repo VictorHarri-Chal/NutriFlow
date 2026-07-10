@@ -27,6 +27,6 @@
   <%# Met à jour le badge sidebar %>
   <%= turbo_stream.replace "shopping_list_badge" do %>
     <%= render "shared/shopping_badge",
-          count: @shopping_list.shopping_list_items.unchecked.count %>
+          count: @shopping_list.unchecked_count %>
   <% end %>
 <% end %>

@@ -1,32 +1,42 @@
 class ShoppingList < ApplicationRecord
   belongs_to :user
-  has_many :shopping_list_items, -> { order(position: :asc, created_at: :asc) },
+  has_many :shopping_list_items, -> { order(created_at: :asc) },
            dependent: :destroy
 
   validates :name, presence: true
 
   # Items groupés par catégorie ; nil → "other" ; unchecked first within each group
   def items_by_category
-    sorted = shopping_list_items.sort_by { |i| [i.checked? ? 1 : 0, i.created_at] }
+    sorted = ordered_items.sort_by { |i| [i.checked? ? 1 : 0, i.created_at] }
     sorted.group_by { |i| i.category.presence || "other" }
   end
 
   def unchecked_count
-    shopping_list_items.where(checked: false).count
+    ordered_items.count { |i| !i.checked? }
+  end
+
+  def has_checked?
+    ordered_items.any?(&:checked?)
+  end
+
+  def has_items?
+    ordered_items.any?
   end
 
   # Adds a food to the list, or merges its quantity with an existing entry.
-  # Matches by food_id first, then by normalized name for manual entries.
+  # Matches by food_id first, then by normalized name — this also catches the
+  # case where the same product was first added manually (no food_id) and is
+  # later added again via autocomplete/recipe/pantry (with a food_id).
   # Returns [item, :merged] or [item, :created]
   def add_or_merge_item(food:, name:, quantity: nil, category: nil)
-    existing = if food
-      shopping_list_items.find_by(food_id: food.id)
-    else
-      shopping_list_items.find_by("LOWER(TRIM(name)) = ?", name.to_s.strip.downcase)
-    end
+    existing   = shopping_list_items.find_by(food_id: food.id) if food
+    existing ||= shopping_list_items.find_by("LOWER(TRIM(name)) = ?", name.to_s.strip.downcase)
 
     if existing
-      existing.update!(quantity: merge_quantities(existing.quantity, quantity))
+      attrs = { quantity: merge_quantities(existing.quantity, quantity) }
+      attrs[:food_id]  = food.id  if food && existing.food_id.nil?
+      attrs[:category] = category if existing.category.nil? && category.present?
+      existing.update!(attrs)
       [existing, :merged]
     else
       item = shopping_list_items.create!(food: food, name: name, quantity: quantity, category: category)
@@ -36,13 +46,17 @@ class ShoppingList < ApplicationRecord
 
   private
 
+  # Loaded once per instance so items_by_category/unchecked_count/has_checked?/
+  # has_items? share a single query instead of one each.
+  def ordered_items
+    @ordered_items ||= shopping_list_items.to_a
+  end
+
   # Unit conversion table: maps a unit to [canonical_unit, factor_to_canonical]
   UNIT_CONVERSIONS = {
     "g"  => ["g",  1],
     "kg" => ["g",  1000],
-    "ml" => ["mL", 1],
     "mL" => ["mL", 1],
-    "l"  => ["mL", 1000],
     "L"  => ["mL", 1000]
   }.freeze
 

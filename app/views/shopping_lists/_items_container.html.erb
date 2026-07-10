@@ -8,11 +8,13 @@
     "dairy"       => { icon: "fa-cheese",            label: t("views.shopping_lists.categories.dairy")      },
     "beverages"   => { icon: "fa-glass-water",       label: t("views.shopping_lists.categories.beverages")  },
     "condiments"  => { icon: "fa-mortar-pestle",     label: t("views.shopping_lists.categories.condiments") },
+    "supplements" => { icon: "fa-capsules",          label: t("views.shopping_lists.categories.supplements") },
     "other"       => { icon: "fa-box",               label: t("views.shopping_lists.categories.other")      }
   }
 
-  # Ordre d'affichage des catégories
-  ordered_keys = %w[proteins grains vegetables fruits dairy beverages condiments other]
+  # Ordre d'affichage des catégories — dérivé de ShoppingListItem::CATEGORIES
+  # pour ne jamais désynchroniser cette liste de celle du modèle.
+  ordered_keys = ShoppingListItem::CATEGORIES
   sorted = ordered_keys.filter_map { |k| [k, items_by_category[k]] if items_by_category[k] }
 %>
 

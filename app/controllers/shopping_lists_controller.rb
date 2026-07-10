@@ -1,4 +1,6 @@
 class ShoppingListsController < ApplicationController
+  include LoadsShoppingListState
+
   before_action :set_shopping_list, only: [:show, :clear_checked, :clear_all, :destroy]
 
   def index
@@ -9,13 +11,8 @@ class ShoppingListsController < ApplicationController
   end
 
   def show
-    @items_by_category = @shopping_list.items_by_category
-    @unchecked_count   = @shopping_list.shopping_list_items.unchecked.count
-    @has_checked       = @shopping_list.shopping_list_items.checked.exists?
-    @has_items         = @shopping_list.shopping_list_items.exists?
-    @foods_json        = current_user.foods.order(:name)
-                                     .select(:id, :name, :category, :favorite)
-                                     .as_json(only: [:id, :name, :category, :favorite])
+    set_list_state
+    set_foods_json
   end
 
   def clear_checked
@@ -50,12 +47,5 @@ class ShoppingListsController < ApplicationController
 
   def set_shopping_list
     @shopping_list = current_user.shopping_lists.find(params[:id])
-  end
-
-  def set_list_state
-    @items_by_category = @shopping_list.items_by_category
-    @unchecked_count   = @shopping_list.shopping_list_items.unchecked.count
-    @has_checked       = @shopping_list.shopping_list_items.checked.exists?
-    @has_items         = @shopping_list.shopping_list_items.exists?
   end
 end
