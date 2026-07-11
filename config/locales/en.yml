@@ -74,14 +74,10 @@ en:
       registrations:
         password_updated: "Your password has been updated successfully."
         email_updated: "Your email address has been updated successfully."
+        email_confirmation_sent: "A confirmation email has been sent to your new address. Click the link to finalize the change."
 
   activerecord:
     attributes:
-      user:
-        current_password: "Current password"
-        password: "Password"
-        password_confirmation: "Password confirmation"
-        email: "Email address"
       food:
         name: "Name"
         brand: "Brand"
@@ -749,13 +745,11 @@ en:
         confirm_password: "Confirm new password"
         confirm_password_placeholder: "Confirm your new password"
         update_password: "Update password"
-        forgot_password: "Forgot password?"
-        forgot_password_hint: "If you forgot your password, you can request a reset link by email."
-        email_address: "Email address"
-        send_reset_link: "Send reset link"
         delete_account: "Delete my account"
         delete_account_warning: "This action is irreversible. All your data will be permanently deleted."
         delete_account_button: "Delete account"
+        pending_reconfirmation: "Email change pending to %{email}. Check your inbox to confirm."
+        resend_confirmation: "Resend email"
       food_groups:
         title: "Food groups"
         description: "Organize your meals by time of day."
@@ -1515,6 +1509,7 @@ en:
         submit: "Sign in"
         no_account: "No account yet?"
         sign_up_link: "Create an account"
+        resend_confirmation: "Didn't receive the confirmation email?"
       registrations:
         title: "Create an account"
         subtitle: "Start tracking your nutrition"
@@ -1523,6 +1518,11 @@ en:
         submit: "Create my account"
         already_account: "Already have an account?"
         sign_in_link: "Sign in"
+      confirmations:
+        new:
+          title: "Confirm your account"
+          subtitle: "A confirmation email has been sent to you. Didn't receive it? Enter your address below to get a new one."
+          submit: "Resend instructions"
       passwords:
         new:
           title: "Forgot your password?"
@@ -1535,6 +1535,10 @@ en:
           confirm_password: "Confirm password"
           submit: "Reset password"
       mailer:
+        confirmation:
+          greeting: "Welcome %{email}!"
+          intro: "You can confirm your email address through the link below."
+          action: "Confirm my account"
         reset_password:
           greeting: "Hello %{email}!"
           intro: "Someone has requested a link to change your password. You can do this through the link below."
@@ -1544,7 +1548,13 @@ en:
         password_changed:
           greeting: "Hello %{email}!"
           body: "Your password has been changed successfully."
+          ignore: "If you didn't make this change, contact us immediately and reset your password."
         email_changed:
           greeting: "Hello %{email}!"
           body_pending: "Your email address is being changed to %{new_email}."
           body_confirmed: "Your email address has been changed to %{new_email}."
+          ignore: "If you didn't make this change, contact us immediately."
+        new_device_sign_in:
+          greeting: "Hello %{email}!"
+          intro: "A sign-in from a new IP address (%{ip}) was just detected on your account."
+          ignore: "If this was you, you can ignore this email. Otherwise, change your password as soon as possible."

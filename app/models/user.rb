@@ -2,7 +2,8 @@ class User < ApplicationRecord
   AVAILABLE_LOCALES = %w[fr en].freeze
 
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :validatable,
+         :confirmable, :trackable
 
   validates :locale, inclusion: { in: AVAILABLE_LOCALES }
 

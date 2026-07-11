@@ -50,12 +50,18 @@
       <% end %>
     </div>
 
-    <div class="px-8 pb-8 text-center">
+    <div class="px-8 pb-8 text-center space-y-2">
       <p class="text-sm text-ink-subtle">
         <%= t("views.devise.sessions.no_account") %>
         <%= link_to t("views.devise.sessions.sign_up_link"), new_registration_path(resource_name),
               class: "font-semibold text-brand hover:text-brand-hover transition-colors" %>
       </p>
+      <% if devise_mapping.confirmable? && flash[:alert] == t("devise.failure.unconfirmed") %>
+        <p>
+          <%= link_to t("views.devise.sessions.resend_confirmation"), new_confirmation_path(resource_name),
+                class: "text-xs text-ink-subtle hover:text-brand transition-colors" %>
+        </p>
+      <% end %>
     </div>
   </div>
 </div>

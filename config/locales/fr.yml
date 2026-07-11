@@ -74,14 +74,10 @@ fr:
       registrations:
         password_updated: "Votre mot de passe a été mis à jour avec succès."
         email_updated: "Votre adresse e-mail a été mise à jour avec succès."
+        email_confirmation_sent: "Un e-mail de confirmation a été envoyé à votre nouvelle adresse. Cliquez sur le lien reçu pour finaliser le changement."
 
   activerecord:
     attributes:
-      user:
-        current_password: "Mot de passe actuel"
-        password: "Mot de passe"
-        password_confirmation: "Confirmation du mot de passe"
-        email: "Adresse e-mail"
       food:
         name: "Nom"
         brand: "Marque"
@@ -152,7 +148,7 @@ fr:
         recipes: "Recettes"
         settings: "Paramètres"
         logout: "Déconnexion"
-        logout_confirm: "Es-tu sûr de vouloir te déconnecter ?"
+        logout_confirm: "Êtes-vous sûr de vouloir vous déconnecter ?"
         profile: "Mon profil"
         collapse: "Réduire"
         weight: "Suivi poids"
@@ -749,13 +745,11 @@ fr:
         confirm_password: "Confirmer le nouveau mot de passe"
         confirm_password_placeholder: "Confirmez votre nouveau mot de passe"
         update_password: "Mettre à jour le mot de passe"
-        forgot_password: "Mot de passe oublié ?"
-        forgot_password_hint: "Si vous avez oublié votre mot de passe, vous pouvez demander un lien de réinitialisation par email."
-        email_address: "Adresse email"
-        send_reset_link: "Envoyer le lien de réinitialisation"
         delete_account: "Supprimer mon compte"
         delete_account_warning: "Cette action est irréversible. Toutes vos données seront définitivement supprimées."
         delete_account_button: "Supprimer le compte"
+        pending_reconfirmation: "Changement d'e-mail en attente vers %{email}. Vérifiez votre boîte de réception pour confirmer."
+        resend_confirmation: "Renvoyer l'e-mail"
       food_groups:
         title: "Groupes d'aliments"
         description: "Organisez vos repas par moments de la journée."
@@ -1504,7 +1498,7 @@ fr:
     devise:
       shared:
         email: "Adresse e-mail"
-        email_placeholder: "ton@email.com"
+        email_placeholder: "votre@email.com"
         password: "Mot de passe"
         back_to_login: "Retour à la connexion"
       sessions:
@@ -1515,6 +1509,7 @@ fr:
         submit: "Se connecter"
         no_account: "Pas encore de compte ?"
         sign_up_link: "Créer un compte"
+        resend_confirmation: "Vous n'avez pas reçu l'email de confirmation ?"
       registrations:
         title: "Créer un compte"
         subtitle: "Commencez à suivre votre nutrition"
@@ -1523,6 +1518,11 @@ fr:
         submit: "Créer mon compte"
         already_account: "Déjà un compte ?"
         sign_in_link: "Se connecter"
+      confirmations:
+        new:
+          title: "Validez votre compte"
+          subtitle: "Un e-mail de confirmation vous a été envoyé. Vous ne l'avez pas reçu ? Renseignez votre adresse ci-dessous pour en recevoir un nouveau."
+          submit: "Renvoyer les instructions"
       passwords:
         new:
           title: "Mot de passe oublié ?"
@@ -1535,6 +1535,10 @@ fr:
           confirm_password: "Confirmer le mot de passe"
           submit: "Réinitialiser le mot de passe"
       mailer:
+        confirmation:
+          greeting: "Bienvenue %{email} !"
+          intro: "Vous pouvez confirmer votre adresse e-mail via le lien ci-dessous."
+          action: "Confirmer mon compte"
         reset_password:
           greeting: "Bonjour %{email} !"
           intro: "Quelqu'un a demandé un lien pour changer votre mot de passe. Vous pouvez le faire via le lien ci-dessous."
@@ -1544,7 +1548,13 @@ fr:
         password_changed:
           greeting: "Bonjour %{email} !"
           body: "Votre mot de passe a été modifié avec succès."
+          ignore: "Si vous n'êtes pas à l'origine de ce changement, contactez-nous immédiatement et réinitialisez votre mot de passe."
         email_changed:
           greeting: "Bonjour %{email} !"
           body_pending: "Votre adresse e-mail est en cours de modification vers %{new_email}."
           body_confirmed: "Votre adresse e-mail a été modifiée vers %{new_email}."
+          ignore: "Si vous n'êtes pas à l'origine de ce changement, contactez-nous immédiatement."
+        new_device_sign_in:
+          greeting: "Bonjour %{email} !"
+          intro: "Une connexion depuis une nouvelle adresse IP (%{ip}) vient d'être détectée sur votre compte."
+          ignore: "Si c'est bien vous, vous pouvez ignorer cet e-mail. Sinon, changez votre mot de passe dès que possible."

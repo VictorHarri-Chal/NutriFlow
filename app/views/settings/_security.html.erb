@@ -8,6 +8,22 @@
     <p class="text-sm text-ink-subtle mt-1"><%= t("views.settings.security.description") %></p>
   </div>
 
+  <% if current_user.pending_reconfirmation? %>
+    <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-status-warning/30 bg-status-warning/10">
+      <div class="flex items-center gap-3">
+        <i class="fas fa-triangle-exclamation text-status-warning text-sm shrink-0"></i>
+        <p class="text-sm text-ink-primary">
+          <%= t("views.settings.security.pending_reconfirmation", email: current_user.unconfirmed_email) %>
+        </p>
+      </div>
+      <%= button_to t("views.settings.security.resend_confirmation"),
+                    user_confirmation_path,
+                    method: :post,
+                    params: { user: { email: current_user.email } },
+                    class: "btn-ghost text-xs shrink-0 cursor-pointer whitespace-nowrap" %>
+    </div>
+  <% end %>
+
   <%# ── Changement d'email ── %>
   <div class="border-t border-surface-border/40 pt-6">
     <h3 class="text-sm font-semibold text-ink-primary mb-1"><%= t("views.settings.security.change_email") %></h3>

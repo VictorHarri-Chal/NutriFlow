@@ -25,6 +25,8 @@ en:
         subject: "Unlock instructions"
       email_changed:
         subject: "Email Changed"
+      new_device_sign_in:
+        subject: "New sign-in detected"
       password_change:
         subject: "Password Changed"
     omniauth_callbacks:

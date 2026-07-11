@@ -23,6 +23,8 @@ fr:
         subject: "Instructions de déverrouillage"
       email_changed:
         subject: "Adresse e-mail modifiée"
+      new_device_sign_in:
+        subject: "Nouvelle connexion détectée"
       password_change:
         subject: "Mot de passe modifié"
     omniauth_callbacks:

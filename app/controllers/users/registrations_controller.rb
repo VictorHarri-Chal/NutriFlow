@@ -4,6 +4,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
   skip_before_action :authenticate_user!, only: [:new, :create]
   before_action :configure_account_update_params, only: [:update]
 
+  def edit
+    redirect_to setting_path(tab: 'security')
+  end
+
   def destroy
     resource.destroy
     Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name)
@@ -20,7 +24,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
     if resource_updated
       bypass_sign_in resource, scope: resource_name if sign_in_after_change_password?
-      notice = change_type == 'email' ? t("controllers.users.registrations.email_updated") : t("controllers.users.registrations.password_updated")
+      notice = if change_type == 'email'
+        resource.pending_reconfirmation? ? t("controllers.users.registrations.email_confirmation_sent") : t("controllers.users.registrations.email_updated")
+      else
+        t("controllers.users.registrations.password_updated")
+      end
       redirect_to setting_path(tab: 'security'), notice: notice
     else
       clean_up_passwords resource
@@ -42,7 +50,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def after_inactive_sign_up_path_for(resource)
-    calendars_path
+    new_confirmation_path(resource_name)
   end
 
   def sign_in_after_change_password?
