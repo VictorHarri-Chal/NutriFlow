@@ -776,6 +776,15 @@ en:
         explanation: "Labels allow you to categorize your foods with tags like \"Proteins\", \"Carbs\", \"Fats\", \"Organic\", etc."
         color_label: "Color"
         delete_confirm: "Delete this label?"
+        colors:
+          red: "Red"
+          orange: "Orange"
+          amber: "Amber"
+          yellow: "Yellow"
+          green: "Green"
+          teal: "Teal"
+          blue: "Blue"
+          violet: "Violet"
 
     confirm:
       title: "Confirmation required"

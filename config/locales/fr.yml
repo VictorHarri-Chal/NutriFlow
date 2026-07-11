@@ -776,6 +776,15 @@ fr:
         explanation: "Les labels vous permettent de catégoriser vos aliments avec des tags comme \"Protéines\", \"Glucides\", \"Lipides\", \"Bio\", etc."
         color_label: "Couleur"
         delete_confirm: "Supprimer ce label ?"
+        colors:
+          red: "Rouge"
+          orange: "Orange"
+          amber: "Ambre"
+          yellow: "Jaune"
+          green: "Vert"
+          teal: "Bleu-vert"
+          blue: "Bleu"
+          violet: "Violet"
 
     confirm:
       title: "Confirmation requise"

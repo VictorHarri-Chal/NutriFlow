@@ -43,7 +43,7 @@
               <%= f.radio_button :color, color, class: "sr-only peer", id: "food_label_color_#{color}" %>
               <div class="w-7 h-7 rounded-full <%= style[:dot] %> ring-2 ring-transparent ring-offset-2 ring-offset-surface-raised
                           peer-checked:ring-white/70 transition-all group-hover:ring-white/40"
-                   title="<%= color %>"></div>
+                   title="<%= t("views.settings.food_labels.colors.#{color}") %>"></div>
             </label>
           <% end %>
         </div>
