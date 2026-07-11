@@ -97,9 +97,7 @@ class RecipesController < ApplicationController
       return
     end
 
-    @shopping_list = current_user.shopping_lists.order(created_at: :asc).first_or_create!(
-      name: t("views.shopping_lists.default_name")
-    )
+    @shopping_list = current_user.active_shopping_list
 
     items.each do |item|
       canonical_unit = %w[mL L].include?(item.unit) ? "mL" : "g"

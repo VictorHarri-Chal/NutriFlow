@@ -15,4 +15,9 @@ module LoadsShoppingListState
                               .select(:id, :name, :category, :favorite)
                               .as_json(only: [:id, :name, :category, :favorite])
   end
+
+  def set_suggestions
+    excluded = @shopping_list.shopping_list_items.where.not(food_id: nil).pluck(:food_id)
+    @suggested_foods = Food.frequently_used(user: current_user, excluding_ids: excluded)
+  end
 end

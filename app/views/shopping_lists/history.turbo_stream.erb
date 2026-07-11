@@ -1,0 +1,3 @@
+<%= turbo_stream.update "shopping_modal_root" do %>
+  <%= render "shopping_lists/history_modal", archived_lists: @archived_lists, pagy: @pagy %>
+<% end %>

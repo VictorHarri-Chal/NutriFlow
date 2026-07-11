@@ -21,11 +21,16 @@
         foods_json:    @foods_json %>
 <% end %>
 
+<%# Met à jour les suggestions (l'aliment ajouté ne doit plus y apparaître) %>
+<%= turbo_stream.replace "shopping_list_suggestions_modal_list" do %>
+  <%= render "shopping_lists/suggestions",
+        shopping_list:   @shopping_list,
+        suggested_foods: @suggested_foods %>
+<% end %>
+
 <%# Met à jour le compteur dans le header %>
 <%= turbo_stream.replace "shopping_list_counter" do %>
-  <p id="shopping_list_counter" class="text-xs text-ink-subtle mt-0.5">
-    <%= t("views.shopping_lists.unchecked_count", count: @unchecked_count) %>
-  </p>
+  <%= render "shopping_lists/counter", unchecked_count: @unchecked_count %>
 <% end %>
 
 <%# Met à jour le badge sidebar %>

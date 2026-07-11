@@ -1,13 +1,53 @@
 class ShoppingList < ApplicationRecord
+  ARCHIVE_LIMIT = 30
+
   belongs_to :user
   has_many :shopping_list_items, -> { order(created_at: :asc) },
            dependent: :destroy
 
   validates :name, presence: true
 
+  scope :active,   -> { where(archived_at: nil) }
+  scope :archived, -> { where.not(archived_at: nil).order(archived_at: :desc) }
+
+  def archived? = archived_at.present?
+
+  def archive!(name: nil)
+    attrs = { archived_at: Time.current }
+    attrs[:name] = name if name.present?
+    update!(attrs)
+    prune_old_archives!
+  end
+
+  # Affiche le nom donné à l'archivage s'il diffère du nom par défaut (dans
+  # n'importe quelle locale supportée, pour rester correct si l'utilisateur
+  # change de langue après coup) ; sinon la date d'archivage comme avant.
+  def archived_label
+    default_names = I18n.available_locales.map { |locale| I18n.t("views.shopping_lists.default_name", locale: locale) }
+    return name unless default_names.include?(name)
+
+    I18n.t("views.shopping_lists.archived_label", date: I18n.l(archived_at.to_date, format: :long))
+  end
+
+  # Ajoute chaque item de la liste source à cette liste, en fusionnant les
+  # quantités via add_or_merge_item (pas de duplication de logique).
+  def merge_from!(source)
+    source.shopping_list_items.includes(:food).each do |item|
+      add_or_merge_item(food: item.food, name: item.name, quantity: item.quantity, category: item.category)
+    end
+  end
+
+  # Vide cette liste puis y recopie les items de la liste source.
+  def replace_with!(source)
+    transaction do
+      shopping_list_items.delete_all
+      merge_from!(source)
+    end
+  end
+
   # Items groupés par catégorie ; nil → "other" ; unchecked first within each group
   def items_by_category
-    sorted = ordered_items.sort_by { |i| [i.checked? ? 1 : 0, i.created_at] }
+    sorted = ordered_items.sort_by { |i| [i.checked? ? 1 : 0, i.position, i.created_at] }
     sorted.group_by { |i| i.category.presence || "other" }
   end
 
@@ -45,6 +85,12 @@ class ShoppingList < ApplicationRecord
   end
 
   private
+
+  # Suppression silencieuse des plus anciennes listes archivées au-delà de
+  # ARCHIVE_LIMIT — l'archivage n'a pas vocation à accumuler indéfiniment.
+  def prune_old_archives!
+    user.shopping_lists.archived.offset(ARCHIVE_LIMIT).destroy_all
+  end
 
   # Loaded once per instance so items_by_category/unchecked_count/has_checked?/
   # has_items? share a single query instead of one each.

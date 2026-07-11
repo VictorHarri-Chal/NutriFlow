@@ -1,7 +1,7 @@
 class ShoppingListItemsController < ApplicationController
   include LoadsShoppingListState
 
-  before_action :set_shopping_list, only: [:create]
+  before_action :set_shopping_list, only: [:create, :reorder]
   before_action :set_item_and_list, only: [:update, :destroy]
 
   def create
@@ -38,6 +38,7 @@ class ShoppingListItemsController < ApplicationController
     end
     set_list_state
     set_foods_json
+    set_suggestions
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to @shopping_list }
@@ -45,7 +46,11 @@ class ShoppingListItemsController < ApplicationController
   end
 
   def update
-    @item.update!(item_params)
+    attrs = item_params
+    if params.key?(:quantity_value)
+      attrs = attrs.merge(quantity: params[:quantity_value].presence && "#{params[:quantity_value]} #{params[:quantity_unit].presence || 'g'}")
+    end
+    @item.update!(attrs)
     set_list_state
     respond_to do |format|
       format.turbo_stream
@@ -62,6 +67,16 @@ class ShoppingListItemsController < ApplicationController
     end
   end
 
+  def reorder
+    ids = Array(params[:ids]).map(&:to_i)
+    return head :bad_request if ids.empty?
+
+    ids.each_with_index do |id, index|
+      @shopping_list.shopping_list_items.where(id: id).update_all(position: index)
+    end
+    head :ok
+  end
+
   private
 
   def set_shopping_list
@@ -76,7 +91,10 @@ class ShoppingListItemsController < ApplicationController
   end
 
   def item_params
-    # food_id n'est pas dans les permitted params — il est vérifié manuellement
-    params.require(:shopping_list_item).permit(:name, :quantity, :checked, :category)
+    # food_id n'est pas dans les permitted params — il est vérifié manuellement.
+    # .fetch (pas .require) : le popover d'édition de quantité ne poste pas de
+    # clé shopping_list_item du tout (quantity_value/quantity_unit à plat, comme
+    # dans #create) — .require lèverait ActionController::ParameterMissing.
+    params.fetch(:shopping_list_item, {}).permit(:name, :quantity, :checked, :category)
   end
 end

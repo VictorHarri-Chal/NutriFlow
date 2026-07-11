@@ -18,15 +18,15 @@
         <i class="<%= @recipe.favorite? ? 'fas' : 'far' %> fa-star text-xs"></i>
         <%= @recipe.favorite? ? t("views.recipes.favorites.remove") : t("views.recipes.favorites.add") %>
       <% end %>
-      <div data-controller="recipe-shopping-popup" class="relative">
+      <div data-controller="popover" class="relative">
         <button type="button"
-                data-action="click->recipe-shopping-popup#open"
+                data-action="click->popover#open"
                 class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-ink-muted bg-surface-raised border border-surface-border/40 hover:text-ink-primary hover:border-surface-border transition-colors">
           <i class="fas fa-cart-plus text-xs"></i>
           <%= t("views.recipes.show.add_to_shopping_list") %>
         </button>
 
-        <div data-recipe-shopping-popup-target="panel"
+        <div data-popover-target="panel"
              class="opacity-0 scale-95 pointer-events-none transition-all duration-150 origin-top-right
                     absolute right-0 top-full mt-2 w-72
                     bg-surface-raised border border-surface-border/40 rounded-2xl shadow-2xl z-50 p-1.5">
@@ -35,7 +35,7 @@
                 method: :post,
                 params: { smart: "true" },
                 class: "w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface-hover transition-colors",
-                form: { data: { turbo_stream: true, action: "submit->recipe-shopping-popup#close" } } do %>
+                form: { data: { turbo_stream: true, action: "submit->popover#close" } } do %>
             <div class="flex-shrink-0 w-7 h-7 rounded-lg bg-status-success/10 border border-status-success/30 flex items-center justify-center">
               <i class="fas fa-check text-[10px] text-status-success"></i>
             </div>
@@ -51,7 +51,7 @@
                 method: :post,
                 params: { smart: "false" },
                 class: "w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface-hover transition-colors",
-                form: { data: { turbo_stream: true, action: "submit->recipe-shopping-popup#close" } } do %>
+                form: { data: { turbo_stream: true, action: "submit->popover#close" } } do %>
             <div class="flex-shrink-0 w-7 h-7 rounded-lg bg-brand/10 border border-brand/30 flex items-center justify-center">
               <i class="fas fa-list text-[10px] text-brand"></i>
             </div>

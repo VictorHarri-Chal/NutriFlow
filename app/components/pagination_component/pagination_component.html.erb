@@ -23,7 +23,7 @@
     <% if @pagy&.pages&.> 1 %>
       <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm ml-2" aria-label="Pagination">
         <% if @pagy %>
-          <%= link_to helpers.pagy_url_for(@pagy, @pagy.prev), class: "#{pagination_links_class} px-2 rounded-l-md" do %>
+          <%= link_to helpers.pagy_url_for(@pagy, @pagy.prev), class: "#{pagination_links_class} px-2 rounded-l-md", data: link_data do %>
             <i class="fas fa-chevron-left"></i>
           <% end %>
         <% end %>
@@ -58,7 +58,7 @@
         <% end %>
 
         <% if @pagy %>
-          <%= link_to helpers.pagy_url_for(@pagy, @pagy.next), class: [pagination_links_class, right_arrow_class, "px-2"].compact.join(" ") do %>
+          <%= link_to helpers.pagy_url_for(@pagy, @pagy.next), class: [pagination_links_class, right_arrow_class, "px-2"].compact.join(" "), data: link_data do %>
             <i class="fas fa-chevron-right"></i>
           <% end %>
         <% end %>

@@ -1,13 +1,21 @@
 # frozen_string_literal: true
 
 class PaginationComponent < ApplicationComponent
-  def initialize(pagy: nil, full_result_option: false)
+  def initialize(pagy: nil, full_result_option: false, turbo_stream_links: false)
     super
     @pagy = pagy
     @full_result_option = full_result_option
+    @turbo_stream_links = turbo_stream_links
   end
 
   private
+
+  # Permet d'utiliser ce composant à l'intérieur d'une modale injectée par
+  # turbo_stream (ex: historique paginé) sans que les liens de pagination
+  # ne déclenchent une navigation plein écran classique.
+  def link_data
+    @turbo_stream_links ? { turbo_stream: true } : {}
+  end
 
   def pagination_links_class
     <<-TXT.squish
@@ -49,7 +57,8 @@ class PaginationComponent < ApplicationComponent
     return unless @pagy
     link_to page,
             helpers.pagy_url_for(@pagy, page),
-            class: "#{pagination_links_class} #{pagination_active_class(page)} px-4"
+            class: "#{pagination_links_class} #{pagination_active_class(page)} px-4",
+            data: link_data
   end
 
   def page_ellipsis

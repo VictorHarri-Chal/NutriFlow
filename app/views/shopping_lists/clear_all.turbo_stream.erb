@@ -13,9 +13,7 @@
 <% end %>
 
 <%= turbo_stream.replace "shopping_list_counter" do %>
-  <p id="shopping_list_counter" class="text-xs text-ink-subtle mt-0.5">
-    <%= t("views.shopping_lists.unchecked_count", count: @unchecked_count) %>
-  </p>
+  <%= render "shopping_lists/counter", unchecked_count: @unchecked_count %>
 <% end %>
 
 <%= turbo_stream.replace "shopping_list_badge" do %>

@@ -1,0 +1,70 @@
+<%# locals: (list:) %>
+<div class="bg-surface-base border border-surface-border/40 rounded-xl p-4"
+     data-controller="collapsible"
+     data-collapsible-storage-key="archived-list-<%= list.id %>">
+
+  <div class="flex items-baseline justify-between gap-2">
+    <span class="text-sm font-bold text-ink-primary"><%= list.archived_label %></span>
+    <span class="text-xs text-ink-subtle"><%= t("views.shopping_lists.history_item_count", count: list.shopping_list_items.size) %></span>
+  </div>
+
+  <div class="cursor-pointer select-none flex items-center gap-1.5 mt-1.5"
+       data-action="click->collapsible#toggle" data-collapsible-target="trigger">
+    <i class="fas fa-chevron-down text-[10px] text-ink-subtle transition-transform duration-200"
+       data-collapsible-target="icon"></i>
+    <span class="text-xs text-ink-subtle"><%= t("views.shopping_lists.history_preview_toggle") %></span>
+  </div>
+
+  <%
+    items_by_cat = list.shopping_list_items.group_by { |i| i.category.presence || "other" }
+  %>
+  <div class="hidden relative mt-2" data-collapsible-target="content">
+    <div class="text-xs text-ink-muted max-h-40 overflow-y-auto pr-1 pb-5 space-y-2.5">
+      <% ShoppingListItem::CATEGORIES.each do |cat| %>
+        <% items = items_by_cat[cat] %>
+        <% next unless items %>
+        <div>
+          <div class="flex items-center gap-1.5 mb-1">
+            <i class="fas <%= shopping_category_icon(cat) %> text-[9px] text-ink-subtle/50"></i>
+            <span class="text-[9px] font-semibold tracking-widest uppercase text-ink-subtle/50">
+              <%= t("views.shopping_lists.categories.#{cat}") %>
+            </span>
+          </div>
+          <div class="space-y-0.5">
+            <% items.each do |item| %>
+              <div class="flex justify-between gap-2">
+                <span><%= item.name %></span>
+                <span class="text-ink-subtle flex-shrink-0"><%= item.quantity %></span>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <%# Fondu indiquant que la zone est scrollable (le scrollbar seul, fin et
+        auto-masqué sur certains OS, ne suffit pas comme indice visuel). %>
+    <div class="pointer-events-none absolute bottom-0 inset-x-0 h-5 bg-gradient-to-t from-surface-base to-transparent"></div>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2 mt-3">
+    <%= button_to merge_into_current_shopping_list_path(list),
+          method: :post,
+          class: "btn-secondary text-xs" do %>
+      <i class="fas fa-plus text-[10px]"></i>
+      <%= t("views.shopping_lists.merge_into_current_label") %>
+    <% end %>
+
+    <%= link_to "#",
+          class: "btn-secondary text-xs",
+          data: {
+            action: "click->confirm#show",
+            confirm_message: t("views.shopping_lists.replace_current_confirm"),
+            confirm_label: t("views.shopping_lists.replace_current_label"),
+            url: replace_current_shopping_list_path(list),
+            turbo_method: "post"
+          } do %>
+      <i class="fas fa-arrow-right-arrow-left text-[10px]"></i>
+      <%= t("views.shopping_lists.replace_current_label") %>
+    <% end %>
+  </div>
+</div>

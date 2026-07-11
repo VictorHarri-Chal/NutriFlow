@@ -1,17 +1,5 @@
 <%# locals: (shopping_list:, items_by_category:) %>
 <%
-  category_meta = {
-    "proteins"    => { icon: "fa-drumstick-bite",  label: t("views.shopping_lists.categories.proteins")   },
-    "grains"      => { icon: "fa-bread-slice",      label: t("views.shopping_lists.categories.grains")     },
-    "vegetables"  => { icon: "fa-carrot",            label: t("views.shopping_lists.categories.vegetables") },
-    "fruits"      => { icon: "fa-apple-whole",       label: t("views.shopping_lists.categories.fruits")    },
-    "dairy"       => { icon: "fa-cheese",            label: t("views.shopping_lists.categories.dairy")      },
-    "beverages"   => { icon: "fa-glass-water",       label: t("views.shopping_lists.categories.beverages")  },
-    "condiments"  => { icon: "fa-mortar-pestle",     label: t("views.shopping_lists.categories.condiments") },
-    "supplements" => { icon: "fa-capsules",          label: t("views.shopping_lists.categories.supplements") },
-    "other"       => { icon: "fa-box",               label: t("views.shopping_lists.categories.other")      }
-  }
-
   # Ordre d'affichage des catégories — dérivé de ShoppingListItem::CATEGORIES
   # pour ne jamais désynchroniser cette liste de celle du modèle.
   ordered_keys = ShoppingListItem::CATEGORIES
@@ -29,7 +17,13 @@
     </div>
   <% elsif sorted.size == 1 && sorted.first[0] == "other" %>
     <%# Un seul groupe "other" → pas de header catégorie, liste plate %>
-    <div class="bg-surface-base rounded-xl border border-surface-border/40 divide-y divide-surface-border/20">
+    <div class="bg-surface-base rounded-xl border border-surface-border/40 divide-y divide-surface-border/20
+                print:bg-white print:border-black print:divide-black"
+         data-controller="sortable-list"
+         data-sortable-list-url-value="<%= reorder_shopping_list_shopping_list_items_path(shopping_list) %>"
+         data-sortable-list-ghost-class-value="shopping-sortable-ghost"
+         data-sortable-list-drag-class-value="shopping-sortable-drag"
+         data-sortable-list-force-fallback-value="true">
       <% sorted.first[1].each do |item| %>
         <%= render "shopping_lists/item", item: item, shopping_list: shopping_list %>
       <% end %>
@@ -38,15 +32,23 @@
     <%# Plusieurs catégories → headers avec section par groupe %>
     <div class="space-y-3">
       <% sorted.each do |category, items| %>
-        <% meta = category_meta[category] || category_meta["other"] %>
         <div>
           <div class="flex items-center gap-1.5 px-1 mb-1.5">
-            <i class="fas <%= meta[:icon] %> text-[11px] text-ink-subtle/50"></i>
-            <span class="text-[11px] font-semibold tracking-widest uppercase text-ink-subtle/50 select-none">
-              <%= meta[:label] %>
+            <i class="fas <%= shopping_category_icon(category) %> text-[11px] text-ink-subtle/50 print:hidden"></i>
+            <span class="text-[11px] font-semibold tracking-widest uppercase text-ink-subtle/50 select-none print:text-black">
+              <%= t("views.shopping_lists.categories.#{category}") %>
             </span>
           </div>
-          <div class="bg-surface-base rounded-xl border border-surface-border/40 divide-y divide-surface-border/20">
+          <%# Pas de data-sortable-list-group-value : chaque catégorie est une
+              instance Sortable indépendante, le drag inter-catégories est
+              volontairement désactivé. %>
+          <div class="bg-surface-base rounded-xl border border-surface-border/40 divide-y divide-surface-border/20
+                      print:bg-white print:border-black print:divide-black"
+               data-controller="sortable-list"
+               data-sortable-list-url-value="<%= reorder_shopping_list_shopping_list_items_path(shopping_list) %>"
+               data-sortable-list-ghost-class-value="shopping-sortable-ghost"
+               data-sortable-list-drag-class-value="shopping-sortable-drag"
+               data-sortable-list-force-fallback-value="true">
             <% items.each do |item| %>
               <%= render "shopping_lists/item", item: item, shopping_list: shopping_list %>
             <% end %>

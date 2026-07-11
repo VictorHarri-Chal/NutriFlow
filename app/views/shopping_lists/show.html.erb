@@ -1,30 +1,81 @@
 <% content_for :page_title, t("views.shopping_lists.page_title") %>
 
-<div class="max-w-2xl mx-auto mt-16 pb-28"
+<div class="max-w-2xl mx-auto mt-16 pb-28 relative"
      data-controller="confirm"
      data-confirm-title-value="<%= t('views.confirm.title') %>"
      data-confirm-cancel-label-value="<%= t('shared.cancel') %>"
      data-confirm-confirm-label-value="<%= t('views.confirm.confirm_btn') %>">
 
-  <div class="bg-surface-raised rounded-2xl border border-surface-border/40 shadow-lg p-6">
+  <%# ── Rail d'icônes (Historique / Souvent achetés / Générer depuis la semaine) ── %>
+  <%# Repose sur le tooltip custom global (data-tooltip) pour l'indice au survol —
+      pas de nouveau composant, cohérent avec add_form/print déjà présents.
+      Structure à 2 niveaux : le conteneur externe est "absolute" + "h-full"
+      (occupe toute la hauteur de la carte sans peser sur le flux), le rail
+      interne est "sticky" pour rester visible pendant le scroll de la liste. %>
+  <div class="hidden xl:block absolute -left-14 top-0 h-full print:hidden">
+    <div class="sticky top-20 flex flex-col gap-2">
+      <%= link_to history_shopping_lists_path,
+            data: { turbo_stream: true, tooltip: t("views.shopping_lists.history_link") },
+            class: "w-10 h-10 rounded-xl bg-surface-raised border border-surface-border/40 flex items-center justify-center text-ink-subtle hover:text-brand hover:border-brand/40 transition-colors" do %>
+        <i class="fas fa-clock-rotate-left text-sm"></i>
+      <% end %>
+      <%= link_to suggestions_preview_shopping_lists_path,
+            data: { turbo_stream: true, tooltip: t("views.shopping_lists.suggestions_label") },
+            class: "w-10 h-10 rounded-xl bg-surface-raised border border-surface-border/40 flex items-center justify-center text-ink-subtle hover:text-brand hover:border-brand/40 transition-colors" do %>
+        <i class="fas fa-repeat text-sm"></i>
+      <% end %>
+      <%= link_to week_preview_shopping_lists_path,
+            data: { turbo_stream: true, tooltip: t("views.shopping_lists.week_generation.button_label") },
+            class: "w-10 h-10 rounded-xl bg-surface-raised border border-surface-border/40 flex items-center justify-center text-ink-subtle hover:text-brand hover:border-brand/40 transition-colors" do %>
+        <i class="fas fa-calendar-week text-sm"></i>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="bg-surface-raised rounded-2xl border border-surface-border/40 shadow-lg p-6
+              print:bg-white print:border-none print:shadow-none print:rounded-none print:p-0">
 
     <%# ── Header ── %>
     <div class="flex items-start justify-between mb-5">
       <div>
-        <h1 class="text-2xl font-bold text-ink-primary"><%= @shopping_list.name %></h1>
-        <p id="shopping_list_counter"
-           class="text-xs text-ink-subtle mt-0.5">
-          <%= t("views.shopping_lists.unchecked_count", count: @unchecked_count) %>
+        <h1 class="text-2xl font-bold text-ink-primary print:text-black"><%= @shopping_list.name %></h1>
+        <%= render "shopping_lists/counter", unchecked_count: @unchecked_count %>
+        <p class="hidden print:block text-xs text-black mt-0.5">
+          <%= l(Date.today, format: :long) %>
         </p>
+      </div>
+
+      <%# Repli mobile/tablette : même 3 actions, icônes seules, sans le rail externe ── %>
+      <div class="flex xl:hidden items-center gap-1.5 flex-shrink-0 print:hidden">
+        <%= link_to history_shopping_lists_path,
+              data: { turbo_stream: true, tooltip: t("views.shopping_lists.history_link") },
+              class: "w-9 h-9 rounded-lg bg-surface-hover flex items-center justify-center text-ink-subtle hover:text-brand transition-colors" do %>
+          <i class="fas fa-clock-rotate-left text-sm"></i>
+        <% end %>
+        <%= link_to suggestions_preview_shopping_lists_path,
+              data: { turbo_stream: true, tooltip: t("views.shopping_lists.suggestions_label") },
+              class: "w-9 h-9 rounded-lg bg-surface-hover flex items-center justify-center text-ink-subtle hover:text-brand transition-colors" do %>
+          <i class="fas fa-repeat text-sm"></i>
+        <% end %>
+        <%= link_to week_preview_shopping_lists_path,
+              data: { turbo_stream: true, tooltip: t("views.shopping_lists.week_generation.button_label") },
+              class: "w-9 h-9 rounded-lg bg-surface-hover flex items-center justify-center text-ink-subtle hover:text-brand transition-colors" do %>
+          <i class="fas fa-calendar-week text-sm"></i>
+        <% end %>
       </div>
     </div>
 
     <%# ── Formulaire d'ajout ── %>
-    <%= render "shopping_lists/add_form",
-          shopping_list: @shopping_list,
-          foods_json:    @foods_json %>
+    <div class="print:hidden">
+      <%= render "shopping_lists/add_form",
+            shopping_list: @shopping_list,
+            foods_json:    @foods_json %>
+    </div>
 
-    <div class="my-5 h-px bg-surface-border/30"></div>
+    <%# Racine des modales (historique / suggestions / génération semaine) ── %>
+    <div id="shopping_modal_root" class="print:hidden"></div>
+
+    <div class="my-5 h-px bg-surface-border/30 print:hidden"></div>
 
     <%# ── Items ── %>
     <%= render "shopping_lists/items_container",

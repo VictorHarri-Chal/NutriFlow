@@ -8,20 +8,28 @@ import Sortable from "sortablejs"
 //   data-sortable-list-move-base-value="<base_path_for_move>"  (optional, enables cross-list)
 //   data-sortable-list-group-value="<shared_group_name>"       (optional, enables cross-list)
 //   data-sortable-list-day-id-value="<day_id>"                 (optional, used for move payload)
+//   data-sortable-list-ghost-class-value="<css-class>"         (optional, defaults to "sortable-ghost")
+//   data-sortable-list-drag-class-value="<css-class>"          (optional, defaults to "sortable-drag")
+//   data-sortable-list-force-fallback-value="true"             (optional, defaults to false — see below)
 // Each item needs data-sortable-id="<id>" and a [data-drag-handle] child.
 export default class extends Controller {
-  static values = { url: String, moveBase: String, group: String, dayId: String }
+  static values = { url: String, moveBase: String, group: String, dayId: String, ghostClass: String, dragClass: String, forceFallback: Boolean }
 
   connect() {
     const groupName = this.hasGroupValue ? this.groupValue : null
 
     this._sortable = Sortable.create(this.element, {
-      handle:     "[data-drag-handle]",
-      animation:  150,
-      ghostClass: "sortable-ghost",
-      dragClass:  "sortable-drag",
-      group:      groupName ? { name: groupName, pull: true, put: true } : undefined,
-      onEnd:      (event) => this._onEnd(event)
+      handle:        "[data-drag-handle]",
+      animation:     150,
+      ghostClass:    this.hasGhostClassValue ? this.ghostClassValue : "sortable-ghost",
+      dragClass:     this.hasDragClassValue  ? this.dragClassValue  : "sortable-drag",
+      // Native HTML5 drag renders the browser's own (often ugly, inconsistent)
+      // ghost image regardless of our CSS classes. forceFallback swaps it for
+      // a fully custom-rendered clone we control — opt-in per instance so it
+      // doesn't change the already-working program_exercises drag.
+      forceFallback: this.forceFallbackValue,
+      group:         groupName ? { name: groupName, pull: true, put: true } : undefined,
+      onEnd:         (event) => this._onEnd(event)
     })
   }
 

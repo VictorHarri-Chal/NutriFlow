@@ -21,6 +21,10 @@ export default class extends Controller {
     )
   }
 
+  print() {
+    window.print()
+  }
+
   share() {
     const text = this._buildText()
     if (!text) return

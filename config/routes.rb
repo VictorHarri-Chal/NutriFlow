@@ -84,8 +84,19 @@ Rails.application.routes.draw do
     member do
       delete :clear_checked
       delete :clear_all
+      patch  :archive
+      post   :merge_into_current
+      post   :replace_current
     end
-    resources :shopping_list_items, only: [:create, :update, :destroy], shallow: true
+    collection do
+      get  :history
+      get  :week_preview
+      post :generate_from_week
+      get  :suggestions_preview
+    end
+    resources :shopping_list_items, only: [:create, :update, :destroy], shallow: true do
+      collection { patch :reorder }
+    end
   end
 
   post 'days/:date/add_food', to: 'days#add_food', as: :add_food_to_day

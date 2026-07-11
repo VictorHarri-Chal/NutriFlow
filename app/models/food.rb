@@ -27,6 +27,16 @@ class Food < ApplicationRecord
     ["brand", "calories", "carbs", "fats", "name", "proteins", "sugars"]
   end
 
+  def self.frequently_used(user:, excluding_ids: [], limit: 15, since: 1.year.ago)
+    user.foods
+        .joins(day_foods: :day)
+        .where(days: { date: since.to_date.. })
+        .where.not(id: excluding_ids)
+        .group("foods.id")
+        .order(Arel.sql("COUNT(day_foods.id) DESC, foods.name ASC"))
+        .limit(limit)
+  end
+
   def source
     self[:source]&.to_sym || :manual
   end

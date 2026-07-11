@@ -1,33 +1,100 @@
 <%# locals: (item:, shopping_list:) %>
+<% quantity_value, quantity_unit = item.quantity.to_s.match(/\A([\d.]+)\s*(\S*)\z/)&.captures || [nil, nil] %>
 <div id="shopping_list_item_<%= item.id %>"
+     data-sortable-id="<%= item.id %>"
      class="group flex items-center gap-3 px-4 py-3 hover:bg-surface-hover/20 transition-colors">
+
+  <%# Poignée de réordonnancement %>
+  <i class="fas fa-grip-vertical text-ink-subtle/40 text-xs cursor-grab active:cursor-grabbing
+            opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 print:hidden"
+     data-drag-handle></i>
 
   <%# Checkbox %>
   <%= button_to shopping_list_item_path(item),
         method: :patch,
         params: { shopping_list_item: { checked: !item.checked } },
-        class: "flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand #{item.checked ? 'bg-brand border-brand' : 'border-surface-border hover:border-brand/60'}",
+        class: "flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand print:hidden #{item.checked ? 'bg-brand border-brand' : 'border-surface-border hover:border-brand/60'}",
         form: { data: { turbo_stream: true } } do %>
     <% if item.checked %>
       <i class="fas fa-check text-[9px] text-zinc-900"></i>
     <% end %>
   <% end %>
 
+  <%# Case à cocher imprimée (le bouton ci-dessus est masqué à l'impression) %>
+  <span class="hidden print:flex print:items-center print:justify-center w-4 h-4 border-2 border-black shrink-0 mr-1">
+    <% if item.checked %><i class="fas fa-check text-[9px] text-black"></i><% end %>
+  </span>
+
   <%# Nom + quantité %>
   <div class="flex-1 min-w-0">
-    <span class="text-sm font-medium transition-colors <%= item.checked ? 'text-ink-subtle line-through' : 'text-ink-primary' %>">
+    <span class="text-sm font-medium transition-colors print:text-black <%= item.checked ? 'text-ink-subtle line-through' : 'text-ink-primary' %>">
       <%= item.name %>
     </span>
     <% if item.quantity.present? %>
-      <span class="text-xs text-ink-subtle ml-1.5"><%= item.quantity %></span>
+      <span class="text-xs text-ink-subtle ml-1.5 print:text-black"><%= item.quantity %></span>
     <% end %>
+  </div>
+
+  <%# Modifier la quantité %>
+  <div class="relative flex-shrink-0" data-controller="popover">
+    <button type="button"
+            data-action="click->popover#open"
+            aria-label="<%= t("views.shopping_lists.edit_quantity") %>"
+            class="w-7 h-7 rounded-lg text-ink-subtle hover:text-brand hover:bg-surface-hover flex items-center justify-center transition-colors opacity-0 group-hover:opacity-100 print:hidden">
+      <i class="fas fa-pen text-[11px]"></i>
+    </button>
+
+    <div data-popover-target="panel"
+         class="opacity-0 scale-95 pointer-events-none transition-all duration-150 origin-top-right
+                absolute right-0 top-full mt-1 z-50
+                bg-surface-raised border border-surface-border/40 rounded-xl shadow-2xl p-2.5">
+      <%= form_with url: shopping_list_item_path(item), method: :patch,
+            data: { turbo_stream: true, action: "submit->popover#close" },
+            class: "flex items-center gap-1.5" do %>
+        <input type="number"
+               name="quantity_value"
+               value="<%= quantity_value %>"
+               min="0" step="1"
+               placeholder="<%= t('views.shopping_lists.add_form.quantity_placeholder') %>"
+               class="input-dark w-16 text-sm text-center"
+               autocomplete="off">
+
+        <div data-controller="unit-select" class="relative shrink-0">
+          <button type="button"
+                  data-action="click->unit-select#toggle"
+                  data-unit-select-target="trigger"
+                  class="input-dark w-16 text-sm flex items-center justify-between gap-1 cursor-pointer select-none">
+            <span data-unit-select-target="label" class="text-ink-subtle">—</span>
+            <i class="fas fa-chevron-down text-[10px] text-ink-subtle transition-transform duration-150"
+               data-unit-select-target="icon"></i>
+          </button>
+          <div data-unit-select-target="dropdown"
+               class="hidden absolute top-full mt-1 right-0 min-w-[4.5rem] bg-surface-raised border border-surface-border/50 rounded-xl shadow-xl overflow-hidden z-50 py-1">
+            <% [["g", "g"], ["kg", "kg"], ["mL", "mL"], ["L", "L"], ["cs", "cs"], ["cc", "cc"], ["pièce", "pièce"]].each do |value, label| %>
+              <button type="button"
+                      data-action="click->unit-select#select"
+                      data-value="<%= value %>"
+                      class="w-full text-left px-3 py-2 text-xs text-ink-muted hover:text-ink-primary hover:bg-surface-hover transition-colors">
+                <%= label %>
+              </button>
+            <% end %>
+          </div>
+          <input type="hidden" name="quantity_unit" value="<%= quantity_unit %>" data-unit-select-target="hiddenInput">
+        </div>
+
+        <button type="submit"
+                class="w-8 h-8 rounded-lg bg-brand hover:bg-brand-hover text-zinc-900 flex items-center justify-center transition-colors flex-shrink-0">
+          <i class="fas fa-check text-xs"></i>
+        </button>
+      <% end %>
+    </div>
   </div>
 
   <%# Supprimer %>
   <%= button_to shopping_list_item_path(item),
         method: :delete,
         aria: { label: t("views.shopping_lists.delete_item") },
-        class: "flex-shrink-0 w-7 h-7 rounded-lg text-ink-subtle hover:text-status-danger hover:bg-status-danger/10 flex items-center justify-center transition-colors opacity-0 group-hover:opacity-100",
+        class: "flex-shrink-0 w-7 h-7 rounded-lg text-ink-subtle hover:text-status-danger hover:bg-status-danger/10 flex items-center justify-center transition-colors opacity-0 group-hover:opacity-100 print:hidden",
         form: { data: { turbo_stream: true } } do %>
     <i class="fas fa-times text-xs"></i>
   <% end %>

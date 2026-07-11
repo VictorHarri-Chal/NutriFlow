@@ -28,12 +28,25 @@
      data-shopping-export-categories-value="<%= json_escape(export_categories.to_json) %>"
      data-shopping-export-copy-success-value="<%= t('views.shopping_lists.copy_success') %>"
      data-shopping-export-copy-error-value="<%= t('views.shopping_lists.copy_error') %>"
-     class="fixed bottom-0 left-0 right-0 md:left-64 transition-[left] duration-300 ease-in-out z-30">
+     class="fixed bottom-0 left-0 right-0 md:left-64 transition-[left] duration-300 ease-in-out z-30 print:hidden">
   <div class="bg-surface-raised border-t border-surface-border/40 px-4 py-3 flex items-center justify-between gap-3 max-w-2xl mx-auto md:mx-0 md:max-w-none md:px-8">
 
     <%# Gauche : effacer les cochés (moins destructif), puis vider la liste %>
     <%# Les deux boutons sont toujours rendus (invisible vs hidden) pour éviter les décalages de layout %>
     <div class="flex items-center gap-1">
+      <button type="button"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-ink-subtle hover:text-ink-primary hover:bg-surface-hover transition-colors <%= has_items ? '' : 'invisible pointer-events-none' %>"
+              data-action="click->confirm#show"
+              data-confirm-message="<%= t('views.shopping_lists.archive_confirm') %>"
+              data-confirm-label="<%= t('views.shopping_lists.archive_button') %>"
+              data-confirm-input-name="name"
+              data-confirm-input-label="<%= t('views.shopping_lists.archive_name_label') %>"
+              data-url="<%= archive_shopping_list_path(shopping_list) %>"
+              data-turbo-method="patch">
+        <i class="fas fa-box-archive text-xs"></i>
+        <%= t("views.shopping_lists.archive_button") %>
+      </button>
+
       <button type="button"
               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-ink-subtle hover:text-status-danger hover:bg-status-danger/8 transition-colors <%= has_items ? '' : 'invisible pointer-events-none' %>"
               data-action="click->confirm#show"
@@ -59,6 +72,13 @@
 
     <%# Droite : export %>
     <div class="flex items-center gap-2">
+      <button type="button"
+              data-action="click->shopping-export#print"
+              <%= "disabled" unless has_items %>
+              class="btn-secondary text-sm gap-2 <%= has_items ? '' : 'opacity-40 cursor-not-allowed' %>">
+        <i class="fas fa-print text-xs"></i>
+        <%= t("views.shopping_lists.export_print") %>
+      </button>
       <button type="button"
               data-action="click->shopping-export#copy"
               data-shopping-export-target="copyBtn"

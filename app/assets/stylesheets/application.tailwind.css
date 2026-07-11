@@ -144,6 +144,15 @@
     @apply shadow-2xl scale-[1.01];
   }
 
+  /* Variante liste de courses : pas de box-shadow (convention "pas d'ombre
+     sur les éléments internes"), bordure ambrée à la place. */
+  .shopping-sortable-ghost {
+    @apply opacity-30 bg-surface-hover;
+  }
+  .shopping-sortable-drag {
+    @apply border-2 border-brand bg-surface-hover/40;
+  }
+
   /* ---- Devise forms ---- */
   .devise-form input[type="email"],
   .devise-form input[type="password"],

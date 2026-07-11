@@ -20,6 +20,12 @@ class User < ApplicationRecord
 
   after_create :create_profile
 
+  def active_shopping_list
+    shopping_lists.active.order(created_at: :asc).first_or_create!(
+      name: I18n.t("views.shopping_lists.default_name")
+    )
+  end
+
   private
 
   def create_profile
