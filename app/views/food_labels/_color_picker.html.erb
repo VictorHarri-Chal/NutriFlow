@@ -1,0 +1,15 @@
+<%# locals: (f:, id_prefix:) %>
+<div>
+  <label class="label-dark block mb-2"><%= t("views.settings.food_labels.color_label") %></label>
+  <div class="flex flex-wrap gap-2">
+    <% FoodLabel::COLORS.each do |color| %>
+      <% style = FoodLabel::COLOR_STYLES[color] %>
+      <label class="cursor-pointer group">
+        <%= f.radio_button :color, color, class: "sr-only peer", id: "#{id_prefix}_color_#{color}" %>
+        <div class="w-7 h-7 rounded-full <%= style[:dot] %> ring-2 ring-transparent ring-offset-2 ring-offset-surface-raised
+                    peer-checked:ring-white/70 transition-all group-hover:ring-white/40"
+             title="<%= t("views.settings.food_labels.colors.#{color}") %>"></div>
+      </label>
+    <% end %>
+  </div>
+</div>

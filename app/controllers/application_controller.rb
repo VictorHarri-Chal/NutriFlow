@@ -5,11 +5,20 @@ class ApplicationController < ActionController::Base
   include Pagy::Backend
 
   before_action :authenticate_user!
+  around_action :set_time_zone
   before_action :set_locale
   before_action :set_sentry_context
   before_action :require_onboarding_complete!
 
   private
+
+  def set_time_zone(&block)
+    if user_signed_in?
+      Time.use_zone(current_user.time_zone, &block)
+    else
+      block.call
+    end
+  end
 
   def require_onboarding_complete!
     return unless user_signed_in?

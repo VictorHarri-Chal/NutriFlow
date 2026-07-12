@@ -1,18 +1,22 @@
 # frozen_string_literal: true
 
 class SettingsController < ApplicationController
+  include SettingsDataLoadable
+
+  TABS = {
+    "general"         => { icon: "fa-sliders",        label_key: "general" },
+    "preferences"     => { icon: "fa-toggle-on",      label_key: "preferences" },
+    "day_food_groups" => { icon: "fa-utensils",       label_key: "food_groups" },
+    "food_labels"     => { icon: "fa-tag",             label_key: "food_labels" },
+    "security"        => { icon: "fa-shield-halved",   label_key: "security" }
+  }.freeze
+
   def show
-    @user = current_user
-    @minimum_password_length = User.password_length.min
-    @day_food_groups = current_user.day_food_groups.includes(:day_foods)
-    @day_food_group = DayFoodGroup.new
-    @food_labels = current_user.food_labels.includes(:foods)
-    @food_label = FoodLabel.new
-    @active_tab = params[:tab] || 'general'
+    load_settings_data(active_tab: params[:tab])
   end
 
   def update
-    if current_user.update(locale: params[:locale])
+    if current_user.update(general_params)
       I18n.locale = current_user.locale.to_sym
       redirect_to setting_path(tab: 'general'), notice: t("controllers.settings.locale_updated")
     else
@@ -28,7 +32,17 @@ class SettingsController < ApplicationController
     end
   end
 
+  def sign_out_other_sessions
+    current_user.invalidate_other_sessions!
+    bypass_sign_in(current_user)
+    redirect_to setting_path(tab: 'security'), notice: t("controllers.settings.other_sessions_signed_out")
+  end
+
   private
+
+  def general_params
+    params.permit(:locale, :time_zone)
+  end
 
   def preferences_params
     params.require(:user).permit(

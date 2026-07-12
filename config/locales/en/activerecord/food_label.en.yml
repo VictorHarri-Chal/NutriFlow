@@ -1,0 +1,11 @@
+en:
+  activerecord:
+    models:
+      food_label:
+        one: "Food label"
+        other: "Food labels"
+    attributes:
+      food_label:
+        name: "Name"
+        user: "User"
+        foods: "Foods"

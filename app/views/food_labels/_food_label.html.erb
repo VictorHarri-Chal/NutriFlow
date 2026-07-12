@@ -1,0 +1,31 @@
+<%= turbo_frame_tag dom_id(food_label) do %>
+  <% style = food_label.color_style %>
+  <div class="flex items-center justify-between py-3 group">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg <%= style[:bg] %> border <%= style[:border] %> flex items-center justify-center shrink-0">
+        <span class="w-3 h-3 rounded-full <%= style[:dot] %>"></span>
+      </div>
+      <div>
+        <div class="text-sm font-medium <%= style[:text] %>"><%= food_label.name %></div>
+        <% food_count = food_label.foods.size %>
+        <div class="text-xs text-ink-subtle mt-0.5">
+          <%= food_count > 0 ? t("shared.food_count", count: food_count) : t("views.settings.food_groups.no_food") %>
+        </div>
+      </div>
+    </div>
+    <div class="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+      <%= link_to edit_food_label_path(food_label),
+            data: { turbo_frame: dom_id(food_label), action: "click->tabs#closeOpenEdits" },
+            title: t("shared.edit"),
+            class: "inline-flex items-center justify-center w-8 h-8 rounded-lg text-ink-subtle hover:text-brand hover:bg-surface-hover transition-colors" do %>
+        <i class="fas fa-pen text-sm"></i>
+      <% end %>
+      <%= delete_link_with_confirm(
+            food_label_path(food_label),
+            confirm: t("views.settings.food_labels.delete_confirm"),
+            icon_class: "fas fa-trash text-sm",
+            title: t("shared.delete"),
+            class: "inline-flex items-center justify-center w-8 h-8 rounded-lg text-ink-subtle hover:text-status-danger hover:bg-status-danger_dim/20 transition-colors") %>
+    </div>
+  </div>
+<% end %>

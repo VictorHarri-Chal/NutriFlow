@@ -1,4 +1,4 @@
-<div class="space-y-8">
+<div class="space-y-6">
 
   <div>
     <h2 class="text-base font-semibold text-ink-primary flex items-center gap-2">
@@ -98,6 +98,26 @@
         <%= form.submit t("views.settings.security.update_password"), class: "btn-primary cursor-pointer" %>
       </div>
     <% end %>
+  </div>
+
+  <%# ── Déconnecter les autres appareils ── %>
+  <div class="border-t border-surface-border/40 pt-6">
+    <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-surface-border/40 bg-surface-hover/40">
+      <div>
+        <h3 class="text-sm font-semibold text-ink-primary"><%= t("views.settings.security.sign_out_other_sessions") %></h3>
+        <p class="text-xs text-ink-subtle mt-0.5"><%= t("views.settings.security.sign_out_other_sessions_hint") %></p>
+      </div>
+      <%= button_to t("views.settings.security.sign_out_other_sessions_button"),
+                    sign_out_other_sessions_setting_path,
+                    method: :delete,
+                    class: "btn-secondary shrink-0 text-sm cursor-pointer",
+                    data: {
+                      action: "click->confirm#show",
+                      confirm_message: t("views.settings.security.sign_out_other_sessions_confirm"),
+                      url: sign_out_other_sessions_setting_path,
+                      method: "delete"
+                    } %>
+    </div>
   </div>
 
   <%# ── Suppression du compte ── %>

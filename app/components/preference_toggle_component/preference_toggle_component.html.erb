@@ -1,0 +1,39 @@
+<div class="flex items-start justify-between gap-6 py-3">
+  <div>
+    <label for="<%= input_id %>" class="text-sm font-medium text-ink-primary block mb-0.5 cursor-pointer">
+      <%= t(label_key) %>
+    </label>
+    <p class="text-xs text-ink-subtle"><%= t(hint_key) %></p>
+  </div>
+
+  <label class="flex items-center cursor-pointer shrink-0 mt-0.5">
+    <input type="hidden" name="<%= field_name %>" value="0">
+
+    <% if requires_confirmation? %>
+      <input type="checkbox"
+             id="<%= input_id %>"
+             name="<%= field_name %>"
+             value="1"
+             role="switch"
+             class="sr-only peer"
+             checked
+             data-action="click->confirm#show"
+             data-url="<%= url %>"
+             data-method="patch"
+             data-confirm-message="<%= confirm_message %>"
+             data-confirm-params="<%= confirm_params %>">
+    <% else %>
+      <input type="checkbox"
+             id="<%= input_id %>"
+             name="<%= field_name %>"
+             value="1"
+             role="switch"
+             class="sr-only peer"
+             <%= "checked" if checked %>
+             onchange="this.form.submit()">
+    <% end %>
+
+    <div class="relative w-9 h-5 rounded-full shrink-0 transition-colors bg-surface-border peer-checked:bg-brand
+                after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4"></div>
+  </label>
+</div>

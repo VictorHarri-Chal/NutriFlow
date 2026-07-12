@@ -34,23 +34,6 @@ module ApplicationHelper
     end
   end
 
-    # Helper pour créer des boutons de suppression avec confirmation personnalisée
-  def delete_button_with_confirm(path, options = {})
-    message = options.delete(:confirm) || I18n.t("shared.delete_confirm")
-    text = options.delete(:text) || I18n.t("shared.delete")
-    button_class = options.delete(:class) || "btn btn-danger"
-
-    button_to path,
-              method: :delete,
-              data: {
-                action: "click->confirm#show",
-                confirm_message: message
-              },
-              class: button_class do
-      text
-    end
-  end
-
   # Helper pour créer des liens de déconnexion avec confirmation personnalisée
   def logout_link_with_confirm(path, options = {})
     message = options.delete(:confirm) || I18n.t("views.shared.sidebar.logout_confirm")

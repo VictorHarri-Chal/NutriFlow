@@ -33,21 +33,7 @@
             disabled: true %>
       </div>
 
-      <%# Sélecteur de couleur %>
-      <div>
-        <label class="label-dark block mb-2"><%= t("views.settings.food_labels.color_label") %></label>
-        <div class="flex flex-wrap gap-2">
-          <% FoodLabel::COLORS.each do |color| %>
-            <% style = FoodLabel::COLOR_STYLES[color] %>
-            <label class="cursor-pointer group">
-              <%= f.radio_button :color, color, class: "sr-only peer", id: "food_label_color_#{color}" %>
-              <div class="w-7 h-7 rounded-full <%= style[:dot] %> ring-2 ring-transparent ring-offset-2 ring-offset-surface-raised
-                          peer-checked:ring-white/70 transition-all group-hover:ring-white/40"
-                   title="<%= t("views.settings.food_labels.colors.#{color}") %>"></div>
-            </label>
-          <% end %>
-        </div>
-      </div>
+      <%= render "food_labels/color_picker", f: f, id_prefix: "food_label" %>
 
     <% end %>
   </div>
@@ -57,29 +43,7 @@
     <% if @food_labels.any? %>
       <div class="divide-y divide-surface-border/30">
         <% @food_labels.each do |label| %>
-          <% style = label.color_style %>
-          <div class="flex items-center justify-between py-3 group">
-            <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-lg <%= style[:bg] %> border <%= style[:border] %> flex items-center justify-center shrink-0">
-                <span class="w-3 h-3 rounded-full <%= style[:dot] %>"></span>
-              </div>
-              <div>
-                <div class="text-sm font-medium <%= style[:text] %>"><%= label.name %></div>
-                <% food_count = label.foods.count %>
-                <div class="text-xs text-ink-subtle mt-0.5">
-                  <%= food_count > 0 ? t("shared.food_count", count: food_count) : t("views.settings.food_groups.no_food") %>
-                </div>
-              </div>
-            </div>
-            <div class="opacity-0 group-hover:opacity-100 transition-opacity">
-              <%= delete_link_with_confirm(
-                    food_label_path(label),
-                    confirm: t("views.settings.food_labels.delete_confirm"),
-                    icon_class: "fas fa-trash text-sm",
-                    title: t("shared.delete"),
-                    class: "inline-flex items-center justify-center w-8 h-8 rounded-lg text-ink-subtle hover:text-status-danger hover:bg-status-danger_dim/20 transition-colors") %>
-            </div>
-          </div>
+          <%= render "food_labels/food_label", food_label: label %>
         <% end %>
       </div>
     <% else %>

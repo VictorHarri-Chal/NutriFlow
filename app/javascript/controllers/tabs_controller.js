@@ -17,11 +17,26 @@ export default class extends Controller {
     if (this.tabTargets.length > 0) {
       this.switchToTab(this.tabTargets[0])
     }
+
+    this._boundCloseOpenEdits = this.closeOpenEdits.bind(this)
+    document.addEventListener("turbo:before-cache", this._boundCloseOpenEdits)
+  }
+
+  disconnect() {
+    document.removeEventListener("turbo:before-cache", this._boundCloseOpenEdits)
   }
 
   switchTab(event) {
     event.preventDefault()
+    this.closeOpenEdits()
     this.switchToTab(event.currentTarget)
+  }
+
+  // Closes any inline edit form left open (e.g. a group/label being renamed)
+  // before switching tabs or letting Turbo cache the current page — otherwise
+  // the form would still show, hidden, when the tab/page is revisited.
+  closeOpenEdits() {
+    this.element.querySelectorAll('[data-role="cancel-edit"]').forEach(link => link.click())
   }
 
   switchToTab(activeTab) {
