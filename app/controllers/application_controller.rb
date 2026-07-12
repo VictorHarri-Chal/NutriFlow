@@ -7,8 +7,18 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!
   before_action :set_locale
   before_action :set_sentry_context
+  before_action :require_onboarding_complete!
 
   private
+
+  def require_onboarding_complete!
+    return unless user_signed_in?
+    return if devise_controller?
+    return if controller_path == "onboarding"
+    return if current_user.profile.onboarding_complete?
+
+    redirect_to edit_onboarding_path
+  end
 
   def set_sentry_context
     return unless current_user

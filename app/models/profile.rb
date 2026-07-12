@@ -58,9 +58,11 @@ class Profile < ApplicationRecord
 
   before_validation :set_default_steps
   before_validation :set_default_water_goal
+  before_validation :default_goal_weight_to_current_weight
   before_validation :sync_goal_with_target_weight
 
   validates :name,               length: { maximum: 30 }
+  validates :name, :date_of_birth, :weight, :height, :gender, presence: true, on: :update
   validates :weight,             numericality: { greater_than: 0, less_than: 500 }, allow_blank: true
   validates :height,             numericality: { greater_than: 0, less_than: 300 }, allow_blank: true
   validate  :date_of_birth_is_plausible
@@ -282,6 +284,12 @@ class Profile < ApplicationRecord
     bmr.present?
   end
 
+  # The mandatory post-signup fields — distinct from #profile_ready_for_goal?,
+  # which only cares about BMR inputs and ignores name/gender.
+  def onboarding_complete?
+    name.present? && date_of_birth.present? && weight.present? && height.present? && gender.present?
+  end
+
   private
 
   def calorie_goal_for(day)
@@ -296,6 +304,15 @@ class Profile < ApplicationRecord
   # form casts it to nil, which must never reach the database as-is.
   def set_default_water_goal
     self.water_goal_ml = 2000 if water_goal_ml.nil?
+  end
+
+  # goal_weight defaults to the current weight (i.e. "maintain") whenever it
+  # hasn't been set yet — otherwise submitting weight/height/date_of_birth
+  # alone (e.g. from onboarding, which doesn't collect a target weight) would
+  # make the profile "ready for goal" while failing its goal_weight presence
+  # validation.
+  def default_goal_weight_to_current_weight
+    self.goal_weight = weight if goal_weight.blank? && weight.present?
   end
 
   def date_of_birth_is_plausible

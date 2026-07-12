@@ -67,6 +67,8 @@ en:
       duplicate_error: "Unable to duplicate this recipe."
     profiles:
       updated: "Profile updated successfully."
+    onboarding:
+      completed: "Profile completed successfully. Welcome to NutriFlow!"
     users:
       passwords:
         reset_sent: "A password reset email has been sent to your email address."
@@ -91,6 +93,7 @@ en:
         weight: "Weight"
         height: "Height"
         date_of_birth: "Date of birth"
+        gender: "Gender"
         goal_weight: "Target weight"
         goal_rate_kg_per_week: "Desired rate"
         water_goal_ml: "Daily water goal"
@@ -174,7 +177,6 @@ en:
       saturated_fat: "Sat. fat"
       salt: "Salt"
       nutrition_summary: "Daily nutritional summary"
-      complete_profile_hint: "Complete your profile to display your goals"
       copy_yesterday_title: "Copy foods from the previous day"
       heatmap:
         title: "%{month}"
@@ -617,8 +619,6 @@ en:
       show:
         title: "My Profile"
         edit_link: "Edit profile"
-        incomplete_hint: "Your profile is incomplete. Enter your weight, height and age to calculate your nutritional needs."
-        complete_cta: "Complete profile"
         calorie_needs_title: "My calorie needs"
         calories_to_eat_per_day: "kcal / day"
         tdee_label: "TDEE"
@@ -698,6 +698,12 @@ en:
         goal_rate_warning_gain: "Beyond 0.5 kg per week, more of the gain tends to be fat rather than muscle."
         goal_rate_estimate_prefix: "Estimate"
         goal_rate_estimate_template: "%{weeks} weeks to reach %{weight} kg"
+
+    onboarding:
+      edit:
+        title: "Complete your profile"
+        subtitle: "This information lets us offer you an experience tailored to your needs."
+        submit: "Finish my profile"
 
     settings:
       show:
@@ -1181,7 +1187,6 @@ en:
         delta_90d: "Last 90 days"
         goal: "Goal"
         not_enough_data: "Not enough data"
-        set_goal: "Set in profile"
         bmi_label: "BMI"
         bmi_category:
           underweight: "Underweight"

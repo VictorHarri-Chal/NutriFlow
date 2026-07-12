@@ -67,6 +67,8 @@ fr:
       duplicate_error: "Impossible de dupliquer cette recette."
     profiles:
       updated: "Profil mis à jour avec succès."
+    onboarding:
+      completed: "Profil complété avec succès. Bienvenue sur NutriFlow !"
     users:
       passwords:
         reset_sent: "Un email de réinitialisation de mot de passe a été envoyé à votre adresse email."
@@ -91,6 +93,7 @@ fr:
         weight: "Poids"
         height: "Taille"
         date_of_birth: "Date de naissance"
+        gender: "Genre"
         goal_weight: "Poids cible"
         goal_rate_kg_per_week: "Rythme souhaité"
         water_goal_ml: "Objectif eau quotidien"
@@ -174,7 +177,6 @@ fr:
       saturated_fat: "Ac. saturés"
       salt: "Sel"
       nutrition_summary: "Résumé nutritionnel du jour"
-      complete_profile_hint: "Complétez votre profil pour afficher vos objectifs"
       copy_yesterday_title: "Copier les aliments du jour précédent"
       heatmap:
         title: "%{month}"
@@ -617,8 +619,6 @@ fr:
       show:
         title: "Mon Profil"
         edit_link: "Modifier le profil"
-        incomplete_hint: "Votre profil est incomplet. Renseignez votre poids, taille et âge pour calculer vos besoins nutritionnels."
-        complete_cta: "Compléter le profil"
         calorie_needs_title: "Mes besoins caloriques"
         calories_to_eat_per_day: "kcal à ingérer / jour"
         tdee_label: "TDEE"
@@ -698,6 +698,12 @@ fr:
         goal_rate_warning_gain: "Au-delà de 0,5 kg par semaine, une bonne partie du gain risque d'être du gras plutôt que du muscle."
         goal_rate_estimate_prefix: "Estimation"
         goal_rate_estimate_template: "%{weeks} semaines pour atteindre %{weight} kg"
+
+    onboarding:
+      edit:
+        title: "Complétez votre profil"
+        subtitle: "Ces informations nous permettent de vous offrir une expérience personnalisée à vos besoins."
+        submit: "Terminer mon profil"
 
     settings:
       show:
@@ -1181,7 +1187,6 @@ fr:
         delta_90d: "Sur 90 jours"
         goal: "Objectif"
         not_enough_data: "Pas assez de données"
-        set_goal: "Définir dans le profil"
         bmi_label: "IMC"
         bmi_category:
           underweight: "Insuffisance pondérale"

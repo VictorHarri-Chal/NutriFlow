@@ -181,108 +181,94 @@
           </div>
         </h3>
 
-        <% if @profile.profile_ready_for_goal? %>
+        <%# Objectif actif — apport cible mis en avant %>
+        <% active_kcal = @profile.goal&.weight_loss? ? @calories_weight_loss :
+                         @profile.goal&.muscle_gain?  ? @calories_muscle_gain :
+                         @calories_maintenance %>
+        <div class="text-center py-3 bg-surface-base rounded-xl border border-surface-border/40">
+          <div class="text-4xl font-bold text-brand leading-tight"><%= active_kcal %></div>
+          <div class="text-xs text-ink-subtle mt-0.5"><%= t("views.profiles.show.calories_to_eat_per_day") %></div>
+        </div>
 
-          <%# Objectif actif — apport cible mis en avant %>
-          <% active_kcal = @profile.goal&.weight_loss? ? @calories_weight_loss :
-                           @profile.goal&.muscle_gain?  ? @calories_muscle_gain :
-                           @calories_maintenance %>
-          <div class="text-center py-3 bg-surface-base rounded-xl border border-surface-border/40">
-            <div class="text-4xl font-bold text-brand leading-tight"><%= active_kcal %></div>
-            <div class="text-xs text-ink-subtle mt-0.5"><%= t("views.profiles.show.calories_to_eat_per_day") %></div>
-          </div>
-
-          <%# Les 3 scénarios (basés sur le TDEE = @calories_maintenance) %>
-          <div class="space-y-2">
-            <% [
-              { key: "weight_loss",  kcal: @calories_weight_loss,  icon: "fa-arrow-trend-down", suffix: t("views.profiles.show.rate_per_week", rate: number_with_precision(@weight_loss_rate, precision: 2, strip_insignificant_zeros: true)) },
-              { key: "maintenance",  kcal: @calories_maintenance,   icon: "fa-equals",           suffix: t("views.profiles.show.tdee_label") },
-              { key: "muscle_gain",  kcal: @calories_muscle_gain,   icon: "fa-dumbbell",         suffix: t("views.profiles.show.rate_per_week", rate: "+#{number_with_precision(@muscle_gain_rate, precision: 2, strip_insignificant_zeros: true)}") }
-            ].each do |s| %>
-              <% active = @profile.goal.to_s == s[:key] %>
-              <div class="flex items-center justify-between px-3 py-2 rounded-lg transition-colors
-                          <%= active ? 'bg-brand/10 border border-brand/30' : 'bg-surface-base border border-surface-border/40' %>">
-                <div class="flex items-center gap-2 min-w-0">
-                  <i class="fas <%= s[:icon] %> text-xs <%= active ? 'text-brand' : 'text-ink-subtle' %> shrink-0"></i>
-                  <div class="min-w-0">
-                    <span class="text-xs <%= active ? 'font-semibold text-brand' : 'text-ink-muted' %> block">
-                      <%= t("views.profiles.show.#{s[:key]}") %>
-                    </span>
-                    <span class="text-[10px] text-ink-subtle/50 block"><%= s[:suffix] %></span>
-                  </div>
-                </div>
-                <span class="text-sm font-bold shrink-0 <%= active ? 'text-brand' : 'text-ink-primary' %>">
-                  <%= s[:kcal] %> <span class="text-xs font-normal text-ink-subtle">kcal</span>
-                </span>
-              </div>
-            <% end %>
-          </div>
-
-          <%# Macros cibles (basées sur l'objectif actif) %>
-          <% if @protein_goal && @fats_goal && @carbs_goal %>
-            <div class="border-t border-surface-border/40 pt-3">
-              <div class="flex items-center gap-1.5 mb-3">
-                <div class="text-xs font-semibold text-ink-subtle uppercase tracking-wide">
-                  <%= t("views.profiles.show.macro_goals_title") %>
-                </div>
-                <div class="relative group inline-flex items-center">
-                  <i class="fas fa-circle-info text-xs text-ink-subtle/40 hover:text-ink-subtle cursor-default transition-colors"></i>
-                  <div class="absolute left-0 top-4 z-10 w-64 hidden group-hover:block
-                              bg-surface-raised border border-surface-border/60 rounded-xl shadow-lg p-3 normal-case tracking-normal font-normal">
-                    <p class="text-[11px] font-semibold text-ink-primary mb-1.5"><%= t("views.profiles.show.macro_info_title") %></p>
-                    <div class="space-y-1.5 text-[10px] text-ink-subtle leading-relaxed">
-                      <p><%= t("views.profiles.show.macro_info_protein") %></p>
-                      <p><%= t("views.profiles.show.macro_info_fat") %></p>
-                      <p><%= t("views.profiles.show.macro_info_carbs") %></p>
-                      <p class="pt-1.5 border-t border-surface-border/40"><%= t("views.profiles.show.tdee_estimate_note", steps: @profile.default_daily_steps || 6000) %></p>
-                    </div>
-                  </div>
+        <%# Les 3 scénarios (basés sur le TDEE = @calories_maintenance) %>
+        <div class="space-y-2">
+          <% [
+            { key: "weight_loss",  kcal: @calories_weight_loss,  icon: "fa-arrow-trend-down", suffix: t("views.profiles.show.rate_per_week", rate: number_with_precision(@weight_loss_rate, precision: 2, strip_insignificant_zeros: true)) },
+            { key: "maintenance",  kcal: @calories_maintenance,   icon: "fa-equals",           suffix: t("views.profiles.show.tdee_label") },
+            { key: "muscle_gain",  kcal: @calories_muscle_gain,   icon: "fa-dumbbell",         suffix: t("views.profiles.show.rate_per_week", rate: "+#{number_with_precision(@muscle_gain_rate, precision: 2, strip_insignificant_zeros: true)}") }
+          ].each do |s| %>
+            <% active = @profile.goal.to_s == s[:key] %>
+            <div class="flex items-center justify-between px-3 py-2 rounded-lg transition-colors
+                        <%= active ? 'bg-brand/10 border border-brand/30' : 'bg-surface-base border border-surface-border/40' %>">
+              <div class="flex items-center gap-2 min-w-0">
+                <i class="fas <%= s[:icon] %> text-xs <%= active ? 'text-brand' : 'text-ink-subtle' %> shrink-0"></i>
+                <div class="min-w-0">
+                  <span class="text-xs <%= active ? 'font-semibold text-brand' : 'text-ink-muted' %> block">
+                    <%= t("views.profiles.show.#{s[:key]}") %>
+                  </span>
+                  <span class="text-[10px] text-ink-subtle/50 block"><%= s[:suffix] %></span>
                 </div>
               </div>
-              <% if @profile.macro_calories_exceed_goal? %>
-                <div class="flex items-center gap-2 px-3 py-2 mb-2 rounded-lg bg-status-danger/10 border border-status-danger/25 text-[11px] text-status-danger">
-                  <i class="fas fa-triangle-exclamation shrink-0"></i>
-                  <span><%= t("views.profiles.show.macro_low_calorie_warning") %></span>
-                </div>
-              <% end %>
-              <div class="grid grid-cols-3 gap-2">
-                <div class="text-center p-2.5 bg-surface-base rounded-lg border border-surface-border/30">
-                  <i class="fas fa-dumbbell text-ink-subtle text-xs mb-1 block"></i>
-                  <div class="text-sm font-bold text-ink-primary"><%= @protein_goal.round %><span class="text-xs font-normal text-ink-subtle">g</span></div>
-                  <div class="text-xs text-ink-subtle mt-0.5"><%= t("views.recipes.show.proteins_short") %></div>
-                  <div class="text-[9px] text-ink-subtle/70 mt-0.5">
-                    <%= t("views.profiles.show.per_kg", value: 2) %> · <%= t("views.profiles.show.macro_kcal_suffix", kcal: (@protein_goal * 4).round) %>
-                  </div>
-                </div>
-                <div class="text-center p-2.5 bg-surface-base rounded-lg border border-surface-border/30">
-                  <i class="fas fa-bread-slice text-ink-subtle text-xs mb-1 block"></i>
-                  <div class="text-sm font-bold text-ink-primary"><%= @carbs_goal %><span class="text-xs font-normal text-ink-subtle">g</span></div>
-                  <div class="text-xs text-ink-subtle mt-0.5"><%= t("views.recipes.show.carbs_short") %></div>
-                  <div class="text-[9px] text-ink-subtle/70 mt-0.5">
-                    <%= t("views.profiles.show.carbs_residual_hint") %> · <%= t("views.profiles.show.macro_kcal_suffix", kcal: (@carbs_goal * 4).round) %>
-                  </div>
-                </div>
-                <div class="text-center p-2.5 bg-surface-base rounded-lg border border-surface-border/30">
-                  <i class="fas fa-oil-can text-ink-subtle text-xs mb-1 block"></i>
-                  <div class="text-sm font-bold text-ink-primary"><%= @fats_goal.round %><span class="text-xs font-normal text-ink-subtle">g</span></div>
-                  <div class="text-xs text-ink-subtle mt-0.5"><%= t("views.recipes.show.fats_short") %></div>
-                  <div class="text-[9px] text-ink-subtle/70 mt-0.5">
-                    <%= t("views.profiles.show.fat_percent_hint", percent: (Profile::FAT_PERCENT_OF_CALORIES * 100).round) %> · <%= t("views.profiles.show.macro_kcal_suffix", kcal: (@fats_goal * 9).round) %>
+              <span class="text-sm font-bold shrink-0 <%= active ? 'text-brand' : 'text-ink-primary' %>">
+                <%= s[:kcal] %> <span class="text-xs font-normal text-ink-subtle">kcal</span>
+              </span>
+            </div>
+          <% end %>
+        </div>
+
+        <%# Macros cibles (basées sur l'objectif actif) %>
+        <% if @protein_goal && @fats_goal && @carbs_goal %>
+          <div class="border-t border-surface-border/40 pt-3">
+            <div class="flex items-center gap-1.5 mb-3">
+              <div class="text-xs font-semibold text-ink-subtle uppercase tracking-wide">
+                <%= t("views.profiles.show.macro_goals_title") %>
+              </div>
+              <div class="relative group inline-flex items-center">
+                <i class="fas fa-circle-info text-xs text-ink-subtle/40 hover:text-ink-subtle cursor-default transition-colors"></i>
+                <div class="absolute left-0 top-4 z-10 w-64 hidden group-hover:block
+                            bg-surface-raised border border-surface-border/60 rounded-xl shadow-lg p-3 normal-case tracking-normal font-normal">
+                  <p class="text-[11px] font-semibold text-ink-primary mb-1.5"><%= t("views.profiles.show.macro_info_title") %></p>
+                  <div class="space-y-1.5 text-[10px] text-ink-subtle leading-relaxed">
+                    <p><%= t("views.profiles.show.macro_info_protein") %></p>
+                    <p><%= t("views.profiles.show.macro_info_fat") %></p>
+                    <p><%= t("views.profiles.show.macro_info_carbs") %></p>
+                    <p class="pt-1.5 border-t border-surface-border/40"><%= t("views.profiles.show.tdee_estimate_note", steps: @profile.default_daily_steps || 6000) %></p>
                   </div>
                 </div>
               </div>
             </div>
-          <% end %>
-
-        <% else %>
-          <%# Profil incomplet %>
-          <div class="text-center py-8">
-            <i class="fas fa-fire text-surface-border text-3xl mb-3 block"></i>
-            <p class="text-xs text-ink-subtle leading-relaxed mb-4"><%= t("views.profiles.show.incomplete_hint") %></p>
-            <%= link_to edit_profile_path, class: "btn-primary text-sm" do %>
-              <i class="fas fa-pen text-xs"></i>
-              <%= t("views.profiles.show.complete_cta") %>
+            <% if @profile.macro_calories_exceed_goal? %>
+              <div class="flex items-center gap-2 px-3 py-2 mb-2 rounded-lg bg-status-danger/10 border border-status-danger/25 text-[11px] text-status-danger">
+                <i class="fas fa-triangle-exclamation shrink-0"></i>
+                <span><%= t("views.profiles.show.macro_low_calorie_warning") %></span>
+              </div>
             <% end %>
+            <div class="grid grid-cols-3 gap-2">
+              <div class="text-center p-2.5 bg-surface-base rounded-lg border border-surface-border/30">
+                <i class="fas fa-dumbbell text-ink-subtle text-xs mb-1 block"></i>
+                <div class="text-sm font-bold text-ink-primary"><%= @protein_goal.round %><span class="text-xs font-normal text-ink-subtle">g</span></div>
+                <div class="text-xs text-ink-subtle mt-0.5"><%= t("views.recipes.show.proteins_short") %></div>
+                <div class="text-[9px] text-ink-subtle/70 mt-0.5">
+                  <%= t("views.profiles.show.per_kg", value: 2) %> · <%= t("views.profiles.show.macro_kcal_suffix", kcal: (@protein_goal * 4).round) %>
+                </div>
+              </div>
+              <div class="text-center p-2.5 bg-surface-base rounded-lg border border-surface-border/30">
+                <i class="fas fa-bread-slice text-ink-subtle text-xs mb-1 block"></i>
+                <div class="text-sm font-bold text-ink-primary"><%= @carbs_goal %><span class="text-xs font-normal text-ink-subtle">g</span></div>
+                <div class="text-xs text-ink-subtle mt-0.5"><%= t("views.recipes.show.carbs_short") %></div>
+                <div class="text-[9px] text-ink-subtle/70 mt-0.5">
+                  <%= t("views.profiles.show.carbs_residual_hint") %> · <%= t("views.profiles.show.macro_kcal_suffix", kcal: (@carbs_goal * 4).round) %>
+                </div>
+              </div>
+              <div class="text-center p-2.5 bg-surface-base rounded-lg border border-surface-border/30">
+                <i class="fas fa-oil-can text-ink-subtle text-xs mb-1 block"></i>
+                <div class="text-sm font-bold text-ink-primary"><%= @fats_goal.round %><span class="text-xs font-normal text-ink-subtle">g</span></div>
+                <div class="text-xs text-ink-subtle mt-0.5"><%= t("views.recipes.show.fats_short") %></div>
+                <div class="text-[9px] text-ink-subtle/70 mt-0.5">
+                  <%= t("views.profiles.show.fat_percent_hint", percent: (Profile::FAT_PERCENT_OF_CALORIES * 100).round) %> · <%= t("views.profiles.show.macro_kcal_suffix", kcal: (@fats_goal * 9).round) %>
+                </div>
+              </div>
+            </div>
           </div>
         <% end %>
 

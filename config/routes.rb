@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   }
 
   resource :profile, only: [:show, :edit, :update]
+  resource :onboarding, only: [:edit, :update], controller: 'onboarding'
 
   resources :calendars, only: [:index] do
     collection do

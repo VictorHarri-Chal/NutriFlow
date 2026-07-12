@@ -105,28 +105,20 @@
       <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1">
         <%= t("views.weight_entries.stats.goal") %>
       </p>
-      <% if @profile&.goal_weight %>
-        <p class="text-2xl font-bold text-ink-primary">
-          <%= @profile.goal_weight %><span class="text-sm font-normal text-ink-subtle ml-1">kg</span>
+      <p class="text-2xl font-bold text-ink-primary">
+        <%= @profile.goal_weight %><span class="text-sm font-normal text-ink-subtle ml-1">kg</span>
+      </p>
+      <% if @goal_delta %>
+        <% remaining_color = @goal_delta.abs < 1 ? "text-status-success" : "text-ink-subtle" %>
+        <p class="text-xs <%= remaining_color %> mt-1">
+          <% if @goal_delta > 0 %>
+            <%= t("views.weight_entries.stats.to_lose", kg: @goal_delta) %>
+          <% elsif @goal_delta < 0 %>
+            <%= t("views.weight_entries.stats.to_gain", kg: @goal_delta.abs) %>
+          <% else %>
+            <%= t("views.weight_entries.stats.goal_reached") %>
+          <% end %>
         </p>
-        <% if @goal_delta %>
-          <% remaining_color = @goal_delta.abs < 1 ? "text-status-success" : "text-ink-subtle" %>
-          <p class="text-xs <%= remaining_color %> mt-1">
-            <% if @goal_delta > 0 %>
-              <%= t("views.weight_entries.stats.to_lose", kg: @goal_delta) %>
-            <% elsif @goal_delta < 0 %>
-              <%= t("views.weight_entries.stats.to_gain", kg: @goal_delta.abs) %>
-            <% else %>
-              <%= t("views.weight_entries.stats.goal_reached") %>
-            <% end %>
-          </p>
-        <% end %>
-      <% else %>
-        <p class="text-2xl font-bold text-ink-subtle">—</p>
-        <%= link_to edit_profile_path,
-              class: "inline-block mt-2 text-[10px] font-medium text-brand hover:text-brand-hover underline underline-offset-2 transition-colors" do %>
-          <%= t("views.weight_entries.stats.set_goal") %>
-        <% end %>
       <% end %>
     </div>
 

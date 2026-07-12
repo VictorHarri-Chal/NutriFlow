@@ -63,8 +63,6 @@ class CalendarDataLoader
     @has_foods   = @user.foods.exists?
     @has_recipes = @user.recipes.exists?
 
-    return unless @profile&.weight.present? && @profile.bmr
-
     effective_steps  = @day.effective_steps(@profile)
     job_neat         = Profile::JOB_NEAT_KCAL[@profile.job_activity_level.to_sym] ||
                        Profile::JOB_NEAT_KCAL[:light_activity]

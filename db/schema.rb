@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_11_000001) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_12_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -223,17 +223,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_11_000001) do
     t.index ["user_id", "in_pantry"], name: "index_foods_on_user_id_and_in_pantry"
     t.index ["user_id", "name"], name: "index_foods_on_user_id_and_name_unique", unique: true
     t.index ["user_id"], name: "index_foods_on_user_id"
-  end
-
-  create_table "identities", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.string "provider", null: false
-    t.string "uid", null: false
-    t.string "email"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["provider", "uid"], name: "index_identities_on_provider_and_uid", unique: true
-    t.index ["user_id"], name: "index_identities_on_user_id"
   end
 
   create_table "profiles", force: :cascade do |t|
@@ -479,7 +468,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_11_000001) do
     t.boolean "show_water_tracking", default: true, null: false
     t.boolean "show_tdee_breakdown", default: true, null: false
     t.boolean "show_weight_tracking", default: true, null: false
-    t.string "jti", default: "", null: false
     t.string "confirmation_token"
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
@@ -491,7 +479,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_11_000001) do
     t.string "last_sign_in_ip"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
@@ -561,7 +548,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_11_000001) do
   add_foreign_key "food_labels_foods", "food_labels"
   add_foreign_key "food_labels_foods", "foods"
   add_foreign_key "foods", "users"
-  add_foreign_key "identities", "users"
   add_foreign_key "profiles", "users"
   add_foreign_key "program_days", "workout_programs"
   add_foreign_key "program_exercises", "exercises"
