@@ -112,19 +112,41 @@ class StatisticsController < ApplicationController
   # ── Training ─────────────────────────────────────────────────────────────────
 
   def load_training_stats
-    @workout_sessions = WorkoutSession.joins(:day)
-                                      .where(days: { user_id: current_user.id, date: @from..Date.today })
-                                      .includes(:day, workout_sets: :exercise)
-                                      .order("days.date")
-
-    @session_count = @workout_sessions.size
+    @workout_sessions = fetch_period_workout_sessions
+    @session_count    = @workout_sessions.size
 
     all_sets      = @workout_sessions.flat_map(&:workout_sets)
     @total_sets   = all_sets.size
     @total_volume = all_sets.sum { |ws| ws.weight_kg.to_f * ws.reps.to_i }.round
 
-    # Frequency chart
-    range            = (@from..Date.today).to_a
+    range = (@from..Date.today).to_a
+    build_frequency_chart(range)
+    build_muscle_group_breakdown(all_sets)
+    @recent_prs = recent_prs(all_sets)
+
+    exercise_ids    = all_sets.map(&:exercise_id).uniq
+    favorite_ids    = current_user.exercise_favorites.pluck(:exercise_id).to_set
+    @user_exercises = Exercise.where(id: exercise_ids)
+                              .sort_by { |e| [favorite_ids.include?(e.id) ? 0 : 1, e.name] }
+    exercise_names  = @user_exercises.index_by(&:id)
+
+    @selected_exercise = @user_exercises.find { |e| e.id == params[:exercise_id]&.to_i } if params[:exercise_id].present?
+    @selected_exercise ||= @user_exercises.first
+    build_exercise_progress(all_sets, @selected_exercise) if @selected_exercise
+
+    build_training_streak(range)
+    @top_1rms         = top_estimated_one_rms(all_sets, exercise_names)
+    @most_progressive = most_progressive_exercises(all_sets, exercise_names)
+  end
+
+  def fetch_period_workout_sessions
+    WorkoutSession.joins(:day)
+                  .where(days: { user_id: current_user.id, date: @from..Date.today })
+                  .includes(:day, workout_sets: :exercise)
+                  .order("days.date")
+  end
+
+  def build_frequency_chart(range)
     sessions_by_date = @workout_sessions.index_by { |s| s.day.date }
 
     if @period == 7
@@ -143,86 +165,83 @@ class StatisticsController < ApplicationController
       @freq_labels = weeks.map { |w, _| l(w, format: :short) }
       @freq_data   = weeks.map { |_, days| days.count { |d| sessions_by_date[d] } }
     end
+  end
 
-    # Muscle group CSS bars (% of total volume, top 6)
+  # % of total volume per body part, top 6 shown (% computed on the full total, not just the top 6)
+  def build_muscle_group_breakdown(all_sets)
     body_vols = all_sets.each_with_object({}) do |ws, h|
       bp = ws.exercise&.body_part
       next if bp.blank?
       h[bp] = (h[bp] || 0) + ws.weight_kg.to_f * ws.reps.to_i
     end
-    sorted     = body_vols.sort_by { |_, v| -v }
-    total_vol  = body_vols.values.sum.to_f
+    sorted    = body_vols.sort_by { |_, v| -v }.first(6)
+    total_vol = body_vols.values.sum.to_f
     @muscle_groups = sorted.map { |bp, vol| [bp, total_vol > 0 ? (vol / total_vol * 100).round : 0] }
+  end
 
-    # PRs (last 10 in period)
-    @recent_prs = WorkoutSet.joins(workout_session: :day)
-                            .includes(:exercise, workout_session: :day)
-                            .where(is_pr: true)
-                            .where(days: { user_id: current_user.id, date: @from..Date.today })
-                            .order("days.date DESC")
-                            .limit(5)
+  # all_sets already has is_pr, exercise and workout_session.day preloaded — no extra query needed.
+  def recent_prs(all_sets)
+    all_sets.select(&:is_pr).sort_by { |ws| ws.workout_session.day.date }.last(5).reverse
+  end
 
-    # Exercise progression chart — derive exercise_ids from already-loaded all_sets (no extra query)
-    exercise_ids = all_sets.map(&:exercise_id).uniq
-    favorite_ids = current_user.exercise_favorites.pluck(:exercise_id).to_set
-    @user_exercises = Exercise.where(id: exercise_ids)
-                              .sort_by { |e| [favorite_ids.include?(e.id) ? 0 : 1, e.name] }
+  # all_sets already covers the full period for every exercise — filter in memory
+  # instead of re-querying (previously a separate WorkoutSet query per exercise switch).
+  def build_exercise_progress(all_sets, exercise)
+    sets    = all_sets.select { |ws| ws.exercise_id == exercise.id }
+    by_date = sets.group_by { |s| s.workout_session.day.date }
+    @progress_labels = by_date.keys.map { |d| l(d, format: :short) }
+    @progress_data   = by_date.values.map { |s| s.map(&:weight_kg).compact.max&.to_f || 0 }
+  end
 
-    @selected_exercise = @user_exercises.find { |e| e.id == params[:exercise_id]&.to_i } if params[:exercise_id].present?
-    @selected_exercise ||= @user_exercises.first
-
-    load_exercise_progress(@selected_exercise) if @selected_exercise
-
-    # Training streak (weeks in range with ≥1 session)
+  def build_training_streak(range)
     session_dates = @workout_sessions.map { |s| s.day.date }
-    all_weeks = range.group_by(&:beginning_of_week)
-    @training_streak_weeks       = all_weeks.count { |_, wds| wds.any? { |d| session_dates.include?(d) } }
-    @training_total_weeks        = all_weeks.size
+    all_weeks     = range.group_by(&:beginning_of_week)
+    @training_streak_weeks = all_weeks.count { |_, wds| wds.any? { |d| session_dates.include?(d) } }
+    @training_total_weeks  = all_weeks.size
+  end
 
-    # Estimated 1RM (Brzycki: weight × 36 / (37 − reps), valid for reps 1–10)
+  # Brzycki: weight × 36 / (37 − reps), valid for reps 1–10 only.
+  def estimated_one_rep_max(weight_kg, reps)
+    return nil unless weight_kg.present? && reps.present?
+    return nil unless reps.between?(1, 10) && weight_kg.to_f > 0
+
+    (weight_kg.to_f * 36.0 / (37.0 - reps.to_f)).round(1)
+  end
+
+  def top_estimated_one_rms(all_sets, exercise_names, top: 3)
     one_rm_by_exercise = {}
     all_sets.each do |ws|
-      next unless ws.weight_kg.present? && ws.reps.present?
-      next unless ws.reps.between?(1, 10) && ws.weight_kg.to_f > 0
-      orm = (ws.weight_kg.to_f * 36.0 / (37.0 - ws.reps.to_f)).round(1)
-      eid = ws.exercise_id
-      one_rm_by_exercise[eid] = [one_rm_by_exercise[eid] || 0.0, orm].max
-    end
-    top_orm_ids = one_rm_by_exercise.sort_by { |_, v| -v }.first(3).map(&:first)
-    exercise_names = @user_exercises.index_by(&:id)
-    @top_1rms = top_orm_ids.filter_map do |eid|
-      name = exercise_names[eid]&.name_fr.presence || exercise_names[eid]&.name
-      next if name.nil?
-      [name, one_rm_by_exercise[eid]]
+      orm = estimated_one_rep_max(ws.weight_kg, ws.reps)
+      next if orm.nil?
+      one_rm_by_exercise[ws.exercise_id] = [one_rm_by_exercise[ws.exercise_id] || 0.0, orm].max
     end
 
-    # Most progressive exercises (% weight gain first half vs second half)
-    mid_date    = @from + (@period / 2).days
-    sets_early  = all_sets.select { |ws| ws.workout_session.day.date < mid_date }
-    sets_late   = all_sets.select { |ws| ws.workout_session.day.date >= mid_date }
-    early_max   = sets_early.group_by(&:exercise_id).transform_values { |ss| ss.map(&:weight_kg).compact.map(&:to_f).max || 0 }
-    late_max    = sets_late.group_by(&:exercise_id).transform_values  { |ss| ss.map(&:weight_kg).compact.map(&:to_f).max || 0 }
+    one_rm_by_exercise.sort_by { |_, v| -v }.first(top).filter_map do |eid, orm|
+      name = localized_exercise_name(exercise_names[eid])
+      [name, orm] if name
+    end
+  end
 
-    @most_progressive = (early_max.keys & late_max.keys).filter_map { |eid|
+  def localized_exercise_name(exercise)
+    exercise&.name_fr.presence || exercise&.name
+  end
+
+  # % weight gain, max weight in the first half of the period vs the second half.
+  def most_progressive_exercises(all_sets, exercise_names, top: 5)
+    mid_date   = @from + (@period / 2).days
+    sets_early = all_sets.select { |ws| ws.workout_session.day.date < mid_date }
+    sets_late  = all_sets.select { |ws| ws.workout_session.day.date >= mid_date }
+    early_max  = sets_early.group_by(&:exercise_id).transform_values { |ss| ss.map(&:weight_kg).compact.map(&:to_f).max || 0 }
+    late_max   = sets_late.group_by(&:exercise_id).transform_values  { |ss| ss.map(&:weight_kg).compact.map(&:to_f).max || 0 }
+
+    (early_max.keys & late_max.keys).filter_map { |eid|
       early = early_max[eid]; late = late_max[eid]
       next if early.zero?
       gain = ((late - early) / early * 100).round(1)
       next if gain <= 0
-      name = exercise_names[eid]&.name_fr.presence || exercise_names[eid]&.name
+      name = localized_exercise_name(exercise_names[eid])
       [name, gain, late]
-    }.sort_by { |_, g, _| -g }.first(5)
-  end
-
-  def load_exercise_progress(exercise)
-    sets = WorkoutSet.joins(workout_session: :day)
-                     .includes(workout_session: :day)
-                     .where(exercise: exercise)
-                     .where(days: { user_id: current_user.id, date: @from..Date.today })
-                     .order("days.date")
-
-    by_date = sets.group_by { |s| s.workout_session.day.date }
-    @progress_labels = by_date.keys.map { |d| l(d, format: :short) }
-    @progress_data   = by_date.values.map { |s| s.map(&:weight_kg).compact.max&.to_f || 0 }
+    }.sort_by { |_, g, _| -g }.first(top)
   end
 
   # ── Cardio ───────────────────────────────────────────────────────────────────

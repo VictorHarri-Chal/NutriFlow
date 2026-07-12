@@ -16,7 +16,8 @@ export default class extends Controller {
     labelLastPerf:      { type: String, default: "Dernière fois" },
     labelMaxSets:       { type: String, default: "max 10" },
     noExerciseError:    { type: String, default: "Ajoutez au moins un exercice." },
-    sessionId:          { type: Number, default: 0 }
+    sessionId:          { type: Number, default: 0 },
+    sessionDate:        { type: String, default: "" }
   }
 
   connect() {
@@ -113,6 +114,7 @@ export default class extends Controller {
       const container = existing.querySelector(".sets-container")
       if (container) this._renumberSets(container)
       this._syncEmptyHint()
+      this._recomputeGroupPrBadges(existing)
       return
     }
 
@@ -135,6 +137,10 @@ export default class extends Controller {
 
   removeSet(event) {
     const row          = event.currentTarget.closest(".set-row")
+    // Captured before any removal: row.remove() detaches row from its parent,
+    // which would make a closest() lookup from a descendant fail afterward.
+    const container    = row.closest(".sets-container")
+    const group        = row.closest("[data-exercise-id]")
     const destroyInput = row.querySelector("[data-destroy-flag]")
     if (destroyInput) {
       destroyInput.value = "1"
@@ -142,8 +148,8 @@ export default class extends Controller {
     } else {
       row.remove()
     }
-    const container = event.currentTarget.closest(".sets-container")
     if (container) this._renumberSets(container)
+    if (group) this._recomputeGroupPrBadges(group)
   }
 
   removeExercise(event) {
@@ -161,15 +167,31 @@ export default class extends Controller {
   // ── PR detection ─────────────────────────────────────────────────
 
   checkPr(event) {
-    const input      = event.currentTarget
-    const group      = input.closest("[data-exercise-id]")
-    if (!group) return
-    const max = this._allTimeMaxes.get(group.dataset.exerciseId)
-    if (!max || max <= 0) return
-    const badge = input.closest(".set-row")?.querySelector("[data-pr-badge]")
-    if (!badge) return
-    const val = parseFloat(input.value)
-    badge.classList.toggle("hidden", !(val > 0 && val > max))
+    const group = event.currentTarget.closest("[data-exercise-id]")
+    if (group) this._recomputeGroupPrBadges(group)
+  }
+
+  // Mirrors PrRecalculator's server-side sweep: walk this exercise's sets in
+  // position order starting from the historical baseline (all_time_max,
+  // possibly 0 for a brand-new exercise), so a badge only lights up once a
+  // set strictly beats the best weight logged before it — including earlier
+  // sets typed in this same session, not just the fetched baseline in
+  // isolation. Re-run on every weight edit, and on any change to which rows
+  // are active (add/remove/restore), so the whole sequence stays consistent.
+  _recomputeGroupPrBadges(group) {
+    const exerciseId = group.dataset.exerciseId
+    if (!this._allTimeMaxes.has(exerciseId)) return // baseline not loaded yet
+
+    let runningMax = this._allTimeMaxes.get(exerciseId)
+    group.querySelectorAll(".set-row:not(.hidden)").forEach(row => {
+      const input = row.querySelector("[name*='weight_kg']")
+      const badge = row.querySelector("[data-pr-badge]")
+      if (!input || !badge) return
+      const val = parseFloat(input.value)
+      const isPr = val > 0 && runningMax > 0 && val > runningMax
+      badge.classList.toggle("hidden", !isPr)
+      if (val > runningMax) runningMax = val
+    })
   }
 
   // ── Private ───────────────────────────────────────────────────────
@@ -319,21 +341,21 @@ export default class extends Controller {
 
   async _fetchLastPerformance(exerciseId, group) {
     let path = this.lastPerfPathValue.replace(":id", exerciseId)
-    if (this.sessionIdValue > 0) path += `?exclude_session_id=${this.sessionIdValue}`
+    const params = new URLSearchParams()
+    if (this.sessionIdValue > 0) params.set("exclude_session_id", this.sessionIdValue)
+    if (this.sessionDateValue)   params.set("as_of_date", this.sessionDateValue)
+    if ([...params].length) path += `?${params.toString()}`
     try {
       const res  = await fetch(path, { headers: { Accept: "application/json" } })
       if (!res.ok) return
       const data = await res.json()
 
-      // Store all-time max and re-evaluate PR badges on existing set rows
-      if (data.all_time_max > 0) {
-        this._allTimeMaxes.set(exerciseId, data.all_time_max)
-        group.querySelectorAll(".set-row:not(.hidden) [name*='weight_kg']").forEach(input => {
-          const val   = parseFloat(input.value)
-          const badge = input.closest(".set-row")?.querySelector("[data-pr-badge]")
-          if (badge) badge.classList.toggle("hidden", !(val > 0 && val > data.all_time_max))
-        })
-      }
+      // Store the historical baseline — even when it's 0 (a brand-new
+      // exercise still needs a known baseline so a later, heavier set typed
+      // in this same session can be recognized as a PR) — then re-evaluate
+      // every set in the group as one chronological sequence.
+      this._allTimeMaxes.set(exerciseId, data.all_time_max || 0)
+      this._recomputeGroupPrBadges(group)
 
       if (!data.sets?.length) return
 

@@ -1,5 +1,13 @@
 class WorkoutSession < ApplicationRecord
   belongs_to :day
+
+  # Must be declared before the `has_many :workout_sets, dependent: :destroy`
+  # below: before_destroy callbacks run in declaration order, so this needs
+  # to capture the exercise ids before Rails' own dependent-destroy callback
+  # wipes the workout_sets rows.
+  before_destroy :capture_pr_recalc_context
+  after_destroy :recalculate_prs_after_destroy
+
   has_many :workout_sets, -> { order(:position) }, dependent: :destroy, inverse_of: :workout_session
   has_many :exercises, through: :workout_sets
 
@@ -47,27 +55,6 @@ class WorkoutSession < ApplicationRecord
     (primary_body_part_met * rpe_multiplier * w * hours).round
   end
 
-  # Flags each set as a PR if its weight beats the user's all-time max for that
-  # exercise (excluding this session so we compare against prior history only).
-  def mark_prs!(user)
-    sets = workout_sets.where.not(weight_kg: nil).to_a
-    return if sets.empty?
-
-    exercise_ids   = sets.map(&:exercise_id).uniq
-    previous_maxes = WorkoutSet
-      .joins(workout_session: :day)
-      .where(exercise_id: exercise_ids, days: { user_id: user.id })
-      .where.not(workout_session_id: id)
-      .group(:exercise_id)
-      .maximum(:weight_kg)
-
-    sets.each do |ws|
-      prev_max = previous_maxes[ws.exercise_id]&.to_f || 0
-      is_pr    = ws.weight_kg.to_f > 0 && ws.weight_kg.to_f > prev_max
-      ws.update_column(:is_pr, is_pr)
-    end
-  end
-
   def total_volume
     workout_sets.sum { |s| (s.weight_kg || 0) * (s.reps || 0) }
   end
@@ -85,6 +72,17 @@ class WorkoutSession < ApplicationRecord
   end
 
   private
+
+  def capture_pr_recalc_context
+    @pr_recalc_user = user
+    @pr_recalc_exercise_ids = workout_sets.pluck(:exercise_id).uniq
+  end
+
+  def recalculate_prs_after_destroy
+    return if @pr_recalc_exercise_ids.blank?
+
+    PrRecalculator.new(@pr_recalc_user, @pr_recalc_exercise_ids).call
+  end
 
   def must_have_at_least_one_exercise
     active = workout_sets.reject(&:marked_for_destruction?)

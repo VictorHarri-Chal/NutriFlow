@@ -9,7 +9,8 @@
             workout_form_label_last_perf_value:      t("views.workout_sessions.form.last_perf_prefix"),
             workout_form_no_exercise_error_value:    t("views.workout_sessions.form.no_exercises_error"),
             workout_form_label_max_sets_value:       t("views.workout_sessions.form.max_sets"),
-            workout_form_session_id_value:           workout_session.persisted? ? workout_session.id : 0 } do |f| %>
+            workout_form_session_id_value:           workout_session.persisted? ? workout_session.id : 0,
+            workout_form_session_date_value:         day.date.iso8601 } do |f| %>
 
   <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4 mb-4">
 

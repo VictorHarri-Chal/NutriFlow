@@ -356,19 +356,11 @@ puts "  ✓ 2 programmes créés"
 # CALENDAR HELPERS
 # ─────────────────────────────────────────────────────────────────────────────
 
-# Tracks heaviest weight ever lifted per exercise → auto-marks PRs
-pr_tracker = Hash.new(0)
-
-def seed_session(day, duration:, rpe:, sets_data:, tracker:)
+def seed_session(day, duration:, rpe:, sets_data:)
   session = day.workout_sessions.build(duration_minutes: duration, rpe: rpe)
   sets_data.each_with_index do |(exercise, reps, weight), i|
     next unless exercise
-    is_pr = weight.present? && weight.to_f > tracker[exercise.id]
-    tracker[exercise.id] = weight.to_f if is_pr
-    session.workout_sets.build(
-      exercise: exercise, reps: reps, weight_kg: weight,
-      position: i, is_pr: is_pr
-    )
+    session.workout_sets.build(exercise: exercise, reps: reps, weight_kg: weight, position: i)
   end
   session.save!
 end
@@ -544,7 +536,7 @@ day_counter = 0
     sleep_quality: SLEEP_Q[(w * 2 + 1) % 18],
     water_ml: WATER_ML[w % 14], steps: STEPS[w % 14])
 
-  seed_session(d_mon, duration: 60 + (w % 3), rpe: 7 + (w % 3 == 0 ? 1 : 0), tracker: pr_tracker, sets_data: [
+  seed_session(d_mon, duration: 60 + (w % 3), rpe: 7 + (w % 3 == 0 ? 1 : 0), sets_data: [
     [bench, 8, bench_w], [bench, 8, bench_w], [bench, 7, bench_w - 2.5], [bench, 6, bench_w - 2.5],
     [incline, 10, incline_w], [incline, 10, incline_w], [incline,  9, incline_w - 2.5],
     [ohp, 10, ohp_w], [ohp, 10, ohp_w], [ohp, 9, ohp_w - 2.5],
@@ -559,7 +551,7 @@ day_counter = 0
     sleep_quality: SLEEP_Q[(w * 3) % 18],
     water_ml: WATER_ML[(w + 1) % 14], steps: STEPS[(w + 2) % 14])
 
-  seed_session(d_tue, duration: 65, rpe: 7, tracker: pr_tracker, sets_data: [
+  seed_session(d_tue, duration: 65, rpe: 7, sets_data: [
     [row, 8, row_w], [row, 8, row_w], [row, 7, row_w - 2.5], [row, 7, row_w - 2.5],
     [pulldown, 12, pulldown_w], [pulldown, 12, pulldown_w], [pulldown, 10, pulldown_w - 2.5],
     [pullup_ex, pullup_reps, nil], [pullup_ex, pullup_reps - 1, nil], [pullup_ex, [pullup_reps - 2, 4].max, nil],
@@ -574,7 +566,7 @@ day_counter = 0
     sleep_quality: SLEEP_Q[(w + 5) % 18],
     water_ml: WATER_ML[(w + 3) % 14], steps: STEPS[(w + 4) % 14])
 
-  seed_session(d_wed, duration: 70 + (w % 5), rpe: 8 + (w % 4 == 0 ? 1 : 0), tracker: pr_tracker, sets_data: [
+  seed_session(d_wed, duration: 70 + (w % 5), rpe: 8 + (w % 4 == 0 ? 1 : 0), sets_data: [
     [squat, 6, squat_w], [squat, 6, squat_w], [squat, 5, squat_w + 2.5], [squat, 5, squat_w],
     [leg_press, 12, leg_press_w], [leg_press, 12, leg_press_w], [leg_press, 11, leg_press_w + 2.5],
     [lunge, 10, lunge_w], [lunge, 10, lunge_w], [lunge, 9, lunge_w],
@@ -601,7 +593,7 @@ day_counter = 0
     sleep_quality: SLEEP_Q[(w + 8) % 18],
     water_ml: WATER_ML[(w + 7) % 14], steps: STEPS[(w + 8) % 14])
 
-  seed_session(d_fri, duration: 58, rpe: 8, tracker: pr_tracker, sets_data: [
+  seed_session(d_fri, duration: 58, rpe: 8, sets_data: [
     [bench, 6, bench_w + 2.5], [bench, 6, bench_w + 2.5], [bench, 5, bench_w + 2.5], [bench, 5, bench_w],
     [incline, 8, incline_w + 2.5], [incline, 8, incline_w + 2.5], [incline, 7, incline_w],
     [ohp, 12, ohp_w], [ohp, 12, ohp_w], [ohp, 11, ohp_w], [ohp, 10, ohp_w - 2.5],
@@ -616,7 +608,7 @@ day_counter = 0
     sleep_quality: SLEEP_Q[(w * 3 + 2) % 18],
     water_ml: WATER_ML[(w + 9) % 14], steps: STEPS[(w + 10) % 14])
 
-  seed_session(d_sat, duration: 68, rpe: 8, tracker: pr_tracker, sets_data: [
+  seed_session(d_sat, duration: 68, rpe: 8, sets_data: [
     [row, 6, row_w + 2.5], [row, 6, row_w + 2.5], [row, 5, row_w + 2.5], [row, 5, row_w],
     [pulldown, 10, pulldown_w + 2.5], [pulldown, 10, pulldown_w + 2.5], [pulldown, 10, pulldown_w], [pulldown, 9, pulldown_w],
     [pullup_ex, pullup_reps, nil], [pullup_ex, pullup_reps, nil], [pullup_ex, pullup_reps - 1, nil],
@@ -641,6 +633,10 @@ day_counter = 0
 
   day_counter += 7
 end
+
+# Recompute PRs through the same chronological path the real app uses,
+# instead of a hand-rolled tracker — keeps seed data consistent with prod.
+PrRecalculator.recompute_all_for(user)
 
 puts "  ✓ #{user.days.count} jours (#{user.days.minimum(:date)} → #{user.days.maximum(:date)})"
 puts "  ✓ #{WorkoutSession.joins(:day).where(days: { user: user }).count} séances d'entraînement"

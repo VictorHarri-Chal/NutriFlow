@@ -56,7 +56,7 @@ class WorkoutSessionsController < ApplicationController
     @workout_session = @day.workout_sessions.build(workout_session_params)
 
     if @workout_session.save
-      @workout_session.mark_prs!(current_user)
+      PrRecalculator.new(current_user, @workout_session.workout_sets.pluck(:exercise_id)).call
       compute_calories(@workout_session)
       load_calendar_data(@day)
       @selected_date = @day.date
@@ -81,8 +81,11 @@ class WorkoutSessionsController < ApplicationController
   def edit; end
 
   def update
+    previous_exercise_ids = @workout_session.workout_sets.pluck(:exercise_id)
+
     if @workout_session.update(workout_session_params)
-      @workout_session.mark_prs!(current_user)
+      current_exercise_ids = @workout_session.workout_sets.pluck(:exercise_id)
+      PrRecalculator.new(current_user, (previous_exercise_ids + current_exercise_ids).uniq).call
       compute_calories(@workout_session)
       load_calendar_data(@day)
       @selected_date = @day.date
