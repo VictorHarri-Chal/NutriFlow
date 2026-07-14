@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_12_205038) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_14_104845) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -269,6 +269,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_12_205038) do
     t.text "notes"
     t.index ["workout_program_id", "day_of_week"], name: "index_program_days_on_workout_program_id_and_day_of_week", unique: true
     t.index ["workout_program_id"], name: "index_program_days_on_workout_program_id"
+  end
+
+  create_table "program_exercise_sets", force: :cascade do |t|
+    t.bigint "program_exercise_id", null: false
+    t.integer "position", default: 0, null: false
+    t.integer "reps_target", null: false
+    t.decimal "weight_target", precision: 6, scale: 2
+    t.integer "rpe"
+    t.string "set_types", default: [], null: false, array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["program_exercise_id", "position"], name: "idx_on_program_exercise_id_position_76c2d97a5b"
+    t.index ["program_exercise_id"], name: "index_program_exercise_sets_on_program_exercise_id"
   end
 
   create_table "program_exercises", force: :cascade do |t|
@@ -570,6 +583,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_12_205038) do
   add_foreign_key "foods", "users"
   add_foreign_key "profiles", "users"
   add_foreign_key "program_days", "workout_programs"
+  add_foreign_key "program_exercise_sets", "program_exercises"
   add_foreign_key "program_exercises", "exercises"
   add_foreign_key "program_exercises", "program_days"
   add_foreign_key "recipe_items", "foods"
