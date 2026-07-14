@@ -1,8 +1,6 @@
 class ProgramExerciseSet < ApplicationRecord
   belongs_to :program_exercise
 
-  attribute :set_types, default: -> { ["working"] }
-
   SET_TYPES = %w[warmup working failure dropset].freeze
   DISPLAY_PRIORITY = %w[failure dropset warmup].freeze
 
@@ -13,16 +11,14 @@ class ProgramExerciseSet < ApplicationRecord
                   allow_nil: true
   validate :set_types_must_be_known
   before_validation :strip_blank_set_types
+  before_create :set_position
 
   DEFAULT_RPE_BY_TYPE = { "failure" => 10, "dropset" => 9, "warmup" => 5 }.freeze
 
   def effective_rpe
     return rpe if rpe.present?
-    return DEFAULT_RPE_BY_TYPE["failure"] if set_types.include?("failure")
-    return DEFAULT_RPE_BY_TYPE["dropset"] if set_types.include?("dropset")
-    return DEFAULT_RPE_BY_TYPE["warmup"]  if set_types == ["warmup"]
 
-    7 # série de travail lambda
+    DEFAULT_RPE_BY_TYPE.fetch(dominant_type, 7)
   end
 
   def bodyweight?
@@ -42,5 +38,9 @@ class ProgramExerciseSet < ApplicationRecord
 
   def strip_blank_set_types
     self.set_types = Array(set_types).reject(&:blank?)
+  end
+
+  def set_position
+    self.position = (program_exercise.program_exercise_sets.maximum(:position) || -1) + 1
   end
 end

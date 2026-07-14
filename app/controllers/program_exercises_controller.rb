@@ -22,6 +22,7 @@ class ProgramExercisesController < ApplicationController
     @last_performance = last_performance_for(@exercise.exercise_id)
     respond_to do |format|
       format.turbo_stream
+      format.html { redirect_to @program }
     end
   end
 
@@ -32,6 +33,7 @@ class ProgramExercisesController < ApplicationController
         format.html { redirect_to @program }
       end
     else
+      @last_performance = last_performance_for(@exercise.exercise_id)
       respond_to do |format|
         format.turbo_stream { render :edit, status: :unprocessable_entity }
         format.html { redirect_to @program }

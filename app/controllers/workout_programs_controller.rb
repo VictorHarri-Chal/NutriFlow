@@ -54,7 +54,7 @@ class WorkoutProgramsController < ApplicationController
     copy.is_active  = false
     copy.save!
 
-    @program.program_days.includes(:program_exercises).each do |source_day|
+    @program.program_days.includes(program_exercises: :program_exercise_sets).each do |source_day|
       target_day = copy.program_days.find_by!(day_of_week: source_day.day_of_week)
       target_day.update!(
         name:             source_day.name,

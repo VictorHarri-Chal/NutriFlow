@@ -35,7 +35,7 @@ class WorkoutSessionsController < ApplicationController
 
         program_day.program_exercises.each do |pe|
           next unless pe.exercise.present?
-          pe.program_exercise_sets.order(:position).each_with_index do |set, i|
+          pe.program_exercise_sets.each_with_index do |set, i|
             new_set = @workout_session.workout_sets.build(
               exercise_id:  pe.exercise_id,
               weight_kg:    set.weight_target,

@@ -26,7 +26,7 @@ class ProgramDay < ApplicationRecord
         notes:        pe.notes,
         position:     pe.position
       )
-      pe.program_exercise_sets.order(:position).each do |set|
+      pe.program_exercise_sets.each do |set|
         new_pe.program_exercise_sets.create!(
           position:      set.position,
           reps_target:   set.reps_target,
