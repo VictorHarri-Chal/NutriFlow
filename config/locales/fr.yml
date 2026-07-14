@@ -1034,7 +1034,7 @@ fr:
         remove_set: "Supprimer la série"
         add_set: "+ Ajouter une série"
         no_sets_yet: "Aucune série pour l'instant."
-        rest_label: "Temps de repos"
+        rest_label: "Temps de repos (sec)"
         notes_label: "Notes"
         save_btn: "Enregistrer"
         cancel_btn: "Annuler"
@@ -1044,11 +1044,11 @@ fr:
         set_types:
           warmup: "Échauffement"
           working: "Travail"
-          failure: "Échec"
+          failure: "Dead set"
           dropset: "Drop-set"
         set_types_abbr:
           warmup: "Éch"
-          failure: "Échec"
+          failure: "Dead"
           dropset: "Drop"
     exercises:
       page_title: "Entraînement"

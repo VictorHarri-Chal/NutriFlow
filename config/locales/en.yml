@@ -1034,7 +1034,7 @@ en:
         remove_set: "Remove set"
         add_set: "+ Add a set"
         no_sets_yet: "No sets yet."
-        rest_label: "Rest time"
+        rest_label: "Rest time (sec)"
         notes_label: "Notes"
         save_btn: "Save"
         cancel_btn: "Cancel"
@@ -1044,11 +1044,11 @@ en:
         set_types:
           warmup: "Warm-up"
           working: "Working"
-          failure: "Failure"
+          failure: "Dead set"
           dropset: "Drop set"
         set_types_abbr:
           warmup: "WU"
-          failure: "Fail"
+          failure: "Dead"
           dropset: "Drop"
     exercises:
       page_title: "Training"
