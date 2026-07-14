@@ -3,6 +3,9 @@ class FoodsController < ApplicationController
 
   def index
     @food_labels = current_user.food_labels.order(:name)
+    params[:q] ||= {}
+    params[:q] = params[:q].to_unsafe_h if params[:q].is_a?(ActionController::Parameters)
+    params[:q][:s] = "name asc" if params[:q][:s].blank?
     @q = current_user.foods.includes(:food_labels).ransack(params[:q])
     @foods = @q.result
 
@@ -43,8 +46,6 @@ class FoodsController < ApplicationController
     if params[:sort_usages].present?
       dir = params[:sort_usages] == "asc" ? "ASC" : "DESC"
       @foods = @foods.reorder(Arel.sql("(SELECT COUNT(*) FROM day_foods WHERE day_foods.food_id = foods.id) #{dir}"))
-    elsif params.dig(:q, :s).blank?
-      @foods = @foods.order(created_at: :desc)
     end
 
     if params[:full_result] == "true"

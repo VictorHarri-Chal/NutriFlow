@@ -28,7 +28,9 @@ class PaginationComponent < ApplicationComponent
   def pagination_active_class(page)
     return unless @pagy
     page_number = (params[:page].presence || 1).to_i
-    "z-10 bg-brand-muted border-brand text-brand" if page_number == page
+    return unless page_number == page
+
+    "z-10 !bg-brand/20 !border-brand/50 !text-brand font-bold hover:!bg-brand hover:!text-zinc-900"
   end
 
   def right_arrow_class
