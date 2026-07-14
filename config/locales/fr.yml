@@ -1010,6 +1010,8 @@ fr:
         description: "Crée ton premier programme pour préparer tes semaines d'entraînement."
       day:
         rest_placeholder: "Repos"
+        rest_min_abbr: "min"
+        rest_sec_abbr: "s"
         empty_hint: "Ajouter des exercices"
         add_exercise: "Ajouter un exercice..."
         no_exercise_found: "Aucun exercice trouvé"
@@ -1025,6 +1027,37 @@ fr:
           zero: "vide"
           one: "1 exo"
           other: "%{count} exos"
+      set_editor:
+        info_tooltip: |-
+          Séries : ajoutez-en autant que nécessaire, chacune avec ses propres répétitions et charge.
+
+          Types : combinez librement Échauffement, Travail, Dead set et Drop-set sur une même série.
+
+          RPE : évalue la difficulté perçue de la série, de 6 (facile) à 10 (échec total).
+
+          Charge : une valeur à 0 correspond à un exercice réalisé au poids de corps.
+        bodyweight_abbr: "PDC"
+        rpe_label: "RPE"
+        remove_set: "Supprimer la série"
+        add_set: "+ Ajouter une série"
+        no_sets_title: "Aucune série"
+        no_sets_description: "Ajoute ta première série pour configurer cet exercice."
+        rest_label: "Temps de repos (sec)"
+        notes_label: "Notes"
+        save_btn: "Enregistrer"
+        cancel_btn: "Annuler"
+        last_performance_title: "Dernière perf"
+        last_performance_ago: "Il y a %{time}"
+        last_performance_pr_badge: "PR"
+        set_types:
+          warmup: "Échauffement"
+          working: "Travail"
+          failure: "Dead set"
+          dropset: "Drop-set"
+        set_types_abbr:
+          warmup: "Éch"
+          failure: "Dead"
+          dropset: "Drop"
     exercises:
       page_title: "Entraînement"
       title: "Banque d'exercices"

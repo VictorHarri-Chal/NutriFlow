@@ -20,15 +20,21 @@ class ProgramDay < ApplicationRecord
 
   def copy_exercises_to!(target_day)
     program_exercises.order(:position).each do |pe|
-      target_day.program_exercises.create!(
-        exercise_id:   pe.exercise_id,
-        sets:          pe.sets,
-        reps_target:   pe.reps_target,
-        weight_target: pe.weight_target,
-        rest_seconds:  pe.rest_seconds,
-        notes:         pe.notes,
-        position:      pe.position
+      new_pe = target_day.program_exercises.create!(
+        exercise_id:  pe.exercise_id,
+        rest_seconds: pe.rest_seconds,
+        notes:        pe.notes,
+        position:     pe.position
       )
+      pe.program_exercise_sets.each do |set|
+        new_pe.program_exercise_sets.create!(
+          position:      set.position,
+          reps_target:   set.reps_target,
+          weight_target: set.weight_target,
+          rpe:           set.rpe,
+          set_types:     set.set_types
+        )
+      end
     end
   end
 end

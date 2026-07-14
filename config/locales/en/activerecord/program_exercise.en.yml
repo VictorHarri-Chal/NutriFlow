@@ -5,8 +5,10 @@ en:
       program_exercises: "Program exercises"
     attributes:
       program_exercise:
-        sets: "Sets"
-        reps_target: "Reps"
-        weight_target: "Weight"
         rest_seconds: "Rest time"
         notes: "Notes"
+      program_exercise/program_exercise_sets:
+        reps_target: "Reps"
+        weight_target: "Weight"
+        rpe: "RPE"
+        set_types: "Set types"

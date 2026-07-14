@@ -1,4 +1,5 @@
-<%# Refresh only the read-only meta block so summary/rest/notes stay in sync without disturbing input focus %>
-<%= turbo_stream.update "pe_#{@exercise.id}_meta" do %>
-  <%= render "workout_programs/exercise_meta", pe: @exercise %>
+<%= turbo_stream.replace "program_exercise_#{@exercise.id}" do %>
+  <%= render "workout_programs/program_exercise", program: @program, day: @day, pe: @exercise %>
 <% end %>
+
+<%= turbo_stream.update "program_exercise_modal_root" %>

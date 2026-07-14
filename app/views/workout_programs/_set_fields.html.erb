@@ -1,0 +1,37 @@
+<%# f: form builder scoped to a ProgramExerciseSet (nested attribute) %>
+<% compact_input_class = "w-full text-center text-[11px] font-semibold bg-surface-hover border border-surface-border/30 rounded px-0.5 py-1 text-ink-primary focus:outline-none focus:border-brand/50 cursor-text" %>
+<div data-nested-form-target="item" class="bg-surface-base border border-surface-border/30 rounded-xl p-3 mb-2">
+  <%= f.hidden_field :id if f.object.persisted? %>
+  <%= f.hidden_field :_destroy, value: false, data: { nested_form_target: "destroyField" } %>
+
+  <div class="flex items-end gap-2">
+    <div class="flex-1">
+      <label class="text-[9px] text-ink-subtle/60 uppercase tracking-wider block mb-0.5"><%= t("views.workout_programs.day.reps") %></label>
+      <%= f.number_field :reps_target, min: 1, step: 1, class: compact_input_class %>
+    </div>
+    <div class="flex-1">
+      <label class="text-[9px] text-ink-subtle/60 uppercase tracking-wider block mb-0.5"><%= t("views.workout_programs.day.weight_kg") %></label>
+      <%= f.number_field :weight_target, min: 0, step: 0.5, class: compact_input_class %>
+    </div>
+    <div class="flex-1">
+      <label class="text-[9px] text-ink-subtle/60 uppercase tracking-wider block mb-0.5"><%= t("views.workout_programs.set_editor.rpe_label") %></label>
+      <%= f.number_field :rpe, min: 6, max: 10, step: 1, placeholder: "—", class: compact_input_class %>
+    </div>
+    <button type="button" data-action="click->nested-form#remove"
+            title="<%= t('views.workout_programs.set_editor.remove_set') %>"
+            class="text-ink-subtle/50 hover:text-status-danger transition-colors text-xs pb-2 shrink-0">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div class="flex flex-wrap gap-1.5 mt-2 pt-2 border-t border-surface-border/20">
+    <% ProgramExerciseSet::SET_TYPES.each do |type| %>
+      <% checkbox_id = "#{f.object_name.gsub(/[\[\]]/, '_')}_set_types_#{type}" %>
+      <%= check_box_tag "#{f.object_name}[set_types][]", type, f.object.set_types.include?(type),
+            id: checkbox_id, class: "hidden peer/#{type}" %>
+      <%= label_tag checkbox_id, t("views.workout_programs.set_editor.set_types.#{type}"),
+            class: set_type_pill_classes(type) %>
+    <% end %>
+    <%= hidden_field_tag "#{f.object_name}[set_types][]", "", id: nil %>
+  </div>
+</div>

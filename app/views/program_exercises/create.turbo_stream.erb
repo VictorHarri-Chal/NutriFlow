@@ -3,7 +3,7 @@
 
 <%# Append the new exercise card to the day's exercise list %>
 <%= turbo_stream.append "program_day_exercises_#{@day.id}" do %>
-  <%= render "workout_programs/program_exercise", program: @program, day: @day, pe: @exercise, open: true %>
+  <%= render "workout_programs/program_exercise", program: @program, day: @day, pe: @exercise %>
 <% end %>
 
 <%# Show copy button if this is the first exercise added %>
@@ -11,4 +11,9 @@
   <%= turbo_stream.replace "copy_btn_day_#{@day.id}" do %>
     <%= render "workout_programs/copy_button", program: @program, day: @day %>
   <% end %>
+<% end %>
+
+<%# Immediately open the edit modal so the user can add sets to the freshly added exercise %>
+<%= turbo_stream.update "program_exercise_modal_root" do %>
+  <%= render "workout_programs/exercise_modal", pe: @exercise, last_performance: nil %>
 <% end %>

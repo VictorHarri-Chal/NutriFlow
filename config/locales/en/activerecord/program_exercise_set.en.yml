@@ -1,0 +1,11 @@
+en:
+  activerecord:
+    models:
+      program_exercise_set: "Set"
+      program_exercise_sets: "Sets"
+    attributes:
+      program_exercise_set:
+        reps_target: "Reps"
+        weight_target: "Weight"
+        rpe: "RPE"
+        set_types: "Set types"

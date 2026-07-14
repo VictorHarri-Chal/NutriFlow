@@ -1010,6 +1010,8 @@ en:
         description: "Create your first program to plan your training weeks."
       day:
         rest_placeholder: "Rest"
+        rest_min_abbr: "min"
+        rest_sec_abbr: "s"
         empty_hint: "Add exercises"
         add_exercise: "Add an exercise..."
         no_exercise_found: "No exercise found"
@@ -1025,6 +1027,37 @@ en:
           zero: "empty"
           one: "1 ex."
           other: "%{count} ex."
+      set_editor:
+        info_tooltip: |-
+          Sets: add as many as needed, each with its own reps and weight.
+
+          Types: freely combine Warm-up, Working, Dead set and Drop-set on the same set.
+
+          RPE: rates how hard the set felt, from 6 (easy) to 10 (complete failure).
+
+          Weight: a value of 0 indicates a bodyweight exercise.
+        bodyweight_abbr: "BW"
+        rpe_label: "RPE"
+        remove_set: "Remove set"
+        add_set: "+ Add a set"
+        no_sets_title: "No sets yet"
+        no_sets_description: "Add your first set to configure this exercise."
+        rest_label: "Rest time (sec)"
+        notes_label: "Notes"
+        save_btn: "Save"
+        cancel_btn: "Cancel"
+        last_performance_title: "Last performance"
+        last_performance_ago: "%{time} ago"
+        last_performance_pr_badge: "PR"
+        set_types:
+          warmup: "Warm-up"
+          working: "Working"
+          failure: "Dead set"
+          dropset: "Drop set"
+        set_types_abbr:
+          warmup: "WU"
+          failure: "Dead"
+          dropset: "Drop"
     exercises:
       page_title: "Training"
       title: "Exercise Library"
