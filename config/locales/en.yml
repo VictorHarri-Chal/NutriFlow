@@ -1028,7 +1028,14 @@ en:
           one: "1 ex."
           other: "%{count} ex."
       set_editor:
-        info_tooltip: "Add as many sets as you like and check whichever types apply (Warm-up, Working, Dead set, Drop-set). You can combine several on the same set. RPE rates how hard the set felt, from 6 (easy) to 10 (complete failure). A weight of 0 means bodyweight."
+        info_tooltip: |-
+          Sets: add as many as needed, each with its own reps and weight.
+
+          Types: freely combine Warm-up, Working, Dead set and Drop-set on the same set.
+
+          RPE: rates how hard the set felt, from 6 (easy) to 10 (complete failure).
+
+          Weight: a value of 0 indicates a bodyweight exercise.
         bodyweight_abbr: "BW"
         rpe_label: "RPE"
         remove_set: "Remove set"

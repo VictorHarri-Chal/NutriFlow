@@ -1028,7 +1028,14 @@ fr:
           one: "1 exo"
           other: "%{count} exos"
       set_editor:
-        info_tooltip: "Ajoute autant de séries que tu veux et coche les types qui s'appliquent (Échauffement, Travail, Dead set, Drop-set). Tu peux en cumuler plusieurs sur une même série. Le RPE évalue la difficulté ressentie, de 6 (facile) à 10 (échec total). Une charge à 0 correspond au poids de corps."
+        info_tooltip: |-
+          Séries : ajoutez-en autant que nécessaire, chacune avec ses propres répétitions et charge.
+
+          Types : combinez librement Échauffement, Travail, Dead set et Drop-set sur une même série.
+
+          RPE : évalue la difficulté perçue de la série, de 6 (facile) à 10 (échec total).
+
+          Charge : une valeur à 0 correspond à un exercice réalisé au poids de corps.
         bodyweight_abbr: "PDC"
         rpe_label: "RPE"
         remove_set: "Supprimer la série"
