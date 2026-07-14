@@ -1010,6 +1010,8 @@ fr:
         description: "Crée ton premier programme pour préparer tes semaines d'entraînement."
       day:
         rest_placeholder: "Repos"
+        rest_min_abbr: "min"
+        rest_sec_abbr: "s"
         empty_hint: "Ajouter des exercices"
         add_exercise: "Ajouter un exercice..."
         no_exercise_found: "Aucun exercice trouvé"
@@ -1025,6 +1027,29 @@ fr:
           zero: "vide"
           one: "1 exo"
           other: "%{count} exos"
+      set_editor:
+        weight_placeholder: "0 = PDC"
+        bodyweight_abbr: "PDC"
+        rpe_label: "RPE"
+        remove_set: "Supprimer la série"
+        add_set: "+ Ajouter une série"
+        no_sets_yet: "Aucune série pour l'instant."
+        rest_label: "Temps de repos"
+        notes_label: "Notes"
+        save_btn: "Enregistrer"
+        cancel_btn: "Annuler"
+        last_performance_title: "Dernière perf"
+        last_performance_ago: "Il y a %{time}"
+        last_performance_pr_badge: "PR"
+        set_types:
+          warmup: "Échauffement"
+          working: "Travail"
+          failure: "Échec"
+          dropset: "Drop-set"
+        set_types_abbr:
+          warmup: "Éch"
+          failure: "Échec"
+          dropset: "Drop"
     exercises:
       page_title: "Entraînement"
       title: "Banque d'exercices"

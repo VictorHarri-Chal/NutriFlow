@@ -1010,6 +1010,8 @@ en:
         description: "Create your first program to plan your training weeks."
       day:
         rest_placeholder: "Rest"
+        rest_min_abbr: "min"
+        rest_sec_abbr: "s"
         empty_hint: "Add exercises"
         add_exercise: "Add an exercise..."
         no_exercise_found: "No exercise found"
@@ -1025,6 +1027,29 @@ en:
           zero: "empty"
           one: "1 ex."
           other: "%{count} ex."
+      set_editor:
+        weight_placeholder: "0 = bodyweight"
+        bodyweight_abbr: "BW"
+        rpe_label: "RPE"
+        remove_set: "Remove set"
+        add_set: "+ Add a set"
+        no_sets_yet: "No sets yet."
+        rest_label: "Rest time"
+        notes_label: "Notes"
+        save_btn: "Save"
+        cancel_btn: "Cancel"
+        last_performance_title: "Last performance"
+        last_performance_ago: "%{time} ago"
+        last_performance_pr_badge: "PR"
+        set_types:
+          warmup: "Warm-up"
+          working: "Working"
+          failure: "Failure"
+          dropset: "Drop set"
+        set_types_abbr:
+          warmup: "WU"
+          failure: "Fail"
+          dropset: "Drop"
     exercises:
       page_title: "Training"
       title: "Exercise Library"

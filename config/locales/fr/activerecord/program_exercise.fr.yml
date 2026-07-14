@@ -5,8 +5,5 @@ fr:
       program_exercises: "Exercices de programme"
     attributes:
       program_exercise:
-        sets: "Séries"
-        reps_target: "Répétitions"
-        weight_target: "Poids"
         rest_seconds: "Temps de repos"
         notes: "Notes"
