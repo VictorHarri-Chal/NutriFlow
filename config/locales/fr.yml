@@ -1028,7 +1028,7 @@ fr:
           one: "1 exo"
           other: "%{count} exos"
       set_editor:
-        weight_placeholder: "0 = PDC"
+        info_tooltip: "Ajoute autant de séries que tu veux et coche les types qui s'appliquent (Échauffement, Travail, Dead set, Drop-set). Tu peux en cumuler plusieurs sur une même série. Le RPE évalue la difficulté ressentie, de 6 (facile) à 10 (échec total). Une charge à 0 correspond au poids de corps."
         bodyweight_abbr: "PDC"
         rpe_label: "RPE"
         remove_set: "Supprimer la série"

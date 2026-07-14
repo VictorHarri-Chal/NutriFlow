@@ -1028,7 +1028,7 @@ en:
           one: "1 ex."
           other: "%{count} ex."
       set_editor:
-        weight_placeholder: "0 = bodyweight"
+        info_tooltip: "Add as many sets as you like and check whichever types apply (Warm-up, Working, Dead set, Drop-set). You can combine several on the same set. RPE rates how hard the set felt, from 6 (easy) to 10 (complete failure). A weight of 0 means bodyweight."
         bodyweight_abbr: "BW"
         rpe_label: "RPE"
         remove_set: "Remove set"

@@ -8,7 +8,11 @@
        data-modal-target="panel">
 
     <div class="flex items-center justify-between px-5 py-4 border-b border-surface-border/40 flex-shrink-0">
-      <h3 class="text-sm font-semibold text-ink-primary"><%= pe.exercise.name.capitalize %></h3>
+      <div class="flex items-center gap-1.5 min-w-0">
+        <h3 class="text-sm font-semibold text-ink-primary truncate"><%= pe.exercise.name.capitalize %></h3>
+        <i class="fas fa-circle-info text-xs text-ink-subtle/40 hover:text-ink-subtle cursor-default transition-colors shrink-0"
+           title="<%= t('views.workout_programs.set_editor.info_tooltip') %>"></i>
+      </div>
       <button type="button" class="btn-ghost w-8 h-8 !p-0 flex items-center justify-center flex-shrink-0"
               data-action="click->modal#close">
         <i class="fas fa-times text-sm"></i>
