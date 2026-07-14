@@ -31,7 +31,7 @@
     <% ProgramExerciseSet::SET_TYPES.each do |type| %>
       <% checkbox_id = "#{f.object_name.gsub(/[\[\]]/, '_')}_set_types_#{type}" %>
       <%= check_box_tag "#{f.object_name}[set_types][]", type, f.object.set_types.include?(type),
-            id: checkbox_id, class: "hidden peer" %>
+            id: checkbox_id, class: "hidden peer/#{type}" %>
       <%= label_tag checkbox_id, t("views.workout_programs.set_editor.set_types.#{type}"),
             class: set_type_pill_classes(type) %>
     <% end %>

@@ -6,11 +6,15 @@ module WorkoutProgramsHelper
     nil       => "bg-brand"
   }.freeze
 
+  # Named peers (peer/<type> ↔ peer-checked/<type>:) — with 4 checkboxes in the same
+  # sibling list, plain peer-checked: matches ANY earlier checked .peer, not just "its own"
+  # checkbox. Each type needs its own named peer or checking one pill visually lights up
+  # a different, later pill instead.
   SET_TYPE_PILL_ACTIVE_CLASSES = {
-    "warmup"  => "peer-checked:bg-ink-subtle/20 peer-checked:text-ink-subtle peer-checked:border-ink-subtle/40",
-    "working" => "peer-checked:bg-brand/20 peer-checked:text-brand peer-checked:border-brand/50",
-    "failure" => "peer-checked:bg-status-danger/20 peer-checked:text-status-danger peer-checked:border-status-danger/50",
-    "dropset" => "peer-checked:bg-status-info/20 peer-checked:text-status-info peer-checked:border-status-info/50"
+    "warmup"  => "peer-checked/warmup:bg-ink-subtle/20 peer-checked/warmup:text-ink-subtle peer-checked/warmup:border-ink-subtle/40",
+    "working" => "peer-checked/working:bg-brand/20 peer-checked/working:text-brand peer-checked/working:border-brand/50",
+    "failure" => "peer-checked/failure:bg-status-danger/20 peer-checked/failure:text-status-danger peer-checked/failure:border-status-danger/50",
+    "dropset" => "peer-checked/dropset:bg-status-info/20 peer-checked/dropset:text-status-info peer-checked/dropset:border-status-info/50"
   }.freeze
 
   def set_type_dot_class(dominant_type)

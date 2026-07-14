@@ -48,7 +48,7 @@
 
           <button type="button" data-nested-form-target="addButton" data-action="click->nested-form#add"
                   style="<%= pe.program_exercise_sets.any? ? '' : 'display:none;' %>"
-                  class="w-full border border-dashed border-surface-border/50 rounded-xl py-2 text-[11px] text-ink-muted hover:text-ink-primary hover:border-surface-border transition-colors mt-1">
+                  class="w-full text-center border border-dashed border-surface-border/50 rounded-xl py-2 text-[11px] text-ink-muted hover:text-ink-primary hover:border-surface-border transition-colors mt-1">
             <%= t("views.workout_programs.set_editor.add_set") %>
           </button>
         </div>
@@ -59,7 +59,6 @@
             <%= t("views.workout_programs.set_editor.rest_label") %>
           </label>
           <%= f.number_field :rest_seconds, min: 0, step: 5,
-                placeholder: t("views.workout_programs.day.rest_placeholder"),
                 class: "w-full text-xs bg-surface-base border border-surface-border/40 rounded-lg px-3 py-2 text-ink-primary placeholder:text-ink-subtle/40 focus:outline-none focus:border-brand/50 transition-colors" %>
         </div>
 
@@ -69,7 +68,6 @@
             <%= t("views.workout_programs.set_editor.notes_label") %>
           </label>
           <%= f.text_area :notes, rows: 3,
-                placeholder: t("views.workout_programs.day.notes_placeholder"),
                 class: "w-full text-xs bg-surface-base border border-surface-border/40 rounded-lg px-3 py-2 text-ink-primary placeholder:text-ink-subtle/40 focus:outline-none focus:border-brand/50 transition-colors",
                 style: "resize: vertical;" %>
         </div>
