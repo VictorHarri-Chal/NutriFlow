@@ -1,6 +1,8 @@
 class ProgramExerciseSet < ApplicationRecord
   belongs_to :program_exercise
 
+  attribute :set_types, default: -> { ["working"] }
+
   SET_TYPES = %w[warmup working failure dropset].freeze
   DISPLAY_PRIORITY = %w[failure dropset warmup].freeze
 
