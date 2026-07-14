@@ -21,20 +21,19 @@
           <%= hidden_field_tag :source,    params[:source]    if params[:source].present? %>
 
           <%= text_field_tag :query, params[:query],
-              class: "input-dark pl-10 #{params[:query].present? ? 'pr-10' : ''} py-1.5 text-sm",
+              class: "input-dark pl-10 pr-10 py-1.5 text-sm",
               placeholder: t("views.recipes.search_placeholder"),
               autocomplete: "off",
-              data: { action: "input->search#input" } %>
+              data: { action: "input->search#input", search_target: "input" } %>
 
           <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-ink-subtle pointer-events-none"></i>
 
-          <% if params[:query].present? %>
-            <%= link_to recipes_path(sort: params[:sort], source: params[:source]),
-                  data: { turbo_frame: "recipes_results" },
-                  class: "absolute right-3 top-1/2 -translate-y-1/2 text-ink-subtle hover:text-ink-muted transition-colors" do %>
-              <i class="fas fa-times"></i>
-            <% end %>
-          <% end %>
+          <button type="button"
+                  data-search-target="clear"
+                  data-action="click->search#clear"
+                  class="<%= params[:query].present? ? '' : 'hidden' %> absolute right-3 top-1/2 -translate-y-1/2 text-ink-subtle hover:text-ink-muted transition-colors">
+            <i class="fas fa-times"></i>
+          </button>
         <% end %>
       </div>
 
@@ -47,6 +46,7 @@
     </div>
   </header>
 
+  <%= turbo_frame_tag "recipes_results", data: { turbo_action: "advance" } do %>
   <!-- Barre source + tri -->
   <div class="flex flex-wrap items-center gap-3 mb-6">
     <%# Source tabs %>
@@ -93,7 +93,6 @@
     <% end %>
   </div>
 
-  <%= turbo_frame_tag "recipes_results" do %>
     <% if @recipes.any? %>
       <!-- Grille de cartes -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
