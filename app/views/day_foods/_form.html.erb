@@ -54,7 +54,7 @@
         <div class="relative">
           <%= f.number_field :quantity,
                 min: 1, step: 1,
-                value: day_food.new_record? ? 100 : day_food.quantity.to_i,
+                value: day_food.new_record? ? nil : day_food.quantity.to_i,
                 class: "input-dark text-sm pr-8",
                 data: { "day-food-preview-target": "quantity" } %>
           <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">g</span>

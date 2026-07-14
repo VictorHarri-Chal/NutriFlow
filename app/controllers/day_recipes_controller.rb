@@ -7,7 +7,7 @@ class DayRecipesController < ApplicationController
 
   def new
     group_id            = params.dig(:day_recipe, :day_food_group_id)
-    @day_recipe         = @day.day_recipes.build(day_food_group_id: group_id)
+    @day_recipe         = @day.day_recipes.build(day_food_group_id: group_id, use_recipe_quantity: true)
     @day_food_groups    = current_user.day_food_groups.order(:name)
     @recipes            = current_user.recipes.includes(recipe_items: :food).order(:name)
     @recent_recipe_ids  = DayRecipe.joins(:day)

@@ -12,6 +12,9 @@ export default class extends Controller {
   }
 
   update() {
+    const useTotal = this.hasUseRecipeQtyTarget && this.useRecipeQtyTarget.checked
+    this.quantityTarget.disabled = useTotal
+
     const recipeId = parseInt(this.recipeIdTarget.value) || 0
     const recipe   = this._recipes.find(r => r.id === recipeId)
 
@@ -20,8 +23,7 @@ export default class extends Controller {
       return
     }
 
-    const useTotal = this.hasUseRecipeQtyTarget && this.useRecipeQtyTarget.checked
-    const qty      = useTotal ? recipe.totalWeight : (parseFloat(this.quantityTarget.value) || 0)
+    const qty = useTotal ? recipe.totalWeight : (parseFloat(this.quantityTarget.value) || 0)
 
     if (qty <= 0) {
       this.panelTarget.classList.add("hidden")
