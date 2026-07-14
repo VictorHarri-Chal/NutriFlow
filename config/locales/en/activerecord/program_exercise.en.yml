@@ -7,3 +7,8 @@ en:
       program_exercise:
         rest_seconds: "Rest time"
         notes: "Notes"
+      program_exercise/program_exercise_sets:
+        reps_target: "Reps"
+        weight_target: "Weight"
+        rpe: "RPE"
+        set_types: "Set types"
