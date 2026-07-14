@@ -6,7 +6,8 @@ en:
   feature_guard:
     workout_disabled: "The workout section is disabled in your preferences."
     cardio_disabled: "The cardio section is disabled in your preferences."
-    weight_disabled: "Weight tracking is disabled in your preferences."
+    weight_page_disabled: "Weight and measurement tracking is disabled in your preferences."
+    measurements_disabled: "Body measurement tracking is disabled in your preferences."
     water_disabled: "Water tracking is disabled in your preferences."
 
   pagination_component:
@@ -46,6 +47,9 @@ en:
       food_add_error: "Error adding food."
     weight_entries:
       saved: "Weight saved."
+      deleted: "Entry deleted."
+    body_measurements:
+      saved: "Measurements saved."
       deleted: "Entry deleted."
     recipe_ratings:
       created: "Rating saved successfully."
@@ -156,6 +160,8 @@ en:
         profile: "My profile"
         collapse: "Collapse"
         weight: "Weight tracking"
+        measurements: "Measurements"
+        weight_and_measurements: "Weight & Measurements"
         exercises: "Training"
         workout_programs: "Programs"
         statistics: "Statistics"
@@ -729,6 +735,8 @@ en:
         show_tdee_breakdown_hint: "Shows the BMR · NEAT · Steps · Workout breakdown below the macro bars in the daily journal."
         show_weight_tracking: "Weight tracking"
         show_weight_tracking_hint: "Gives access to the body weight tracking page and shows its link in the navigation menu. Disabled, the page becomes inaccessible."
+        show_body_measurements: "Body measurements"
+        show_body_measurements_hint: "Shows the Measurements tab (waist, hips, etc.) on the Weight & Measurements page. Disabled, this tab becomes inaccessible."
         confirm_disable: "Disable \"%{feature}\"? Your existing data will be kept, but this section will become inaccessible."
       general:
         title: "General settings"
@@ -934,6 +942,7 @@ en:
         update_btn: "Update"
         edit_btn: "Edit"
         no_comment: "No note written."
+        not_rated_yet: "You haven't rated this recipe yet."
         delete_note: "Clear"
       day_food_group:
         quantity_col: "Quantity"
@@ -1204,7 +1213,10 @@ en:
         wrists: "Wrists"
 
     weight_entries:
-      page_title: "Weight tracking"
+      page_title:
+        weight: "Weight tracking"
+        measurements: "Measurements"
+        weight_and_measurements: "Weight & Measurements"
       stats:
         current: "Current weight"
         delta_30d: "Last 30 days"
@@ -1221,6 +1233,7 @@ en:
         to_lose: "%{kg} kg to lose"
         to_gain: "%{kg} kg to gain"
         goal_reached: "Goal reached!"
+        trend_unit: "kg/wk"
       chart:
         title: "Weight curve"
         not_enough_data: "Add at least 2 measurements to display the chart"
@@ -1236,6 +1249,49 @@ en:
         title: "History"
         empty: "No measurements recorded"
         delete_confirm: "Delete this entry?"
+      tabs:
+        poids: "Weight"
+        mesures: "Measurements"
+      measurements:
+        stats:
+          waist: "Waist"
+          waist_info: "A direct reflection of abdominal fat. Cardiometabolic risk increases above 94 cm (men) or 80 cm (women), and rises sharply above 102 cm / 88 cm (WHO benchmarks)."
+          waist_hip_ratio: "Waist/hip ratio"
+          waist_hip_ratio_info: "Reflects fat distribution. Increased risk above 0.90 for men and 0.85 for women (WHO thresholds)."
+          waist_height_ratio: "Waist/height ratio"
+          waist_height_ratio_info: "A simple benchmark: keep this ratio under 0.5 (waist circumference less than half your height). Risk is considered high above 0.6."
+          body_fat: "Estimated body fat"
+          body_fat_info: "Estimated using the US Navy formula. Rough guide (ACE): athlete level 6-13% (men) / 14-20% (women), fitness level 14-17% (men) / 21-24% (women), average level 18-24% (men) / 25-31% (women)."
+        chart:
+          title: "Measurement trend"
+          not_enough_data: "Add at least 2 measurements to display the chart"
+        form:
+          title: "Log my measurements"
+          date_label: "Date"
+          photo_label: "Photo (optional)"
+          photo_choose: "Choose a file"
+          photo_hint: "JPG or PNG"
+          submit: "Save"
+        history:
+          title: "History"
+          empty: "No measurements recorded"
+          delete_confirm: "Delete this entry?"
+        fields:
+          waist_cm: "Waist"
+          hips_cm: "Hips"
+          chest_cm: "Chest"
+          biceps_cm: "Biceps"
+          thighs_cm: "Thighs"
+          calves_cm: "Calves"
+          neck_cm: "Neck"
+        fields_short:
+          waist_cm: "Waist"
+          hips_cm: "Hips"
+          chest_cm: "Chest"
+          biceps_cm: "Biceps"
+          thighs_cm: "Thighs"
+          calves_cm: "Calves"
+          neck_cm: "Neck"
     statistics:
       page_title: "Statistics"
       tabs:

@@ -1,0 +1,22 @@
+en:
+  activerecord:
+    models:
+      body_measurement: "Body measurement"
+      body_measurements: "Body measurements"
+    attributes:
+      body_measurement:
+        date: "Date"
+        waist_cm: "Waist"
+        hips_cm: "Hips"
+        chest_cm: "Chest"
+        biceps_cm: "Biceps"
+        thighs_cm: "Thighs"
+        calves_cm: "Calves"
+        neck_cm: "Neck"
+        image: "Photo"
+    errors:
+      models:
+        body_measurement:
+          attributes:
+            base:
+              no_measurement_present: "Enter at least one measurement"

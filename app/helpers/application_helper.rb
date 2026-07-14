@@ -11,6 +11,16 @@ module ApplicationHelper
     args.map { |arg| arg.respond_to?(:to_key) ? dom_id(arg) : arg }.join("_")
   end
 
+  def weight_sidebar_label_key(user)
+    if user.show_weight_tracking? && user.show_body_measurements?
+      "weight_and_measurements"
+    elsif user.show_body_measurements?
+      "measurements"
+    else
+      "weight"
+    end
+  end
+
   def delete_link_with_confirm(path, options = {})
     message = options.delete(:confirm) || I18n.t("shared.delete_confirm")
     icon_class = options.delete(:icon_class) || "fa fa-trash"

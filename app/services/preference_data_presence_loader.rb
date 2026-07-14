@@ -14,7 +14,8 @@ class PreferenceDataPresenceLoader
       show_cardio_section:  cardio_data?,
       show_water_tracking:  water_data?,
       show_weight_tracking: weight_data?,
-      show_day_note:        day_note_data?
+      show_day_note:        day_note_data?,
+      show_body_measurements: body_measurement_data?
     }
   end
 
@@ -36,6 +37,10 @@ class PreferenceDataPresenceLoader
 
   def weight_data?
     user.weight_entries.exists?
+  end
+
+  def body_measurement_data?
+    user.body_measurements.exists?
   end
 
   def day_note_data?

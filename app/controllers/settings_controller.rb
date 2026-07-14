@@ -47,7 +47,8 @@ class SettingsController < ApplicationController
   def preferences_params
     params.require(:user).permit(
       :show_day_note, :show_workout_section, :show_cardio_section,
-      :show_water_tracking, :show_tdee_breakdown, :show_weight_tracking
+      :show_water_tracking, :show_tdee_breakdown, :show_weight_tracking,
+      :show_body_measurements
     )
   end
 end

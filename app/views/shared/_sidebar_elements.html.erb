@@ -35,10 +35,10 @@
           <% end %>
         <% end %>
 
-        <% if current_user.show_weight_tracking? %>
+        <% if current_user.show_weight_tracking? || current_user.show_body_measurements? %>
           <%= link_to weight_entries_path, class: current_page?(weight_entries_path) ? "nav-link-active" : "nav-link" do %>
               <i class="fas fa-weight-scale w-5 h-5 mr-3"></i>
-              <span class="font-medium pb-1"><%= t("views.shared.sidebar.weight") %></span>
+              <span class="font-medium pb-1"><%= t("views.shared.sidebar.#{weight_sidebar_label_key(current_user)}") %></span>
           <% end %>
         <% end %>
 

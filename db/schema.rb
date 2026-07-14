@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_12_130000) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_12_205038) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,22 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_12_130000) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "body_measurements", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.date "date", null: false
+    t.decimal "waist_cm", precision: 5, scale: 2
+    t.decimal "hips_cm", precision: 5, scale: 2
+    t.decimal "chest_cm", precision: 5, scale: 2
+    t.decimal "biceps_cm", precision: 5, scale: 2
+    t.decimal "thighs_cm", precision: 5, scale: 2
+    t.decimal "calves_cm", precision: 5, scale: 2
+    t.decimal "neck_cm", precision: 5, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "date"], name: "index_body_measurements_on_user_id_and_date", unique: true
+    t.index ["user_id"], name: "index_body_measurements_on_user_id"
   end
 
   create_table "cardio_blocks", force: :cascade do |t|
@@ -479,6 +495,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_12_130000) do
     t.string "last_sign_in_ip"
     t.string "time_zone", default: "Europe/Paris", null: false
     t.string "session_token", null: false
+    t.boolean "show_body_measurements", default: true, null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -534,6 +551,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_12_130000) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "body_measurements", "users"
   add_foreign_key "cardio_blocks", "cardio_sessions"
   add_foreign_key "cardio_sessions", "days"
   add_foreign_key "day_food_groups", "users"

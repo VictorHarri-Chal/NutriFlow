@@ -73,6 +73,7 @@ Rails.application.routes.draw do
   end
 
   resources :weight_entries, only: [:index, :create, :destroy]
+  resources :body_measurements, only: [:create, :destroy]
 
   resources :recipes do
     member do

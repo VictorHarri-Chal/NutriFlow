@@ -1,0 +1,22 @@
+fr:
+  activerecord:
+    models:
+      body_measurement: "Mesure corporelle"
+      body_measurements: "Mesures corporelles"
+    attributes:
+      body_measurement:
+        date: "Date"
+        waist_cm: "Tour de taille"
+        hips_cm: "Tour de hanches"
+        chest_cm: "Tour de poitrine"
+        biceps_cm: "Tour de bras"
+        thighs_cm: "Tour de cuisses"
+        calves_cm: "Tour de mollets"
+        neck_cm: "Tour de cou"
+        image: "Photo"
+    errors:
+      models:
+        body_measurement:
+          attributes:
+            base:
+              no_measurement_present: "Renseignez au moins une mesure"

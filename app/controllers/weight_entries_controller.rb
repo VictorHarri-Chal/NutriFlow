@@ -1,18 +1,16 @@
 class WeightEntriesController < ApplicationController
-  include FeatureGuard
+  include MeasurementsTabLoadable
 
-  before_action :require_weight_tracking!
-
-  VALID_PERIODS = [30, 90].freeze
+  before_action :set_available_tabs
+  before_action :require_weight_page_access!
 
   def index
-    @entries     = current_user.weight_entries.ordered
-    @profile     = current_user.profile
-    @today_entry = current_user.weight_entries.find_or_initialize_by(date: Date.today)
-    @period      = VALID_PERIODS.include?(params[:period]&.to_i) ? params[:period].to_i : 30
+    @tab = @available_tabs.include?(params[:tab]) ? params[:tab] : @available_tabs.first
 
-    build_chart_data
-    build_stats
+    case @tab
+    when "poids"   then load_weight_tab
+    when "mesures" then load_measurements_tab
+    end
   end
 
   def create
@@ -22,14 +20,11 @@ class WeightEntriesController < ApplicationController
     @weight_entry.weight_kg = weight_entry_params[:weight_kg]
 
     if @weight_entry.save
-      redirect_to weight_entries_path, notice: t("controllers.weight_entries.saved")
+      redirect_to weight_entries_path(tab: "poids"), notice: t("controllers.weight_entries.saved")
     else
-      @entries     = current_user.weight_entries.ordered
-      @profile     = current_user.profile
+      @tab         = "poids"
       @today_entry = @weight_entry
-      @period      = 30
-      build_chart_data
-      build_stats
+      load_weight_tab
       render :index, status: :unprocessable_entity
     end
   end
@@ -37,13 +32,36 @@ class WeightEntriesController < ApplicationController
   def destroy
     entry = current_user.weight_entries.find(params[:id])
     entry.destroy
-    redirect_to weight_entries_path, notice: t("controllers.weight_entries.deleted")
+    redirect_to weight_entries_path(tab: "poids"), notice: t("controllers.weight_entries.deleted")
   end
 
   private
 
+  def set_available_tabs
+    @available_tabs = compute_available_tabs
+  end
+
+  def require_weight_page_access!
+    redirect_to root_path, alert: t("feature_guard.weight_page_disabled") if @available_tabs.empty?
+  end
+
   def weight_entry_params
     params.require(:weight_entry).permit(:weight_kg, :date)
+  end
+
+  # ── Onglet Poids ─────────────────────────────────────────────────────────
+
+  def load_weight_tab
+    @entries     = current_user.weight_entries.ordered
+    @profile     = current_user.profile
+    # ||= preserves the invalid entry set by create's failure path so validation errors survive the re-render
+    @today_entry ||= current_user.weight_entries.find_or_initialize_by(date: Date.today)
+    @period      = VALID_PERIODS.include?(params[:period]&.to_i) ? params[:period].to_i : 30
+
+    @entries_pagy, @history_entries = pagy(@entries.reverse_order, items: 5)
+
+    build_chart_data
+    build_stats
   end
 
   def build_chart_data

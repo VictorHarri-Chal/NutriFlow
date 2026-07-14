@@ -23,6 +23,7 @@ class User < ApplicationRecord
   has_many :food_labels,    dependent: :destroy
   has_many :recipes,        dependent: :destroy
   has_many :weight_entries,       dependent: :destroy
+  has_many :body_measurements,    dependent: :destroy
   has_many :exercise_favorites,   dependent: :destroy
   has_many :favorited_exercises,  through: :exercise_favorites, source: :exercise
   has_many :workout_programs,     dependent: :destroy

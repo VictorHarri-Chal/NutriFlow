@@ -9,8 +9,17 @@ class ApplicationController < ActionController::Base
   before_action :set_locale
   before_action :set_sentry_context
   before_action :require_onboarding_complete!
+  before_action :set_active_storage_url_options
 
   private
+
+  # Required for Active Storage direct URL generation (.variant(...).processed.url,
+  # .url) outside the built-in redirect controller — without it, the Disk service
+  # raises ArgumentError in development/test. Production (Cloudflare R2) doesn't
+  # need this since CloudflareR2Service builds URLs from a fixed CDN host instead.
+  def set_active_storage_url_options
+    ActiveStorage::Current.url_options = { host: request.host, port: request.port, protocol: request.protocol }
+  end
 
   def set_time_zone(&block)
     if user_signed_in?

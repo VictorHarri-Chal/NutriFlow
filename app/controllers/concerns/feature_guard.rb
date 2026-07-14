@@ -11,8 +11,8 @@ module FeatureGuard
     redirect_to root_path, alert: t("feature_guard.cardio_disabled") unless current_user.show_cardio_section?
   end
 
-  def require_weight_tracking!
-    redirect_to root_path, alert: t("feature_guard.weight_disabled") unless current_user.show_weight_tracking?
+  def require_body_measurements!
+    redirect_to root_path, alert: t("feature_guard.measurements_disabled") unless current_user.show_body_measurements?
   end
 
   def require_water_tracking!

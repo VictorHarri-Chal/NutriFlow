@@ -6,7 +6,8 @@ fr:
   feature_guard:
     workout_disabled: "La section entraînement est désactivée dans vos préférences."
     cardio_disabled: "La section cardio est désactivée dans vos préférences."
-    weight_disabled: "Le suivi de poids est désactivé dans vos préférences."
+    weight_page_disabled: "Le suivi de poids et des mesures est désactivé dans vos préférences."
+    measurements_disabled: "Le suivi des mesures corporelles est désactivé dans vos préférences."
     water_disabled: "Le suivi d'hydratation est désactivé dans vos préférences."
 
   pagination_component:
@@ -46,6 +47,9 @@ fr:
       food_add_error: "Erreur lors de l'ajout de l'aliment."
     weight_entries:
       saved: "Poids enregistré."
+      deleted: "Entrée supprimée."
+    body_measurements:
+      saved: "Mesures enregistrées."
       deleted: "Entrée supprimée."
     recipe_ratings:
       created: "Notation enregistrée avec succès."
@@ -156,6 +160,8 @@ fr:
         profile: "Mon profil"
         collapse: "Réduire"
         weight: "Suivi poids"
+        measurements: "Mesures"
+        weight_and_measurements: "Poids & Mesures"
         exercises: "Entraînement"
         workout_programs: "Programmes"
         statistics: "Statistiques"
@@ -729,6 +735,8 @@ fr:
         show_tdee_breakdown_hint: "Affiche la décomposition BMR · NEAT · Pas · Entraînement sous les barres de macros dans le journal quotidien."
         show_weight_tracking: "Suivi de poids"
         show_weight_tracking_hint: "Donne accès à la page de suivi du poids corporel et affiche son lien dans le menu de navigation. Désactivé, la page devient inaccessible."
+        show_body_measurements: "Mesures corporelles"
+        show_body_measurements_hint: "Affiche l'onglet Mesures (tour de taille, hanches, etc.) sur la page Poids & Mesures. Désactivé, cet onglet devient inaccessible."
         confirm_disable: "Désactiver « %{feature} » ? Vos données existantes seront conservées, mais cette section deviendra inaccessible."
       general:
         title: "Paramètres généraux"
@@ -934,6 +942,7 @@ fr:
         update_btn: "Mettre à jour"
         edit_btn: "Modifier"
         no_comment: "Aucune note rédigée."
+        not_rated_yet: "Tu n'as pas encore noté cette recette."
         delete_note: "Effacer"
       day_food_group:
         quantity_col: "Quantité"
@@ -1204,7 +1213,10 @@ fr:
         wrists: "Poignets"
 
     weight_entries:
-      page_title: "Suivi poids"
+      page_title:
+        weight: "Suivi poids"
+        measurements: "Mesures"
+        weight_and_measurements: "Poids & Mesures"
       stats:
         current: "Poids actuel"
         delta_30d: "Sur 30 jours"
@@ -1221,6 +1233,7 @@ fr:
         to_lose: "%{kg} kg à perdre"
         to_gain: "%{kg} kg à prendre"
         goal_reached: "Objectif atteint !"
+        trend_unit: "kg/sem"
       chart:
         title: "Courbe de poids"
         not_enough_data: "Ajoutez au moins 2 mesures pour afficher la courbe"
@@ -1236,6 +1249,49 @@ fr:
         title: "Historique"
         empty: "Aucune mesure enregistrée"
         delete_confirm: "Supprimer cette entrée ?"
+      tabs:
+        poids: "Poids"
+        mesures: "Mesures"
+      measurements:
+        stats:
+          waist: "Tour de taille"
+          waist_info: "Reflet direct de la graisse abdominale. Risque cardio-métabolique accru au-delà de 94 cm (homme) ou 80 cm (femme), fortement accru au-delà de 102 cm / 88 cm (repères OMS)."
+          waist_hip_ratio: "Ratio taille/hanches"
+          waist_hip_ratio_info: "Indique la répartition des graisses. Risque accru au-delà de 0,90 chez l'homme et 0,85 chez la femme (seuils de l'OMS)."
+          waist_height_ratio: "Ratio taille/hauteur"
+          waist_height_ratio_info: "Repère simple : gardez ce ratio sous 0,5 (tour de taille inférieur à la moitié de votre taille). Risque considéré comme élevé au-delà de 0,6."
+          body_fat: "Masse grasse estimée"
+          body_fat_info: "Estimation par la formule US Navy. Repères indicatifs (ACE) : niveau athlète 6-13 % (homme) / 14-20 % (femme), niveau forme 14-17 % (homme) / 21-24 % (femme), niveau moyen 18-24 % (homme) / 25-31 % (femme)."
+        chart:
+          title: "Évolution des mesures"
+          not_enough_data: "Ajoutez au moins 2 mesures pour afficher la courbe"
+        form:
+          title: "Enregistrer mes mesures"
+          date_label: "Date"
+          photo_label: "Photo (optionnel)"
+          photo_choose: "Choisir un fichier"
+          photo_hint: "JPG ou PNG"
+          submit: "Enregistrer"
+        history:
+          title: "Historique"
+          empty: "Aucune mesure enregistrée"
+          delete_confirm: "Supprimer cette entrée ?"
+        fields:
+          waist_cm: "Tour de taille"
+          hips_cm: "Tour de hanches"
+          chest_cm: "Tour de poitrine"
+          biceps_cm: "Tour de bras"
+          thighs_cm: "Tour de cuisses"
+          calves_cm: "Tour de mollets"
+          neck_cm: "Tour de cou"
+        fields_short:
+          waist_cm: "Taille"
+          hips_cm: "Hanches"
+          chest_cm: "Poitrine"
+          biceps_cm: "Bras"
+          thighs_cm: "Cuisses"
+          calves_cm: "Mollets"
+          neck_cm: "Cou"
     statistics:
       page_title: "Statistiques"
       tabs:
