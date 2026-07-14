@@ -10,7 +10,7 @@ class WorkoutProgramsController < ApplicationController
   end
 
   def show
-    @program_days = @program.program_days.includes(program_exercises: :exercise)
+    @program_days = @program.program_days.includes(program_exercises: [:exercise, :program_exercise_sets])
   end
 
   def new

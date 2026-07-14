@@ -30,7 +30,7 @@ class ProgramDaysController < ApplicationController
 
   def set_day
     @day = ProgramDay.joins(:workout_program)
-                     .includes(program_exercises: :exercise)
+                     .includes(program_exercises: [:exercise, :program_exercise_sets])
                      .where(workout_programs: { user_id: current_user.id })
                      .find(params[:id])
     @program = @day.workout_program
