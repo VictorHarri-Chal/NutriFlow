@@ -26,7 +26,7 @@ class WorkoutSessionsController < ApplicationController
     # Pre-fill from a program day if requested
     if params[:program_day_id].present? && @active_program
       program_day = @active_program.program_days
-                                   .includes(program_exercises: :exercise)
+                                   .includes(program_exercises: [:exercise, :program_exercise_sets])
                                    .find_by(id: params[:program_day_id])
       if program_day
         # Pre-fill session metadata
@@ -35,16 +35,16 @@ class WorkoutSessionsController < ApplicationController
 
         program_day.program_exercises.each do |pe|
           next unless pe.exercise.present?
-          pe.sets.times do |i|
-            set = @workout_session.workout_sets.build(
+          pe.program_exercise_sets.order(:position).each_with_index do |set, i|
+            new_set = @workout_session.workout_sets.build(
               exercise_id:  pe.exercise_id,
-              weight_kg:    pe.weight_target,
-              reps:         pe.reps_target,
+              weight_kg:    set.weight_target,
+              reps:         set.reps_target,
               position:     @workout_session.workout_sets.size,
               rest_seconds: i == 0 ? pe.rest_seconds : nil,
               notes:        i == 0 ? pe.notes.presence : nil
             )
-            set.exercise = pe.exercise
+            new_set.exercise = pe.exercise
           end
         end
       end
