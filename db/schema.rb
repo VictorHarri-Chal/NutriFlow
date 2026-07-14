@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_14_104845) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_14_105039) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -287,9 +287,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_14_104845) do
   create_table "program_exercises", force: :cascade do |t|
     t.bigint "program_day_id", null: false
     t.bigint "exercise_id", null: false
-    t.integer "sets", default: 3, null: false
-    t.integer "reps_target", default: 10, null: false
-    t.decimal "weight_target", precision: 6, scale: 2
     t.integer "rest_seconds"
     t.integer "position", default: 0, null: false
     t.text "notes"
