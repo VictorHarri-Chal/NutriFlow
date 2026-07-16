@@ -12,3 +12,7 @@ en:
         weight_target: "Weight"
         rpe: "RPE"
         set_types: "Set types"
+    errors:
+      models:
+        program_exercise:
+          too_many_sets: "You can't add more than 10 sets per exercise."

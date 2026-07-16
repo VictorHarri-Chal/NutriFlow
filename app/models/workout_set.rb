@@ -1,4 +1,6 @@
 class WorkoutSet < ApplicationRecord
+  include RpeSetType
+
   belongs_to :workout_session
   belongs_to :exercise
 

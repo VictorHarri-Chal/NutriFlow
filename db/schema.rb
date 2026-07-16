@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_14_225522) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_16_125208) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -547,7 +547,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_14_225522) do
   create_table "workout_sessions", force: :cascade do |t|
     t.bigint "day_id", null: false
     t.integer "duration_minutes"
-    t.integer "rpe"
     t.text "notes"
     t.integer "calories_burned"
     t.datetime "created_at", null: false
@@ -566,6 +565,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_14_225522) do
     t.integer "rest_seconds"
     t.text "notes"
     t.boolean "is_pr", default: false, null: false
+    t.integer "rpe"
+    t.string "set_types", default: ["working"], null: false, array: true
     t.index ["exercise_id"], name: "index_workout_sets_on_exercise_id"
     t.index ["workout_session_id", "position"], name: "index_workout_sets_on_workout_session_id_and_position"
     t.index ["workout_session_id"], name: "index_workout_sets_on_workout_session_id"

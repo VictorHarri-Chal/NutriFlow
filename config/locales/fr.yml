@@ -117,6 +117,7 @@ fr:
               too_far_in_the_past: "n'est pas une date plausible"
         workout_session:
           at_least_one_exercise: "Ajoutez au moins un exercice avant d'enregistrer la séance."
+          too_many_sets_per_exercise: "Vous ne pouvez pas ajouter plus de 10 séries par exercice."
         cardio_session:
           at_least_one_block: "Ajoutez au moins une machine avant d'enregistrer la session cardio."
         recipe_rating:
@@ -1059,6 +1060,7 @@ fr:
           zero: "vide"
           one: "1 exo"
           other: "%{count} exos"
+    workout_sets:
       set_editor:
         info_tooltip: |-
           Séries : ajoutez-en autant que nécessaire, chacune avec ses propres répétitions et charge.
@@ -1072,6 +1074,7 @@ fr:
         rpe_label: "RPE"
         remove_set: "Supprimer la série"
         add_set: "+ Ajouter une série"
+        max_sets: "max 10"
         no_sets_title: "Aucune série"
         no_sets_description: "Ajoute ta première série pour configurer cet exercice."
         rest_label: "Temps de repos (sec)"
@@ -1550,17 +1553,13 @@ fr:
         weight_kg: "Poids (kg)"
         reps: "Répétitions"
         duration: "Durée"
-        rpe: "Intensité (RPE)"
         notes: "Notes"
         notes_placeholder: "Sensations, observations..."
         empty_hint: "Cherchez un exercice et cliquez Ajouter pour commencer"
         search_hint: "Tapez pour rechercher un exercice"
         last_perf_prefix: "Dernière fois"
-        rpe_light: "Léger"
-        rpe_max: "Maximal"
         no_exercises_error: "Ajoutez au moins un exercice avant d'enregistrer la séance."
         no_weight_error: "Renseignez le poids, les répétitions et la durée avant d'enregistrer."
-        max_sets: "max 10"
         submit_add: "Ajouter"
         from_program: "Charger depuis « %{name} »"
       picker:

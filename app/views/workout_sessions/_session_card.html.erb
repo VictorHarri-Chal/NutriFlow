@@ -12,12 +12,10 @@
           <%= workout_session.duration_minutes %> min
         </span>
       <% end %>
-      <% if workout_session.rpe.present? %>
-        <span class="flex items-center gap-1 text-[11px] text-ink-muted">
-          <i class="fas fa-fire text-ink-subtle/60 text-[9px]"></i>
-          RPE <%= workout_session.rpe %>
-        </span>
-      <% end %>
+      <span class="flex items-center gap-1 text-[11px] text-ink-muted">
+        <i class="fas fa-fire text-ink-subtle/60 text-[9px]"></i>
+        RPE <%= number_with_precision(workout_session.average_rpe, precision: 1, strip_insignificant_zeros: true) %>/10
+      </span>
       <% cal = workout_session.estimated_calories(current_user.profile&.weight&.to_f) %>
       <span class="flex items-center gap-1 text-[11px] text-status-success/80 font-medium">
         <i class="fas fa-fire-alt text-[9px]"></i>

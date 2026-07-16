@@ -4,5 +4,5 @@
   <% if (type_label = set_chip_type_label(set)).present? %>
     <span class="text-ink-muted font-bold uppercase text-[8px] tracking-wide"><%= type_label %></span>
   <% end %>
-  <%= set.reps_target %>×<%= set.bodyweight? ? t("views.workout_programs.set_editor.bodyweight_abbr") : set.weight_target.to_f %>
+  <%= set.reps_target %>×<%= set.bodyweight? ? t("views.workout_sets.set_editor.bodyweight_abbr") : set.weight_target.to_f %>
 </span>

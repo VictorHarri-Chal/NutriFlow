@@ -12,3 +12,7 @@ fr:
         weight_target: "Charge"
         rpe: "RPE"
         set_types: "Types de série"
+    errors:
+      models:
+        program_exercise:
+          too_many_sets: "Vous ne pouvez pas ajouter plus de 10 séries par exercice."

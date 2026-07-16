@@ -1,31 +1,45 @@
 import { Controller } from "@hotwired/stimulus"
 
+// Mirrors SetTypesHelper#set_type_pill_classes (size: :md) — Tailwind classes must
+// appear as literal strings for the JIT scanner to pick them up, so this is duplicated
+// here rather than fetched from the server (same tradeoff as the rest of this file's
+// JS-built markup, which already duplicates the ERB templates).
+const SET_TYPE_PILL_BASE_CLASSES = "inline-flex items-center px-3 py-1.5 rounded-full text-[10px] font-medium border cursor-pointer transition-colors bg-surface-hover text-ink-muted border-surface-border/40"
+const SET_TYPE_PILL_CLASSES = {
+  warmup:  `${SET_TYPE_PILL_BASE_CLASSES} peer-checked/warmup:bg-status-success/20 peer-checked/warmup:text-status-success peer-checked/warmup:border-status-success/50`,
+  working: `${SET_TYPE_PILL_BASE_CLASSES} peer-checked/working:bg-brand/20 peer-checked/working:text-brand peer-checked/working:border-brand/50`,
+  failure: `${SET_TYPE_PILL_BASE_CLASSES} peer-checked/failure:bg-status-danger/20 peer-checked/failure:text-status-danger peer-checked/failure:border-status-danger/50`,
+  dropset: `${SET_TYPE_PILL_BASE_CLASSES} peer-checked/dropset:bg-status-info/20 peer-checked/dropset:text-status-info peer-checked/dropset:border-status-info/50`
+}
+
 // Manages the workout session form:
 // - receives "exercise-selected" from exercise-combobox, builds exercise groups
 // - handles add/remove set per exercise
-// - manages RPE slider ↔ hidden field sync
 // - fetches "last performance" for context when an exercise is added
 export default class extends Controller {
-  static targets = ["exercisesList", "emptyHint", "noExerciseError", "noWeightError", "rpeSlider", "rpeDisplay", "rpeValue"]
+  static targets = ["exercisesList", "emptyHint", "noExerciseError", "noWeightError"]
   static values = {
     lastPerfPath:       String,
     exerciseSearchPath: String,
     labelWeight:        { type: String, default: "Poids (kg)" },
     labelReps:          { type: String, default: "Reps" },
+    labelRpe:           { type: String, default: "RPE" },
     labelAddSet:        { type: String, default: "Série" },
     labelLastPerf:      { type: String, default: "Dernière fois" },
     labelMaxSets:       { type: String, default: "max 10" },
     noExerciseError:    { type: String, default: "Ajoutez au moins un exercice." },
     sessionId:          { type: Number, default: 0 },
-    sessionDate:        { type: String, default: "" }
+    sessionDate:        { type: String, default: "" },
+    infoTooltip:            { type: String, default: "" },
+    labelSetTypeWarmup:     { type: String, default: "Échauffement" },
+    labelSetTypeWorking:    { type: String, default: "Travail" },
+    labelSetTypeFailure:    { type: String, default: "Dead set" },
+    labelSetTypeDropset:    { type: String, default: "Drop-set" }
   }
 
   connect() {
     this._setIndex    = this._countExistingInputs()
     this._allTimeMaxes = new Map() // exerciseId → all-time max weight (for PR detection)
-    if (this.hasRpeSliderTarget && this.rpeSliderTarget.value) {
-      this._syncRpeDisplay(this.rpeSliderTarget.value)
-    }
     if (this.hasExercisesListTarget) {
       this._reindexPositions()
       this._syncEmptyHint()
@@ -37,20 +51,6 @@ export default class extends Controller {
         if (exerciseId) this._fetchLastPerformance(exerciseId, group)
       })
     }
-  }
-
-  // ── RPE slider ────────────────────────────────────────────────────
-
-  updateRpe(event) {
-    const val = event.currentTarget.value
-    this._syncRpeDisplay(val)
-    if (this.hasRpeValueTarget) this.rpeValueTarget.value = val
-  }
-
-  _syncRpeDisplay(val) {
-    if (!this.hasRpeDisplayTarget) return
-    if (!val) { this.rpeDisplayTarget.textContent = "—"; return }
-    this.rpeDisplayTarget.textContent = `${val}/10`
   }
 
   // ── Form submit validation ────────────────────────────────────────
@@ -206,7 +206,11 @@ export default class extends Controller {
 
     div.innerHTML = `
       <div class="flex items-center justify-between gap-2">
-        <span class="text-sm font-semibold text-ink-primary capitalize truncate exercise-name-label"></span>
+        <div class="flex items-center gap-1.5 min-w-0">
+          <span class="text-sm font-semibold text-ink-primary capitalize truncate exercise-name-label"></span>
+          <i class="fas fa-circle-info text-xs text-ink-subtle/40 hover:text-ink-subtle cursor-default transition-colors shrink-0"
+             title="${this.infoTooltipValue}"></i>
+        </div>
         <button type="button" data-action="click->workout-form#removeExercise"
                 class="text-xs text-ink-subtle hover:text-status-danger transition-colors cursor-pointer shrink-0">
           <i class="fas fa-times"></i>
@@ -217,14 +221,15 @@ export default class extends Controller {
         <span class="last-perf-text text-xs text-ink-subtle flex-1"></span>
         <span class="last-perf-delta hidden text-[10px] font-semibold shrink-0"></span>
       </div>
-      <div class="grid grid-cols-[16px_1fr_1fr_28px_20px] gap-2 text-xs text-ink-subtle">
+      <div class="grid grid-cols-[16px_1fr_1fr_1fr_28px_20px] gap-2 text-xs text-ink-subtle">
         <span>#</span>
         <span>${this.labelWeightValue}</span>
         <span>${this.labelRepsValue}</span>
+        <span>${this.labelRpeValue}</span>
         <span></span>
         <span></span>
       </div>
-      <div class="sets-container space-y-1.5"></div>
+      <div class="sets-container divide-y divide-surface-border/20"></div>
       <div class="flex items-center gap-2 mt-1">
         <button type="button" data-action="click->workout-form#addSet"
                 class="text-xs text-brand hover:text-brand/80 transition-colors flex items-center gap-1 cursor-pointer">
@@ -267,12 +272,12 @@ export default class extends Controller {
   _buildSetRow(exerciseId, opts = {}) {
     const idx = this._setIndex++
     const div = document.createElement("div")
-    div.className = "set-row"
+    div.className = "set-row py-2"
 
     div.innerHTML = `
       <input type="hidden" name="workout_session[workout_sets_attributes][${idx}][exercise_id]" value="${exerciseId}">
       <input type="hidden" name="workout_session[workout_sets_attributes][${idx}][position]" value="0" data-position-input="true">
-      <div class="grid grid-cols-[16px_1fr_1fr_28px_20px] gap-2 items-center">
+      <div class="grid grid-cols-[16px_1fr_1fr_1fr_28px_20px] gap-2 items-center">
         <span class="text-xs text-ink-subtle set-number"></span>
         <input type="number" name="workout_session[workout_sets_attributes][${idx}][weight_kg]"
                data-controller="digit-limit"
@@ -287,6 +292,12 @@ export default class extends Controller {
                data-action="input->digit-limit#limit"
                data-digit-limit-max-integer-digits-value="4"
                class="input-dark text-sm py-1.5 cursor-text">
+        <input type="number" name="workout_session[workout_sets_attributes][${idx}][rpe]"
+               placeholder="—" min="6" max="10" step="1"
+               data-controller="digit-limit"
+               data-action="input->digit-limit#limit"
+               data-digit-limit-max-integer-digits-value="2"
+               class="input-dark text-sm py-1.5 cursor-text text-center">
         <span data-pr-badge
               class="hidden flex items-center justify-center text-[9px] font-bold text-brand bg-brand/10 border border-brand/30 rounded px-1.5 py-0.5 leading-none whitespace-nowrap">
           PR
@@ -296,8 +307,31 @@ export default class extends Controller {
           <i class="fas fa-times"></i>
         </button>
       </div>
+
+      <div class="flex flex-wrap gap-2 pl-6 mt-1.5">
+        ${this._buildSetTypePills(idx)}
+      </div>
     `
     return div
+  }
+
+  _buildSetTypePills(idx) {
+    const types = [
+      { key: "warmup",  label: this.labelSetTypeWarmupValue },
+      { key: "working", label: this.labelSetTypeWorkingValue },
+      { key: "failure", label: this.labelSetTypeFailureValue },
+      { key: "dropset", label: this.labelSetTypeDropsetValue }
+    ]
+    const pills = types.map(({ key, label }) => {
+      const checkboxId = `workout_set_${idx}_set_types_${key}`
+      const checked    = key === "working" ? "checked" : ""
+      return `
+        <input type="checkbox" name="workout_session[workout_sets_attributes][${idx}][set_types][]" value="${key}" ${checked}
+               id="${checkboxId}" class="hidden peer/${key}">
+        <label for="${checkboxId}" class="${SET_TYPE_PILL_CLASSES[key]}">${label}</label>
+      `
+    }).join("")
+    return `${pills}<input type="hidden" name="workout_session[workout_sets_attributes][${idx}][set_types][]" value="">`
   }
 
   _renumberSets(container) {

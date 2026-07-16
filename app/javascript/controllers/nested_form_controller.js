@@ -1,8 +1,12 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["template", "item", "destroyField", "emptyState", "addButton", "headerRow"]
-  static values = { wrapperSelector: { type: String, default: ".ingredients-container" } }
+  static targets = ["template", "item", "destroyField", "emptyState", "addButton", "headerRow", "maxHint"]
+  // maxItems: 0 means unlimited — only the program-builder set editor opts into a cap.
+  static values = {
+    wrapperSelector: { type: String, default: ".ingredients-container" },
+    maxItems:        { type: Number, default: 0 }
+  }
 
   connect() {
     this.updateEmptyState()
@@ -11,6 +15,7 @@ export default class extends Controller {
   add(event) {
     event.preventDefault()
     if (!this.wrapper) return
+    if (this.maxItemsValue > 0 && this.visibleItemCount >= this.maxItemsValue) return
     const content = this.templateTarget.innerHTML.replace(/NEW_RECORD/g, new Date().getTime())
     this.wrapper.insertAdjacentHTML("beforeend", content)
     this.updateEmptyState()
@@ -40,8 +45,8 @@ export default class extends Controller {
   }
 
   updateEmptyState() {
-    const visibleItems = this.itemTargets.filter(item => item.style.display !== "none")
-    const isEmpty = visibleItems.length === 0
+    const visibleCount = this.visibleItemCount
+    const isEmpty = visibleCount === 0
 
     this.emptyStateTarget.style.display = isEmpty ? "block" : "none"
     if (this.hasAddButtonTarget) {
@@ -50,6 +55,19 @@ export default class extends Controller {
     if (this.hasHeaderRowTarget) {
       this.headerRowTarget.style.display = isEmpty ? "none" : "flex"
     }
+
+    if (this.maxItemsValue > 0) {
+      const atMax = visibleCount >= this.maxItemsValue
+      if (this.hasAddButtonTarget) {
+        this.addButtonTarget.classList.toggle("opacity-30", atMax)
+        this.addButtonTarget.classList.toggle("pointer-events-none", atMax)
+      }
+      if (this.hasMaxHintTarget) this.maxHintTarget.classList.toggle("hidden", !atMax)
+    }
+  }
+
+  get visibleItemCount() {
+    return this.itemTargets.filter(item => item.style.display !== "none").length
   }
 
   get wrapper() {

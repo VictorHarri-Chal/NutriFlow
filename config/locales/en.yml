@@ -117,6 +117,7 @@ en:
               too_far_in_the_past: "is not a plausible date"
         workout_session:
           at_least_one_exercise: "Add at least one exercise before saving the session."
+          too_many_sets_per_exercise: "You can't add more than 10 sets per exercise."
         cardio_session:
           at_least_one_block: "Add at least one machine before saving the cardio session."
         recipe_rating:
@@ -1059,6 +1060,7 @@ en:
           zero: "empty"
           one: "1 ex."
           other: "%{count} ex."
+    workout_sets:
       set_editor:
         info_tooltip: |-
           Sets: add as many as needed, each with its own reps and weight.
@@ -1072,6 +1074,7 @@ en:
         rpe_label: "RPE"
         remove_set: "Remove set"
         add_set: "+ Add a set"
+        max_sets: "max 10"
         no_sets_title: "No sets yet"
         no_sets_description: "Add your first set to configure this exercise."
         rest_label: "Rest time (sec)"
@@ -1550,17 +1553,13 @@ en:
         weight_kg: "Weight (kg)"
         reps: "Reps"
         duration: "Duration"
-        rpe: "Intensity (RPE)"
         notes: "Notes"
         notes_placeholder: "How you felt, observations..."
         empty_hint: "Search an exercise and click Add to start"
         search_hint: "Type to search an exercise"
         last_perf_prefix: "Last time"
-        rpe_light: "Light"
-        rpe_max: "Max"
         no_exercises_error: "Add at least one exercise before saving the session."
         no_weight_error: "Fill in weight, reps, and duration before saving."
-        max_sets: "max 10"
         submit_add: "Add"
         from_program: "Load from « %{name} »"
       picker:
