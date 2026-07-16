@@ -44,6 +44,17 @@ module FoodsHelper
     end
   end
 
+  # Utilise @foods_in_use (précalculé en masse par FoodsController#index) quand
+  # disponible ; sinon calcule à la volée — sûr pour un rendu à l'unité
+  # (toggle_favorite/toggle_pantry) mais à éviter dans une boucle.
+  def food_blocked_for_direct_delete?(food)
+    if @foods_in_use
+      @foods_in_use.include?(food.id)
+    else
+      food.day_foods.exists? || food.recipe_items.exists? || food.day_recipe_items.exists?
+    end
+  end
+
   def translate_allergen(allergen)
     key = allergen.to_s.downcase.tr("-", "_")
     t("views.foods.show.allergens_map.#{key}", default: allergen.tr("-", " ").capitalize)

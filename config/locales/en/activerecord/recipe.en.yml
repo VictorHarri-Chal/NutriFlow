@@ -6,6 +6,11 @@ en:
     attributes:
       recipe:
         name: "Name"
+      recipe/recipe_items:
+        food: "Food"
+        food_id: "Food"
+        quantity: "Quantity"
+        unit: "Unit"
     errors:
       models:
         recipe:

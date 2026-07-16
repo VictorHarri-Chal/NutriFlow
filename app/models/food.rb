@@ -4,9 +4,14 @@ class Food < ApplicationRecord
   CATEGORIES = %w[proteins grains vegetables fruits dairy beverages condiments supplements other].freeze
 
   belongs_to :user
-  has_many :day_foods, dependent: :destroy
+  # :restrict_with_error, not :destroy — deleting a Food must never silently
+  # erase logged history or gut a recipe out from under the user. Blocking the
+  # deletion (see FoodsController#destroy) forces removing it from those places
+  # first, deliberately.
+  has_many :day_foods, dependent: :restrict_with_error
   has_many :days, through: :day_foods
-  has_many :recipe_items, dependent: :destroy
+  has_many :recipe_items, dependent: :restrict_with_error
+  has_many :day_recipe_items, dependent: :restrict_with_error
   has_many :shopping_list_items, dependent: :nullify
   has_and_belongs_to_many :food_labels, join_table: 'food_labels_foods'
 

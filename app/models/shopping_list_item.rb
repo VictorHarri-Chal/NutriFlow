@@ -1,4 +1,6 @@
 class ShoppingListItem < ApplicationRecord
+  include ValidatesSharedOwner
+
   CATEGORIES = %w[proteins grains vegetables fruits dairy beverages condiments supplements other].freeze
 
   belongs_to :shopping_list
@@ -6,6 +8,7 @@ class ShoppingListItem < ApplicationRecord
 
   validates :name, presence: true
   validates :category, inclusion: { in: CATEGORIES }, allow_nil: true
+  validates_shared_owner :food, owner: :shopping_list, if: :food_id?
 
   scope :unchecked, -> { where(checked: false) }
   scope :checked,   -> { where(checked: true)  }

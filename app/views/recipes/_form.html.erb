@@ -123,7 +123,7 @@
           <%# Liste des ingrédients %>
           <div class="ingredients-container divide-y divide-surface-border/30">
             <%= f.simple_fields_for :recipe_items do |item_fields| %>
-              <%= render "item_fields", f: item_fields %>
+              <%= render "shared/ingredient_fields", f: item_fields, unit_class: RecipeItem, i18n_scope: "views.recipes.item_fields", width_class: "w-16", quantity_step: 1, quantity_round: 0 %>
             <% end %>
 
             <%# Empty state %>
@@ -153,7 +153,7 @@
           <%# Template pour les nouveaux ingrédients %>
           <template data-nested-form-target="template">
             <%= f.simple_fields_for :recipe_items, recipe.recipe_items.build, child_index: "NEW_RECORD" do |item_fields| %>
-              <%= render "item_fields", f: item_fields %>
+              <%= render "shared/ingredient_fields", f: item_fields, unit_class: RecipeItem, i18n_scope: "views.recipes.item_fields", width_class: "w-16", quantity_step: 1, quantity_round: 0 %>
             <% end %>
           </template>
         </div>

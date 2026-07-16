@@ -10,7 +10,7 @@ module CalendarData
 
     month_days = current_user.days
                    .where(date: start_of_month..end_of_month)
-                   .includes(day_foods: :food, day_recipes: { recipe: { recipe_items: :food } })
+                   .includes(day_foods: :food, day_recipes: { recipe: { recipe_items: :food }, day_recipe_items: :food })
 
     @month_heatmap = month_days.each_with_object({}) do |d, h|
       foods_cals   = d.day_foods.sum(&:total_calories)

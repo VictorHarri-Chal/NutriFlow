@@ -29,6 +29,8 @@ en:
       created: "Food created successfully."
       updated: "Food updated successfully."
       destroyed: "Food deleted successfully."
+      force_destroyed: "Food and all its history deleted successfully."
+      delete_blocked: "This food is still in use and cannot be deleted."
       duplicated: "Food duplicated. Edit it before saving."
       duplicate_name: "Copy of %{name}"
       duplicate_error: "Unable to duplicate this food."
@@ -137,6 +139,7 @@ en:
     not_provided: "Not provided"
     select_blank: "Select..."
     food_count:
+      zero: "0 food"
       one: "1 food"
       other: "%{count} foods"
     no_food_groups: "No meal groups"
@@ -261,6 +264,21 @@ en:
       add_food: "Add a food"
       edit_food: "Edit food"
       delete_confirm: "Are you sure you want to delete \"%{name}\"?"
+      delete_blocked:
+        title: "Cannot delete"
+        intro: "\"%{name}\" is still in use and cannot be deleted right now:"
+        day_foods:
+          one: "%{count} log entry"
+          other: "%{count} log entries"
+        recipes:
+          one: "%{count} recipe"
+          other: "%{count} recipes"
+        day_recipe_items:
+          one: "%{count} customized recipe"
+          other: "%{count} customized recipes"
+        confirm: "Got it"
+        force_delete: "Delete everything"
+        force_delete_confirm: "Delete \"%{name}\" and everything linked to it (recipes, customized recipes, and log entries)? This action is irreversible."
       search_placeholder: "Search for a food..."
       labels_col: "Labels"
       usages_col: "Uses"
@@ -529,6 +547,18 @@ en:
         no_recipe_found: "No recipe found"
         use_recipe_quantity: "Use the total recipe quantity"
         food_group: "Meal group"
+        customize_tooltip: "Customize the ingredients for this entry"
+        customize_caption: "Ingredients for this entry · %{date}"
+        customize_empty: "No ingredients"
+        customize_add_first: "Add a food"
+        customize_add_ingredient: "Add a food"
+        customize_total_label: "Recalculated total"
+        customize_confirm: "Confirm"
+      item_fields:
+        search_food: "Search a food..."
+        remove: "Remove"
+        error_food: "Select a food"
+        error_quantity: "Invalid quantity (min. 1 g)"
 
     recipes:
       title: "Recipe bank"
@@ -540,6 +570,7 @@ en:
       no_results_for: "No recipe matches your search \"%{query}\""
       create_first: "Create your first recipe to see it here."
       recipe_count:
+        zero: "0 recipe"
         one: "1 recipe"
         other: "%{count} recipes"
       sort_label: "Sort:"
@@ -948,6 +979,7 @@ en:
         quantity_col: "Quantity"
         actions_col: "Actions"
         recipe_label: "Dish"
+        customized_tooltip: "Ingredients modified for this entry"
         ungrouped_title: "Ungrouped items"
         delete_recipe_confirm: "Are you sure you want to delete this dish?"
         delete_food_confirm: "Are you sure you want to delete this food?"
@@ -1062,6 +1094,7 @@ en:
       page_title: "Training"
       title: "Exercise Library"
       exercise_count:
+        zero: "0 exercise"
         one: "1 exercise"
         other: "%{count} exercises"
       search_placeholder: "Search for an exercise..."
@@ -1502,6 +1535,7 @@ en:
       widget:
         title: "Workout"
         session_count:
+          zero: "0 session"
           one: "1 session"
           other: "%{count} sessions"
         empty: "No workout session today"

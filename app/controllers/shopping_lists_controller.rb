@@ -122,7 +122,7 @@ class ShoppingListsController < ApplicationController
   def week_missing_foods
     days = current_user.days
              .where(date: 6.days.ago.to_date..Date.current)
-             .includes(day_foods: :food, day_recipes: { recipe: { recipe_items: :food } })
+             .includes(day_foods: :food, day_recipes: [{ recipe: { recipe_items: :food } }, { day_recipe_items: :food }])
 
     agg = Hash.new { |h, k| h[k] = { food: nil, grams: 0.0, unit: "g", category: nil } }
 
@@ -137,14 +137,29 @@ class ShoppingListsController < ApplicationController
       end
 
       day.day_recipes.each do |dr|
-        dr.recipe.recipe_items.each do |ri|
-          next if ri.food.in_pantry
+        # Une recette personnalisée a ses propres ingrédients (potentiellement
+        # différents de la recette d'origine) — ils priment, sans passer par
+        # gram_factor puisqu'ils stockent déjà la quantité réellement utilisée.
+        if dr.customized?
+          dr.day_recipe_items.each do |item|
+            next if item.food.in_pantry
 
-          entry = agg[ri.food.id]
-          entry[:food] ||= ri.food
-          entry[:category] ||= ri.food.category
-          entry[:unit] = "mL" if %w[mL L].include?(ri.unit)
-          entry[:grams] += ri.grams_equivalent * dr.gram_factor
+            entry = agg[item.food.id]
+            entry[:food] ||= item.food
+            entry[:category] ||= item.food.category
+            entry[:unit] = "mL" if %w[mL L].include?(item.unit)
+            entry[:grams] += item.grams_equivalent
+          end
+        else
+          dr.recipe.recipe_items.each do |ri|
+            next if ri.food.in_pantry
+
+            entry = agg[ri.food.id]
+            entry[:food] ||= ri.food
+            entry[:category] ||= ri.food.category
+            entry[:unit] = "mL" if %w[mL L].include?(ri.unit)
+            entry[:grams] += ri.grams_equivalent * dr.gram_factor
+          end
         end
       end
     end

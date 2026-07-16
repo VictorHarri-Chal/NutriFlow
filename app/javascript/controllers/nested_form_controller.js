@@ -17,6 +17,13 @@ export default class extends Controller {
     this.element.dispatchEvent(new Event("input", { bubbles: true }))
   }
 
+  // The quantity field has no combobox/keydown handling of its own (unlike the
+  // food-name input) — without this, pressing Enter while editing a quantity
+  // submits the enclosing form instead of just confirming the row's value.
+  preventEnterSubmit(event) {
+    event.preventDefault()
+  }
+
   remove(event) {
     event.preventDefault()
     const item = event.target.closest("[data-nested-form-target='item']")

@@ -23,9 +23,10 @@ Rails.application.routes.draw do
       post  :add_missing_to_shopping_list
     end
     member do
-      post  :duplicate
-      patch :toggle_favorite
-      patch :toggle_pantry
+      post   :duplicate
+      patch  :toggle_favorite
+      patch  :toggle_pantry
+      delete :force_destroy
     end
   end
   resource :setting, only: [:show, :update] do

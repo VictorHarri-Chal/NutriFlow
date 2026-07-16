@@ -10,6 +10,7 @@ class DayRecipesController < ApplicationController
     @day_recipe         = @day.day_recipes.build(day_food_group_id: group_id, use_recipe_quantity: true)
     @day_food_groups    = current_user.day_food_groups.order(:name)
     @recipes            = current_user.recipes.includes(recipe_items: :food).order(:name)
+    @foods              = current_user.foods.order(:name)
     @recent_recipe_ids  = DayRecipe.joins(:day)
                             .where(days: { user_id: current_user.id })
                             .where("day_recipes.created_at > ?", 14.days.ago)
@@ -31,6 +32,7 @@ class DayRecipesController < ApplicationController
     else
       @day_food_groups = current_user.day_food_groups.order(:name)
       @recipes         = current_user.recipes.includes(recipe_items: :food).order(:name)
+      @foods           = current_user.foods.order(:name)
       respond_to do |format|
         format.turbo_stream { render turbo_stream: turbo_stream.replace("food_item_form", partial: "day_recipes/form", locals: { day: @day, day_recipe: @day_recipe, submit_text: t("shared.add") }) }
         format.html         { render :new, status: :unprocessable_entity }
@@ -41,6 +43,7 @@ class DayRecipesController < ApplicationController
   def edit
     @day_food_groups = current_user.day_food_groups.order(:name)
     @recipes         = current_user.recipes.includes(recipe_items: :food).order(:name)
+    @foods           = current_user.foods.order(:name)
   end
 
   def update
@@ -56,6 +59,7 @@ class DayRecipesController < ApplicationController
     else
       @day_food_groups = current_user.day_food_groups.order(:name)
       @recipes         = current_user.recipes.includes(recipe_items: :food).order(:name)
+      @foods           = current_user.foods.order(:name)
       respond_to do |format|
         format.turbo_stream { render turbo_stream: turbo_stream.replace("food_item_form", partial: "day_recipes/form", locals: { day: @day, day_recipe: @day_recipe, submit_text: t("shared.update") }) }
         format.html         { render :edit, status: :unprocessable_entity }
@@ -82,11 +86,14 @@ class DayRecipesController < ApplicationController
   end
 
   def set_day_recipe
-    @day_recipe = find_day_scoped(DayRecipe, params[:id])
+    @day_recipe = find_day_scoped(DayRecipe.includes(day_recipe_items: :food), params[:id])
     @day = @day_recipe.day
   end
 
   def day_recipe_params
-    params.require(:day_recipe).permit(:recipe_id, :quantity, :day_food_group_id, :use_recipe_quantity)
+    params.require(:day_recipe).permit(
+      :recipe_id, :quantity, :day_food_group_id, :use_recipe_quantity, :customized,
+      day_recipe_items_attributes: [:id, :food_id, :quantity, :unit, :_destroy]
+    )
   end
 end

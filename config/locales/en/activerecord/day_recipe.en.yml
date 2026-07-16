@@ -1,0 +1,20 @@
+en:
+  activerecord:
+    models:
+      day_recipe:
+        one: "Recipe"
+        other: "Recipes"
+    attributes:
+      day_recipe:
+        recipe: "Recipe"
+        quantity: "Quantity"
+        use_recipe_quantity: "Use the recipe's quantity"
+      day_recipe/day_recipe_items:
+        food: "Food"
+        food_id: "Food"
+        quantity: "Quantity"
+        unit: "Unit"
+    errors:
+      models:
+        day_recipe:
+          at_least_one_ingredient: "At least one ingredient is required"

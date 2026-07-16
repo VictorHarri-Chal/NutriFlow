@@ -1,10 +1,13 @@
 class DayFood < ApplicationRecord
+  include ValidatesSharedOwner
+
   belongs_to :day
   belongs_to :food
   belongs_to :day_food_group, optional: true
 
   validates :quantity, presence: true, numericality: { greater_than: 0 }
   validate :day_food_group_belongs_to_user, if: -> { day_food_group_id.present? && day.present? }
+  validates_shared_owner :food, owner: :day
 
   def gram_factor
     quantity / 100.0

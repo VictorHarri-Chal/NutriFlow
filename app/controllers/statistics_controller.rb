@@ -43,7 +43,7 @@ class StatisticsController < ApplicationController
                        .where(date: @from..Date.today)
                        .includes(
                          day_foods:   [:food, :day_food_group],
-                         day_recipes: [:day_food_group, { recipe: { recipe_items: :food } }]
+                         day_recipes: [:day_food_group, { recipe: { recipe_items: :food } }, { day_recipe_items: :food }]
                        )
                        .order(:date)
                        .to_a

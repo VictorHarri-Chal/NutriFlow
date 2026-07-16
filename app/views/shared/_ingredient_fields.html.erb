@@ -1,3 +1,8 @@
+<%# locals: (f:, unit_class:, i18n_scope:, width_class: "w-16", quantity_step: 1, quantity_round: 0) %>
+<%# Une ligne "aliment + quantité + unité" dans une liste imbriquée (nested-form) —
+    partagée entre recipes/_form.html.erb (RecipeItem, grammes entiers) et
+    day_recipes/_customize_modal.html.erb (DayRecipeItem, dixièmes de gramme
+    car issus d'une répartition proportionnelle). %>
 <div class="flex items-start gap-3 py-2 px-1 rounded-lg hover:bg-surface-base/50 transition-colors group"
      data-nested-form-target="item">
 
@@ -8,15 +13,16 @@
        data-food-combobox-food-name-value="<%= f.object.food&.name.to_s %>"
        data-food-combobox-no-results-value="<%= t('views.day_foods.form.no_food_found') %>">
 
-    <%= f.hidden_field :food_id, data: { "food-combobox-target": "hiddenId" } %>
+    <%= f.hidden_field :food_id, data: { "food-combobox-target": "hiddenId", role: "food-id" } %>
 
     <div class="relative">
       <input type="text"
              class="input-dark pl-8 text-sm <%= 'border-status-danger focus:ring-status-danger/50 focus:border-status-danger' if f.object.errors[:food_id].any? %>"
-             placeholder="<%= t("views.recipes.item_fields.search_food") %>"
+             placeholder="<%= t("#{i18n_scope}.search_food") %>"
              autocomplete="off"
              value="<%= f.object.food&.name.to_s %>"
              data-food-combobox-target="input"
+             data-role="food-name"
              data-action="focus->food-combobox#open input->food-combobox#filter keydown->food-combobox#keydown">
       <i class="fas fa-search absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-subtle text-xs pointer-events-none"></i>
     </div>
@@ -24,7 +30,7 @@
     <% if f.object.errors[:food_id].any? %>
       <p class="mt-1 text-xs text-status-danger flex items-center gap-1">
         <i class="fas fa-circle-exclamation text-[10px]"></i>
-        <%= t("views.recipes.item_fields.error_food") %>
+        <%= t("#{i18n_scope}.error_food") %>
       </p>
     <% end %>
 
@@ -36,38 +42,39 @@
   <%# ── Quantité + unité ── %>
   <div class="flex gap-1 shrink-0">
     <%# Nombre %>
-    <div class="w-16">
+    <div class="<%= width_class %>">
       <%= f.number_field :quantity,
-            min: 1, step: 1,
-            value: f.object.quantity.present? ? f.object.quantity.to_i : 100,
+            min: quantity_step, step: quantity_step,
+            value: f.object.quantity.present? ? f.object.quantity.round(quantity_round) : 100,
             class: "input-dark text-sm text-center w-full #{f.object.errors[:quantity].any? ? 'border-status-danger focus:ring-status-danger/50 focus:border-status-danger' : ''}",
-            placeholder: "100" %>
+            placeholder: "100",
+            data: { role: "quantity", action: "keydown.enter->nested-form#preventEnterSubmit" } %>
       <% if f.object.errors[:quantity].any? %>
         <p class="mt-1 text-xs text-status-danger flex items-center gap-1">
           <i class="fas fa-circle-exclamation text-[10px]"></i>
-          <%= t("views.recipes.item_fields.error_quantity") %>
+          <%= t("#{i18n_scope}.error_quantity") %>
         </p>
       <% end %>
     </div>
 
     <%# Sélecteur d'unité %>
-    <div data-controller="unit-select" class="relative shrink-0 w-16">
+    <div data-controller="unit-select" class="relative shrink-0 <%= width_class %>">
       <%= f.hidden_field :unit,
             value: f.object.unit.presence || "g",
-            data: { "unit-select-target": "hiddenInput" } %>
+            data: { "unit-select-target": "hiddenInput", role: "unit-hidden" } %>
 
       <button type="button"
               data-action="click->unit-select#toggle"
               data-unit-select-target="trigger"
               class="input-dark w-full text-sm flex items-center justify-between gap-1 cursor-pointer select-none px-2">
-        <span data-unit-select-target="label" class="text-ink-muted"><%= f.object.unit.presence || "g" %></span>
+        <span data-unit-select-target="label" data-role="unit-label" class="text-ink-muted"><%= f.object.unit.presence || "g" %></span>
         <i class="fas fa-chevron-down text-[10px] text-ink-subtle transition-transform duration-150"
            data-unit-select-target="icon"></i>
       </button>
 
       <div data-unit-select-target="dropdown"
            class="hidden absolute top-full mt-1 left-0 min-w-[4.5rem] bg-surface-raised border border-surface-border/50 rounded-xl shadow-xl overflow-hidden z-50 py-1">
-        <% RecipeItem::UNITS.each do |unit| %>
+        <% unit_class::UNITS.each do |unit| %>
           <button type="button"
                   data-action="click->unit-select#select"
                   data-value="<%= unit %>"
@@ -82,8 +89,9 @@
   <%# ── Supprimer ── %>
   <div class="shrink-0 pt-1.5">
     <button type="button"
-            class="w-8 h-8 flex items-center justify-center rounded-lg text-ink-subtle opacity-0 group-hover:opacity-100 hover:text-status-danger hover:bg-status-danger_dim/20 transition-all"
-            title="<%= t("views.recipes.item_fields.remove") %>"
+            class="w-8 h-8 flex items-center justify-center rounded-lg text-ink-subtle opacity-0 group-hover:opacity-100 hover:text-status-danger hover:bg-status-danger_dim/20 transition-all disabled:group-hover:opacity-30 disabled:cursor-not-allowed disabled:hover:text-ink-subtle disabled:hover:bg-transparent"
+            title="<%= t("#{i18n_scope}.remove") %>"
+            data-role="remove-button"
             data-action="nested-form#remove">
       <i class="fas fa-times text-sm"></i>
     </button>

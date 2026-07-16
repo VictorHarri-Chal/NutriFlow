@@ -75,6 +75,10 @@
               <td class="hidden sm:table-cell">
                 <% if is_recipe?(item) %>
                   <span class="text-brand text-xs font-medium"><%= t("views.components.day_food_group.recipe_label") %></span>
+                  <% if item.customized? %>
+                    <i class="fas fa-sliders text-ink-subtle/70 text-[10px] ml-1"
+                       title="<%= t("views.components.day_food_group.customized_tooltip") %>"></i>
+                  <% end %>
                 <% else %>
                   <span class="text-ink-muted"><%= item.food.brand.presence || "—" %></span>
                 <% end %>

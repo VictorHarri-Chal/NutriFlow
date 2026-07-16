@@ -1,11 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-
-const UNIT_GRAM_MULTIPLIERS = {
-  g:  1,
-  kg: 1000,
-  mL: 1,
-  L:  1000
-}
+import { UNIT_GRAM_MULTIPLIERS } from "unit_conversions"
 
 const MICRONUTRIENT_ORDER = [
   "calcium", "iron", "magnesium", "potassium", "sodium", "zinc", "cholesterol",

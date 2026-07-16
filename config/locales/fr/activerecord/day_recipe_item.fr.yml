@@ -1,0 +1,11 @@
+fr:
+  activerecord:
+    models:
+      day_recipe_item:
+        one: "Ingrédient"
+        other: "Ingrédients"
+    attributes:
+      day_recipe_item:
+        food: "Aliment"
+        quantity: "Quantité"
+        unit: "Unité"

@@ -39,6 +39,10 @@ export default class extends Controller {
     // Lazy build in case connect() ran before the data script was in the DOM
     if (!this._optionsBuilt) this._buildOptions()
 
+    // Recomputed on every open, not cached at connect(): sibling rows can gain
+    // or lose a food between two openings of the same dropdown.
+    this._excludedIds = this._siblingFoodIds()
+
     this._dd.classList.remove("hidden")
     this.filter()
     document.addEventListener("click", this._boundClose)
@@ -49,22 +53,43 @@ export default class extends Controller {
     const allOptions = this._dd.querySelectorAll("[data-combobox-option]")
     const allHeaders = this._dd.querySelectorAll("[data-combobox-header]")
     const empty      = this._dd.querySelector("[data-combobox-empty]")
+    const excluded   = this._excludedIds || new Set()
 
-    if (query === "") {
-      allOptions.forEach(opt => opt.classList.remove("hidden"))
-      allHeaders.forEach(h   => h.classList.remove("hidden"))
-      if (empty) empty.classList.add("hidden")
-      return
-    }
+    allHeaders.forEach(h => h.classList.toggle("hidden", query !== ""))
 
-    allHeaders.forEach(h => h.classList.add("hidden"))
     let visibleCount = 0
     allOptions.forEach(opt => {
-      const match = opt.dataset.name.toLowerCase().includes(query)
-      opt.classList.toggle("hidden", !match)
-      if (match) visibleCount++
+      const matchesQuery = query === "" || opt.dataset.name.toLowerCase().includes(query)
+      const isDuplicate  = excluded.has(parseInt(opt.dataset.id))
+      const visible      = matchesQuery && !isDuplicate
+      opt.classList.toggle("hidden", !visible)
+      if (visible) visibleCount++
     })
     if (empty) empty.classList.toggle("hidden", visibleCount > 0)
+  }
+
+  // Food ids already used by other (non-removed) rows in the same nested-form
+  // list — e.g. the ingredient rows of a recipe or of a personalized recipe's
+  // customize modal — so the same food can't be picked twice. Returns an empty
+  // set for combobox instances that aren't inside such a list (the recipe
+  // picker itself, or a standalone food-log entry).
+  _siblingFoodIds() {
+    const row = this.element.closest('[data-nested-form-target="item"]')
+    const container = row?.parentElement
+    if (!row || !container) return new Set()
+
+    const ids = new Set()
+    container.querySelectorAll('[data-nested-form-target="item"]').forEach(sibling => {
+      if (sibling === row || sibling.style.display === "none") return
+
+      const destroyField = sibling.querySelector('[data-nested-form-target="destroyField"]')
+      if (destroyField && destroyField.value === "1") return
+
+      const hiddenId = sibling.querySelector('[data-food-combobox-target="hiddenId"]')
+      const id = parseInt(hiddenId?.value)
+      if (id) ids.add(id)
+    })
+    return ids
   }
 
   // ── Select ──────────────────────────────────────────────────────
