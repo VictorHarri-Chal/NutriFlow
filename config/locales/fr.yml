@@ -175,6 +175,7 @@ fr:
       page_title: "Calendrier"
       add_recipe: "Ajouter un plat"
       add_food: "Ajouter un aliment"
+      fab_toggle: "Ajouter"
       today: "Aujourd'hui"
       previous_day: "Jour précédent"
       next_day: "Jour suivant"
