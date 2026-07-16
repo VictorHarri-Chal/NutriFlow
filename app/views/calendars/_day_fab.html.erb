@@ -5,6 +5,7 @@
           class: "absolute bottom-0 right-0 flex h-11 w-11 items-center justify-center rounded-full border border-surface-border/40 bg-surface-raised text-ink-subtle shadow-lg transition-all duration-200 ease-out opacity-0 scale-50 translate-x-0 translate-y-0 pointer-events-none hover:text-brand",
           title: t("views.workout_sessions.widget.add_session"),
           aria: { label: t("views.workout_sessions.widget.add_session") },
+          tabindex: "-1",
           data: { fab_target: "item", turbo_frame: "workout_item_form", action: "click->exclusive-frame#clear click->fab#close" } do %>
       <i class="fas fa-dumbbell text-sm" aria-hidden="true"></i>
     <% end %>
@@ -15,6 +16,7 @@
           class: "absolute bottom-0 right-0 flex h-11 w-11 items-center justify-center rounded-full border border-surface-border/40 bg-surface-raised text-ink-subtle shadow-lg transition-all duration-200 ease-out opacity-0 scale-50 translate-x-0 translate-y-0 pointer-events-none hover:text-brand",
           title: t("views.cardio_sessions.widget.add"),
           aria: { label: t("views.cardio_sessions.widget.add") },
+          tabindex: "-1",
           data: { fab_target: "item", turbo_frame: "cardio_item_form", action: "click->exclusive-frame#clear click->fab#close" } do %>
       <i class="fas fa-heart-pulse text-sm" aria-hidden="true"></i>
     <% end %>
@@ -24,6 +26,7 @@
         class: "absolute bottom-0 right-0 flex h-11 w-11 items-center justify-center rounded-full border border-surface-border/40 bg-surface-raised text-ink-subtle shadow-lg transition-all duration-200 ease-out opacity-0 scale-50 translate-x-0 translate-y-0 pointer-events-none hover:text-brand",
         title: t("views.calendars.add_recipe"),
         aria: { label: t("views.calendars.add_recipe") },
+        tabindex: "-1",
         data: { fab_target: "item", turbo_frame: "food_item_form", action: "click->exclusive-frame#clear click->fab#close" } do %>
     <i class="fas fa-utensils text-sm" aria-hidden="true"></i>
   <% end %>
@@ -32,6 +35,7 @@
         class: "absolute bottom-0 right-0 flex h-11 w-11 items-center justify-center rounded-full border border-surface-border/40 bg-surface-raised text-ink-subtle shadow-lg transition-all duration-200 ease-out opacity-0 scale-50 translate-x-0 translate-y-0 pointer-events-none hover:text-brand",
         title: t("views.calendars.add_food"),
         aria: { label: t("views.calendars.add_food") },
+        tabindex: "-1",
         data: { fab_target: "item", turbo_frame: "food_item_form", action: "click->exclusive-frame#clear click->fab#close" } do %>
     <i class="fas fa-apple-whole text-sm" aria-hidden="true"></i>
   <% end %>

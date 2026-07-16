@@ -39,6 +39,7 @@ export default class extends Controller {
       item.style.transitionDelay = "0ms"
       item.classList.remove("opacity-100", "scale-100", "translate-x-[var(--fab-tx)]", "translate-y-[var(--fab-ty)]")
       item.classList.add("opacity-0", "scale-50", "translate-x-0", "translate-y-0", "pointer-events-none")
+      item.setAttribute("tabindex", "-1")
     })
     this._removeListeners()
   }
@@ -51,6 +52,7 @@ export default class extends Controller {
       item.style.transitionDelay = `${index * 40}ms`
       item.classList.remove("opacity-0", "scale-50", "translate-x-0", "translate-y-0", "pointer-events-none")
       item.classList.add("opacity-100", "scale-100", "translate-x-[var(--fab-tx)]", "translate-y-[var(--fab-ty)]")
+      item.removeAttribute("tabindex")
     })
     requestAnimationFrame(() => {
       document.addEventListener("click", this._boundOutsideClick)
