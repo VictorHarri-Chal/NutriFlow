@@ -71,7 +71,8 @@
             <%= t("views.workout_programs.set_editor.rest_label") %>
           </label>
           <%= f.number_field :rest_seconds, min: 0, step: 5,
-                class: "w-full text-xs bg-surface-base border border-surface-border/40 rounded-lg px-3 py-2 text-ink-primary placeholder:text-ink-subtle/40 focus:outline-none focus:border-brand/50 transition-colors" %>
+                class: "w-full text-xs bg-surface-base border border-surface-border/40 rounded-lg px-3 py-2 text-ink-primary placeholder:text-ink-subtle/40 focus:outline-none focus:border-brand/50 transition-colors",
+                data: { controller: "digit-limit", action: "input->digit-limit#limit", digit_limit_max_integer_digits_value: 4 } %>
         </div>
 
         <div class="mt-3">
@@ -79,7 +80,7 @@
             <i class="fas fa-comment-alt text-[9px]"></i>
             <%= t("views.workout_programs.set_editor.notes_label") %>
           </label>
-          <%= f.text_area :notes, rows: 3,
+          <%= f.text_area :notes, rows: 3, maxlength: 500,
                 class: "w-full text-xs bg-surface-base border border-surface-border/40 rounded-lg px-3 py-2 text-ink-primary placeholder:text-ink-subtle/40 focus:outline-none focus:border-brand/50 transition-colors",
                 style: "resize: vertical;" %>
         </div>

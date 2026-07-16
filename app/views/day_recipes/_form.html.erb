@@ -87,12 +87,19 @@
               still submitting its frozen value (a disabled input is dropped from the request
               entirely, which would silently null out the base quantity on every future save). %>
           <%= f.number_field :quantity,
-                min: 1, step: 1,
-                value: day_recipe.new_record? ? nil : day_recipe.quantity.to_i,
+                min: 1, step: 0.1,
+                value: day_recipe.new_record? ? nil : day_recipe.quantity.to_f.round(1),
                 disabled: day_recipe.use_recipe_quantity? && !day_recipe.customized?,
                 readonly: day_recipe.customized?,
                 class: "input-dark text-sm pr-8",
-                data: { "day-recipe-preview-target": "quantity", "day-recipe-customize-target": "quantityInput" } %>
+                data: {
+                  "day-recipe-preview-target": "quantity",
+                  "day-recipe-customize-target": "quantityInput",
+                  controller: "digit-limit",
+                  action: "input->digit-limit#limit",
+                  digit_limit_max_integer_digits_value: 4,
+                  digit_limit_max_decimal_digits_value: 1
+                } %>
           <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">g</span>
         </div>
       </div>

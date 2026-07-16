@@ -7,7 +7,7 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <%= f.input :name,
         label: t("views.profiles.edit.name"),
-        input_html: { class: "input-dark", autocomplete: "off" },
+        input_html: { class: "input-dark", autocomplete: "off", maxlength: 30 },
         label_html: { class: "label-dark" } %>
     <div>
       <%= f.label :date_of_birth, t("views.profiles.edit.date_of_birth"), class: "label-dark block mb-1.5" %>
@@ -40,9 +40,12 @@
       </div>
       <div class="relative">
         <%= f.number_field :weight, step: 0.1, class: "input-dark pr-10",
-            data: { action: "input->water-goal-estimator#update input->goal-rate-estimator#update",
+            data: { controller: "digit-limit",
+                    action: "input->water-goal-estimator#update input->goal-rate-estimator#update input->digit-limit#limit",
                     water_goal_estimator_target: "weightInput",
-                    goal_rate_estimator_target: "weightInput" } %>
+                    goal_rate_estimator_target: "weightInput",
+                    digit_limit_max_integer_digits_value: 3,
+                    digit_limit_max_decimal_digits_value: 1 } %>
         <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">kg</span>
       </div>
     </div>
@@ -50,8 +53,11 @@
       <%= f.label :height, t("views.profiles.edit.height"), class: "label-dark block mb-1.5" %>
       <div class="relative">
         <%= f.number_field :height, step: 0.1, class: "input-dark pr-10",
-          data: { action: "input->goal-rate-estimator#update",
-                  goal_rate_estimator_target: "heightInput" } %>
+          data: { controller: "digit-limit",
+                  action: "input->goal-rate-estimator#update input->digit-limit#limit",
+                  goal_rate_estimator_target: "heightInput",
+                  digit_limit_max_integer_digits_value: 3,
+                  digit_limit_max_decimal_digits_value: 1 } %>
         <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">cm</span>
       </div>
     </div>

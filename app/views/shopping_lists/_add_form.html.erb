@@ -17,6 +17,7 @@
             class: "input-dark w-full pr-4",
             placeholder: t("views.shopping_lists.add_form.placeholder"),
             autocomplete: "off",
+            maxlength: 50,
             data: {
               "shopping-autocomplete-target": "input",
               action: "focus->shopping-autocomplete#focus input->shopping-autocomplete#input keydown->shopping-autocomplete#keydown"
@@ -37,10 +38,14 @@
       <input type="number"
              name="quantity_value"
              min="0"
-             step="1"
+             step="0.1"
              class="input-dark w-16 text-sm text-center"
              placeholder="<%= t('views.shopping_lists.add_form.quantity_placeholder') %>"
-             autocomplete="off">
+             autocomplete="off"
+             data-controller="digit-limit"
+             data-action="input->digit-limit#limit"
+             data-digit-limit-max-integer-digits-value="4"
+             data-digit-limit-max-decimal-digits-value="1">
 
       <div data-controller="unit-select" class="relative shrink-0">
         <button type="button"

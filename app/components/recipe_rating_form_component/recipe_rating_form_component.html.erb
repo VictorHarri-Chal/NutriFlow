@@ -83,6 +83,7 @@
       <%= f.text_area :comment,
                       value: existing_comment,
                       rows: 3,
+                      maxlength: 500,
                       class: "input-dark resize-none text-sm w-full",
                       data: { recipe_rating_target: "commentInput", action: "input->recipe-rating#checkDirty" } %>
 

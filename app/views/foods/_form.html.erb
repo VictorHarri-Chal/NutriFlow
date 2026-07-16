@@ -23,13 +23,13 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
       <%= f.input :name,
                   label: t("activerecord.attributes.food.name"),
-                  input_html: { class: "input-dark", autocomplete: "off", autofocus: true,
+                  input_html: { class: "input-dark", autocomplete: "off", autofocus: true, maxlength: 50,
                                 data: { "food-preview-target": "nameField" } },
                   label_html: { class: "label-dark" } %>
       <%= f.input :brand,
                   label: t("activerecord.attributes.food.brand"),
                   required: false,
-                  input_html: { class: "input-dark", autocomplete: "off",
+                  input_html: { class: "input-dark", autocomplete: "off", maxlength: 50,
                                 data: { "food-preview-target": "brandField" } },
                   label_html: { class: "label-dark" } %>
     </div>
@@ -44,7 +44,9 @@
       <%# Calories ── pleine largeur %>
       <%= f.input :calories,
                   label: t("activerecord.attributes.food.calories"),
-                  input_html: { class: "input-dark", step: 1, data: { "food-preview-target": "calories" } },
+                  input_html: { class: "input-dark", step: 1,
+                                data: { "food-preview-target": "calories", controller: "digit-limit", action: "input->digit-limit#limit",
+                                        digit_limit_max_integer_digits_value: 4 } },
                   label_html: { class: "label-dark" },
                   append: "kcal" %>
 
@@ -53,25 +55,33 @@
         <%= f.input :proteins,
                     label: t("activerecord.attributes.food.proteins"),
                     required: false,
-                    input_html: { class: "input-dark", step: 0.1, data: { "food-preview-target": "proteins" } },
+                    input_html: { class: "input-dark", step: 0.1,
+                                  data: { "food-preview-target": "proteins", controller: "digit-limit", action: "input->digit-limit#limit",
+                                          digit_limit_max_integer_digits_value: 4, digit_limit_max_decimal_digits_value: 1 } },
                     label_html: { class: "label-dark" },
                     append: "g" %>
         <%= f.input :carbs,
                     label: t("activerecord.attributes.food.carbs"),
                     required: false,
-                    input_html: { class: "input-dark", step: 0.1, data: { "food-preview-target": "carbs" } },
+                    input_html: { class: "input-dark", step: 0.1,
+                                  data: { "food-preview-target": "carbs", controller: "digit-limit", action: "input->digit-limit#limit",
+                                          digit_limit_max_integer_digits_value: 4, digit_limit_max_decimal_digits_value: 1 } },
                     label_html: { class: "label-dark" },
                     append: "g" %>
         <%= f.input :fats,
                     label: t("activerecord.attributes.food.fats"),
                     required: false,
-                    input_html: { class: "input-dark", step: 0.1, data: { "food-preview-target": "fats" } },
+                    input_html: { class: "input-dark", step: 0.1,
+                                  data: { "food-preview-target": "fats", controller: "digit-limit", action: "input->digit-limit#limit",
+                                          digit_limit_max_integer_digits_value: 4, digit_limit_max_decimal_digits_value: 1 } },
                     label_html: { class: "label-dark" },
                     append: "g" %>
         <%= f.input :sugars,
                     label: t("activerecord.attributes.food.sugars"),
                     required: false,
-                    input_html: { class: "input-dark", step: 0.1, data: { "food-preview-target": "sugars" } },
+                    input_html: { class: "input-dark", step: 0.1,
+                                  data: { "food-preview-target": "sugars", controller: "digit-limit", action: "input->digit-limit#limit",
+                                          digit_limit_max_integer_digits_value: 4, digit_limit_max_decimal_digits_value: 1 } },
                     label_html: { class: "label-dark" },
                     append: "g" %>
       </div>
@@ -82,21 +92,24 @@
                     label: t("views.foods.show.nutrients.fiber"),
                     required: false,
                     input_html: { class: "input-dark", step: 0.1,
-                                  data: { "food-off-search-target": "fiberField" } },
+                                  data: { "food-off-search-target": "fiberField", controller: "digit-limit", action: "input->digit-limit#limit",
+                                          digit_limit_max_integer_digits_value: 4, digit_limit_max_decimal_digits_value: 1 } },
                     label_html: { class: "label-dark" },
                     append: "g" %>
         <%= f.input :saturated_fat,
                     label: t("views.foods.show.nutrients.saturated_fat"),
                     required: false,
                     input_html: { class: "input-dark", step: 0.1,
-                                  data: { "food-off-search-target": "saturatedFatField" } },
+                                  data: { "food-off-search-target": "saturatedFatField", controller: "digit-limit", action: "input->digit-limit#limit",
+                                          digit_limit_max_integer_digits_value: 4, digit_limit_max_decimal_digits_value: 1 } },
                     label_html: { class: "label-dark" },
                     append: "g" %>
         <%= f.input :salt,
                     label: t("views.foods.show.nutrients.salt"),
                     required: false,
                     input_html: { class: "input-dark", step: 0.01,
-                                  data: { "food-off-search-target": "saltField" } },
+                                  data: { "food-off-search-target": "saltField", controller: "digit-limit", action: "input->digit-limit#limit",
+                                          digit_limit_max_integer_digits_value: 4, digit_limit_max_decimal_digits_value: 2 } },
                     label_html: { class: "label-dark" },
                     append: "g" %>
       </div>

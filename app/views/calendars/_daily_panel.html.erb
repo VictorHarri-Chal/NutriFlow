@@ -127,7 +127,9 @@
                          min="0" max="99999" step="1"
                          placeholder="<%= tdee_breakdown[:steps_count] %>"
                          class="w-20 bg-surface-base border border-surface-border rounded-lg px-2 py-1 text-xs text-ink-primary focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand"
-                         data-action="change->auto-save#save blur->auto-save#save">
+                         data-controller="digit-limit"
+                         data-digit-limit-max-integer-digits-value="5"
+                         data-action="change->auto-save#save blur->auto-save#save input->digit-limit#limit">
                   <span class="text-ink-subtle text-[10px]"><%= t("views.calendars.breakdown.steps_unit") %></span>
                 </div>
               <% end %>

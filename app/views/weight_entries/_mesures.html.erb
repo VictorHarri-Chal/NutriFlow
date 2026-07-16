@@ -146,7 +146,14 @@
                   value: @today_measurement.public_send(field),
                   placeholder: measurement_placeholder(field, current_user),
                   class: "input-dark pr-10",
-                  data: { "body-measurement-form-target": "field", field: field } %>
+                  data: {
+                    controller: "digit-limit",
+                    action: "input->digit-limit#limit",
+                    "body-measurement-form-target": "field",
+                    field: field,
+                    digit_limit_max_integer_digits_value: 3,
+                    digit_limit_max_decimal_digits_value: 1
+                  } %>
               <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-subtle">cm</span>
             </div>
           </div>

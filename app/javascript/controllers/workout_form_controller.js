@@ -240,6 +240,9 @@ export default class extends Controller {
             <input type="number"
                    name="workout_session[workout_sets_attributes][${firstSetIdx}][rest_seconds]"
                    min="0" step="5"
+                   data-controller="digit-limit"
+                   data-action="input->digit-limit#limit"
+                   data-digit-limit-max-integer-digits-value="4"
                    class="w-full pr-7 text-[11px] bg-transparent border border-transparent rounded px-1 py-0.5 text-ink-muted placeholder:text-ink-subtle/30 hover:border-surface-border/50 focus:border-brand/40 focus:outline-none focus:bg-surface-hover transition-colors cursor-text">
             <span class="absolute right-1.5 top-1/2 -translate-y-1/2 text-[9px] text-ink-subtle/30 pointer-events-none">sec</span>
           </div>
@@ -272,11 +275,17 @@ export default class extends Controller {
       <div class="grid grid-cols-[16px_1fr_1fr_28px_20px] gap-2 items-center">
         <span class="text-xs text-ink-subtle set-number"></span>
         <input type="number" name="workout_session[workout_sets_attributes][${idx}][weight_kg]"
-               data-action="input->workout-form#checkPr"
+               data-controller="digit-limit"
+               data-action="input->workout-form#checkPr input->digit-limit#limit"
+               data-digit-limit-max-integer-digits-value="4"
+               data-digit-limit-max-decimal-digits-value="1"
                placeholder="0" min="0" step="0.5" value="${opts.weightKg != null ? opts.weightKg : ''}"
                class="input-dark text-sm py-1.5 cursor-text">
         <input type="number" name="workout_session[workout_sets_attributes][${idx}][reps]"
                value="${opts.reps != null ? opts.reps : 10}" min="0" step="1"
+               data-controller="digit-limit"
+               data-action="input->digit-limit#limit"
+               data-digit-limit-max-integer-digits-value="4"
                class="input-dark text-sm py-1.5 cursor-text">
         <span data-pr-badge
               class="hidden flex items-center justify-center text-[9px] font-bold text-brand bg-brand/10 border border-brand/30 rounded px-1.5 py-0.5 leading-none whitespace-nowrap">

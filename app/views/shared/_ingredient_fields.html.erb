@@ -43,12 +43,18 @@
   <div class="flex gap-1 shrink-0">
     <%# Nombre %>
     <div class="<%= width_class %>">
+      <%
+        quantity_data = { role: "quantity", controller: "digit-limit",
+                          action: "keydown.enter->nested-form#preventEnterSubmit input->digit-limit#limit",
+                          digit_limit_max_integer_digits_value: 4,
+                          digit_limit_max_decimal_digits_value: 1 }
+      %>
       <%= f.number_field :quantity,
             min: quantity_step, step: quantity_step,
             value: f.object.quantity.present? ? f.object.quantity.round(quantity_round) : 100,
             class: "input-dark text-sm text-center w-full #{f.object.errors[:quantity].any? ? 'border-status-danger focus:ring-status-danger/50 focus:border-status-danger' : ''}",
             placeholder: "100",
-            data: { role: "quantity", action: "keydown.enter->nested-form#preventEnterSubmit" } %>
+            data: quantity_data %>
       <% if f.object.errors[:quantity].any? %>
         <p class="mt-1 text-xs text-status-danger flex items-center gap-1">
           <i class="fas fa-circle-exclamation text-[10px]"></i>

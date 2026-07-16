@@ -53,10 +53,16 @@
         <label class="label-dark block mb-1.5"><%= t("shared.quantity") %></label>
         <div class="relative">
           <%= f.number_field :quantity,
-                min: 1, step: 1,
-                value: day_food.new_record? ? nil : day_food.quantity.to_i,
+                min: 1, step: 0.1,
+                value: day_food.new_record? ? nil : day_food.quantity.to_f.round(1),
                 class: "input-dark text-sm pr-8",
-                data: { "day-food-preview-target": "quantity" } %>
+                data: {
+                  "day-food-preview-target": "quantity",
+                  controller: "digit-limit",
+                  action: "input->digit-limit#limit",
+                  digit_limit_max_integer_digits_value: 4,
+                  digit_limit_max_decimal_digits_value: 1
+                } %>
           <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">g</span>
         </div>
       </div>

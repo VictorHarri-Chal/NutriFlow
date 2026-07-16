@@ -24,7 +24,7 @@
       <%# Nom %>
       <div class="mb-4">
         <%= f.label :name, t("views.exercises.custom.fields.name"), class: "label-dark block mb-1.5" %>
-        <%= f.text_field :name, class: "input-dark cursor-text", autocomplete: "off" %>
+        <%= f.text_field :name, class: "input-dark cursor-text", autocomplete: "off", maxlength: 50 %>
       </div>
 
       <%# Image %>
@@ -126,7 +126,8 @@
           <%= f.text_field :secondary_muscles_raw,
               value: Array(exercise.secondary_muscles).join(", "),
               class: "input-dark cursor-text",
-              autocomplete: "off" %>
+              autocomplete: "off",
+              maxlength: 100 %>
           <p class="text-xs text-ink-subtle/60 mt-1"><%= t("views.exercises.custom.fields.secondary_muscles_hint") %></p>
         </div>
 
@@ -196,14 +197,14 @@
       <%# Description %>
       <div class="mb-4">
         <%= f.label :description, t("views.exercises.custom.fields.description"), class: "label-dark block mb-1.5" %>
-        <%= f.text_area :description, rows: 3, class: "input-dark resize-none cursor-text" %>
+        <%= f.text_area :description, rows: 3, maxlength: 2000, class: "input-dark resize-none cursor-text" %>
       </div>
 
       <%# Instructions %>
       <div>
         <%= f.label :instructions, t("views.exercises.custom.fields.instructions"), class: "label-dark block mb-1.5" %>
         <p class="text-xs text-ink-subtle/60 mb-1.5"><%= t("views.exercises.custom.fields.instructions_hint") %></p>
-        <%= f.text_area :instructions, rows: 6, class: "input-dark resize-none cursor-text" %>
+        <%= f.text_area :instructions, rows: 6, maxlength: 2000, class: "input-dark resize-none cursor-text" %>
       </div>
     </div>
 

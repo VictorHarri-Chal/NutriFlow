@@ -7,7 +7,7 @@
 
   <div>
     <%= f.label :name, t("views.workout_programs.form.name"), class: "label-dark block mb-1" %>
-    <%= f.text_field :name, class: "input-dark", placeholder: t("views.workout_programs.form.name_placeholder"), autofocus: true %>
+    <%= f.text_field :name, class: "input-dark", placeholder: t("views.workout_programs.form.name_placeholder"), autofocus: true, maxlength: 50 %>
   </div>
 
   <div>
