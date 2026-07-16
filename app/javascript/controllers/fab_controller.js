@@ -6,7 +6,7 @@ import { Controller } from "@hotwired/stimulus"
 // actually rendered (2-4, depending on server-side conditionals).
 const ARC_START_DEG = 90
 const ARC_END_DEG = 180
-const RADIUS_PX = 92
+const RADIUS_PX = 104
 
 export default class extends Controller {
   static targets = ["button", "icon", "item"]
