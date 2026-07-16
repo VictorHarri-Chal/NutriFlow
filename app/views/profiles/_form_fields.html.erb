@@ -25,10 +25,10 @@
     <p class="text-xs text-ink-subtle mb-4"><%= t("views.profiles.edit.job_activity_level_hint") %></p>
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
       <% [
-        { value: "desk_job",       icon: "fa-laptop",         kcal: 150 },
-        { value: "light_activity", icon: "fa-shoe-prints",    kcal: 300 },
-        { value: "standing_job",   icon: "fa-person-walking", kcal: 500 },
-        { value: "physical_job",   icon: "fa-hard-hat",       kcal: 800 }
+        { value: "desk_job",       icon: "fa-laptop" },
+        { value: "light_activity", icon: "fa-person" },
+        { value: "standing_job",   icon: "fa-person-walking" },
+        { value: "physical_job",   icon: "fa-hard-hat" }
       ].each do |opt| %>
         <label class="cursor-pointer">
           <%= f.radio_button :job_activity_level, opt[:value], class: "sr-only peer",
@@ -38,11 +38,13 @@
                        hover:border-brand/30 hover:text-ink-primary
                        peer-checked:bg-brand/10 peer-checked:border-brand peer-checked:text-brand">
             <i class="fas <%= opt[:icon] %> text-xl"></i>
-            <span class="text-xs font-semibold leading-tight">
+            <span class="text-xs font-semibold leading-tight min-h-9 flex items-center justify-center">
               <%= t("enumerize.profile.job_activity_level.#{opt[:value]}") %>
             </span>
-            <span class="text-[10px] text-ink-subtle/60 peer-checked:text-brand/60">
-              +<%= opt[:kcal] %> kcal
+            <span class="text-[10px] text-ink-subtle/60 peer-checked:text-brand/60 leading-tight">
+              +<%= Profile::JOB_NEAT_KCAL[opt[:value].to_sym] %> kcal<br>
+              <%= t("views.profiles.edit.job_activity_steps_included",
+                    count: number_with_delimiter(Profile::JOB_BASELINE_STEPS[opt[:value].to_sym])) %>
             </span>
           </span>
         </label>

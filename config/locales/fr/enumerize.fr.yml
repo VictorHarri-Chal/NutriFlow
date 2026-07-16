@@ -6,10 +6,10 @@ fr:
         female: "Femme"
         other: "Autre"
       job_activity_level:
-        desk_job: "Sédentaire"
-        light_activity: "Peu actif"
-        standing_job: "Modérément actif"
-        physical_job: "Très actif"
+        desk_job: "Poste assis"
+        light_activity: "Debout, sans effort"
+        standing_job: "Debout, avec déplacements"
+        physical_job: "Port de charges"
       goal:
         weight_loss: "Perte de poids"
         maintenance: "Maintien"

@@ -15,6 +15,18 @@ class Profile < ApplicationRecord
     physical_job:   800
   }.freeze
 
+  # Average daily steps already assumed by each job category — used to avoid
+  # double-counting the same walking when the user also logs real steps.
+  # Independent from JOB_NEAT_KCAL (not derived from it): a literal inverse
+  # calculation would give unrealistic thresholds (~20 000 steps for
+  # physical_job), making the steps field useless for the most active users.
+  JOB_BASELINE_STEPS = {
+    desk_job:       4_000,
+    light_activity: 6_500,
+    standing_job:   9_000,
+    physical_job:   12_000
+  }.freeze
+
   # kcal burned per step, normalised to 70 kg reference body weight
   # Derived from MET 3.5 (walking) × 0.04 kcal/step base
   KCAL_PER_STEP_AT_70KG = 0.04
@@ -128,17 +140,41 @@ class Profile < ApplicationRecord
     (steps_count.to_i * KCAL_PER_STEP_AT_70KG * (weight.to_f / 70.0)).round
   end
 
-  # Total Daily Energy Expenditure for a given Day record
-  # TDEE = BMR + job_neat + steps_neat + workout_kcal
-  def tdee(day:)
+  # Kcal from the day's steps beyond the average already assumed by the
+  # selected job category — see JOB_BASELINE_STEPS. Never negative: a day
+  # below the job's average simply earns zero extra credit, no penalty.
+  def steps_neat_kcal(steps_count)
+    baseline = JOB_BASELINE_STEPS[job_activity_level&.to_sym] || JOB_BASELINE_STEPS[:light_activity]
+    excess   = [steps_count.to_i - baseline, 0].max
+    neat_from_steps(excess)
+  end
+
+  # Full TDEE decomposition for a given Day record. The only place the
+  # formula is implemented — CalendarDataLoader delegates here instead of
+  # recomputing it, so the two can never silently drift apart.
+  # TDEE = BMR + job_neat + steps_neat (excess over job baseline) + workout_kcal
+  def tdee_breakdown(day:)
     return nil unless bmr
 
-    job_neat    = JOB_NEAT_KCAL[job_activity_level.to_sym] || JOB_NEAT_KCAL[:light_activity]
-    steps       = day.effective_steps(self)
-    steps_kcal  = neat_from_steps(steps)
+    job_neat     = JOB_NEAT_KCAL[job_activity_level.to_sym] || JOB_NEAT_KCAL[:light_activity]
+    steps_count  = day.effective_steps(self)
+    steps_kcal   = steps_neat_kcal(steps_count)
     workout_kcal = day.workout_calories_total
 
-    bmr + job_neat + steps_kcal + workout_kcal
+    {
+      bmr:          bmr,
+      job_neat:     job_neat,
+      steps_kcal:   steps_kcal,
+      steps_count:  steps_count,
+      steps_custom: day.steps.present?,
+      workout_kcal: workout_kcal,
+      tdee:         bmr + job_neat + steps_kcal + workout_kcal
+    }
+  end
+
+  # Total Daily Energy Expenditure for a given Day record
+  def tdee(day:)
+    tdee_breakdown(day: day)&.fetch(:tdee)
   end
 
   # Final calorie target for the day, adjusted for goal
@@ -154,7 +190,7 @@ class Profile < ApplicationRecord
     return nil unless bmr
 
     job_neat   = JOB_NEAT_KCAL[job_activity_level.to_sym] || JOB_NEAT_KCAL[:light_activity]
-    steps_kcal = neat_from_steps(default_daily_steps || 6_000)
+    steps_kcal = steps_neat_kcal(default_daily_steps || 6_000)
     bmr + job_neat + steps_kcal
   end
 
@@ -296,8 +332,17 @@ class Profile < ApplicationRecord
     day ? daily_calorie_target(day: day) : calories_needed_for_goal
   end
 
+  # Re-syncs to the new job's baseline when the job changes and the user
+  # didn't also type an explicit steps value in that same update — otherwise
+  # a profile auto-created blank at signup (job defaults to light_activity,
+  # see db/schema.rb) would keep light_activity's baseline forever once the
+  # user picks their real job on the profile edit form (onboarding itself
+  # never collects job_activity_level — see OnboardingController).
   def set_default_steps
-    self.default_daily_steps = 6_000 if default_daily_steps.nil?
+    return unless default_daily_steps.blank? || (job_activity_level_changed? && !default_daily_steps_changed?)
+
+    self.default_daily_steps = JOB_BASELINE_STEPS[job_activity_level&.to_sym] ||
+                                JOB_BASELINE_STEPS[:light_activity]
   end
 
   # water_goal_ml is NOT NULL at the DB level — clearing the field in the

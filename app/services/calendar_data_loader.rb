@@ -59,28 +59,13 @@ class CalendarDataLoader
   # ── Profile & goals ──────────────────────────────────────────────────────────
 
   def load_profile_goals
-    @profile    = @user.profile
+    @profile     = @user.profile
     @has_foods   = @user.foods.exists?
     @has_recipes = @user.recipes.exists?
 
-    effective_steps  = @day.effective_steps(@profile)
-    job_neat         = Profile::JOB_NEAT_KCAL[@profile.job_activity_level.to_sym] ||
-                       Profile::JOB_NEAT_KCAL[:light_activity]
-    steps_kcal       = @profile.neat_from_steps(effective_steps)
-    workout_kcal     = @day.workout_calories_total
-    tdee             = @profile.bmr + job_neat + steps_kcal + workout_kcal
-    goal_delta       = @profile.daily_calorie_delta
-
-    @tdee_breakdown = {
-      bmr:          @profile.bmr,
-      job_neat:     job_neat,
-      steps_kcal:   steps_kcal,
-      steps_count:  effective_steps,
-      steps_custom: @day.steps.present?,
-      workout_kcal: workout_kcal,
-      tdee:         tdee,
-      goal_delta:   goal_delta
-    }
+    goal_delta      = @profile.daily_calorie_delta
+    @tdee_breakdown = @profile.tdee_breakdown(day: @day).merge(goal_delta: goal_delta)
+    tdee            = @tdee_breakdown[:tdee]
 
     @daily_calorie_goal = (tdee + goal_delta).round
     @daily_protein_goal = @profile.daily_protein_goal
