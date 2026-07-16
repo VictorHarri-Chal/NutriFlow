@@ -42,6 +42,10 @@ function show(e) {
     tip.style.display = 'block'
     tip.style.opacity = '0'
     tip.style.transform = 'translateY(4px)'
+    // Reset left so a stale value from the previous tooltip can't constrain
+    // the shrink-to-fit width measurement below (opacity is still 0, so this
+    // is never visible).
+    tip.style.left = '0px'
 
     // Two-frame render so the browser has sized the tooltip before positioning
     requestAnimationFrame(() => {
