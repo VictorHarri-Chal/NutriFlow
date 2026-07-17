@@ -10,7 +10,11 @@ class WorkoutProgramsController < ApplicationController
   end
 
   def show
-    @program_days = @program.program_days.includes(program_exercises: [:exercise, :program_exercise_sets])
+    ActiveRecord::Associations::Preloader.new(
+      records: [@program],
+      associations: { program_days: { program_exercises: [:exercise, :program_exercise_sets] } }
+    ).call
+    @program_days = @program.program_days
   end
 
   def new
