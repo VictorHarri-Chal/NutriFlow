@@ -1026,7 +1026,6 @@ fr:
         open_button: "Répartition"
         title: "Répartition étirement / contraction"
         hint: "Sur l'ensemble du programme"
-        stats: "%{exercise_count} exercices · %{body_part_count} groupes musculaires travaillés"
         coverage_title: "Groupes travaillés"
         no_exercises: "Ajoute des exercices à ton programme pour voir cet aperçu."
         no_classified: "Aucun exercice de ce programme n'est encore classé étirement/contraction."

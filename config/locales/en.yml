@@ -1026,7 +1026,6 @@ en:
         open_button: "Balance"
         title: "Stretch / contraction balance"
         hint: "Across the whole program"
-        stats: "%{exercise_count} exercises · %{body_part_count} muscle groups worked"
         coverage_title: "Muscle groups worked"
         no_exercises: "Add exercises to your program to see this overview."
         no_classified: "No exercise in this program is classified stretch/contraction yet."
