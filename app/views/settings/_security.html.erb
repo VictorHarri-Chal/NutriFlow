@@ -130,7 +130,7 @@
       <%= button_to t("views.settings.security.reset_data_button"),
                     reset_data_setting_path,
                     method: :delete,
-                    class: "btn-danger shrink-0 text-sm cursor-pointer",
+                    class: "btn-danger shrink-0 w-36 text-center text-sm cursor-pointer",
                     data: {
                       action: "click->confirm#show",
                       confirm_message: t("views.settings.security.reset_data_warning"),
@@ -150,7 +150,7 @@
       <%= button_to t("views.settings.security.delete_account_button"),
                     registration_path(:user),
                     method: :delete,
-                    class: "btn-danger shrink-0 text-sm cursor-pointer",
+                    class: "btn-danger shrink-0 w-36 text-center text-sm cursor-pointer",
                     data: {
                       action: "click->confirm#show",
                       confirm_message: t("views.settings.security.delete_account_warning"),
