@@ -1145,6 +1145,12 @@ fr:
         plyometrics: "Pliométrie"
         balance: "Équilibre"
         rehabilitation: "Rééducation"
+      tension_profile:
+        stretch: "Étirement"
+        contraction: "Contraction"
+        tooltip:
+          stretch: "Cet exercice sollicite le muscle en position étirée, sous charge. À combiner dans la semaine avec un exercice à dominante contraction pour un travail complet du groupe musculaire."
+          contraction: "Cet exercice sollicite le muscle en position raccourcie/contractée. À combiner dans la semaine avec un exercice à dominante étirement pour un travail complet du groupe musculaire."
       show:
         muscles: "Muscles"
         primary_muscle: "Muscle principal"

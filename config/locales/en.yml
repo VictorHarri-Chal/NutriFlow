@@ -1145,6 +1145,12 @@ en:
         plyometrics: "Plyometrics"
         balance: "Balance"
         rehabilitation: "Rehabilitation"
+      tension_profile:
+        stretch: "Stretch"
+        contraction: "Contraction"
+        tooltip:
+          stretch: "This exercise loads the muscle in a lengthened position under tension. Pair it during the week with a contraction-biased exercise for complete muscle development."
+          contraction: "This exercise loads the muscle in a shortened/contracted position. Pair it during the week with a stretch-biased exercise for complete muscle development."
       show:
         muscles: "Muscles"
         primary_muscle: "Primary muscle"

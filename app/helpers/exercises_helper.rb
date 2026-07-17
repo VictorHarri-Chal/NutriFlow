@@ -9,6 +9,23 @@ module ExercisesHelper
     DIFFICULTY_CLASSES[difficulty.to_s.downcase] || "bg-surface-hover text-ink-muted border border-surface-border/40"
   end
 
+  # Font Awesome icon per tension profile — "mixed" is intentionally excluded,
+  # the pill is never rendered for it (see #tension_profile_visible?).
+  TENSION_PROFILE_ICONS = {
+    "stretch"     => "fa-expand",
+    "contraction" => "fa-compress",
+  }.freeze
+
+  def tension_profile_icon(tension_profile)
+    TENSION_PROFILE_ICONS.fetch(tension_profile.to_s, "fa-expand")
+  end
+
+  # Only stretch/contraction are shown — "mixed" (the default for compound
+  # movements) and nil (not yet classified) are not informative to the user.
+  def tension_profile_visible?(tension_profile)
+    tension_profile.to_s.in?(%w[stretch contraction])
+  end
+
   # Translate a body_part value (e.g. "upper arms") using the i18n locale file.
   # Falls back to the raw string if no key is found.
   def t_body_part(body_part)

@@ -80,6 +80,13 @@
               <%= t_category(@exercise.category) %>
             </span>
           <% end %>
+          <% if tension_profile_visible?(@exercise.tension_profile) %>
+            <span class="px-2.5 py-1 bg-surface-hover text-ink-muted border border-surface-border/40 rounded-lg text-xs inline-flex items-center gap-1.5"
+                  title="<%= t("views.exercises.tension_profile.tooltip.#{@exercise.tension_profile}") %>">
+              <i class="fas <%= tension_profile_icon(@exercise.tension_profile) %> text-[10px] opacity-70"></i>
+              <%= t("views.exercises.tension_profile.#{@exercise.tension_profile}") %>
+            </span>
+          <% end %>
         </div>
       </div>
 
