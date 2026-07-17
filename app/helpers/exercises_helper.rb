@@ -17,7 +17,7 @@ module ExercisesHelper
   }.freeze
 
   def tension_profile_icon(tension_profile)
-    TENSION_PROFILE_ICONS.fetch(tension_profile.to_s, "fa-expand")
+    TENSION_PROFILE_ICONS.fetch(tension_profile.to_s)
   end
 
   # Only stretch/contraction are shown — "mixed" (the default for compound
