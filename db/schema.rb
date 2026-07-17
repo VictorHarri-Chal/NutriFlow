@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_16_225833) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_17_103640) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -190,6 +190,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_16_225833) do
     t.text "name_fr"
     t.text "description_fr"
     t.text "instructions_fr"
+    t.string "tension_profile"
     t.index ["body_part"], name: "index_exercises_on_body_part"
     t.index ["custom_user_id"], name: "index_exercises_on_custom_user_id"
     t.index ["exercise_id"], name: "index_exercises_on_exercise_id", unique: true

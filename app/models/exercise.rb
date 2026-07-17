@@ -1,5 +1,8 @@
 class Exercise < ApplicationRecord
+  extend Enumerize
   include PgSearch::Model
+
+  TENSION_PROFILES = %i[stretch contraction mixed].freeze
 
   belongs_to :custom_user, class_name: "User", foreign_key: :custom_user_id, optional: true
   has_one_attached :image do |attachable|
@@ -7,6 +10,8 @@ class Exercise < ApplicationRecord
     attachable.variant :medium,    resize_to_limit: [800, 800]
   end
   has_many :exercise_favorites, dependent: :destroy
+
+  enumerize :tension_profile, in: TENSION_PROFILES
 
   validates :exercise_id, presence: true, uniqueness: true
   validates :name, presence: true
