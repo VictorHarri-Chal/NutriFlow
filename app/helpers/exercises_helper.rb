@@ -81,5 +81,4 @@ module ExercisesHelper
   def exercise_instructions(exercise)
     (I18n.locale == :fr && exercise.instructions_fr.present?) ? exercise.instructions_fr : exercise.instructions
   end
-
 end
