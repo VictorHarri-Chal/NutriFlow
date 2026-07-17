@@ -25,6 +25,7 @@ fr:
       preferences_updated: "Préférences mises à jour."
       preferences_error: "Erreur lors de la mise à jour des préférences."
       other_sessions_signed_out: "Les autres appareils ont été déconnectés."
+      data_reset: "Toutes vos données ont été supprimées. Vous pouvez recommencer l'onboarding."
     foods:
       created: "Aliment créé avec succès."
       updated: "Aliment mis à jour avec succès."
@@ -813,6 +814,9 @@ fr:
         confirm_password: "Confirmer le nouveau mot de passe"
         confirm_password_placeholder: "Confirmez votre nouveau mot de passe"
         update_password: "Mettre à jour le mot de passe"
+        reset_data: "Réinitialiser mes données"
+        reset_data_warning: "Cette action est irréversible. Tous vos aliments, recettes, entraînements, programmes, listes de courses et votre calendrier seront définitivement supprimés, et vous repartirez de l'onboarding. Votre compte reste actif."
+        reset_data_button: "Réinitialiser mes données"
         delete_account: "Supprimer mon compte"
         delete_account_warning: "Cette action est irréversible. Toutes vos données seront définitivement supprimées."
         delete_account_button: "Supprimer le compte"

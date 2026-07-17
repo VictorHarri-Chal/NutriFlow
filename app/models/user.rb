@@ -55,6 +55,27 @@ class User < ApplicationRecord
     update!(session_token: generate_session_token)
   end
 
+  # Wipes every owned record but keeps the account itself (login, email,
+  # preferences). Same destruction order as the has_many declarations above,
+  # for the same reasons.
+  def reset_all_data!
+    transaction do
+      profile.destroy
+      days.destroy_all
+      recipes.destroy_all
+      shopping_lists.destroy_all
+      food_labels.destroy_all
+      foods.destroy_all
+      day_food_groups.destroy_all
+      weight_entries.destroy_all
+      body_measurements.destroy_all
+      exercise_favorites.destroy_all
+      workout_programs.destroy_all
+      exercises.destroy_all
+      create_profile!
+    end
+  end
+
   private
 
   def create_profile

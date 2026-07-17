@@ -32,6 +32,7 @@ Rails.application.routes.draw do
   resource :setting, only: [:show, :update] do
     patch :update_preferences
     delete :sign_out_other_sessions
+    delete :reset_data
   end
   resources :day_food_groups, only: [:create, :edit, :update, :destroy]
   resources :food_labels, only: [:create, :edit, :update, :destroy]

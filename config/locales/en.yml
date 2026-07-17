@@ -25,6 +25,7 @@ en:
       preferences_updated: "Preferences updated."
       preferences_error: "Error updating preferences."
       other_sessions_signed_out: "Other devices have been signed out."
+      data_reset: "All your data has been deleted. You can start onboarding again."
     foods:
       created: "Food created successfully."
       updated: "Food updated successfully."
@@ -813,6 +814,9 @@ en:
         confirm_password: "Confirm new password"
         confirm_password_placeholder: "Confirm your new password"
         update_password: "Update password"
+        reset_data: "Reset my data"
+        reset_data_warning: "This action is irreversible. All your foods, recipes, workouts, programs, shopping lists and your calendar will be permanently deleted, and you'll start onboarding again. Your account stays active."
+        reset_data_button: "Reset my data"
         delete_account: "Delete my account"
         delete_account_warning: "This action is irreversible. All your data will be permanently deleted."
         delete_account_button: "Delete account"

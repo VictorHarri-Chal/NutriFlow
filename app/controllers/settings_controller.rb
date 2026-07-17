@@ -38,6 +38,11 @@ class SettingsController < ApplicationController
     redirect_to setting_path(tab: 'security'), notice: t("controllers.settings.other_sessions_signed_out")
   end
 
+  def reset_data
+    current_user.reset_all_data!
+    redirect_to root_path, notice: t("controllers.settings.data_reset")
+  end
+
   private
 
   def general_params
