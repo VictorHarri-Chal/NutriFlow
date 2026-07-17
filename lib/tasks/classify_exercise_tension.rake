@@ -25,7 +25,10 @@ namespace :exercises do
 
     rows.each do |row|
       label = row["tension"].to_s.strip
-      next if label.empty? && (skipped_blank += 1) # leave tension_profile nil, matches "never guess"
+      if label.empty?
+        skipped_blank += 1
+        next # leave tension_profile nil, matches "never guess"
+      end
 
       profile = LABEL_TO_PROFILE.fetch(label) { raise "Unknown tension label #{label.inspect} for #{row['exercise_id']}" }
 
