@@ -20,6 +20,18 @@ class WorkoutProgram < ApplicationRecord
     update!(is_active: true)
   end
 
+  # Aggregates every ProgramExercise's Exercise#tension_profile across all
+  # ProgramDays, grouped by body_part. Relies on program_days (and its nested
+  # program_exercises: :exercise) already being eager-loaded by the caller —
+  # never queries directly, to avoid N+1 on the program show page.
+  def tension_balance
+    program_exercises = program_days.flat_map(&:program_exercises).select { |pe| pe.exercise.body_part.present? }
+
+    program_exercises.group_by { |pe| pe.exercise.body_part }.transform_values do |pes|
+      pes.group_by { |pe| pe.exercise.tension_profile }.transform_values(&:size)
+    end
+  end
+
   private
 
   def deactivate_others
