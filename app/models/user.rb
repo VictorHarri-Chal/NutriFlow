@@ -16,18 +16,24 @@ class User < ApplicationRecord
   validates :locale, inclusion: { in: AVAILABLE_LOCALES }
   validates :time_zone, inclusion: { in: AVAILABLE_TIME_ZONES }
 
+  # Declaration order matters for account/data destruction: Food guards
+  # itself with dependent: :restrict_with_error against day_foods/recipe_items,
+  # and workout_sets/program_exercises hold non-cascading FKs to exercises —
+  # so days/recipes/food_labels must be destroyed before foods, and
+  # days/workout_programs before exercises.
   has_one  :profile,        dependent: :destroy
-  has_many :foods,          dependent: :destroy
   has_many :days,           dependent: :destroy
-  has_many :day_food_groups, dependent: :destroy
-  has_many :food_labels,    dependent: :destroy
   has_many :recipes,        dependent: :destroy
+  has_many :shopping_lists, dependent: :destroy
+  has_many :food_labels,    dependent: :destroy
+  has_many :foods,          dependent: :destroy
+  has_many :day_food_groups,      dependent: :destroy
   has_many :weight_entries,       dependent: :destroy
   has_many :body_measurements,    dependent: :destroy
   has_many :exercise_favorites,   dependent: :destroy
   has_many :favorited_exercises,  through: :exercise_favorites, source: :exercise
   has_many :workout_programs,     dependent: :destroy
-  has_many :shopping_lists,       dependent: :destroy
+  has_many :exercises,            foreign_key: :custom_user_id, dependent: :destroy
 
   after_create :create_profile
   before_create { self.session_token ||= generate_session_token }
