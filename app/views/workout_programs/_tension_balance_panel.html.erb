@@ -53,10 +53,10 @@
                   <div class="bg-brand" style="width: <%= (stretch_count.to_f / total * 100).round(1) %>%"></div>
                 <% end %>
                 <% if contraction_count.positive? %>
-                  <div class="bg-ink-subtle" style="width: <%= (contraction_count.to_f / total * 100).round(1) %>%"></div>
+                  <div class="bg-status-info" style="width: <%= (contraction_count.to_f / total * 100).round(1) %>%"></div>
                 <% end %>
                 <% if mixed_count.positive? %>
-                  <div class="bg-surface-border" style="width: <%= (mixed_count.to_f / total * 100).round(1) %>%"></div>
+                  <div class="bg-ink-subtle" style="width: <%= (mixed_count.to_f / total * 100).round(1) %>%"></div>
                 <% end %>
               </div>
               <% if stretch_count.zero? && contraction_count.positive? %>
@@ -70,8 +70,8 @@
 
         <div class="flex gap-4 flex-wrap text-xs text-ink-subtle pt-1">
           <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-brand"></span><%= t("views.workout_programs.tension_balance.legend.stretch") %></span>
-          <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-ink-subtle"></span><%= t("views.workout_programs.tension_balance.legend.contraction") %></span>
-          <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-surface-border"></span><%= t("views.workout_programs.tension_balance.legend.mixed") %></span>
+          <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-status-info"></span><%= t("views.workout_programs.tension_balance.legend.contraction") %></span>
+          <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-ink-subtle"></span><%= t("views.workout_programs.tension_balance.legend.mixed") %></span>
         </div>
       <% end %>
     </div>
