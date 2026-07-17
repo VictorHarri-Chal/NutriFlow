@@ -74,6 +74,10 @@
             <tr>
               <td class="align-top font-medium text-ink-primary">
                 <span class="break-words"><%= item.food_name %></span>
+                <% if logged_during_fasting?(item) %>
+                  <i class="fas fa-hourglass-half text-ink-subtle/70 text-[10px] ml-1"
+                     title="<%= t("views.calendars.fasting.meal_logged_during_fast") %>"></i>
+                <% end %>
                 <% if is_recipe?(item) %>
                   <div class="text-xs text-brand font-medium">
                     <%= t("views.components.day_food_group.recipe_label") %>

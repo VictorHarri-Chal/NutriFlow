@@ -28,6 +28,11 @@ module CalendarData
     end
   end
 
+  def load_fasting_data
+    @active_fasting_session = current_user.fasting_sessions.active.first
+    @fasting_stats          = FastingStatsCalculator.new(current_user).call
+  end
+
   def parse_heatmap_month(value)
     return nil if value.blank?
 

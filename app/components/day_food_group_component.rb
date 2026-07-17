@@ -1,13 +1,14 @@
 class DayFoodGroupComponent < ApplicationComponent
-  def initialize(day_food_group: nil, day_foods:, day:)
-    @day_food_group = day_food_group
-    @day_foods      = day_foods
-    @day            = day
+  def initialize(day_food_group: nil, day_foods:, day:, fasting_sessions: [])
+    @day_food_group    = day_food_group
+    @day_foods         = day_foods
+    @day               = day
+    @fasting_sessions  = fasting_sessions
   end
 
   private
 
-  attr_reader :day_food_group, :day_foods, :day
+  attr_reader :day_food_group, :day_foods, :day, :fasting_sessions
 
   def group_totals
     {
@@ -55,5 +56,9 @@ class DayFoodGroupComponent < ApplicationComponent
   def delete_confirm_message(item)
     key = is_recipe?(item) ? "delete_recipe_confirm" : "delete_food_confirm"
     I18n.t("views.components.day_food_group.#{key}")
+  end
+
+  def logged_during_fasting?(item)
+    fasting_sessions.any? { |s| item.created_at >= s.started_at && (s.ended_at.nil? || item.created_at <= s.ended_at) }
   end
 end

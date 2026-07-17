@@ -14,3 +14,9 @@ fr:
         weight_loss: "Perte de poids"
         maintenance: "Maintien"
         muscle_gain: "Prise de muscle"
+    fasting_session:
+      protocol:
+        sixteen_eight: "16:8"
+        eighteen_six: "18:6"
+        omad: "OMAD"
+        circadian_12_12: "Circadien 12:12"

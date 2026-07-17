@@ -18,4 +18,8 @@ module FeatureGuard
   def require_water_tracking!
     redirect_to root_path, alert: t("feature_guard.water_disabled") unless current_user.show_water_tracking?
   end
+
+  def require_fasting_tracking!
+    redirect_to root_path, alert: t("feature_guard.fasting_disabled") unless current_user.show_fasting_tracking?
+  end
 end

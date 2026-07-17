@@ -1,0 +1,86 @@
+<% content_for :page_title, t("views.fasting_sessions.page_title") %>
+
+<div class="max-w-4xl mx-auto mt-16 space-y-5 pb-12">
+
+  <p class="text-sm text-ink-muted"><%= t("views.fasting_sessions.intro") %></p>
+
+  <%# ── KPI cards ── %>
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+      <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1">
+        <%= t("views.fasting_sessions.kpi.current_streak") %>
+      </p>
+      <p class="text-2xl font-bold text-ink-primary"><%= @stats[:current_streak] %></p>
+    </div>
+
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+      <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1">
+        <%= t("views.fasting_sessions.kpi.best_streak") %>
+      </p>
+      <p class="text-2xl font-bold text-ink-primary"><%= @stats[:best_streak] %></p>
+    </div>
+
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+      <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1">
+        <%= t("views.fasting_sessions.kpi.total_hours") %>
+      </p>
+      <p class="text-2xl font-bold text-ink-primary"><%= @stats[:total_hours] %><span class="text-sm font-normal text-ink-subtle ml-1">h</span></p>
+    </div>
+
+    <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+      <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1">
+        <%= t("views.fasting_sessions.kpi.completion_rate") %>
+      </p>
+      <p class="text-2xl font-bold text-ink-primary"><%= @stats[:completion_rate] %><span class="text-sm font-normal text-ink-subtle ml-1">%</span></p>
+    </div>
+  </div>
+
+  <%# ── Historique ── %>
+  <div class="card">
+    <div class="card-section">
+      <h2 class="text-sm font-semibold text-ink-primary mb-3"><%= t("views.fasting_sessions.history.title") %></h2>
+
+      <% if @sessions.any? %>
+        <div class="overflow-x-auto">
+          <table class="min-w-full table-dark">
+            <thead>
+              <tr>
+                <th class="text-left"><%= t("views.fasting_sessions.history.date_col") %></th>
+                <th class="text-left"><%= t("views.fasting_sessions.history.protocol_col") %></th>
+                <th class="text-left"><%= t("views.fasting_sessions.history.duration_col") %></th>
+                <th class="text-left"><%= t("views.fasting_sessions.history.status_col") %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @sessions.each do |session| %>
+                <tr>
+                  <td class="text-ink-primary"><%= l(session.started_at.to_date, format: :long) %></td>
+                  <td class="text-ink-muted"><%= t("enumerize.fasting_session.protocol.#{session.protocol}") %></td>
+                  <td class="text-ink-muted"><%= format_fasting_duration(session.elapsed_hours) %></td>
+                  <td>
+                    <% if session.active? %>
+                      <span class="text-status-info text-xs font-medium"><%= t("views.fasting_sessions.history.status_in_progress") %></span>
+                    <% elsif session.reached_target? %>
+                      <span class="text-status-success text-xs font-medium"><%= t("views.fasting_sessions.history.status_completed") %></span>
+                    <% else %>
+                      <span class="text-status-warning text-xs font-medium"><%= t("views.fasting_sessions.history.status_cut_short") %></span>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <p class="text-sm text-ink-subtle text-center py-6"><%= t("views.fasting_sessions.history.empty") %></p>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @sessions_pagy&.pages&.> 1 %>
+    <div class="mt-6 flex justify-center">
+      <%= render PaginationComponent.new(pagy: @sessions_pagy) %>
+    </div>
+  <% end %>
+
+</div>

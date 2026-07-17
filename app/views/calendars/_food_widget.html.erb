@@ -3,6 +3,12 @@
   total_proteins = all_day_items.sum(&:total_proteins)
   total_carbs    = all_day_items.sum(&:total_carbs)
   total_fats     = all_day_items.sum(&:total_fats)
+
+  fasting_sessions = if all_day_items.any? && current_user.show_fasting_tracking?
+    current_user.fasting_sessions.overlapping(day.date.beginning_of_day..day.date.end_of_day).to_a
+  else
+    []
+  end
 %>
 
 <div id="food_widget"
@@ -39,10 +45,10 @@
 
     <% if all_day_items.any? %>
       <% day_items_by_group.each do |group, items| %>
-        <%= render DayFoodGroupComponent.new(day_food_group: group, day_foods: items, day: day) %>
+        <%= render DayFoodGroupComponent.new(day_food_group: group, day_foods: items, day: day, fasting_sessions: fasting_sessions) %>
       <% end %>
       <% if day_items_without_group.any? %>
-        <%= render DayFoodGroupComponent.new(day_foods: day_items_without_group, day: day) %>
+        <%= render DayFoodGroupComponent.new(day_foods: day_items_without_group, day: day, fasting_sessions: fasting_sessions) %>
       <% end %>
     <% else %>
       <p class="text-sm text-ink-subtle text-center py-3"><%= t("views.calendars.food_widget.empty") %></p>
