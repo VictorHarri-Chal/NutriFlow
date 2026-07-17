@@ -24,6 +24,10 @@ class User < ApplicationRecord
   # before exercises, and profile must be destroyed last of all.
   has_many :days,           dependent: :destroy
   has_many :recipes,        dependent: :destroy
+  # Ratings this user gave on other users' recipes (as opposed to
+  # recipe.recipe_ratings, the ratings received on this user's own recipes,
+  # already cascaded via the `recipes` association above).
+  has_many :recipe_ratings, dependent: :destroy
   has_many :shopping_lists, dependent: :destroy
   has_many :food_labels,    dependent: :destroy
   has_many :foods,          dependent: :destroy
@@ -65,6 +69,7 @@ class User < ApplicationRecord
     transaction do
       days.destroy_all
       recipes.destroy_all
+      recipe_ratings.destroy_all
       shopping_lists.destroy_all
       food_labels.destroy_all
       foods.destroy_all
