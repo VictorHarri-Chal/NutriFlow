@@ -1022,6 +1022,18 @@ en:
       set_active: "Set as active"
       edit_program: "Edit"
       duplicate_btn: "Duplicate"
+      tension_balance:
+        open_button: "Balance"
+        title: "Stretch / contraction balance"
+        hint: "Across the whole program"
+        no_data: "Add classified exercises (stretch or contraction) to see the breakdown."
+        gap:
+          stretch: "No stretch-biased exercise for %{body_part} this week."
+          contraction: "No contraction-biased exercise for %{body_part} this week."
+        legend:
+          stretch: "Stretch"
+          contraction: "Contraction"
+          mixed: "Mixed"
       back: "My programs"
       back_to_program: "Back to program"
       delete_confirm: "Delete « %{name} »? This cannot be undone."

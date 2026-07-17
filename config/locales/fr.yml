@@ -1022,6 +1022,18 @@ fr:
       set_active: "Définir comme actif"
       edit_program: "Modifier"
       duplicate_btn: "Dupliquer"
+      tension_balance:
+        open_button: "Répartition"
+        title: "Répartition étirement / contraction"
+        hint: "Sur l'ensemble du programme"
+        no_data: "Ajoute des exercices classés (étirement ou contraction) pour voir la répartition."
+        gap:
+          stretch: "Aucun exercice à dominante étirement pour les %{body_part} cette semaine."
+          contraction: "Aucun exercice à dominante contraction pour les %{body_part} cette semaine."
+        legend:
+          stretch: "Étirement"
+          contraction: "Contraction"
+          mixed: "Mixte"
       back: "Mes programmes"
       back_to_program: "Retour au programme"
       delete_confirm: "Supprimer « %{name} » ? Cette action est irréversible."
