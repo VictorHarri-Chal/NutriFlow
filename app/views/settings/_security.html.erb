@@ -120,6 +120,26 @@
     </div>
   </div>
 
+  <%# ── Réinitialisation des données ── %>
+  <div class="border-t border-surface-border/40 pt-6">
+    <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-status-danger/20 bg-status-danger/5">
+      <div>
+        <h3 class="text-sm font-semibold text-status-danger"><%= t("views.settings.security.reset_data") %></h3>
+        <p class="text-xs text-ink-subtle mt-0.5"><%= t("views.settings.security.reset_data_warning") %></p>
+      </div>
+      <%= button_to t("views.settings.security.reset_data_button"),
+                    reset_data_setting_path,
+                    method: :delete,
+                    class: "btn-danger shrink-0 w-36 text-center text-sm cursor-pointer",
+                    data: {
+                      action: "click->confirm#show",
+                      confirm_message: t("views.settings.security.reset_data_warning"),
+                      url: reset_data_setting_path,
+                      method: "delete"
+                    } %>
+    </div>
+  </div>
+
   <%# ── Suppression du compte ── %>
   <div class="border-t border-surface-border/40 pt-6">
     <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-status-danger/20 bg-status-danger/5">
@@ -130,7 +150,7 @@
       <%= button_to t("views.settings.security.delete_account_button"),
                     registration_path(:user),
                     method: :delete,
-                    class: "btn-danger shrink-0 text-sm cursor-pointer",
+                    class: "btn-danger shrink-0 w-36 text-center text-sm cursor-pointer",
                     data: {
                       action: "click->confirm#show",
                       confirm_message: t("views.settings.security.delete_account_warning"),

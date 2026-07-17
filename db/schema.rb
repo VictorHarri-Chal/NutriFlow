@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_16_144958) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_16_225833) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -589,6 +589,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_16_144958) do
   add_foreign_key "days", "users"
   add_foreign_key "exercise_favorites", "exercises"
   add_foreign_key "exercise_favorites", "users"
+  add_foreign_key "exercises", "users", column: "custom_user_id"
   add_foreign_key "food_labels", "users"
   add_foreign_key "food_labels_foods", "food_labels"
   add_foreign_key "food_labels_foods", "foods"
