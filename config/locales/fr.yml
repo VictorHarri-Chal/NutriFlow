@@ -1026,7 +1026,10 @@ fr:
         open_button: "Répartition"
         title: "Répartition étirement / contraction"
         hint: "Sur l'ensemble du programme"
-        no_data: "Ajoute des exercices classés (étirement ou contraction) pour voir la répartition."
+        stats: "%{exercise_count} exercices · %{body_part_count} groupes musculaires travaillés"
+        coverage_title: "Groupes travaillés"
+        no_exercises: "Ajoute des exercices à ton programme pour voir cet aperçu."
+        no_classified: "Aucun exercice de ce programme n'est encore classé étirement/contraction."
         gap:
           stretch: "Aucun exercice à dominante étirement pour les %{body_part} cette semaine."
           contraction: "Aucun exercice à dominante contraction pour les %{body_part} cette semaine."

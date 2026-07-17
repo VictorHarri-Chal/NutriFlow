@@ -1,6 +1,15 @@
 <%# program: WorkoutProgram — relies on program.program_days already eager-loaded by the controller %>
 <%
-  rows = program.tension_balance.filter_map do |body_part, counts|
+  balance = program.tension_balance
+
+  # Every exercise counts here regardless of classification, so a body part
+  # worked only by not-yet-classified exercises (e.g. neck) still shows up —
+  # only the detailed breakdown below is limited to classified exercises.
+  coverage          = balance.transform_values { |counts| counts.values.sum }
+  total_exercises   = coverage.values.sum
+  body_parts_worked = coverage.size
+
+  rows = balance.filter_map do |body_part, counts|
     stretch_count     = counts["stretch"].to_i
     contraction_count = counts["contraction"].to_i
     mixed_count        = counts["mixed"].to_i
@@ -33,46 +42,67 @@
         <span class="text-xs text-ink-subtle"><%= t("views.workout_programs.tension_balance.hint") %></span>
       </div>
 
-      <% if rows.blank? %>
-        <p class="text-sm text-ink-muted"><%= t("views.workout_programs.tension_balance.no_data") %></p>
+      <% if coverage.blank? %>
+        <p class="text-sm text-ink-muted"><%= t("views.workout_programs.tension_balance.no_exercises") %></p>
       <% else %>
-        <div class="flex flex-col gap-3">
-          <% rows.each do |row| %>
-            <% body_part        = row[:body_part] %>
-            <% stretch_count     = row[:stretch] %>
-            <% contraction_count = row[:contraction] %>
-            <% mixed_count       = row[:mixed] %>
-            <% total             = row[:total] %>
+        <p class="text-xs text-ink-subtle">
+          <%= t("views.workout_programs.tension_balance.stats", exercise_count: total_exercises, body_part_count: body_parts_worked) %>
+        </p>
 
-            <div class="flex flex-col gap-1">
-              <div class="flex items-center justify-between text-sm">
-                <span class="font-semibold text-ink-primary"><%= t_body_part(body_part) %></span>
-                <span class="text-xs text-ink-subtle"><%= tension_balance_count_label(stretch_count, contraction_count, mixed_count) %></span>
-              </div>
-              <div class="h-2 rounded-full overflow-hidden bg-surface-hover flex">
-                <% if stretch_count.positive? %>
-                  <div class="bg-brand" style="width: <%= (stretch_count.to_f / total * 100).round(1) %>%"></div>
-                <% end %>
-                <% if contraction_count.positive? %>
-                  <div class="bg-status-success" style="width: <%= (contraction_count.to_f / total * 100).round(1) %>%"></div>
-                <% end %>
-                <% if mixed_count.positive? %>
-                  <div class="bg-ink-subtle" style="width: <%= (mixed_count.to_f / total * 100).round(1) %>%"></div>
-                <% end %>
-              </div>
-              <% if stretch_count.zero? && contraction_count.positive? %>
-                <p class="text-xs text-ink-muted"><%= t("views.workout_programs.tension_balance.gap.stretch", body_part: t_body_part(body_part)) %></p>
-              <% elsif contraction_count.zero? && stretch_count.positive? %>
-                <p class="text-xs text-ink-muted"><%= t("views.workout_programs.tension_balance.gap.contraction", body_part: t_body_part(body_part)) %></p>
-              <% end %>
-            </div>
-          <% end %>
+        <div class="flex flex-col gap-2">
+          <p class="text-xs font-semibold text-ink-subtle uppercase tracking-wider"><%= t("views.workout_programs.tension_balance.coverage_title") %></p>
+          <div class="flex flex-wrap gap-2">
+            <% coverage.sort_by { |_, count| -count }.each do |body_part, count| %>
+              <span class="px-2.5 py-1 bg-surface-hover border border-surface-border/40 rounded-lg text-xs text-ink-muted">
+                <%= t_body_part(body_part) %> · <%= count %>
+              </span>
+            <% end %>
+          </div>
         </div>
 
-        <div class="flex gap-4 flex-wrap text-xs text-ink-subtle pt-1">
-          <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-brand"></span><%= t("views.workout_programs.tension_balance.legend.stretch") %></span>
-          <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-status-success"></span><%= t("views.workout_programs.tension_balance.legend.contraction") %></span>
-          <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-ink-subtle"></span><%= t("views.workout_programs.tension_balance.legend.mixed") %></span>
+        <div class="border-t border-surface-border/40 pt-4 flex flex-col gap-4">
+          <% if rows.blank? %>
+            <p class="text-sm text-ink-muted"><%= t("views.workout_programs.tension_balance.no_classified") %></p>
+          <% else %>
+            <div class="flex flex-col gap-3">
+              <% rows.each do |row| %>
+                <% body_part        = row[:body_part] %>
+                <% stretch_count     = row[:stretch] %>
+                <% contraction_count = row[:contraction] %>
+                <% mixed_count       = row[:mixed] %>
+                <% total             = row[:total] %>
+
+                <div class="flex flex-col gap-1">
+                  <div class="flex items-center justify-between text-sm">
+                    <span class="font-semibold text-ink-primary"><%= t_body_part(body_part) %></span>
+                    <span class="text-xs text-ink-subtle"><%= tension_balance_count_label(stretch_count, contraction_count, mixed_count) %></span>
+                  </div>
+                  <div class="h-2 rounded-full overflow-hidden bg-surface-hover flex">
+                    <% if stretch_count.positive? %>
+                      <div class="bg-brand" style="width: <%= (stretch_count.to_f / total * 100).round(1) %>%"></div>
+                    <% end %>
+                    <% if contraction_count.positive? %>
+                      <div class="bg-status-success" style="width: <%= (contraction_count.to_f / total * 100).round(1) %>%"></div>
+                    <% end %>
+                    <% if mixed_count.positive? %>
+                      <div class="bg-ink-subtle" style="width: <%= (mixed_count.to_f / total * 100).round(1) %>%"></div>
+                    <% end %>
+                  </div>
+                  <% if stretch_count.zero? && contraction_count.positive? %>
+                    <p class="text-xs text-ink-muted"><%= t("views.workout_programs.tension_balance.gap.stretch", body_part: t_body_part(body_part)) %></p>
+                  <% elsif contraction_count.zero? && stretch_count.positive? %>
+                    <p class="text-xs text-ink-muted"><%= t("views.workout_programs.tension_balance.gap.contraction", body_part: t_body_part(body_part)) %></p>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+
+            <div class="flex gap-4 flex-wrap text-xs text-ink-subtle">
+              <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-brand"></span><%= t("views.workout_programs.tension_balance.legend.stretch") %></span>
+              <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-status-success"></span><%= t("views.workout_programs.tension_balance.legend.contraction") %></span>
+              <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-ink-subtle"></span><%= t("views.workout_programs.tension_balance.legend.mixed") %></span>
+            </div>
+          <% end %>
         </div>
       <% end %>
     </div>
