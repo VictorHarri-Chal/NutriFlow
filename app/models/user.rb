@@ -57,10 +57,11 @@ class User < ApplicationRecord
 
   # Wipes every owned record but keeps the account itself (login, email,
   # preferences). Same destruction order as the has_many declarations above,
-  # for the same reasons.
+  # for the same reasons. Profile is destroyed last: WeightEntry#after_destroy
+  # syncs its weight back onto the (still cached, in-memory) profile, so
+  # destroying it any earlier raises on a stale destroyed record.
   def reset_all_data!
     transaction do
-      profile.destroy
       days.destroy_all
       recipes.destroy_all
       shopping_lists.destroy_all
@@ -72,6 +73,7 @@ class User < ApplicationRecord
       exercise_favorites.destroy_all
       workout_programs.destroy_all
       exercises.destroy_all
+      profile.destroy
       create_profile!
     end
   end
