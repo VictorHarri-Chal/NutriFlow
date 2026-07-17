@@ -1120,6 +1120,7 @@ en:
         other: "%{count} exercises"
       search_placeholder: "Search for an exercise..."
       filter_body_part: "Muscle group"
+      filter_tension_profile: "Tension"
       filter_equipment: "Equipment"
       all: "All"
       back_to_list: "Back to exercises"
@@ -1158,8 +1159,10 @@ en:
         balance: "Balance"
         rehabilitation: "Rehabilitation"
       tension_profile:
-        stretch: "Stretch"
-        contraction: "Contraction"
+        stretch: "Stretch-biased"
+        contraction: "Contraction-biased"
+        mixed: "Mixed"
+        none: "Unclassified"
         tooltip:
           stretch: "This exercise loads the muscle in a lengthened position under tension. Pair it during the week with a contraction-biased exercise for complete muscle development."
           contraction: "This exercise loads the muscle in a shortened/contracted position. Pair it during the week with a stretch-biased exercise for complete muscle development."

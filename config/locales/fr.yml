@@ -1120,6 +1120,7 @@ fr:
         other: "%{count} exercices"
       search_placeholder: "Rechercher un exercice..."
       filter_body_part: "Groupe musculaire"
+      filter_tension_profile: "Tension"
       filter_equipment: "Équipement"
       all: "Tous"
       back_to_list: "Retour aux exercices"
@@ -1158,8 +1159,10 @@ fr:
         balance: "Équilibre"
         rehabilitation: "Rééducation"
       tension_profile:
-        stretch: "Étirement"
-        contraction: "Contraction"
+        stretch: "Dominante étirement"
+        contraction: "Dominante contraction"
+        mixed: "Mixte"
+        none: "Non classé"
         tooltip:
           stretch: "Cet exercice sollicite le muscle en position étirée, sous charge. À combiner dans la semaine avec un exercice à dominante contraction pour un travail complet du groupe musculaire."
           contraction: "Cet exercice sollicite le muscle en position raccourcie/contractée. À combiner dans la semaine avec un exercice à dominante étirement pour un travail complet du groupe musculaire."
