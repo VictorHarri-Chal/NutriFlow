@@ -20,6 +20,7 @@ class ProgramDaysController < ApplicationController
     @target_day.program_exercises.destroy_all
     @day.copy_exercises_to!(@target_day)
     @target_day = @program.program_days.includes(program_exercises: [:exercise, :program_exercise_sets]).find(@target_day.id)
+    @program.preload_tension_balance_data!
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to @program }

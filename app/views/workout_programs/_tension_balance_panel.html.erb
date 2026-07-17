@@ -11,7 +11,8 @@
   end
 %>
 
-<div data-tension-balance-panel-target="overlay"
+<div id="tension_balance_panel"
+     data-tension-balance-panel-target="overlay"
      class="fixed inset-0 z-50 flex items-end justify-center opacity-0 pointer-events-none transition-opacity duration-300">
 
   <div class="absolute inset-0 bg-black/60"
@@ -53,7 +54,7 @@
                   <div class="bg-brand" style="width: <%= (stretch_count.to_f / total * 100).round(1) %>%"></div>
                 <% end %>
                 <% if contraction_count.positive? %>
-                  <div class="bg-status-info" style="width: <%= (contraction_count.to_f / total * 100).round(1) %>%"></div>
+                  <div class="bg-status-success" style="width: <%= (contraction_count.to_f / total * 100).round(1) %>%"></div>
                 <% end %>
                 <% if mixed_count.positive? %>
                   <div class="bg-ink-subtle" style="width: <%= (mixed_count.to_f / total * 100).round(1) %>%"></div>
@@ -70,7 +71,7 @@
 
         <div class="flex gap-4 flex-wrap text-xs text-ink-subtle pt-1">
           <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-brand"></span><%= t("views.workout_programs.tension_balance.legend.stretch") %></span>
-          <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-status-info"></span><%= t("views.workout_programs.tension_balance.legend.contraction") %></span>
+          <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-status-success"></span><%= t("views.workout_programs.tension_balance.legend.contraction") %></span>
           <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-ink-subtle"></span><%= t("views.workout_programs.tension_balance.legend.mixed") %></span>
         </div>
       <% end %>

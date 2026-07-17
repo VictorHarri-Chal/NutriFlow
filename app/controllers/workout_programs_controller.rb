@@ -10,10 +10,7 @@ class WorkoutProgramsController < ApplicationController
   end
 
   def show
-    ActiveRecord::Associations::Preloader.new(
-      records: [@program],
-      associations: { program_days: { program_exercises: [:exercise, :program_exercise_sets] } }
-    ).call
+    @program.preload_tension_balance_data!
     @program_days = @program.program_days
   end
 

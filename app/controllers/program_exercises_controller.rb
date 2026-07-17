@@ -9,6 +9,7 @@ class ProgramExercisesController < ApplicationController
     @exercise = @day.program_exercises.build(exercise_params)
     if @exercise.save
       @exercise = ProgramExercise.includes(:exercise, :program_exercise_sets).find(@exercise.id)
+      @program.preload_tension_balance_data!
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to @program }
@@ -43,6 +44,7 @@ class ProgramExercisesController < ApplicationController
 
   def destroy
     @exercise.destroy
+    @program.preload_tension_balance_data!
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to @program }

@@ -32,6 +32,19 @@ class WorkoutProgram < ApplicationRecord
     end
   end
 
+  # Forces a fresh eager-load of program_days (and nested program_exercises:
+  # exercise/program_exercise_sets) directly onto this record's own
+  # association cache, so #tension_balance reads it without N+1. #reset first
+  # guarantees a fresh query even if program_days was already touched earlier
+  # in the same request (e.g. after a create/destroy that changed the data).
+  def preload_tension_balance_data!
+    association(:program_days).reset
+    ActiveRecord::Associations::Preloader.new(
+      records: [self],
+      associations: { program_days: { program_exercises: [:exercise, :program_exercise_sets] } }
+    ).call
+  end
+
   private
 
   def deactivate_others
