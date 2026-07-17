@@ -27,6 +27,7 @@ class Exercise < ApplicationRecord
   scope :accessible_to, ->(user) { where(custom_user_id: [nil, user.id]) }
   scope :by_body_part, ->(part) { where(body_part: part) }
   scope :by_equipment, ->(eq) { where(equipment: eq) }
+  scope :by_tension_profile, ->(value) { value == "none" ? where(tension_profile: nil) : where(tension_profile: value) }
   scope :with_gif, -> { where(gif_status: "ok") }
   scope :visible, -> { where(gif_status: [nil, "ok"]) }
 

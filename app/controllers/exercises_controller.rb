@@ -14,6 +14,7 @@ class ExercisesController < ApplicationController
     @exercises = base
     @exercises = @exercises.search_by_name(params[:query])    if params[:query].present?
     @exercises = @exercises.by_body_part(params[:body_part])  if params[:body_part].present?
+    @exercises = @exercises.by_tension_profile(params[:tension_profile]) if params[:tension_profile].present?
     @exercises = @exercises.by_equipment(params[:equipment])  if params[:equipment].present?
     @exercises = @exercises.where(difficulty: params[:difficulty]) if params[:difficulty].present?
 
