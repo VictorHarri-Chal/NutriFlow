@@ -18,10 +18,10 @@ class User < ApplicationRecord
 
   # Declaration order matters for account/data destruction: Food guards
   # itself with dependent: :restrict_with_error against day_foods/recipe_items,
-  # and workout_sets/program_exercises hold non-cascading FKs to exercises —
-  # so days/recipes/food_labels must be destroyed before foods, and
-  # days/workout_programs before exercises.
-  has_one  :profile,        dependent: :destroy
+  # workout_sets/program_exercises hold non-cascading FKs to exercises, and
+  # WeightEntry#after_destroy syncs its weight onto the (cached) profile — so
+  # days/recipes/food_labels must be destroyed before foods, days/workout_programs
+  # before exercises, and profile must be destroyed last of all.
   has_many :days,           dependent: :destroy
   has_many :recipes,        dependent: :destroy
   has_many :shopping_lists, dependent: :destroy
@@ -34,6 +34,7 @@ class User < ApplicationRecord
   has_many :favorited_exercises,  through: :exercise_favorites, source: :exercise
   has_many :workout_programs,     dependent: :destroy
   has_many :exercises,            foreign_key: :custom_user_id, dependent: :destroy
+  has_one  :profile,              dependent: :destroy
 
   after_create :create_profile
   before_create { self.session_token ||= generate_session_token }
