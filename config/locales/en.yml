@@ -1025,6 +1025,7 @@ en:
       tension_balance:
         open_button: "Balance"
         title: "Stretch / contraction balance"
+        info_tooltip: "Shows, for each muscle group, whether the program's exercises load the muscle more in a stretched or contracted position. Ideally, combine both for complete muscle development."
         hint: "Across the whole program"
         coverage_title: "Muscle groups worked"
         no_exercises: "Add exercises to your program to see this overview."
