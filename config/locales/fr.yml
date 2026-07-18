@@ -1025,7 +1025,10 @@ fr:
       tension_balance:
         open_button: "Répartition"
         title: "Répartition étirement / contraction"
-        info_tooltip: "Indique, pour chaque groupe musculaire, si les exercices du programme sollicitent davantage le muscle en position étirée ou contractée. Idéalement, combinez les deux pour un travail complet du groupe musculaire."
+        info_tooltip: |-
+          Indique, pour chaque groupe musculaire, si les exercices du programme sollicitent davantage le muscle en position étirée ou contractée. Idéalement, combinez les deux pour un travail complet du groupe musculaire.
+
+          Les exercices sans classification étirement ou contraction n'apparaissent pas dans cette répartition.
         hint: "Sur l'ensemble du programme"
         coverage_title: "Groupes travaillés"
         no_exercises: "Ajoute des exercices à ton programme pour voir cet aperçu."
