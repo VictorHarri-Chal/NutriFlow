@@ -1031,7 +1031,7 @@ fr:
           Les exercices sans classification étirement ou contraction n'apparaissent pas dans cette répartition.
         hint: "Sur l'ensemble du programme"
         coverage_title: "Groupes travaillés"
-        no_exercises: "Ajoute des exercices à ton programme pour voir cet aperçu."
+        no_exercises: "Ajoute des exercices à ton programme pour voir ici les groupes musculaires travaillés et leur répartition étirement / contraction."
         no_classified: "Aucun exercice de ce programme n'est encore classé étirement/contraction."
         gap:
           stretch: "Aucun exercice à dominante étirement pour les %{body_part} cette semaine."

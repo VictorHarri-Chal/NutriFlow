@@ -1031,7 +1031,7 @@ en:
           Exercises without a stretch or contraction classification don't appear in this breakdown.
         hint: "Across the whole program"
         coverage_title: "Muscle groups worked"
-        no_exercises: "Add exercises to your program to see this overview."
+        no_exercises: "Add exercises to your program to see which muscle groups you're working and their stretch / contraction balance."
         no_classified: "No exercise in this program is classified stretch/contraction yet."
         gap:
           stretch: "No stretch-biased exercise for %{body_part} this week."
