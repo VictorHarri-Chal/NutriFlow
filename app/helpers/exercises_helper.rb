@@ -26,6 +26,18 @@ module ExercisesHelper
     tension_profile.to_s.in?(%w[stretch contraction])
   end
 
+  TENSION_PROFILE_FILTER_VALUES = (Exercise::TENSION_PROFILES.map(&:to_s) + ["none"]).freeze
+
+  # Label for the tension filter dropdown's active state. Returns nil for
+  # anything outside the known values (including a malformed param like a
+  # Hash from ?tension_profile[foo]=bar) so the view can fall back to the
+  # neutral placeholder instead of rendering a "translation missing" string.
+  def tension_profile_filter_label(value)
+    return nil unless TENSION_PROFILE_FILTER_VALUES.include?(value)
+
+    value == "none" ? t("views.exercises.tension_profile.none") : t("views.exercises.tension_profile.#{value}")
+  end
+
   # Translate a body_part value (e.g. "upper arms") using the i18n locale file.
   # Falls back to the raw string if no key is found.
   def t_body_part(body_part)

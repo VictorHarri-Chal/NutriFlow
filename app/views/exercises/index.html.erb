@@ -106,8 +106,8 @@
       </div>
 
       <%# ── Dropdown : Tension ── %>
-      <% tp_active = params[:tension_profile].present? %>
-      <% tp_active_label = params[:tension_profile] == "none" ? t("views.exercises.tension_profile.none") : t("views.exercises.tension_profile.#{params[:tension_profile]}") %>
+      <% tp_active_label = tension_profile_filter_label(params[:tension_profile]) %>
+      <% tp_active = tp_active_label.present? %>
       <div class="relative" data-controller="filter-dropdown">
         <button type="button"
                 data-action="click->filter-dropdown#toggle"
