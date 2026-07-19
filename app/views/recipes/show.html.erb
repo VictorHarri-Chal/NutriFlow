@@ -204,7 +204,7 @@
                 <tr>
                   <td class="align-top font-medium text-ink-primary"><span class="break-words"><%= item.food.name %></span></td>
                   <td class="align-top whitespace-nowrap text-ink-muted"><%= item.quantity.frac.zero? ? item.quantity.to_i : item.quantity %> <%= item.unit %></td>
-                  <td class="align-top whitespace-nowrap font-semibold text-brand"><%= item.total_calories %> kcal</td>
+                  <td class="align-top whitespace-nowrap font-semibold text-brand"><%= item.total_calories.round %> kcal</td>
                   <td class="align-top whitespace-nowrap font-semibold text-ink-muted"><%= item.total_proteins.round %> g</td>
                   <td class="align-top whitespace-nowrap font-semibold text-ink-muted"><%= item.total_carbs.round %> g</td>
                   <td class="align-top whitespace-nowrap font-semibold text-ink-muted"><%= item.total_fats.round %> g</td>
