@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["registry", "select", "value", "unit", "list"]
+  static targets = ["registry", "select", "value", "unit", "list", "addButton"]
 
   connect() {
     this._registry = JSON.parse(this.registryTarget.textContent)
@@ -14,6 +14,16 @@ export default class extends Controller {
   syncUnit() {
     const entry = this._entry(this.selectTarget.value)
     if (this.hasUnitTarget) this.unitTarget.textContent = entry ? entry.unit : ""
+    this.updateAddButtonState()
+  }
+
+  // Le bouton "Ajouter" reste désactivé tant qu'un micronutriment n'est pas
+  // choisi ET qu'une valeur > 0 n'est pas saisie — jamais les deux à moitié.
+  updateAddButtonState() {
+    if (!this.hasAddButtonTarget) return
+    const hasKey   = this.selectTarget.value !== ""
+    const hasValue = parseFloat(this.valueTarget.value) > 0
+    this.addButtonTarget.disabled = !(hasKey && hasValue)
   }
 
   add(event) {
@@ -55,9 +65,10 @@ export default class extends Controller {
 
   _renderExisting() {
     Object.entries(this._currentData()).forEach(([key, value]) => {
-      this._removeOption(key)
+      this._removeOptionElement(key)
       this._appendRow(key, value)
     })
+    this._refreshCustomSelect()
   }
 
   _entry(key) {
@@ -82,9 +93,13 @@ export default class extends Controller {
   }
 
   _removeOption(key) {
+    this._removeOptionElement(key)
+    this._refreshCustomSelect()
+  }
+
+  _removeOptionElement(key) {
     const option = Array.from(this.selectTarget.options).find(o => o.value === key)
     if (option) option.remove()
-    this._rebuildCustomSelect()
   }
 
   _restoreOption(key) {
@@ -94,15 +109,22 @@ export default class extends Controller {
     option.value = key
     option.text  = entry.label
     this.selectTarget.appendChild(option)
-    this._rebuildCustomSelect()
+    this._refreshCustomSelect()
   }
 
-  _rebuildCustomSelect() {
-    const wrapper = this.selectTarget.closest('[data-controller~="custom-select"]')
-    if (!wrapper) return
-    wrapper.removeAttribute("data-controller")
-    requestAnimationFrame(() => wrapper.setAttribute("data-controller", "custom-select"))
+  // Le <select> natif a changé (options ajoutées/retirées) — on demande au
+  // contrôleur custom-select voisin de se resynchroniser via ses propres
+  // méthodes publiques, plutôt que de le forcer à se déconnecter/reconnecter.
+  _refreshCustomSelect() {
     if (this.selectTarget.options.length > 0) this.selectTarget.selectedIndex = 0
+
+    const wrapper = this.selectTarget.closest('[data-controller~="custom-select"]')
+    const customSelect = wrapper && this.application.getControllerForElementAndIdentifier(wrapper, "custom-select")
+    if (customSelect) {
+      customSelect.buildDropdown()
+      customSelect.syncLabel()
+    }
+
     this.syncUnit()
   }
 }

@@ -300,11 +300,12 @@ class FoodsController < ApplicationController
       end
       # micronutrients arrives as a JSON string from the hidden field
       if p[:micronutrients].is_a?(String)
-        begin
-          p[:micronutrients] = JSON.parse(p[:micronutrients]).transform_keys(&:to_s).presence || {}
+        parsed = begin
+          JSON.parse(p[:micronutrients])
         rescue JSON::ParserError
-          p[:micronutrients] = {}
+          nil
         end
+        p[:micronutrients] = parsed.is_a?(Hash) ? parsed.transform_keys(&:to_s).presence || {} : {}
       end
     end
   end

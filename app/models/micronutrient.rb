@@ -37,4 +37,9 @@ class Micronutrient
   def self.find(key) = ALL.find { |entry| entry.key == key.to_sym }
   def self.minerals  = ALL.select { |entry| entry.group == :mineral }
   def self.vitamins  = ALL.select { |entry| entry.group == :vitamin }
+
+  def self.coverage_percentage(value, goal)
+    return nil unless goal && goal > 0
+    (value.to_f / goal * 100).round
+  end
 end

@@ -19,7 +19,8 @@ export default class extends Controller {
     "additivesSection", "labelsSection",
     "allergensSection", "tracesSection",
     "advancedSection",
-    "manualMicronutrientSection"
+    "manualMicronutrientSection",
+    "micronutrientsSection"
   ]
 
   static values = { url: String, allergensMap: Object, labelsMap: Object, nsDescs: Object, novaDescs: Object, ecoDescs: Object }
@@ -128,6 +129,7 @@ export default class extends Controller {
     if (this.hasQualitySectionTarget)   this.qualitySectionTarget.classList.add("hidden")
     if (this.hasAdvancedSectionTarget)  this.advancedSectionTarget.classList.add("hidden")
     if (this.hasManualMicronutrientSectionTarget) this.manualMicronutrientSectionTarget.classList.remove("hidden")
+    if (this.hasMicronutrientsSectionTarget) this.micronutrientsSectionTarget.classList.add("hidden")
   }
 
   _updateQualitySection(product) {

@@ -185,6 +185,8 @@ en:
         trigger_title: "View micronutrients"
         week_range: "Week of %{start} to %{end}"
         ceiling_suffix: " (max)"
+        info_title: "Where do these targets come from?"
+        info_text: "These weekly targets are based on ANSES (French health agency) nutritional references from 2021, multiplied by 7. They are fixed by sex and don't vary with your weight or activity level. Sodium is shown as a ceiling not to exceed (\"max\"), not a minimum to reach. Cholesterol has no official reference: its value is shown for information only, without a numeric target."
       nutrition_summary: "Daily nutritional summary"
       copy_yesterday_title: "Copy foods from the previous day"
       heatmap:
@@ -965,7 +967,7 @@ en:
           other: "%{count} times"
         last_cooked_label: "Last prepared"
         micronutrients: "Micronutrients"
-        weekly_coverage: "%{per_100g}%% weekly RDA /100g · %{total}%% whole recipe"
+        weekly_coverage: "%{per_100g}%% weekly RDA (100g)"
         allergens_and_traces: "Allergens & Traces"
         allergens: "Allergens"
         traces: "Possible traces"

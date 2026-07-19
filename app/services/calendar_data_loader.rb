@@ -84,7 +84,7 @@ class CalendarDataLoader
   # ── Micronutrients ───────────────────────────────────────────────────────────
 
   def load_micronutrients
-    @micronutrient_coverage = @day.micronutrient_coverage
+    @micronutrient_coverage = @day.micronutrient_coverage(user: @user, profile: @profile)
     @micronutrient_week_start = @day.date.beginning_of_week
     @micronutrient_week_end   = @day.date.end_of_week
   end

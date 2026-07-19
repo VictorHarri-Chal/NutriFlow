@@ -60,7 +60,10 @@ namespace :ciqual do
 
     col_micronutrients = Micronutrient::KEYS.each_with_object({}) do |key, acc|
       pattern = column_patterns[key]
-      acc[key] = headers.find { |h| norm.(h).include?(pattern) } if pattern
+      next unless pattern
+
+      col = headers.find { |h| norm.(h).include?(pattern) }
+      acc[key] = col if col
     end
 
     missing = [col_code, col_name_fr, col_calories].select(&:nil?)
@@ -89,7 +92,7 @@ namespace :ciqual do
 
       micronutrients = col_micronutrients.each_with_object({}) do |(key, col), acc|
         value = parse_ciqual_value(row[col])
-        acc[key] = value if value != 0.0
+        acc[key] = value if value && value != 0.0
       end
 
       attrs = {

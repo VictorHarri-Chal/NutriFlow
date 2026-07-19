@@ -22,3 +22,4 @@ fr:
             micronutrients:
               unknown_key: " : micronutriment inconnu (%{key})"
               invalid_value: " : valeur invalide pour %{key} (doit être un nombre positif)"
+              value_out_of_range: " : valeur trop élevée pour %{key}"

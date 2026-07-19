@@ -3,6 +3,11 @@ module HasFoodQuantity
 
   UNITS = %w[g kg mL L].freeze
 
+  # Plafond de bon sens sur la quantité loggée (dans son unité native) — sans
+  # lui, une quantité extrême combinée à une valeur nutritionnelle élevée peut
+  # dépasser Float::MAX lors du scaling et produire Infinity.
+  MAX_QUANTITY = 100_000
+
   UNIT_GRAM_MULTIPLIERS = {
     "g"  => 1.0,
     "kg" => 1000.0,

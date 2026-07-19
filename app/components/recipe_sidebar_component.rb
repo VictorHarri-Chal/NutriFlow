@@ -44,10 +44,8 @@ class RecipeSidebarComponent < ApplicationComponent
       per_100g_value = per_100g_micronutrients[entry.key.to_s].to_f
       goal = goals[entry.key]
 
-      { key: entry.key, unit: entry.unit,
-        total_value: total_value, per_100g_value: per_100g_value,
-        total_coverage_pct:    coverage_pct(total_value, goal),
-        per_100g_coverage_pct: coverage_pct(per_100g_value, goal) }
+      { key: entry.key, unit: entry.unit, total_value: total_value,
+        per_100g_coverage_pct: Micronutrient.coverage_percentage(per_100g_value, goal) }
     end
   end
 
@@ -65,11 +63,6 @@ class RecipeSidebarComponent < ApplicationComponent
 
   def weekly_goals
     @weekly_goals ||= current_user.profile&.weekly_micronutrient_goals || {}
-  end
-
-  def coverage_pct(value, goal)
-    return nil unless goal && goal > 0
-    (value.to_f / goal * 100).round
   end
 
   attr_reader :times_cooked, :last_cooked_date

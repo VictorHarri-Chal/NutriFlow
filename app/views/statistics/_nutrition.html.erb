@@ -155,7 +155,7 @@
         <i class="fas fa-flask text-brand text-xs"></i>
         <%= t("views.statistics.nutrition.micronutrient_trend_title") %>
       </h2>
-      <%= form_with url: statistics_path, method: :get, data: { turbo_frame: "_top" } do |f| %>
+      <%= form_with url: statistics_path, method: :get, data: { turbo_frame: "micronutrient_chart" } do |f| %>
         <%= hidden_field_tag :period, @period %>
         <%= hidden_field_tag :tab, @tab %>
         <div data-controller="custom-select" class="relative w-56">
@@ -173,15 +173,17 @@
         </div>
       <% end %>
     </div>
-    <div class="relative h-48">
-      <canvas data-controller="line-chart"
-              data-line-chart-labels-value="<%= @micronutrient_labels.to_json %>"
-              data-line-chart-data-value="<%= @micronutrient_data.to_json %>"
-              data-line-chart-unit-value="<%= @selected_micronutrient.unit %>"
-              data-line-chart-color-value="#A78BFA"
-              data-line-chart-goal-value="<%= @micronutrient_daily_goal %>">
-      </canvas>
-    </div>
+    <%= turbo_frame_tag "micronutrient_chart" do %>
+      <div class="relative h-48">
+        <canvas data-controller="line-chart"
+                data-line-chart-labels-value="<%= @micronutrient_labels.to_json %>"
+                data-line-chart-data-value="<%= @micronutrient_data.to_json %>"
+                data-line-chart-unit-value="<%= @selected_micronutrient.unit %>"
+                data-line-chart-color-value="#A78BFA"
+                data-line-chart-goal-value="<%= @micronutrient_daily_goal %>">
+        </canvas>
+      </div>
+    <% end %>
   </div>
 
 <% end %>

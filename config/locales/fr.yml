@@ -185,6 +185,8 @@ fr:
         trigger_title: "Voir les micronutriments"
         week_range: "Semaine du %{start} au %{end}"
         ceiling_suffix: " (max)"
+        info_title: "D'où viennent ces objectifs ?"
+        info_text: "Ces repères hebdomadaires sont basés sur les références nutritionnelles de l'ANSES (2021), multipliées par 7. Ils sont fixes selon votre sexe et ne varient pas avec votre poids ou votre activité physique. Le sodium est un plafond à ne pas dépasser (« max »), pas un minimum à atteindre. Le cholestérol n'a pas de référence officielle : sa valeur est affichée à titre indicatif, sans objectif chiffré."
       nutrition_summary: "Résumé nutritionnel du jour"
       copy_yesterday_title: "Copier les aliments du jour précédent"
       heatmap:
@@ -965,7 +967,7 @@ fr:
           other: "%{count} fois"
         last_cooked_label: "Dernière fois"
         micronutrients: "Micronutriments"
-        weekly_coverage: "%{per_100g}%% AJR hebdo /100g · %{total}%% recette entière"
+        weekly_coverage: "%{per_100g}%% AJR hebdo (100g)"
         allergens_and_traces: "Allergènes & Traces"
         allergens: "Allergènes"
         traces: "Traces possibles"

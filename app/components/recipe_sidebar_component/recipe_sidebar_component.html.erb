@@ -46,11 +46,9 @@
                 <%= number_with_precision(item[:total_value], precision: 1, strip_insignificant_zeros: true) %> <%= item[:unit] %>
               </span>
             </div>
-            <% if item[:total_coverage_pct] || item[:per_100g_coverage_pct] %>
+            <% if item[:per_100g_coverage_pct] %>
               <div class="text-[10px] text-ink-subtle mt-0.5">
-                <%= t("views.components.recipe_sidebar.weekly_coverage",
-                      per_100g: item[:per_100g_coverage_pct] || 0,
-                      total: item[:total_coverage_pct] || 0) %>
+                <%= t("views.components.recipe_sidebar.weekly_coverage", per_100g: item[:per_100g_coverage_pct]) %>
               </div>
             <% end %>
           </div>

@@ -5,7 +5,8 @@ class DayFood < ApplicationRecord
   belongs_to :day
   belongs_to :day_food_group, optional: true
 
-  validates :quantity, presence: true, numericality: { greater_than: 0 }
+  validates :quantity, presence: true,
+            numericality: { greater_than: 0, less_than_or_equal_to: HasFoodQuantity::MAX_QUANTITY }
   validate :day_food_group_belongs_to_user, if: -> { day_food_group_id.present? && day.present? }
   validates_shared_owner :food, owner: :day
 

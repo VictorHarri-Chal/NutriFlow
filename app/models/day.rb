@@ -66,7 +66,11 @@ class Day < ApplicationRecord
       end.transform_values { |v| v.round(2) }.reject { |_, v| v.zero? }
   end
 
-  def week_aggregated_micronutrients
+  # Accepte un `user:` déjà chargé (ex: CalendarDataLoader a déjà `current_user`
+  # en mémoire) pour éviter un aller-retour SQL évitable sur `user` — sinon
+  # `self.user` (l'association `belongs_to`) déclenche sa propre requête,
+  # distincte de toute instance de User déjà en mémoire côté appelant.
+  def week_aggregated_micronutrients(user: self.user)
     week_range = date.beginning_of_week..date.end_of_week
     user.days.where(date: week_range)
         .includes(day_foods: :food, day_recipes: { recipe: { recipe_items: :food }, day_recipe_items: :food })
@@ -77,9 +81,9 @@ class Day < ApplicationRecord
 
   # Toujours les 14 clés de Micronutrient::ALL, même à 0 — jamais seulement
   # celles consommées (le panneau calendrier doit montrer les manques).
-  def micronutrient_coverage
-    consumed = week_aggregated_micronutrients
-    goals    = user.profile&.weekly_micronutrient_goals || {}
+  def micronutrient_coverage(user: self.user, profile: user&.profile)
+    consumed = week_aggregated_micronutrients(user: user)
+    goals    = profile&.weekly_micronutrient_goals || {}
 
     Micronutrient::ALL.each_with_object({}) do |entry, acc|
       value = consumed[entry.key.to_s].to_f
@@ -87,7 +91,7 @@ class Day < ApplicationRecord
       acc[entry.key] = {
         consumed:   value,
         goal:       goal,
-        percentage: goal && goal > 0 ? (value / goal * 100).round : nil,
+        percentage: Micronutrient.coverage_percentage(value, goal),
         nature:     entry.nature
       }
     end

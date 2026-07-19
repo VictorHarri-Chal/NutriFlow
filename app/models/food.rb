@@ -60,6 +60,12 @@ class Food < ApplicationRecord
     self.salt          ||= 0
   end
 
+  # Plafond de bon sens (aucun micronutriment par 100g ne s'en approche jamais
+  # réellement) qui empêche une valeur combinée à une quantité loggée énorme
+  # de dépasser Float::MAX et de produire Infinity, valeur que Statistics
+  # échoue ensuite à sérialiser en JSON.
+  MICRONUTRIENT_MAX_VALUE = 100_000
+
   def micronutrients_are_valid
     return if micronutrients.blank?
 
@@ -71,6 +77,10 @@ class Food < ApplicationRecord
       end
       unless value.is_a?(Numeric) && value.to_f > 0
         errors.add(:micronutrients, :invalid_value, key: key)
+        next
+      end
+      if value.to_f > MICRONUTRIENT_MAX_VALUE
+        errors.add(:micronutrients, :value_out_of_range, key: key)
       end
     end
   end
