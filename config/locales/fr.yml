@@ -88,14 +88,6 @@ fr:
 
   activerecord:
     attributes:
-      food:
-        name: "Nom"
-        brand: "Marque"
-        calories: "Calories"
-        proteins: "Protéines"
-        carbs: "Glucides"
-        fats: "Lipides"
-        sugars: "Sucres"
       profile:
         name: "Nom"
         weight: "Poids"

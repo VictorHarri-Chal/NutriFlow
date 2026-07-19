@@ -1,0 +1,20 @@
+en:
+  activerecord:
+    models:
+      food: "Food"
+      foods: "Foods"
+    attributes:
+      food:
+        name: "Name"
+        brand: "Brand"
+        fats: "Fats"
+        carbs: "Carbohydrates"
+        sugars: "Sugars"
+        proteins: "Proteins"
+        calories: "Calories"
+    errors:
+      models:
+        food:
+          attributes:
+            name:
+              taken: "is already used for one of your foods"

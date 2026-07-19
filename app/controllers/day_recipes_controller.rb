@@ -48,12 +48,11 @@ class DayRecipesController < ApplicationController
 
   def update
     if @day_recipe.update(day_recipe_params)
+      load_calendar_data(@day)
+      @selected_date = @day.date
+      load_month_heatmap(@day.date)
       respond_to do |format|
-        format.turbo_stream do
-          load_calendar_data(@day)
-          @selected_date = @day.date
-          load_month_heatmap(@day.date)
-        end
+        format.turbo_stream
         format.html { redirect_to calendars_path(date: @day.date) }
       end
     else

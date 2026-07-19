@@ -88,14 +88,6 @@ en:
 
   activerecord:
     attributes:
-      food:
-        name: "Name"
-        brand: "Brand"
-        calories: "Calories"
-        proteins: "Proteins"
-        carbs: "Carbohydrates"
-        fats: "Fats"
-        sugars: "Sugars"
       profile:
         name: "Name"
         weight: "Weight"
