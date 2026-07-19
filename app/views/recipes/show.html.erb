@@ -187,21 +187,27 @@
           </p>
           <span class="text-xs text-ink-subtle tabular-nums"><%= @recipe.recipe_items.size %></span>
         </div>
-        <div class="overflow-y-auto" style="max-height: 280px;">
+        <div class="overflow-x-auto overflow-y-auto" style="max-height: 280px;">
           <table class="min-w-full table-dark [&_td]:!py-4">
             <thead class="sticky top-0 z-10">
               <tr>
                 <th><%= t("views.recipes.show.food_col") %></th>
                 <th><%= t("views.recipes.show.quantity_col") %></th>
                 <th><%= t("views.recipes.show.calories") %></th>
+                <th title="<%= Food.human_attribute_name(:proteins) %>"><%= t("views.recipes.show.proteins_abbr") %></th>
+                <th title="<%= Food.human_attribute_name(:carbs) %>"><%= t("views.recipes.show.carbs_abbr") %></th>
+                <th title="<%= Food.human_attribute_name(:fats) %>"><%= t("views.recipes.show.fats_abbr") %></th>
               </tr>
             </thead>
             <tbody>
               <% @recipe.recipe_items.each do |item| %>
                 <tr>
-                  <td class="font-medium text-ink-primary"><%= item.food.name %></td>
-                  <td class="text-ink-muted"><%= item.quantity.frac.zero? ? item.quantity.to_i : item.quantity %> <%= item.unit %></td>
-                  <td class="font-semibold text-brand"><%= item.total_calories %> kcal</td>
+                  <td class="align-top font-medium text-ink-primary"><span class="break-words"><%= item.food.name %></span></td>
+                  <td class="align-top whitespace-nowrap text-ink-muted"><%= item.quantity.frac.zero? ? item.quantity.to_i : item.quantity %> <%= item.unit %></td>
+                  <td class="align-top whitespace-nowrap font-semibold text-brand"><%= item.total_calories.round %> kcal</td>
+                  <td class="align-top whitespace-nowrap font-semibold text-ink-muted"><%= item.total_proteins.round %> g</td>
+                  <td class="align-top whitespace-nowrap font-semibold text-ink-muted"><%= item.total_carbs.round %> g</td>
+                  <td class="align-top whitespace-nowrap font-semibold text-ink-muted"><%= item.total_fats.round %> g</td>
                 </tr>
               <% end %>
             </tbody>
