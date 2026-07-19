@@ -312,6 +312,23 @@ class Profile < ApplicationRecord
     (daily_protein_goal * 4) + (daily_fats_goal(day: day) * 9) > calorie_goal
   end
 
+  # Objectifs hebdomadaires (AJR ANSES × 7) par micronutrient. Aucun des 14
+  # nutriments gérés ne dépend du poids ni de l'activité physique (voir l'annexe
+  # du spec) — uniquement du sexe, avec la même convention que
+  # #gender_bmr_constant pour "other" (moyenne homme/femme).
+  def weekly_micronutrient_goals
+    Micronutrient::ALL.each_with_object({}) do |entry, acc|
+      next if entry.nature == :none
+
+      daily = case gender.to_s
+              when "male"   then entry.rda_male
+              when "female" then entry.rda_female
+              else               (entry.rda_male + entry.rda_female) / 2.0
+              end
+      acc[entry.key] = (daily * 7).round(2)
+    end
+  end
+
   # The whole goal mechanism (target weight, rate, and their personalised
   # defaults) needs a computable BMR — i.e. weight, height and age — to mean
   # anything. Without it, none of these fields are shown in the UI, so none

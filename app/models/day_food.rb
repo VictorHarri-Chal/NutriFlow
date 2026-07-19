@@ -1,49 +1,18 @@
 class DayFood < ApplicationRecord
+  include HasFoodQuantity
   include ValidatesSharedOwner
 
   belongs_to :day
-  belongs_to :food
   belongs_to :day_food_group, optional: true
 
-  validates :quantity, presence: true, numericality: { greater_than: 0 }
+  validates :quantity, presence: true,
+            numericality: { greater_than: 0, less_than_or_equal_to: HasFoodQuantity::MAX_QUANTITY }
   validate :day_food_group_belongs_to_user, if: -> { day_food_group_id.present? && day.present? }
   validates_shared_owner :food, owner: :day
 
-  def gram_factor
-    quantity / 100.0
-  end
-
-  def total_calories
-    (food.calories * gram_factor).round(1)
-  end
-
-  def total_proteins
-    (food.proteins * gram_factor).round(1)
-  end
-
-  def total_carbs
-    (food.carbs * gram_factor).round(1)
-  end
-
-  def total_fats
-    (food.fats * gram_factor).round(1)
-  end
-
-  def total_sugars
-    (food.sugars * gram_factor).round(1)
-  end
-
-  def total_fiber
-    (food.fiber.to_f * gram_factor).round(1)
-  end
-
-  def total_saturated_fat
-    (food.saturated_fat.to_f * gram_factor).round(1)
-  end
-
-  def total_salt
-    (food.salt.to_f * gram_factor).round(1)
-  end
+  # day_foods n'a pas de colonne `unit` (toujours en grammes) — HasFoodQuantity
+  # en a besoin pour son calcul générique de grams_equivalent.
+  def unit = "g"
 
   private
 

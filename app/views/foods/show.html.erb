@@ -122,14 +122,8 @@
 
         <%
           mn = (@food.micronutrients || {}).transform_keys(&:to_s)
-          minerals = %w[calcium iron magnesium potassium sodium zinc cholesterol]
-          vitamins = %w[vitamin_c vitamin_d vitamin_b12 vitamin_a vitamin_b9 epa dha]
-          units = { "calcium" => "mg", "iron" => "mg", "magnesium" => "mg", "potassium" => "mg",
-                    "sodium" => "mg", "zinc" => "mg", "cholesterol" => "mg",
-                    "vitamin_c" => "mg", "vitamin_d" => "µg", "vitamin_b12" => "µg",
-                    "vitamin_a" => "µg", "vitamin_b9" => "µg", "epa" => "g", "dha" => "g" }
-          present_minerals = minerals.select { |k| mn[k].present? }
-          present_vitamins = vitamins.select { |k| mn[k].present? }
+          present_minerals = Micronutrient.minerals.map(&:key).select { |k| mn[k.to_s].present? }
+          present_vitamins = Micronutrient.vitamins.map(&:key).select { |k| mn[k.to_s].present? }
         %>
         <% if present_minerals.any? %>
           <div>
@@ -138,7 +132,7 @@
               <% present_minerals.each do |key| %>
                 <div class="flex items-center justify-between px-4 py-2.5">
                   <span class="text-sm text-ink-muted"><%= t("views.foods.show.nutrients.#{key}") %></span>
-                  <span class="text-sm font-semibold text-ink-primary"><%= mn[key] %> <span class="text-xs font-normal text-ink-subtle"><%= units[key] %></span></span>
+                  <span class="text-sm font-semibold text-ink-primary"><%= mn[key.to_s] %> <span class="text-xs font-normal text-ink-subtle"><%= Micronutrient.find(key).unit %></span></span>
                 </div>
               <% end %>
             </div>
@@ -152,7 +146,7 @@
               <% present_vitamins.each do |key| %>
                 <div class="flex items-center justify-between px-4 py-2.5">
                   <span class="text-sm text-ink-muted"><%= t("views.foods.show.nutrients.#{key}") %></span>
-                  <span class="text-sm font-semibold text-ink-primary"><%= mn[key] %> <span class="text-xs font-normal text-ink-subtle"><%= units[key] %></span></span>
+                  <span class="text-sm font-semibold text-ink-primary"><%= mn[key.to_s] %> <span class="text-xs font-normal text-ink-subtle"><%= Micronutrient.find(key).unit %></span></span>
                 </div>
               <% end %>
             </div>
