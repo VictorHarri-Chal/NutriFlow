@@ -53,6 +53,11 @@
           total_saturated_fat: total_saturated_fat,
           total_salt:          total_salt) %>
 
+    <%= render MicronutrientPanelComponent.new(
+          coverage:   @micronutrient_coverage,
+          week_start: @micronutrient_week_start,
+          week_end:   @micronutrient_week_end) %>
+
     <%# ── Breakdown dépenses ── %>
     <% if current_user.show_tdee_breakdown? %>
       <div class="mt-4 pt-4 border-t border-surface-border/30">

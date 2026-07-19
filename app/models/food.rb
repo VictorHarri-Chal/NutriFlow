@@ -21,6 +21,7 @@ class Food < ApplicationRecord
   validates :category, inclusion: { in: CATEGORIES }, allow_nil: true
   validates :calories, :proteins, :fats, :carbs, :sugars, :fiber, :saturated_fat, :salt,
             numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validate :micronutrients_are_valid
 
   pg_search_scope :search_by_name,
   against: [:name],
@@ -57,5 +58,20 @@ class Food < ApplicationRecord
     self.fiber         ||= 0
     self.saturated_fat ||= 0
     self.salt          ||= 0
+  end
+
+  def micronutrients_are_valid
+    return if micronutrients.blank?
+
+    valid_keys = Micronutrient::KEYS.map(&:to_s)
+    micronutrients.each do |key, value|
+      unless valid_keys.include?(key.to_s)
+        errors.add(:micronutrients, :unknown_key, key: key)
+        next
+      end
+      unless value.is_a?(Numeric) && value.to_f > 0
+        errors.add(:micronutrients, :invalid_value, key: key)
+      end
+    end
   end
 end

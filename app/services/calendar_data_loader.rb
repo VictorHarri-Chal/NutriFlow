@@ -16,6 +16,7 @@ class CalendarDataLoader
   def call
     load_items
     load_profile_goals
+    load_micronutrients
     build_result
   end
 
@@ -80,6 +81,14 @@ class CalendarDataLoader
     @carbs_percentage    = @daily_carbs_goal && @daily_carbs_goal > 0 ? (@total_carbs / @daily_carbs_goal.to_f * 100).round(1) : 0
   end
 
+  # ── Micronutrients ───────────────────────────────────────────────────────────
+
+  def load_micronutrients
+    @micronutrient_coverage = @day.micronutrient_coverage
+    @micronutrient_week_start = @day.date.beginning_of_week
+    @micronutrient_week_end   = @day.date.end_of_week
+  end
+
   # ── Result ───────────────────────────────────────────────────────────────────
 
   def build_result
@@ -107,7 +116,10 @@ class CalendarDataLoader
       calories_percentage:     @calories_percentage,
       proteins_percentage:     @proteins_percentage,
       fats_percentage:         @fats_percentage,
-      carbs_percentage:        @carbs_percentage
+      carbs_percentage:        @carbs_percentage,
+      micronutrient_coverage:   @micronutrient_coverage,
+      micronutrient_week_start: @micronutrient_week_start,
+      micronutrient_week_end:   @micronutrient_week_end
     }
   end
 end

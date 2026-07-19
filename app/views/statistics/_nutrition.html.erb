@@ -148,4 +148,40 @@
 
   </div>
 
+  <%# ── Tendances micronutriments ── %>
+  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl p-6">
+    <div class="flex items-center justify-between mb-4 gap-3 flex-wrap">
+      <h2 class="text-sm font-semibold text-ink-primary flex items-center gap-2">
+        <i class="fas fa-flask text-brand text-xs"></i>
+        <%= t("views.statistics.nutrition.micronutrient_trend_title") %>
+      </h2>
+      <%= form_with url: statistics_path, method: :get, data: { turbo_frame: "_top" } do |f| %>
+        <%= hidden_field_tag :period, @period %>
+        <%= hidden_field_tag :tab, @tab %>
+        <div data-controller="custom-select" class="relative w-56">
+          <%= select_tag :micronutrient,
+                options_for_select(@micronutrient_options.map { |e| [e.label, e.key] }, @selected_micronutrient.key),
+                class: "sr-only", data: { custom_select_target: "select" },
+                onchange: "this.form.requestSubmit()" %>
+          <button type="button" data-action="click->custom-select#toggle"
+                  class="input-dark flex items-center justify-between cursor-pointer w-full text-left text-sm">
+            <span data-custom-select-target="label" class="text-ink-subtle"></span>
+            <i class="fas fa-chevron-down text-xs text-ink-subtle flex-shrink-0"></i>
+          </button>
+          <div data-custom-select-target="dropdown"
+               class="hidden absolute z-50 w-full mt-1 bg-surface-raised border border-surface-border/60 rounded-lg shadow-2xl max-h-52 overflow-y-auto"></div>
+        </div>
+      <% end %>
+    </div>
+    <div class="relative h-48">
+      <canvas data-controller="line-chart"
+              data-line-chart-labels-value="<%= @micronutrient_labels.to_json %>"
+              data-line-chart-data-value="<%= @micronutrient_data.to_json %>"
+              data-line-chart-unit-value="<%= @selected_micronutrient.unit %>"
+              data-line-chart-color-value="#A78BFA"
+              data-line-chart-goal-value="<%= @micronutrient_daily_goal %>">
+      </canvas>
+    </div>
+  </div>
+
 <% end %>

@@ -18,7 +18,8 @@ export default class extends Controller {
     "ecoscoreWrapper", "ecoscoreBadge", "ecoscoreDesc",
     "additivesSection", "labelsSection",
     "allergensSection", "tracesSection",
-    "advancedSection"
+    "advancedSection",
+    "manualMicronutrientSection"
   ]
 
   static values = { url: String, allergensMap: Object, labelsMap: Object, nsDescs: Object, novaDescs: Object, ecoDescs: Object }
@@ -64,6 +65,7 @@ export default class extends Controller {
     if (this.hasSourceFieldTarget)  this.sourceFieldTarget.value = "ciqual"
     if (this.hasBadgeTarget)       this.badgeTarget.classList.replace("flex", "hidden")
     if (this.hasCiqualBadgeTarget) this.ciqualBadgeTarget.classList.replace("hidden", "flex")
+    if (this.hasManualMicronutrientSectionTarget) this.manualMicronutrientSectionTarget.classList.add("hidden")
 
     document.dispatchEvent(new CustomEvent("food-off-search:import", {
       detail: { product },
@@ -96,6 +98,7 @@ export default class extends Controller {
     if (this.hasSourceFieldTarget)  this.sourceFieldTarget.value = "off"
     if (this.hasCiqualBadgeTarget) this.ciqualBadgeTarget.classList.replace("flex", "hidden")
     if (this.hasBadgeTarget)       this.badgeTarget.classList.replace("hidden", "flex")
+    if (this.hasManualMicronutrientSectionTarget) this.manualMicronutrientSectionTarget.classList.add("hidden")
 
     document.dispatchEvent(new CustomEvent("food-off-search:import", {
       detail: { product },
@@ -124,6 +127,7 @@ export default class extends Controller {
     this._toggleTagSection(this.hasLabelsSectionTarget    && this.labelsSectionTarget,    [])
     if (this.hasQualitySectionTarget)   this.qualitySectionTarget.classList.add("hidden")
     if (this.hasAdvancedSectionTarget)  this.advancedSectionTarget.classList.add("hidden")
+    if (this.hasManualMicronutrientSectionTarget) this.manualMicronutrientSectionTarget.classList.remove("hidden")
   }
 
   _updateQualitySection(product) {

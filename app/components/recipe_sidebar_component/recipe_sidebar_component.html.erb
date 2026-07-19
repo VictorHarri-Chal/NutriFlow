@@ -39,11 +39,20 @@
       </p>
       <div class="divide-y divide-surface-border/20">
         <% mn_list.each do |item| %>
-          <div class="flex items-center justify-between py-1.5">
-            <span class="text-xs text-ink-muted"><%= t("views.foods.show.nutrients.#{item[:key]}") %></span>
-            <span class="text-xs font-semibold text-ink-primary tabular-nums">
-              <%= number_with_precision(item[:value], precision: 1, strip_insignificant_zeros: true) %> <%= item[:unit] %>
-            </span>
+          <div class="py-1.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-ink-muted"><%= t("views.foods.show.nutrients.#{item[:key]}") %></span>
+              <span class="text-xs font-semibold text-ink-primary tabular-nums">
+                <%= number_with_precision(item[:total_value], precision: 1, strip_insignificant_zeros: true) %> <%= item[:unit] %>
+              </span>
+            </div>
+            <% if item[:total_coverage_pct] || item[:per_100g_coverage_pct] %>
+              <div class="text-[10px] text-ink-subtle mt-0.5">
+                <%= t("views.components.recipe_sidebar.weekly_coverage",
+                      per_100g: item[:per_100g_coverage_pct] || 0,
+                      total: item[:total_coverage_pct] || 0) %>
+              </div>
+            <% end %>
           </div>
         <% end %>
       </div>

@@ -59,6 +59,40 @@ class Day < ApplicationRecord
     preloaded_day_foods.sum(&:total_sugars) + preloaded_day_recipes.sum(&:total_sugars)
   end
 
+  def aggregated_micronutrients
+    @aggregated_micronutrients ||= (preloaded_day_foods + preloaded_day_recipes)
+      .each_with_object({}) do |item, acc|
+        item.scaled_micronutrients.each { |key, value| acc[key] = (acc[key] || 0) + value }
+      end.transform_values { |v| v.round(2) }.reject { |_, v| v.zero? }
+  end
+
+  def week_aggregated_micronutrients
+    week_range = date.beginning_of_week..date.end_of_week
+    user.days.where(date: week_range)
+        .includes(day_foods: :food, day_recipes: { recipe: { recipe_items: :food }, day_recipe_items: :food })
+        .each_with_object({}) do |d, acc|
+          d.aggregated_micronutrients.each { |key, value| acc[key] = (acc[key] || 0) + value }
+        end.transform_values { |v| v.round(2) }
+  end
+
+  # Toujours les 14 clés de Micronutrient::ALL, même à 0 — jamais seulement
+  # celles consommées (le panneau calendrier doit montrer les manques).
+  def micronutrient_coverage
+    consumed = week_aggregated_micronutrients
+    goals    = user.profile&.weekly_micronutrient_goals || {}
+
+    Micronutrient::ALL.each_with_object({}) do |entry, acc|
+      value = consumed[entry.key.to_s].to_f
+      goal  = goals[entry.key]
+      acc[entry.key] = {
+        consumed:   value,
+        goal:       goal,
+        percentage: goal && goal > 0 ? (value / goal * 100).round : nil,
+        nature:     entry.nature
+      }
+    end
+  end
+
   private
 
   def preloaded_day_foods

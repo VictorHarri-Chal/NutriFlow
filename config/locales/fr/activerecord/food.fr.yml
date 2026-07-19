@@ -12,9 +12,13 @@ fr:
         sugars: "Sucres"
         proteins: "Protéines"
         calories: "Calories"
+        micronutrients: "Micronutriments"
     errors:
       models:
         food:
           attributes:
             name:
               taken: "est déjà utilisé pour un de vos aliments"
+            micronutrients:
+              unknown_key: " : micronutriment inconnu (%{key})"
+              invalid_value: " : valeur invalide pour %{key} (doit être un nombre positif)"

@@ -107,6 +107,22 @@ class StatisticsController < ApplicationController
         vals.any? ? (vals.sum / vals.size.to_f).round(1) : 0
       end
     end
+
+    load_micronutrient_trend(days_by_date, range)
+  end
+
+  def load_micronutrient_trend(days_by_date, range)
+    selected_key = Micronutrient::KEYS.map(&:to_s).include?(params[:micronutrient]) ? params[:micronutrient].to_sym : :iron
+    @selected_micronutrient = Micronutrient.find(selected_key)
+    @micronutrient_options  = Micronutrient::ALL
+
+    goals = current_user.profile&.weekly_micronutrient_goals || {}
+    @micronutrient_daily_goal = goals[selected_key] ? (goals[selected_key] / 7.0).round(2) : 0
+
+    @micronutrient_labels = range.map { |d| l(d, format: :short) }
+    @micronutrient_data = range.map do |d|
+      days_by_date[d] ? days_by_date[d].aggregated_micronutrients[selected_key.to_s].to_f : 0
+    end
   end
 
   # ── Training ─────────────────────────────────────────────────────────────────

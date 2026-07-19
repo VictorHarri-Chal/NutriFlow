@@ -60,6 +60,10 @@ class DayRecipe < ApplicationRecord
   def total_saturated_fat = customized? ? customized_totals[:saturated_fat] : (recipe.total_saturated_fat * gram_factor).round(1)
   def total_salt          = customized? ? customized_totals[:salt]          : (recipe.total_salt          * gram_factor).round(1)
 
+  def scaled_micronutrients
+    customized? ? customized_micronutrients : recipe.aggregated_micronutrients.transform_values { |v| (v * gram_factor).round(2) }
+  end
+
   def total_weight
     effective_quantity
   end
@@ -89,5 +93,11 @@ class DayRecipe < ApplicationRecord
       acc[:saturated_fat] += item.total_saturated_fat
       acc[:salt]          += item.total_salt
     end.transform_values { |v| v.round(1) }
+  end
+
+  def customized_micronutrients
+    @customized_micronutrients ||= day_recipe_items.each_with_object({}) do |item, acc|
+      item.scaled_micronutrients.each { |key, value| acc[key] = (acc[key] || 0) + value }
+    end.transform_values { |v| v.round(2) }
   end
 end

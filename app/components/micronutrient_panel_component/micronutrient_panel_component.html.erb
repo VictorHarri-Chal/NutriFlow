@@ -1,0 +1,53 @@
+<div class="border-t border-surface-border/40 mt-3 pt-3"
+     data-controller="collapsible"
+     data-collapsible-storage-key="micronutrient-panel">
+
+  <div class="flex justify-center">
+    <button type="button"
+            class="group flex flex-col items-center gap-0.5 text-ink-subtle/60 hover:text-brand transition-colors py-1 px-4"
+            data-action="click->collapsible#toggle"
+            data-collapsible-target="trigger"
+            title="<%= t("views.calendars.micronutrients.trigger_title") %>">
+      <i class="fas fa-chevron-down text-xs transition-transform duration-200" data-collapsible-target="icon"></i>
+    </button>
+  </div>
+
+  <div class="hidden mt-4 space-y-4" data-collapsible-target="content">
+    <p class="text-center text-[11px] text-ink-subtle">
+      <%= t("views.calendars.micronutrients.week_range",
+            start: l(week_start, format: :short), end: l(week_end, format: :short)) %>
+    </p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+      <% groups.each do |title, entries| %>
+        <div>
+          <h4 class="text-[11px] font-semibold text-ink-subtle uppercase tracking-wide mb-2"><%= title %></h4>
+          <div class="space-y-2.5">
+            <% entries.each do |entry| %>
+              <% data = coverage[entry.key] %>
+              <div>
+                <div class="flex items-center justify-between text-xs mb-1">
+                  <span class="text-ink-muted"><%= entry.label %></span>
+                  <% if data[:goal] %>
+                    <span class="text-ink-subtle tabular-nums">
+                      <%= number_with_precision(data[:consumed], precision: 1, strip_insignificant_zeros: true) %> / <%= number_with_precision(data[:goal], precision: 0) %> <%= entry.unit %><%= t("views.calendars.micronutrients.ceiling_suffix") if entry.nature == :ceiling %>
+                    </span>
+                  <% else %>
+                    <span class="text-ink-subtle tabular-nums">
+                      <%= number_with_precision(data[:consumed], precision: 1, strip_insignificant_zeros: true) %> <%= entry.unit %>
+                    </span>
+                  <% end %>
+                </div>
+                <% if data[:goal] %>
+                  <div class="progress-track h-1">
+                    <div class="h-full rounded-full <%= bar_color_class(entry, data) %>" style="width: <%= bar_width(data) %>%"></div>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -35,21 +35,33 @@ namespace :ciqual do
     col_saturated_fat = headers.find { |h| norm.(h).include?("saturés") }
     col_salt          = headers.find { |h| norm.(h).include?("Sel") && norm.(h).include?("sodium") }
 
-    # Micronutrient columns
-    col_calcium    = headers.find { |h| norm.(h).include?("Calcium") }
-    col_iron       = headers.find { |h| norm.(h).include?("Fer (") }
-    col_magnesium  = headers.find { |h| norm.(h).include?("Magnésium") }
-    col_potassium  = headers.find { |h| norm.(h).include?("Potassium") }
-    col_sodium     = headers.find { |h| norm.(h).include?("Sodium") }
-    col_zinc       = headers.find { |h| norm.(h).include?("Zinc") }
-    col_vitamin_c  = headers.find { |h| norm.(h).include?("Vitamine C") }
-    col_vitamin_d  = headers.find { |h| norm.(h).include?("Vitamine D (") }
-    col_vitamin_b12 = headers.find { |h| norm.(h).include?("Vitamine B12") }
-    col_vitamin_a  = headers.find { |h| norm.(h).include?("équivalents rétinol") }
-    col_vitamin_b9 = headers.find { |h| norm.(h).include?("Folates totaux (µg") }
-    col_cholesterol = headers.find { |h| norm.(h).include?("Cholestérol") }
-    col_epa        = headers.find { |h| norm.(h).include?("EPA") }
-    col_dha        = headers.find { |h| norm.(h).include?("DHA") }
+    # Micronutrient columns — un seul motif de recherche par clé du registre
+    # Micronutrient. Ajouter un nutriment ici + une entrée dans Micronutrient::ALL
+    # suffit à l'importer, sans toucher au reste de la tâche.
+    # (Variable locale, pas une constante — cette valeur est reconstruite à
+    # chaque exécution de la tâche, une constante se réassignerait à chaque
+    # appel et déclencherait un warning Ruby "already initialized constant".)
+    column_patterns = {
+      calcium:     "Calcium",
+      iron:        "Fer (",
+      magnesium:   "Magnésium",
+      potassium:   "Potassium",
+      sodium:      "Sodium",
+      zinc:        "Zinc",
+      vitamin_c:   "Vitamine C",
+      vitamin_d:   "Vitamine D (",
+      vitamin_b12: "Vitamine B12",
+      vitamin_a:   "équivalents rétinol",
+      vitamin_b9:  "Folates totaux (µg",
+      cholesterol: "Cholestérol",
+      epa:         "EPA",
+      dha:         "DHA"
+    }.freeze
+
+    col_micronutrients = Micronutrient::KEYS.each_with_object({}) do |key, acc|
+      pattern = column_patterns[key]
+      acc[key] = headers.find { |h| norm.(h).include?(pattern) } if pattern
+    end
 
     missing = [col_code, col_name_fr, col_calories].select(&:nil?)
     if missing.any?
@@ -59,7 +71,7 @@ namespace :ciqual do
     puts "Import Ciqual depuis #{path}"
     puts "Colonnes détectées : calories=#{col_calories}, protéines=#{col_proteins}, glucides=#{col_carbs}, lipides=#{col_fats}, sucres=#{col_sugars}"
     puts "Colonnes étendues  : fibres=#{col_fiber ? 'oui' : 'non'}, AG_sat=#{col_saturated_fat ? 'oui' : 'non'}, sel=#{col_salt ? 'oui' : 'non'}"
-    puts "Micronutriments    : calcium=#{col_calcium ? 'oui' : 'non'}, fer=#{col_iron ? 'oui' : 'non'}, magnésium=#{col_magnesium ? 'oui' : 'non'}, EPA=#{col_epa ? 'oui' : 'non'}, DHA=#{col_dha ? 'oui' : 'non'}"
+    puts "Micronutriments    : #{col_micronutrients.size}/#{Micronutrient::KEYS.size} colonnes détectées (#{col_micronutrients.keys.join(', ')})"
 
     created = 0
     updated = 0
@@ -75,22 +87,10 @@ namespace :ciqual do
         next
       end
 
-      micronutrients = {
-        calcium:    col_calcium    ? parse_ciqual_value(row[col_calcium])    : nil,
-        iron:       col_iron       ? parse_ciqual_value(row[col_iron])       : nil,
-        magnesium:  col_magnesium  ? parse_ciqual_value(row[col_magnesium])  : nil,
-        potassium:  col_potassium  ? parse_ciqual_value(row[col_potassium])  : nil,
-        sodium:     col_sodium     ? parse_ciqual_value(row[col_sodium])     : nil,
-        zinc:       col_zinc       ? parse_ciqual_value(row[col_zinc])       : nil,
-        vitamin_c:  col_vitamin_c  ? parse_ciqual_value(row[col_vitamin_c])  : nil,
-        vitamin_d:  col_vitamin_d  ? parse_ciqual_value(row[col_vitamin_d])  : nil,
-        vitamin_b12: col_vitamin_b12 ? parse_ciqual_value(row[col_vitamin_b12]) : nil,
-        vitamin_a:  col_vitamin_a  ? parse_ciqual_value(row[col_vitamin_a])  : nil,
-        vitamin_b9: col_vitamin_b9 ? parse_ciqual_value(row[col_vitamin_b9]) : nil,
-        cholesterol: col_cholesterol ? parse_ciqual_value(row[col_cholesterol]) : nil,
-        epa:        col_epa        ? parse_ciqual_value(row[col_epa])        : nil,
-        dha:        col_dha        ? parse_ciqual_value(row[col_dha])        : nil
-      }.compact.reject { |_, v| v == 0.0 }
+      micronutrients = col_micronutrients.each_with_object({}) do |(key, col), acc|
+        value = parse_ciqual_value(row[col])
+        acc[key] = value if value != 0.0
+      end
 
       attrs = {
         name:          name,

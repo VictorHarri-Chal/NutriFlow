@@ -8,13 +8,17 @@ en:
         name: "Name"
         brand: "Brand"
         fats: "Fats"
-        carbs: "Carbohydrates"
+        carbs: "Carbs"
         sugars: "Sugars"
         proteins: "Proteins"
         calories: "Calories"
+        micronutrients: "Micronutrients"
     errors:
       models:
         food:
           attributes:
             name:
               taken: "is already used for one of your foods"
+            micronutrients:
+              unknown_key: " : unknown micronutrient (%{key})"
+              invalid_value: " : invalid value for %{key} (must be a positive number)"

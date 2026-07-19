@@ -38,6 +38,12 @@ class Recipe < ApplicationRecord
       salt:          (total_salt          * factor).round(1) }
   end
 
+  def per_100g_micronutrients
+    weight = total_weight.to_f
+    factor = weight > 0 ? (100.0 / weight) : 0
+    aggregated_micronutrients.transform_values { |v| (v * factor).round(2) }
+  end
+
   def total_calories      = computed_totals[:calories]
   def total_proteins      = computed_totals[:proteins]
   def total_carbs         = computed_totals[:carbs]

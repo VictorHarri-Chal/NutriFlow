@@ -8,28 +8,8 @@
   <%# ── Labels i18n pour micronutriments et allergènes (lus par recipe_builder_controller.js) ── %>
   <script id="recipe-labels-data" type="application/json">
     <%= json_escape({
-      micronutrients: {
-        calcium: t("views.foods.show.nutrients.calcium"),
-        iron: t("views.foods.show.nutrients.iron"),
-        magnesium: t("views.foods.show.nutrients.magnesium"),
-        potassium: t("views.foods.show.nutrients.potassium"),
-        sodium: t("views.foods.show.nutrients.sodium"),
-        zinc: t("views.foods.show.nutrients.zinc"),
-        cholesterol: t("views.foods.show.nutrients.cholesterol"),
-        vitamin_c: t("views.foods.show.nutrients.vitamin_c"),
-        vitamin_d: t("views.foods.show.nutrients.vitamin_d"),
-        vitamin_b12: t("views.foods.show.nutrients.vitamin_b12"),
-        vitamin_a: t("views.foods.show.nutrients.vitamin_a"),
-        vitamin_b9: t("views.foods.show.nutrients.vitamin_b9"),
-        epa: t("views.foods.show.nutrients.epa"),
-        dha: t("views.foods.show.nutrients.dha")
-      },
-      micronutrient_units: {
-        calcium: "mg", iron: "mg", magnesium: "mg", potassium: "mg",
-        sodium: "mg", zinc: "mg", cholesterol: "mg",
-        vitamin_c: "mg", vitamin_d: "µg", vitamin_b12: "µg",
-        vitamin_a: "µg", vitamin_b9: "µg", epa: "g", dha: "g"
-      },
+      micronutrients: Micronutrient::ALL.to_h { |entry| [entry.key, entry.label] },
+      micronutrient_units: Micronutrient::ALL.to_h { |entry| [entry.key, entry.unit] },
       allergens: {
         milk: t("views.foods.show.allergens_map.milk"),
         eggs: t("views.foods.show.allergens_map.eggs"),
