@@ -61,37 +61,42 @@
         <thead>
           <tr>
             <th class="text-left"><%= Food.human_attribute_name(:name) %></th>
-            <th class="text-left hidden sm:table-cell"><%= Food.human_attribute_name(:brand) %></th>
             <th class="text-left"><%= t("views.components.day_food_group.quantity_col") %></th>
             <th class="text-left"><%= Food.human_attribute_name(:calories) %></th>
+            <th class="text-left" title="<%= Food.human_attribute_name(:proteins) %>"><%= t("views.components.day_food_group.proteins_abbr") %></th>
+            <th class="text-left" title="<%= Food.human_attribute_name(:carbs) %>"><%= t("views.components.day_food_group.carbs_abbr") %></th>
+            <th class="text-left" title="<%= Food.human_attribute_name(:fats) %>"><%= t("views.components.day_food_group.fats_abbr") %></th>
             <th class="text-center w-24"><%= t("views.components.day_food_group.actions_col") %></th>
           </tr>
         </thead>
         <tbody>
           <% day_foods.each do |item| %>
             <tr>
-              <td class="font-medium text-ink-primary"><%= item.food_name %></td>
-
-              <td class="hidden sm:table-cell">
+              <td class="align-top font-medium text-ink-primary">
+                <span class="break-words"><%= item.food_name %></span>
                 <% if is_recipe?(item) %>
-                  <span class="text-brand text-xs font-medium"><%= t("views.components.day_food_group.recipe_label") %></span>
-                  <% if item.customized? %>
-                    <i class="fas fa-sliders text-ink-subtle/70 text-[10px] ml-1"
-                       title="<%= t("views.components.day_food_group.customized_tooltip") %>"></i>
-                  <% end %>
-                <% else %>
-                  <span class="text-ink-muted"><%= item.food.brand.presence || "—" %></span>
+                  <div class="text-xs text-brand font-medium">
+                    <%= t("views.components.day_food_group.recipe_label") %>
+                    <% if item.customized? %>
+                      <i class="fas fa-sliders text-ink-subtle/70 text-[10px] ml-1"
+                         title="<%= t("views.components.day_food_group.customized_tooltip") %>"></i>
+                    <% end %>
+                  </div>
                 <% end %>
               </td>
 
-              <td>
+              <td class="align-top">
                 <span class="text-ink-primary"><%= item.display_quantity %></span>
               </td>
 
-              <td class="font-semibold text-brand"><%= item.total_calories.round %> kcal</td>
+              <td class="align-top font-semibold text-brand"><%= item.total_calories.round %> kcal</td>
+
+              <td class="align-top font-semibold text-ink-muted"><%= item.total_proteins.round %> g</td>
+              <td class="align-top font-semibold text-ink-muted"><%= item.total_carbs.round %> g</td>
+              <td class="align-top font-semibold text-ink-muted"><%= item.total_fats.round %> g</td>
 
               <%# Actions: edit + delete with clear separation %>
-              <td class="text-center w-24">
+              <td class="align-top text-center w-24">
                 <div class="flex items-center justify-center gap-3">
                   <%= link_to edit_path(item),
                         class: "w-8 h-8 inline-flex items-center justify-center rounded-lg text-ink-subtle hover:text-brand hover:bg-surface-hover transition-colors",
