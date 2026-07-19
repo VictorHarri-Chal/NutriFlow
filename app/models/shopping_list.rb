@@ -5,7 +5,7 @@ class ShoppingList < ApplicationRecord
   has_many :shopping_list_items, -> { order(created_at: :asc) },
            dependent: :destroy
 
-  validates :name, presence: true
+  validates :name, presence: true, length: { maximum: 80 }
 
   scope :active,   -> { where(archived_at: nil) }
   scope :archived, -> { where.not(archived_at: nil).order(archived_at: :desc) }

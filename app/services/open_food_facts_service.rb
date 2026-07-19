@@ -42,7 +42,7 @@ class OpenFoodFactsService
   TAG_FIELDS = %i[allergens traces additives labels].freeze
 
   FIELDS = [
-    "product_name", "brands", "nutriments",
+    "product_name", "brands", "nutriments", "image_url",
     "nutriscore_grade", "nova_group", "id", "ecoscore_grade",
     "ingredients_text",
     *TAG_FIELDS.map { |f| "#{f}_tags" }
@@ -88,6 +88,7 @@ class OpenFoodFactsService
       nova_group:       (1..4).include?(product["nova_group"]&.to_i) ? product["nova_group"].to_i : nil,
       ecoscore_grade:   VALID_ECO_GRADES.include?(product["ecoscore_grade"]&.downcase) ? product["ecoscore_grade"].downcase : nil,
       ingredients_text: product["ingredients_text"].to_s.strip.presence,
+      image_url:        product["image_url"].to_s.strip.presence,
       micronutrients:   micronutrients.presence || {},
       **required,
       **optional,

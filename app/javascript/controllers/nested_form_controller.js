@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["template", "item", "destroyField", "emptyState", "addButton", "headerRow", "maxHint"]
+  static targets = ["template", "item", "destroyField", "emptyState", "addButton", "headerRow", "maxHint", "submitButton"]
   // maxItems: 0 means unlimited — only the program-builder set editor opts into a cap.
   static values = {
     wrapperSelector: { type: String, default: ".ingredients-container" },
@@ -54,6 +54,9 @@ export default class extends Controller {
     }
     if (this.hasHeaderRowTarget) {
       this.headerRowTarget.style.display = isEmpty ? "none" : "flex"
+    }
+    if (this.hasSubmitButtonTarget) {
+      this.submitButtonTarget.disabled = isEmpty
     }
 
     if (this.maxItemsValue > 0) {

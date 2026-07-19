@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { NS_COLORS, NOVA_COLORS, ECO_COLORS, ECO_LABELS, parseQualityScores, setBadge, renderAllergenChips, renderTagChips } from "off_product_renderer"
 
 export default class extends Controller {
   static targets = [
@@ -20,10 +21,6 @@ export default class extends Controller {
     "advancedSection"
   ]
 
-  static NS_COLORS   = { a: "#038141", b: "#85BB2F", c: "#FECB02", d: "#EE8100", e: "#E63E11" }
-  static NOVA_COLORS = { 1: "#038141", 2: "#85BB2F", 3: "#EE8100", 4: "#E63E11" }
-  static ECO_COLORS  = { "a-plus": "#006400", a: "#038141", b: "#85BB2F", c: "#FECB02", d: "#EE8100", e: "#E63E11", f: "#8B1A1A" }
-  static ECO_LABELS  = { "a-plus": "A+" }
   static values = { url: String, allergensMap: Object, labelsMap: Object, nsDescs: Object, novaDescs: Object, ecoDescs: Object }
 
   connect() {
@@ -132,12 +129,7 @@ export default class extends Controller {
   _updateQualitySection(product) {
     if (!this.hasQualitySectionTarget) return
 
-    const nsRaw   = product.nutriscore?.toLowerCase()
-    const ns      = nsRaw && this.constructor.NS_COLORS[nsRaw] ? nsRaw : null
-    const novaRaw = parseInt(product.nova_group)
-    const nova    = (!isNaN(novaRaw) && novaRaw >= 1 && novaRaw <= 4) ? novaRaw : null
-    const ecoRaw  = product.ecoscore_grade?.toLowerCase()
-    const eco     = ecoRaw && this.constructor.ECO_COLORS[ecoRaw] ? ecoRaw : null
+    const { ns, nova, eco } = parseQualityScores(product)
 
     if (!ns && !nova && !eco) {
       this.qualitySectionTarget.classList.add("hidden")
@@ -145,79 +137,31 @@ export default class extends Controller {
     }
     this.qualitySectionTarget.classList.remove("hidden")
 
-    this._setBadge(this.hasNutriscoreWrapperTarget && this.nutriscoreWrapperTarget,
-                   this.hasNutriscoreBadgeTarget   && this.nutriscoreBadgeTarget,
-                   ns, ns?.toUpperCase(), this.constructor.NS_COLORS)
+    setBadge(this.hasNutriscoreWrapperTarget && this.nutriscoreWrapperTarget,
+             this.hasNutriscoreBadgeTarget   && this.nutriscoreBadgeTarget,
+             ns, ns?.toUpperCase(), NS_COLORS)
     if (this.hasNutriscoreDescTarget) this.nutriscoreDescTarget.textContent = this.nsDescsValue[ns] || ""
 
-    this._setBadge(this.hasNovaWrapperTarget && this.novaWrapperTarget,
-                   this.hasNovaBadgeTarget   && this.novaBadgeTarget,
-                   nova, nova ? String(nova) : null, this.constructor.NOVA_COLORS)
+    setBadge(this.hasNovaWrapperTarget && this.novaWrapperTarget,
+             this.hasNovaBadgeTarget   && this.novaBadgeTarget,
+             nova, nova ? String(nova) : null, NOVA_COLORS)
     if (this.hasNovaDescTarget) this.novaDescTarget.textContent = this.novaDescsValue[String(nova)] || ""
 
-    const ecoLetter = eco ? (this.constructor.ECO_LABELS[eco] || eco.toUpperCase()) : null
-    this._setBadge(this.hasEcoscoreWrapperTarget && this.ecoscoreWrapperTarget,
-                   this.hasEcoscoreBadgeTarget   && this.ecoscoreBadgeTarget,
-                   eco, ecoLetter, this.constructor.ECO_COLORS)
+    const ecoLetter = eco ? (ECO_LABELS[eco] || eco.toUpperCase()) : null
+    setBadge(this.hasEcoscoreWrapperTarget && this.ecoscoreWrapperTarget,
+             this.hasEcoscoreBadgeTarget   && this.ecoscoreBadgeTarget,
+             eco, ecoLetter, ECO_COLORS)
     if (this.hasEcoscoreDescTarget) this.ecoscoreDescTarget.textContent = this.ecoDescsValue[eco] || ""
   }
 
-  _setBadge(wrapper, badge, value, label, colorsMap) {
-    if (!wrapper || !badge) return
-    if (value) {
-      wrapper.classList.remove("hidden")
-      wrapper.classList.add("flex")
-      badge.textContent = label || String(value).toUpperCase()
-      badge.style.backgroundColor = colorsMap[value] || "#52525B"
-    } else {
-      wrapper.classList.add("hidden")
-      wrapper.classList.remove("flex")
-    }
-  }
-
   _updateAllergenDisplays(allergens, traces) {
-    this._setAllergenDisplay(this.hasAllergensDisplayTarget && this.allergensDisplayTarget, allergens)
     const map = this.hasAllergensMapValue ? this.allergensMapValue : {}
+    if (this.hasAllergensDisplayTarget) renderAllergenChips(this.allergensDisplayTarget, allergens, map)
     this._updateTagDisplay(this.hasTracesDisplayTarget && this.tracesDisplayTarget, traces, map)
   }
 
-  _setAllergenDisplay(el, values) {
-    if (!el) return
-    el.innerHTML = ""
-    if (values.length) {
-      el.className = "flex flex-wrap gap-1.5"
-      const map = this.hasAllergensMapValue ? this.allergensMapValue : {}
-      values.forEach(v => {
-        const key   = v.toLowerCase().replace(/-/g, "_")
-        const label = map[key] || v.replace(/-/g, " ")
-        const span  = document.createElement("span")
-        span.className = "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-status-danger/10 border border-status-danger/30 text-status-danger"
-        span.innerHTML = `<i class="fas fa-triangle-exclamation text-[9px]"></i>${this._escape(label)}`
-        el.appendChild(span)
-      })
-    } else {
-      el.innerHTML = `<span class="text-xs text-ink-subtle">—</span>`
-      el.className = ""
-    }
-  }
-
   _updateTagDisplay(el, values, map) {
-    if (!el) return
-    el.innerHTML = ""
-    if (values.length) {
-      el.className = "flex flex-wrap gap-1.5"
-      values.forEach(v => {
-        const key = v.toLowerCase().replace(/-/g, "_")
-        const label = (map && map[key]) || v.replace(/-/g, " ")
-        const span = document.createElement("span")
-        span.className = "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-surface-hover border border-surface-border/50 text-ink-muted"
-        span.textContent = label
-        el.appendChild(span)
-      })
-    } else {
-      el.textContent = "—"
-      el.className = "text-xs text-ink-subtle"
-    }
+    renderTagChips(el, values, map)
   }
 
   _toggleTagSection(el, values) {

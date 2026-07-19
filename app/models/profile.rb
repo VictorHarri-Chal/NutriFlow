@@ -79,8 +79,8 @@ class Profile < ApplicationRecord
   validates :height,             numericality: { greater_than: 0, less_than: 300 }, allow_blank: true
   validate  :date_of_birth_is_plausible
   validates :goal_weight,        presence: true, if: :profile_ready_for_goal?
-  validates :goal_weight,        numericality: { greater_than: 20, less_than: 400 }, allow_blank: true
-  validates :water_goal_ml,      numericality: { greater_than: 0, less_than: 10_000 }, allow_blank: true
+  validates :goal_weight,        numericality: { greater_than_or_equal_to: 20, less_than_or_equal_to: 400 }, allow_blank: true
+  validates :water_goal_ml,      numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 10_000 }, allow_blank: true
   validates :default_daily_steps, numericality: { greater_than_or_equal_to: 0, less_than: 100_000 }, allow_blank: true
   validates :goal_rate_kg_per_week, numericality: {
     greater_than_or_equal_to: GOAL_RATE_RANGE.min,

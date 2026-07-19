@@ -56,11 +56,12 @@
           method: :patch,
           scope: :program_day,
           class: "w-full" do |f| %>
-      <%= f.text_field :name,
+      <%= f.text_area :name,
             value: day.name,
             placeholder: t("views.workout_programs.day.rest_placeholder"),
-            maxlength: 50,
-            class: "w-full text-center text-sm font-bold bg-transparent border border-transparent rounded-lg px-1 py-1 text-ink-primary placeholder:text-ink-subtle/30 hover:border-surface-border/60 focus:border-brand/50 focus:outline-none focus:bg-surface-hover transition-colors cursor-text",
+            maxlength: 80,
+            rows: 2,
+            class: "w-full text-center text-sm font-bold bg-transparent border border-transparent rounded-lg px-1 py-1 text-ink-primary placeholder:text-ink-subtle/30 hover:border-surface-border/60 focus:border-brand/50 focus:outline-none focus:bg-surface-hover transition-colors cursor-text resize-none leading-tight",
             data: { action: "blur->auto-submit#submit keydown.enter->auto-submit#submit",
                     controller: "auto-submit" } %>
     <% end %>

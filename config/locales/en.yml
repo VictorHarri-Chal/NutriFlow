@@ -1680,6 +1680,17 @@ en:
         supplements: "Supplements"
         other: "Other"
 
+    scans:
+      navbar_tooltip: "Scan a product"
+      modal_title: "Scan a product"
+      add_to_bank: "Add to my food bank"
+      view_existing_food: "View food"
+      added_notice: "Added to your food bank."
+      view_food: "View food"
+      scan_another: "Scan another"
+      close: "Close"
+      of_which: "of which"
+
     devise:
       shared:
         email: "Email address"

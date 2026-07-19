@@ -1,0 +1,185 @@
+<div class="p-5 space-y-3">
+
+  <%# ── Identité ── %>
+  <div class="flex gap-3 items-center mb-2">
+    <div class="w-14 h-14 rounded-xl bg-surface-base border border-surface-border/40 flex items-center justify-center shrink-0 overflow-hidden">
+      <%# Le placeholder est un div sans classes Font Awesome — fontawesome/all.min.css se
+          charge après tailwind.css dans le layout, et si .fas définit son propre display,
+          il peut l'emporter sur .hidden (même spécificité, chargé après) quand les deux
+          classes sont sur le même élément. Isoler l'icône dans un wrapper neutre évite ça. %>
+      <div data-scan-result-target="photoPlaceholder" class="flex items-center justify-center w-full h-full">
+        <i class="fas fa-bowl-food text-surface-border text-lg"></i>
+      </div>
+      <img data-scan-result-target="photo" class="hidden w-full h-full object-cover" alt="">
+    </div>
+    <div class="min-w-0">
+      <div class="text-base font-bold text-ink-primary break-words" data-scan-result-target="name"></div>
+      <div class="text-xs text-ink-muted break-words" data-scan-result-target="brand"></div>
+    </div>
+  </div>
+
+  <%# ── Calories (toujours affiché) ── %>
+  <div class="text-center py-4 bg-surface-base rounded-xl border border-surface-border/40">
+    <div class="text-4xl font-bold text-brand leading-none" data-scan-result-target="calories">0</div>
+    <div class="text-xs text-ink-subtle mt-1.5"><%= t("views.foods.show.kcal_per_100g") %></div>
+  </div>
+
+  <%# ── Macronutriments — sucres/acides gras saturés fusionnés dans la ligne parente, comme une étiquette nutritionnelle classique ── %>
+  <div class="bg-surface-base rounded-xl border border-surface-border/40 divide-y divide-surface-border/30">
+    <div class="flex items-center justify-between px-4 py-2.5">
+      <span class="text-sm text-ink-muted"><%= t("activerecord.attributes.food.proteins") %></span>
+      <span class="text-sm font-semibold text-ink-primary" data-scan-result-target="proteins"></span>
+    </div>
+    <div class="flex items-center justify-between px-4 py-2.5">
+      <div>
+        <div class="text-sm text-ink-muted"><%= t("activerecord.attributes.food.carbs") %></div>
+        <div class="text-xs text-ink-subtle mt-0.5">
+          <%= t("views.scans.of_which") %> <%= t("activerecord.attributes.food.sugars").downcase %> <span data-scan-result-target="sugarsInline"></span>
+        </div>
+      </div>
+      <span class="text-sm font-semibold text-ink-primary" data-scan-result-target="carbs"></span>
+    </div>
+    <div class="flex items-center justify-between px-4 py-2.5">
+      <div>
+        <div class="text-sm text-ink-muted"><%= t("activerecord.attributes.food.fats") %></div>
+        <div class="hidden text-xs text-ink-subtle mt-0.5" data-scan-result-target="saturatedFatRow">
+          <%= t("views.scans.of_which") %> <%= t("views.foods.show.nutrients.saturated_fat").downcase %> <span data-scan-result-target="saturatedFatInline"></span>
+        </div>
+      </div>
+      <span class="text-sm font-semibold text-ink-primary" data-scan-result-target="fats"></span>
+    </div>
+    <div class="hidden flex items-center justify-between px-4 py-2.5" data-scan-result-target="fiberRow">
+      <span class="text-sm text-ink-muted"><%= t("views.foods.show.nutrients.fiber") %></span>
+      <span class="text-sm font-semibold text-ink-primary" data-scan-result-target="fiber"></span>
+    </div>
+    <div class="hidden flex items-center justify-between px-4 py-2.5" data-scan-result-target="saltRow">
+      <span class="text-sm text-ink-muted"><%= t("views.foods.show.nutrients.salt") %></span>
+      <span class="text-sm font-semibold text-ink-primary" data-scan-result-target="salt"></span>
+    </div>
+  </div>
+
+  <%# ── Minéraux (masqué si vide) — même découpage que foods/show.html.erb ── %>
+  <div class="hidden" data-scan-result-target="mineralsSection"
+       data-controller="collapsible" data-collapsible-open-by-default>
+    <div class="bg-surface-base rounded-xl border border-surface-border/40 overflow-hidden">
+      <div class="flex items-center justify-between px-4 py-3 cursor-pointer select-none"
+           data-action="click->collapsible#toggle" data-collapsible-target="trigger">
+        <span class="text-xs font-semibold text-ink-subtle uppercase tracking-wide"><%= t("views.foods.show.minerals") %></span>
+        <i class="fas fa-chevron-down text-xs text-ink-subtle transition-transform duration-200" data-collapsible-target="icon"></i>
+      </div>
+      <div class="divide-y divide-surface-border/30" data-collapsible-target="content" data-scan-result-target="mineralsList"></div>
+    </div>
+  </div>
+
+  <%# ── Vitamines (masqué si vide) ── %>
+  <div class="hidden" data-scan-result-target="vitaminsSection"
+       data-controller="collapsible" data-collapsible-open-by-default>
+    <div class="bg-surface-base rounded-xl border border-surface-border/40 overflow-hidden">
+      <div class="flex items-center justify-between px-4 py-3 cursor-pointer select-none"
+           data-action="click->collapsible#toggle" data-collapsible-target="trigger">
+        <span class="text-xs font-semibold text-ink-subtle uppercase tracking-wide"><%= t("views.foods.show.vitamins") %></span>
+        <i class="fas fa-chevron-down text-xs text-ink-subtle transition-transform duration-200" data-collapsible-target="icon"></i>
+      </div>
+      <div class="divide-y divide-surface-border/30" data-collapsible-target="content" data-scan-result-target="vitaminsList"></div>
+    </div>
+  </div>
+
+  <%# ── Qualité (masqué si aucun score) — chaque score dans sa propre carte, comme foods/show.html.erb ── %>
+  <div class="hidden" data-scan-result-target="qualitySection"
+       data-controller="collapsible" data-collapsible-open-by-default>
+    <div class="flex items-center justify-between px-1 py-1 cursor-pointer select-none"
+         data-action="click->collapsible#toggle" data-collapsible-target="trigger">
+      <span class="text-xs font-semibold text-ink-subtle uppercase tracking-wide px-3"><%= t("views.foods.show.tabs.quality") %></span>
+      <i class="fas fa-chevron-down text-xs text-ink-subtle transition-transform duration-200 mr-3" data-collapsible-target="icon"></i>
+    </div>
+    <div class="space-y-3 mt-2" data-collapsible-target="content" data-scan-result-target="qualityList"></div>
+  </div>
+
+  <%# ── Allergènes (masqué si vide) ── %>
+  <div class="hidden" data-scan-result-target="allergensSection"
+       data-controller="collapsible" data-collapsible-open-by-default>
+    <div class="bg-surface-base rounded-xl border border-surface-border/40 overflow-hidden">
+      <div class="flex items-center justify-between px-4 py-3 cursor-pointer select-none"
+           data-action="click->collapsible#toggle" data-collapsible-target="trigger">
+        <span class="text-xs font-semibold text-ink-subtle uppercase tracking-wide"><%= t("views.foods.show.allergens") %></span>
+        <i class="fas fa-chevron-down text-xs text-ink-subtle transition-transform duration-200" data-collapsible-target="icon"></i>
+      </div>
+      <div class="p-4" data-collapsible-target="content">
+        <div class="flex flex-wrap gap-1.5" data-scan-result-target="allergensList"></div>
+      </div>
+    </div>
+  </div>
+
+  <%# ── Traces (masqué si vide) ── %>
+  <div class="hidden" data-scan-result-target="tracesSection"
+       data-controller="collapsible" data-collapsible-open-by-default>
+    <div class="bg-surface-base rounded-xl border border-surface-border/40 overflow-hidden">
+      <div class="flex items-center justify-between px-4 py-3 cursor-pointer select-none"
+           data-action="click->collapsible#toggle" data-collapsible-target="trigger">
+        <span class="text-xs font-semibold text-ink-subtle uppercase tracking-wide"><%= t("views.foods.show.traces") %></span>
+        <i class="fas fa-chevron-down text-xs text-ink-subtle transition-transform duration-200" data-collapsible-target="icon"></i>
+      </div>
+      <div class="p-4" data-collapsible-target="content">
+        <div class="flex flex-wrap gap-1.5" data-scan-result-target="tracesList"></div>
+      </div>
+    </div>
+  </div>
+
+  <%# ── Additifs (masqué si vide) ── %>
+  <div class="hidden" data-scan-result-target="additivesSection"
+       data-controller="collapsible" data-collapsible-open-by-default>
+    <div class="bg-surface-base rounded-xl border border-surface-border/40 overflow-hidden">
+      <div class="flex items-center justify-between px-4 py-3 cursor-pointer select-none"
+           data-action="click->collapsible#toggle" data-collapsible-target="trigger">
+        <span class="text-xs font-semibold text-ink-subtle uppercase tracking-wide"><%= t("views.foods.show.additives") %></span>
+        <i class="fas fa-chevron-down text-xs text-ink-subtle transition-transform duration-200" data-collapsible-target="icon"></i>
+      </div>
+      <div class="p-4" data-collapsible-target="content">
+        <div class="flex flex-wrap gap-1.5" data-scan-result-target="additivesList"></div>
+      </div>
+    </div>
+  </div>
+
+  <%# ── Labels & Certifications (masqué si vide) ── %>
+  <div class="hidden" data-scan-result-target="labelsSection"
+       data-controller="collapsible" data-collapsible-open-by-default>
+    <div class="bg-surface-base rounded-xl border border-surface-border/40 overflow-hidden">
+      <div class="flex items-center justify-between px-4 py-3 cursor-pointer select-none"
+           data-action="click->collapsible#toggle" data-collapsible-target="trigger">
+        <span class="text-xs font-semibold text-ink-subtle uppercase tracking-wide"><%= t("views.foods.show.labels") %></span>
+        <i class="fas fa-chevron-down text-xs text-ink-subtle transition-transform duration-200" data-collapsible-target="icon"></i>
+      </div>
+      <div class="p-4" data-collapsible-target="content">
+        <div class="flex flex-wrap gap-1.5" data-scan-result-target="labelsList"></div>
+      </div>
+    </div>
+  </div>
+
+  <%# ── Message d'erreur de validation (masqué par défaut) ── %>
+  <div class="hidden rounded-xl border border-status-danger/30 bg-status-danger/10 p-4" data-scan-result-target="errorBox">
+    <ul class="list-disc list-inside text-sm text-status-danger space-y-1" data-scan-result-target="errorList"></ul>
+  </div>
+
+  <%# ── État succès (masqué par défaut) ── %>
+  <div class="hidden text-center py-6" data-scan-result-target="successBox">
+    <div class="w-12 h-12 mx-auto mb-3 bg-status-success/15 rounded-full flex items-center justify-center">
+      <i class="fas fa-check text-status-success text-lg"></i>
+    </div>
+    <p class="text-sm font-semibold text-ink-primary mb-4"><%= t("views.scans.added_notice") %></p>
+    <div class="flex items-center justify-center gap-2">
+      <button type="button" class="btn-secondary" data-action="click->scan-result#viewFood"><%= t("views.scans.view_food") %></button>
+      <button type="button" class="btn-secondary" data-action="click->scan-result#rescan"><%= t("views.scans.scan_another") %></button>
+      <button type="button" class="btn-secondary" data-action="click->modal#close"><%= t("views.scans.close") %></button>
+    </div>
+  </div>
+</div>
+
+<%# ── CTA sticky ── %>
+<div class="sticky bottom-0 bg-surface-raised border-t border-surface-border/40 p-4" data-scan-result-target="ctaBar">
+  <button type="button" class="btn-primary w-full" data-action="click->scan-result#addFood" data-scan-result-target="addBtn">
+    <%= t("views.scans.add_to_bank") %>
+  </button>
+  <button type="button" class="hidden btn-primary w-full text-center" data-action="click->scan-result#viewExisting" data-scan-result-target="viewExistingBtn">
+    <%= t("views.scans.view_existing_food") %>
+  </button>
+</div>

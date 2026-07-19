@@ -3,7 +3,7 @@ class WeightEntry < ApplicationRecord
 
   validates :date,      presence: true, uniqueness: { scope: :user_id }
   validates :weight_kg, presence: true,
-                        numericality: { greater_than: 20, less_than: 400 }
+                        numericality: { greater_than_or_equal_to: 20, less_than_or_equal_to: 400 }
   validate  :date_not_in_future
 
   after_save    :sync_profile_weight

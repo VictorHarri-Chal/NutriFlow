@@ -215,21 +215,11 @@ class FoodsController < ApplicationController
   end
 
   def barcode_import
-    code = params[:code].to_s.gsub(/\D/, "")
-    return render json: { error: t("controllers.foods.barcode_not_found") }, status: :not_found unless [8, 12, 13].include?(code.length)
-
-    if (existing = current_user.foods.find_by(off_id: code))
-      return render json: { existing_food: { id: existing.id } }
-    end
-
-    product = Rails.cache.fetch("off_barcode:#{code}", expires_in: 24.hours) do
-      OpenFoodFactsService.by_barcode(code)
-    end
-
-    if product
-      render json: { product: product.merge(source: "off") }
-    else
+    result = BarcodeLookupService.call(code: params[:code], user: current_user)
+    if result[:error]
       render json: { error: t("controllers.foods.barcode_not_found") }, status: :not_found
+    else
+      render json: result
     end
   end
 

@@ -29,6 +29,9 @@ Rails.application.routes.draw do
       delete :force_destroy
     end
   end
+  resources :scans, only: [:new, :create] do
+    collection { get :lookup }
+  end
   resource :setting, only: [:show, :update] do
     patch :update_preferences
     delete :sign_out_other_sessions
