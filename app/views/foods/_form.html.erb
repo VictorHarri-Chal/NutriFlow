@@ -23,13 +23,13 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
       <%= f.input :name,
                   label: t("activerecord.attributes.food.name"),
-                  input_html: { class: "input-dark", autocomplete: "off", autofocus: true, maxlength: 50,
+                  input_html: { class: "input-dark", autocomplete: "off", autofocus: true, maxlength: 80,
                                 data: { "food-preview-target": "nameField" } },
                   label_html: { class: "label-dark" } %>
       <%= f.input :brand,
                   label: t("activerecord.attributes.food.brand"),
                   required: false,
-                  input_html: { class: "input-dark", autocomplete: "off", maxlength: 50,
+                  input_html: { class: "input-dark", autocomplete: "off", maxlength: 80,
                                 data: { "food-preview-target": "brandField" } },
                   label_html: { class: "label-dark" } %>
     </div>

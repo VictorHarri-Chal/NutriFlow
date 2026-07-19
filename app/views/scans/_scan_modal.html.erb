@@ -1,0 +1,37 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4"
+     data-controller="modal scan-result"
+     data-scan-result-create-url-value="<%= scans_path %>"
+     data-scan-result-allergens-map-value="<%= json_escape(I18n.t('views.foods.show.allergens_map').transform_keys(&:to_s).to_json) %>"
+     data-scan-result-labels-map-value="<%= json_escape(I18n.t('views.foods.show.labels_map').transform_keys(&:to_s).to_json) %>"
+     data-scan-result-nutrient-labels-value="<%= json_escape(I18n.t('views.foods.show.nutrients').transform_keys(&:to_s).to_json) %>"
+     data-scan-result-ns-descs-value="<%= json_escape(I18n.t('views.foods.show.nutriscore_description').transform_keys(&:to_s).to_json) %>"
+     data-scan-result-nova-descs-value="<%= json_escape(I18n.t('views.foods.show.nova_description').transform_keys(&:to_s).to_json) %>"
+     data-scan-result-eco-descs-value="<%= json_escape(I18n.t('views.foods.show.ecoscore_description').transform_keys(&:to_s).to_json) %>"
+     data-action="click->modal#handleBackdropClick keydown@document->modal#handleEscape barcode-scanner:product@document->scan-result#handleProduct">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+  <div class="relative w-full max-w-xl bg-surface-raised border border-surface-border/50 rounded-2xl shadow-2xl transition-all duration-200 ease-out scale-95 opacity-0 flex flex-col max-h-[85vh] overflow-hidden"
+       data-modal-target="panel">
+
+    <div class="flex items-center justify-between px-5 py-4 border-b border-surface-border/40 flex-shrink-0">
+      <h3 class="text-sm font-semibold text-ink-primary">
+        <%= t("views.scans.modal_title") %>
+      </h3>
+      <button type="button"
+              class="btn-ghost w-8 h-8 !p-0 flex items-center justify-center flex-shrink-0"
+              data-action="click->modal#close">
+        <i class="fas fa-times text-sm"></i>
+      </button>
+    </div>
+
+    <div class="overflow-y-auto min-h-0 flex-1">
+      <div data-scan-result-target="scanStep" class="p-5">
+        <%= render "foods/barcode_scan_panel", lookup_url: lookup_scans_path, auto_open_camera: true, show_cancel_link: false %>
+      </div>
+
+      <div data-scan-result-target="productStep" class="hidden">
+        <%= render "scans/product_card" %>
+      </div>
+    </div>
+  </div>
+</div>

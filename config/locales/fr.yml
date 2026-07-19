@@ -1661,6 +1661,17 @@ fr:
         supplements: "Compléments"
         other: "Autres"
 
+    scans:
+      navbar_tooltip: "Scanner un produit"
+      modal_title: "Scanner un produit"
+      add_to_bank: "Ajouter à ma banque d'aliments"
+      view_existing_food: "Voir l'aliment"
+      added_notice: "Ajouté à votre banque d'aliments."
+      view_food: "Voir l'aliment"
+      scan_another: "Scanner un autre"
+      close: "Fermer"
+      of_which: "dont"
+
     devise:
       shared:
         email: "Adresse e-mail"

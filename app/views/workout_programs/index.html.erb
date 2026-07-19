@@ -36,7 +36,7 @@
 
             <%# Info %>
             <div class="flex-1 min-w-0">
-              <p class="font-semibold text-ink-primary truncate group-hover:text-brand transition-colors"><%= program.name %></p>
+              <p class="font-semibold text-ink-primary break-words group-hover:text-brand transition-colors"><%= program.name %></p>
               <p class="text-xs text-ink-subtle mt-0.5">
                 <%= t("views.workout_programs.split_types.#{program.split_type}") %>
                 · <%= t("views.workout_programs.days_with_sessions", count: program.program_days.reject { |d| d.name.blank? }.size) %>

@@ -39,7 +39,7 @@
         <% end %>
       </div>
       <div class="relative">
-        <%= f.number_field :weight, step: 0.1, class: "input-dark pr-10",
+        <%= f.number_field :weight, min: 20, max: 400, step: 0.1, class: "input-dark pr-10",
             data: { controller: "digit-limit",
                     action: "input->water-goal-estimator#update input->goal-rate-estimator#update input->digit-limit#limit",
                     water_goal_estimator_target: "weightInput",
@@ -52,7 +52,7 @@
     <div>
       <%= f.label :height, t("views.profiles.edit.height"), class: "label-dark block mb-1.5" %>
       <div class="relative">
-        <%= f.number_field :height, step: 0.1, class: "input-dark pr-10",
+        <%= f.number_field :height, min: 50, max: 250, step: 0.1, class: "input-dark pr-10",
           data: { controller: "digit-limit",
                   action: "input->goal-rate-estimator#update input->digit-limit#limit",
                   goal_rate_estimator_target: "heightInput",

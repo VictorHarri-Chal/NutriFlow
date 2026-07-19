@@ -44,12 +44,12 @@
   </div>
 
   <%# Muscle group chips — tinted brand to distinguish from set badges %>
-  <% body_parts = grouped.keys.filter_map(&:body_part).uniq %>
+  <% body_parts = grouped.keys.filter_map { |ex| ex.body_part.presence }.uniq %>
   <% if body_parts.any? %>
     <div class="flex flex-wrap gap-1">
       <% body_parts.first(3).each do |bp| %>
         <span class="text-[10px] px-2 py-0.5 rounded-full bg-brand/10 border border-brand/20 text-brand/60 leading-none font-medium">
-          <%= t("views.exercises.body_parts.#{bp.parameterize(separator: '_')}", default: bp.split.map(&:capitalize).join(" ")) %>
+          <%= t_body_part(bp) %>
         </span>
       <% end %>
       <% if body_parts.size > 3 %>
@@ -67,7 +67,7 @@
       <div class="space-y-0.5">
         <div class="flex items-start gap-3">
           <div class="flex items-center gap-1 min-w-0 flex-1 pt-px">
-            <span class="text-[11px] font-medium text-ink-primary capitalize truncate">
+            <span class="text-[11px] font-medium text-ink-primary capitalize break-words">
               <%= exercise.name %>
             </span>
             <% if sets.any?(&:is_pr) %>

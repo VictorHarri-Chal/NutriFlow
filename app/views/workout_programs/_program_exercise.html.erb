@@ -24,7 +24,7 @@
   <%# Everything else opens the edit modal %>
   <%= link_to edit_program_exercise_path(pe), data: { turbo_stream: true }, class: "block cursor-pointer" do %>
     <div class="pr-4 mb-1.5">
-      <span class="text-xs font-medium text-ink-primary leading-tight line-clamp-2">
+      <span class="text-xs font-medium text-ink-primary leading-tight break-words">
         <%= pe.exercise.name.capitalize %>
       </span>
     </div>

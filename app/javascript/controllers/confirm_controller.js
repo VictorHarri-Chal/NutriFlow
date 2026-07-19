@@ -182,6 +182,7 @@ export default class extends Controller {
             <label class="label-dark text-xs mb-1 block" data-confirm-target="inputLabel"></label>
             <input type="text"
                    class="input-dark w-full text-sm"
+                   maxlength="80"
                    data-confirm-target="inputField"
                    data-action="keydown.enter->confirm#confirm">
           </div>

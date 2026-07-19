@@ -41,11 +41,10 @@ class ExercisesController < ApplicationController
     favorited_ids = current_user.exercise_favorites.pluck(:exercise_id).to_set
 
     render json: exercises.map { |e|
-      key = e.body_part&.gsub(" ", "_")
       {
         id:               e.id,
         name:             e.name,
-        body_part_label:  I18n.t("views.exercises.body_parts.#{key}", default: e.body_part&.capitalize.to_s),
+        body_part_label:  helpers.t_body_part(e.body_part),
         favorite:         favorited_ids.include?(e.id)
       }
     }
@@ -67,11 +66,10 @@ class ExercisesController < ApplicationController
     ordered = exercise_ids.filter_map { |id| exercises[id] }
 
     render json: ordered.map { |e|
-      key = e.body_part&.gsub(" ", "_")
       {
         id:               e.id,
         name:             e.name,
-        body_part_label:  I18n.t("views.exercises.body_parts.#{key}", default: e.body_part&.capitalize.to_s),
+        body_part_label:  helpers.t_body_part(e.body_part),
         favorite:         favorited_ids.include?(e.id)
       }
     }
@@ -82,11 +80,10 @@ class ExercisesController < ApplicationController
     exercises = current_user.favorited_exercises.accessible_to(current_user).order(:name)
 
     render json: exercises.map { |e|
-      key = e.body_part&.gsub(" ", "_")
       {
         id:               e.id,
         name:             e.name,
-        body_part_label:  I18n.t("views.exercises.body_parts.#{key}", default: e.body_part&.capitalize.to_s),
+        body_part_label:  helpers.t_body_part(e.body_part),
         favorite:         true
       }
     }

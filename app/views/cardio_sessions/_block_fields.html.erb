@@ -42,7 +42,7 @@
       <%= bf.label :speed_kmh, t("views.cardio_sessions.form.speed_label"), class: "label-dark" %>
       <div class="relative">
         <%= bf.number_field :speed_kmh,
-              step: 0.1,
+              min: 0.1, step: 0.1,
               placeholder: "4",
               class: "input-dark text-sm pr-14",
               disabled: true,
