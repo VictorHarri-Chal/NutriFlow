@@ -308,7 +308,7 @@ fr:
         item_pregnancy: "Grossesse ou allaitement"
         item_minor: "Adolescence ou croissance non terminée"
         advice: "Si l'une de ces situations vous concerne, consultez un professionnel de santé avant de commencer votre jeûne."
-        acknowledge: "J'ai compris, commencer mon jeûne"
+        acknowledge: "Commencer mon jeûne"
         cancel: "Annuler"
 
     foods:
