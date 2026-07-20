@@ -15,13 +15,18 @@ class PreferenceDataPresenceLoader
       show_water_tracking:  water_data?,
       show_weight_tracking: weight_data?,
       show_day_note:        day_note_data?,
-      show_body_measurements: body_measurement_data?
+      show_body_measurements: body_measurement_data?,
+      show_fasting_tracking: fasting_data?
     }
   end
 
   private
 
   attr_reader :user
+
+  def fasting_data?
+    user.fasting_sessions.exists?
+  end
 
   def workout_data?
     WorkoutSession.joins(:day).where(days: { user_id: user.id }).exists?

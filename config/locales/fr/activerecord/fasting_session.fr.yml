@@ -1,0 +1,16 @@
+fr:
+  activerecord:
+    models:
+      fasting_session: "Jeûne"
+      fasting_sessions: "Jeûnes"
+    attributes:
+      fasting_session:
+        protocol: "Protocole"
+        started_at: "Début"
+        ended_at: "Fin"
+    errors:
+      models:
+        fasting_session:
+          attributes:
+            base:
+              active_session_already_exists: "Vous avez déjà un jeûne en cours."

@@ -198,6 +198,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_20_125747) do
     t.index ["target_muscle"], name: "index_exercises_on_target_muscle"
   end
 
+  create_table "fasting_sessions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "protocol", default: "sixteen_eight", null: false
+    t.datetime "started_at", null: false
+    t.datetime "ended_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_fasting_sessions_on_user_id"
+    t.index ["user_id"], name: "index_one_active_fasting_session_per_user", unique: true, where: "(ended_at IS NULL)"
+  end
+
   create_table "food_labels", force: :cascade do |t|
     t.string "name", null: false
     t.bigint "user_id", null: false
@@ -519,6 +530,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_20_125747) do
     t.string "time_zone", default: "Europe/Paris", null: false
     t.string "session_token", null: false
     t.boolean "show_body_measurements", default: true, null: false
+    t.datetime "fasting_disclaimer_acknowledged_at"
+    t.boolean "show_fasting_tracking", default: true, null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -591,6 +604,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_20_125747) do
   add_foreign_key "exercise_favorites", "exercises"
   add_foreign_key "exercise_favorites", "users"
   add_foreign_key "exercises", "users", column: "custom_user_id"
+  add_foreign_key "fasting_sessions", "users"
   add_foreign_key "food_labels", "users"
   add_foreign_key "food_labels_foods", "food_labels"
   add_foreign_key "food_labels_foods", "foods"

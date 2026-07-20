@@ -11,6 +11,7 @@ class StatisticsController < ApplicationController
     @available_tabs << "cardio"      if current_user.show_cardio_section?
     @available_tabs << "bien_etre"   if current_user.show_day_note?
     @available_tabs << "hydratation" if current_user.show_water_tracking?
+    @available_tabs << "jeune"       if current_user.show_fasting_tracking?
 
     requested = params[:tab]
     if @available_tabs.include?(requested)
@@ -31,6 +32,7 @@ class StatisticsController < ApplicationController
     when "cardio"       then load_cardio_stats
     when "bien_etre"    then load_wellbeing_stats
     when "hydratation"  then load_hydratation_stats
+    when "jeune"        then load_jeune_stats
     end
   end
 
@@ -491,6 +493,23 @@ class StatisticsController < ApplicationController
       pct   = @water_goal_ml.to_i > 0 ? [(ml.to_f / @water_goal_ml * 100).round, 100].min : 0
       { date: d, pct: pct }
     end
+  end
+
+  # ── Jeûne ────────────────────────────────────────────────────────────────────
+
+  def load_jeune_stats
+    @jeune_sessions = current_user.fasting_sessions
+                                  .where(started_at: @from.beginning_of_day..Time.current)
+                                  .order(started_at: :desc)
+                                  .to_a
+
+    reached       = @jeune_sessions.select(&:reached_target?)
+    reached_dates = reached.map { |s| s.started_at.to_date }.uniq.sort
+
+    @jeune_current_streak  = calc_current_streak(reached_dates)
+    @jeune_best_streak     = calc_best_streak(reached_dates)
+    @jeune_total_hours     = @jeune_sessions.sum(&:elapsed_hours).round(1)
+    @jeune_completion_rate = @jeune_sessions.any? ? (reached.size.to_f / @jeune_sessions.size * 100).round(1) : nil
   end
 
   # ── Helpers ──────────────────────────────────────────────────────────────────

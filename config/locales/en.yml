@@ -9,6 +9,7 @@ en:
     weight_page_disabled: "Weight and measurement tracking is disabled in your preferences."
     measurements_disabled: "Body measurement tracking is disabled in your preferences."
     water_disabled: "Water tracking is disabled in your preferences."
+    fasting_disabled: "Intermittent fasting tracking is disabled in your preferences."
 
   pagination_component:
     results: "Results"
@@ -23,6 +24,7 @@ en:
       locale_updated: "Language updated successfully."
       locale_error: "Error updating language."
       preferences_updated: "Preferences updated."
+      preferences_updated_fasting_stopped: "Preferences updated. Your active fast was stopped."
       preferences_error: "Error updating preferences."
       other_sessions_signed_out: "Other devices have been signed out."
       data_reset: "All your data has been deleted. You can start onboarding again."
@@ -48,6 +50,8 @@ en:
     days:
       food_added: "Food added successfully."
       food_add_error: "Error adding food."
+    fasting_sessions:
+      disclaimer_required: "Confirm the disclaimer to start your fast."
     weight_entries:
       saved: "Weight saved."
       deleted: "Entry deleted."
@@ -218,6 +222,27 @@ en:
         small_glass: "Small glass"
         medium_glass: "Large glass"
         bottle: "Bottle"
+      fasting:
+        title: "Intermittent fasting"
+        finish: "Finish fast"
+        cancel: "Cancel"
+        cancel_confirm: "Cancel this fast? It won't be kept in your history."
+        expected_end: "Expected to end at %{time}"
+        expected_end_tomorrow: "Expected to end tomorrow at %{time}"
+        in_duration: "in %{duration}"
+        goal_reached: "Goal reached, keep going if you'd like"
+        idle_summary_empty: "No fast logged yet"
+        banner_text: "%{protocol} fast in progress · %{remaining} left · expected to end at %{time}"
+        banner_text_tomorrow: "%{protocol} fast in progress · %{remaining} left · expected to end tomorrow at %{time}"
+        idle_summary:
+          one: "Current streak: %{count} day · %{hours} h total"
+          other: "Current streak: %{count} days · %{hours} h total"
+        protocol_tooltip:
+          sixteen_eight: "16h fasting, 8h eating window. Level: easy to moderate."
+          eighteen_six: "18h fasting, 6h eating window. Level: moderate."
+          omad: "One meal, about 1h. Level: hard."
+          circadian_12_12: "12h fast aligned with the night, 12h eating window. Level: very easy."
+        meal_logged_during_fast: "Logged during a fasting window"
       copy_success: "Yesterday's foods have been copied successfully."
       copy_error: "Some foods could not be copied."
       copy_nothing_to_copy: "No foods logged yesterday."
@@ -258,6 +283,18 @@ en:
         title: "No foods logged"
         description: "You haven't added any foods for this day yet."
         add_first_food: "Add your first food"
+
+    fasting_sessions:
+      disclaimer:
+        title: "Before you start"
+        intro: "Check whether any of these situations apply to you:"
+        item_diabetes: "Diabetes treated with insulin or sulfonylureas"
+        item_eating_disorder: "History of eating disorders"
+        item_pregnancy: "Pregnancy or breastfeeding"
+        item_minor: "Adolescence or incomplete growth"
+        advice: "If any of these apply to you, consult a healthcare professional before starting your fast."
+        acknowledge: "Start"
+        cancel: "Cancel"
 
     foods:
       page_title: "Food bank"
@@ -779,6 +816,8 @@ en:
         show_weight_tracking_hint: "Gives access to the body weight tracking page and shows its link in the navigation menu. Disabled, the page becomes inaccessible."
         show_body_measurements: "Body measurements"
         show_body_measurements_hint: "Shows the Measurements tab (waist, hips, etc.) on the Weight & Measurements page. Disabled, this tab becomes inaccessible."
+        show_fasting_tracking: "Intermittent fasting"
+        show_fasting_tracking_hint: "Shows the fasting widget in the diary and the Fasting tab in statistics. When disabled, this section becomes inaccessible."
         confirm_disable: "Disable \"%{feature}\"? Your existing data will be kept, but this section will become inaccessible."
       general:
         title: "General settings"
@@ -1410,6 +1449,7 @@ en:
         cardio: "Cardio"
         bien_etre: "Wellbeing"
         hydratation: "Hydration"
+        jeune: "Fasting"
       periods:
         "7": "7 d"
         "30": "30 d"
@@ -1544,6 +1584,22 @@ en:
       hydratation:
         no_data_title: "No hydration data for %{period}"
         no_data_hint: "Log your daily water intake in the calendar to track your hydration."
+      jeune:
+        no_data_title: "No fast for %{period}"
+        no_data_hint: "Start a fast from the calendar to see your stats here."
+        kpi_streak: "Current streak"
+        kpi_best_streak: "Best streak"
+        kpi_total_hours: "Total hours"
+        kpi_completion_rate: "Completion rate"
+        streak_days:
+          one: "%{count} day"
+          other: "%{count} days"
+        history_title: "History"
+        history_period: "Over %{period}"
+        history_truncated: "Showing the %{shown} most recent sessions (%{total} total for this period)"
+        status_completed: "Completed on time"
+        status_cut_short: "Cut short"
+        status_in_progress: "In progress"
 
     cardio_sessions:
       confirm_delete: "Delete this cardio session?"

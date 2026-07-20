@@ -1,0 +1,9 @@
+<%= turbo_stream.replace "fasting_widget" do %>
+  <%= render "calendars/fasting_widget",
+             active_fasting_session: @active_fasting_session,
+             fasting_stats: @fasting_stats,
+             force_open: true %>
+<% end %>
+<%= turbo_stream.replace "active_fasting_banner" do %>
+  <%= render "calendars/active_fasting_banner", active_fasting_session: @active_fasting_session %>
+<% end %>

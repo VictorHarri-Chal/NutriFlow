@@ -1,0 +1,114 @@
+<div id="fasting_widget"
+     data-controller="collapsible<%= ' fasting-timer' if active_fasting_session %>"
+     data-collapsible-storage-key="fasting-widget"
+     <%= 'data-collapsible-force-open' if local_assigns[:force_open] %>
+     <% if active_fasting_session %>
+       data-fasting-timer-started-at-value="<%= active_fasting_session.started_at.iso8601 %>"
+       data-fasting-timer-target-hours-value="<%= active_fasting_session.target_duration_hours %>"
+       data-fasting-timer-remaining-template-value="(<%= t("views.calendars.fasting.in_duration", duration: "__DURATION__") %>)"
+     <% end %>
+     class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-3 mb-4">
+
+  <%# Header %>
+  <div class="flex items-center justify-between cursor-pointer select-none"
+       data-action="click->collapsible#toggle"
+       data-collapsible-target="trigger">
+    <div class="flex items-center gap-2">
+      <i class="fas fa-chevron-down text-xs text-ink-subtle transition-transform duration-200"
+         data-collapsible-target="icon"></i>
+      <span class="text-xs font-medium text-ink-subtle uppercase tracking-wider">
+        <%= t("views.calendars.fasting.title") %>
+      </span>
+    </div>
+    <% if active_fasting_session %>
+      <span class="text-xs font-semibold text-brand">
+        <span data-fasting-timer-target="elapsedValue"><%= format_fasting_duration(active_fasting_session.elapsed_hours) %></span> / <%= active_fasting_session.target_duration_hours %>h
+      </span>
+    <% end %>
+  </div>
+
+  <%# Corps collapsible %>
+  <div data-collapsible-target="content" class="mt-4">
+    <% if active_fasting_session %>
+      <div class="flex gap-4 items-center">
+
+        <%# Colonne gauche — Ring %>
+        <div class="flex flex-col items-center justify-center flex-shrink-0 w-[38%]" data-fasting-timer-target="ring">
+          <%= render RingComponent.new(value: active_fasting_session.elapsed_hours, goal: active_fasting_session.target_duration_hours,
+                size: :md, color_class: "stroke-brand", percentage_color_class: "text-brand") do %>
+            <span class="text-base font-bold leading-none text-brand" data-fasting-timer-target="elapsedValue">
+              <%= format_fasting_duration(active_fasting_session.elapsed_hours) %>
+            </span>
+            <span class="text-[9px] text-ink-subtle">/ <%= active_fasting_session.target_duration_hours %>h</span>
+          <% end %>
+        </div>
+
+        <%# Colonne droite %>
+        <div class="flex flex-col flex-1 min-w-0 gap-2">
+          <div class="flex items-center justify-between gap-2 flex-wrap px-3 py-2 rounded-lg bg-surface-hover/60 border border-surface-border/40">
+            <p class="text-xs text-ink-muted">
+              <%= t("enumerize.fasting_session.protocol.#{active_fasting_session.protocol}") %>
+              · <%= fasting_expected_end_label(active_fasting_session) %>
+              <span data-fasting-timer-target="remainingText"
+                    class="<%= 'hidden' if active_fasting_session.progress_percentage >= 100 %> text-ink-subtle/70">
+                (<%= t("views.calendars.fasting.in_duration", duration: format_fasting_duration(active_fasting_session.remaining_hours)) %>)
+              </span>
+            </p>
+
+            <% if fasting_stats[:current_streak] > 0 %>
+              <p class="text-[10px] text-ink-subtle flex items-center gap-1">
+                <i class="fas fa-fire"></i>
+                <span><%= t("views.calendars.fasting.idle_summary", count: fasting_stats[:current_streak], hours: fasting_stats[:total_hours]) %></span>
+              </p>
+            <% end %>
+          </div>
+
+          <div data-fasting-timer-target="goalReachedBox"
+               class="<%= 'hidden' unless active_fasting_session.progress_percentage >= 100 %> flex items-center gap-2 px-3 py-2 rounded-lg bg-status-success/10 border border-status-success/20">
+            <i class="fas fa-check-circle text-status-success text-xs shrink-0"></i>
+            <span class="text-xs font-semibold text-status-success"><%= t("views.calendars.fasting.goal_reached") %></span>
+          </div>
+
+          <div class="flex items-center gap-1.5">
+            <%= button_to finish_fasting_session_path(active_fasting_session),
+                  method: :patch,
+                  form: { class: "contents" },
+                  class: "btn-primary flex-1 text-xs py-1.5" do %>
+              <%= t("views.calendars.fasting.finish") %>
+            <% end %>
+            <%= delete_link_with_confirm(fasting_session_path(active_fasting_session),
+                  confirm: t("views.calendars.fasting.cancel_confirm"),
+                  icon_class: "fas fa-xmark text-xs",
+                  title: t("views.calendars.fasting.cancel"),
+                  class: "p-1.5 rounded-lg text-ink-subtle hover:text-status-danger hover:bg-status-danger/10 transition-colors") %>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <div class="flex flex-col gap-3">
+        <div class="grid grid-cols-2 gap-1.5">
+          <% FastingSession::PROTOCOLS.each do |protocol| %>
+            <%= button_to fasting_sessions_path,
+                  params: { protocol: protocol },
+                  method: :post,
+                  title: t("views.calendars.fasting.protocol_tooltip.#{protocol}"),
+                  form: { class: "contents" },
+                  class: "flex flex-col items-center gap-0.5 py-2 px-1 rounded-xl border border-surface-border/50 bg-surface-hover hover:border-brand/40 hover:bg-brand/5 transition-colors group" do %>
+              <span class="text-xs font-bold text-ink-primary group-hover:text-brand transition-colors">
+                <%= t("enumerize.fasting_session.protocol.#{protocol}") %>
+              </span>
+            <% end %>
+          <% end %>
+        </div>
+
+        <p class="text-[10px] text-ink-subtle text-center">
+          <% if fasting_stats[:current_streak] > 0 %>
+            <%= t("views.calendars.fasting.idle_summary", count: fasting_stats[:current_streak], hours: fasting_stats[:total_hours]) %>
+          <% else %>
+            <%= t("views.calendars.fasting.idle_summary_empty") %>
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>

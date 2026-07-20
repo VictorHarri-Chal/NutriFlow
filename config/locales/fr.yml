@@ -9,6 +9,7 @@ fr:
     weight_page_disabled: "Le suivi de poids et des mesures est désactivé dans vos préférences."
     measurements_disabled: "Le suivi des mesures corporelles est désactivé dans vos préférences."
     water_disabled: "Le suivi d'hydratation est désactivé dans vos préférences."
+    fasting_disabled: "Le suivi du jeûne intermittent est désactivé dans vos préférences."
 
   pagination_component:
     results: "Résultats"
@@ -23,6 +24,7 @@ fr:
       locale_updated: "Langue mise à jour avec succès."
       locale_error: "Erreur lors de la mise à jour de la langue."
       preferences_updated: "Préférences mises à jour."
+      preferences_updated_fasting_stopped: "Préférences mises à jour. Votre jeûne en cours a été arrêté."
       preferences_error: "Erreur lors de la mise à jour des préférences."
       other_sessions_signed_out: "Les autres appareils ont été déconnectés."
       data_reset: "Toutes vos données ont été supprimées. Vous pouvez recommencer l'onboarding."
@@ -48,6 +50,8 @@ fr:
     days:
       food_added: "Aliment ajouté avec succès."
       food_add_error: "Erreur lors de l'ajout de l'aliment."
+    fasting_sessions:
+      disclaimer_required: "Confirmez l'avertissement pour démarrer votre jeûne."
     weight_entries:
       saved: "Poids enregistré."
       deleted: "Entrée supprimée."
@@ -218,6 +222,27 @@ fr:
         small_glass: "Petit verre"
         medium_glass: "Grand verre"
         bottle: "Bouteille"
+      fasting:
+        title: "Jeûne intermittent"
+        finish: "Terminer le jeûne"
+        cancel: "Annuler"
+        cancel_confirm: "Annuler ce jeûne ? Il ne sera pas conservé dans votre historique."
+        expected_end: "Fin prévue à %{time}"
+        expected_end_tomorrow: "Fin prévue demain à %{time}"
+        in_duration: "dans %{duration}"
+        goal_reached: "Objectif atteint, continuez si vous le souhaitez"
+        idle_summary_empty: "Aucun jeûne enregistré pour l'instant"
+        banner_text: "Jeûne %{protocol} en cours · reste %{remaining} · fin prévue à %{time}"
+        banner_text_tomorrow: "Jeûne %{protocol} en cours · reste %{remaining} · fin prévue demain à %{time}"
+        idle_summary:
+          one: "Série actuelle : %{count} jour · %{hours} h cumulées"
+          other: "Série actuelle : %{count} jours · %{hours} h cumulées"
+        protocol_tooltip:
+          sixteen_eight: "16h de jeûne, 8h pour manger. Niveau : facile à modéré."
+          eighteen_six: "18h de jeûne, 6h pour manger. Niveau : modéré."
+          omad: "Un seul repas, environ 1h. Niveau : difficile."
+          circadian_12_12: "12h de jeûne alignées sur la nuit, 12h pour manger. Niveau : très facile."
+        meal_logged_during_fast: "Enregistré pendant une fenêtre de jeûne"
       copy_success: "Les aliments d'hier ont été copiés avec succès."
       copy_error: "Impossible de copier certains aliments."
       copy_nothing_to_copy: "Aucun aliment enregistré hier."
@@ -258,6 +283,18 @@ fr:
         title: "Aucun aliment consommé"
         description: "Vous n'avez pas encore ajouté d'aliments pour cette journée."
         add_first_food: "Ajouter votre premier aliment"
+
+    fasting_sessions:
+      disclaimer:
+        title: "Avant de commencer"
+        intro: "Vérifiez que vous n'êtes pas concerné(e) par l'une de ces situations :"
+        item_diabetes: "Diabète traité par insuline ou sulfamides hypoglycémiants"
+        item_eating_disorder: "Antécédents de troubles du comportement alimentaire"
+        item_pregnancy: "Grossesse ou allaitement"
+        item_minor: "Adolescence ou croissance non terminée"
+        advice: "Si l'une de ces situations vous concerne, consultez un professionnel de santé avant de commencer votre jeûne."
+        acknowledge: "Commencer"
+        cancel: "Annuler"
 
     foods:
       page_title: "Banque d'aliments"
@@ -779,6 +816,8 @@ fr:
         show_weight_tracking_hint: "Donne accès à la page de suivi du poids corporel et affiche son lien dans le menu de navigation. Désactivé, la page devient inaccessible."
         show_body_measurements: "Mesures corporelles"
         show_body_measurements_hint: "Affiche l'onglet Mesures (tour de taille, hanches, etc.) sur la page Poids & Mesures. Désactivé, cet onglet devient inaccessible."
+        show_fasting_tracking: "Jeûne intermittent"
+        show_fasting_tracking_hint: "Affiche le widget de jeûne dans le journal et l'onglet Jeûne dans les statistiques. Désactivé, cette section devient inaccessible."
         confirm_disable: "Désactiver « %{feature} » ? Vos données existantes seront conservées, mais cette section deviendra inaccessible."
       general:
         title: "Paramètres généraux"
@@ -1410,6 +1449,7 @@ fr:
         cardio: "Cardio"
         bien_etre: "Bien-être"
         hydratation: "Hydratation"
+        jeune: "Jeûne"
       periods:
         "7": "7 j"
         "30": "30 j"
@@ -1544,6 +1584,22 @@ fr:
       hydratation:
         no_data_title: "Aucune donnée d'hydratation sur %{period}"
         no_data_hint: "Ajoute ta consommation d'eau dans le calendrier pour suivre ton hydratation."
+      jeune:
+        no_data_title: "Aucun jeûne sur %{period}"
+        no_data_hint: "Démarre un jeûne depuis le calendrier pour voir tes statistiques ici."
+        kpi_streak: "Série actuelle"
+        kpi_best_streak: "Meilleure série"
+        kpi_total_hours: "Heures cumulées"
+        kpi_completion_rate: "Taux de réussite"
+        streak_days:
+          one: "%{count} jour"
+          other: "%{count} jours"
+        history_title: "Historique"
+        history_period: "Sur %{period}"
+        history_truncated: "Affichage limité aux %{shown} sessions les plus récentes (%{total} au total sur cette période)"
+        status_completed: "Terminé dans les temps"
+        status_cut_short: "Écourté"
+        status_in_progress: "En cours"
 
     cardio_sessions:
       confirm_delete: "Supprimer cette session cardio ?"
