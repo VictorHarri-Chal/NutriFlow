@@ -38,7 +38,7 @@ class FastingSessionsController < ApplicationController
   end
 
   def finish
-    @fasting_session.update!(ended_at: Time.current)
+    @fasting_session.finish!
     load_fasting_data
     respond_to do |format|
       format.turbo_stream

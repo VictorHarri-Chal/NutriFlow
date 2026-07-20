@@ -43,6 +43,7 @@ class User < ApplicationRecord
 
   after_create :create_profile
   before_create { self.session_token ||= generate_session_token }
+  after_save :stop_active_fast_if_tracking_disabled
 
   def active_shopping_list
     shopping_lists.active.order(created_at: :asc).first_or_create!(
@@ -91,6 +92,16 @@ class User < ApplicationRecord
 
   def create_profile
     create_profile!
+  end
+
+  # Enforced here rather than only in the settings controller so any future
+  # code path that flips this preference off (console, a future admin action,
+  # etc.) can't leave an active fast running invisibly behind a hidden feature.
+  def stop_active_fast_if_tracking_disabled
+    return unless saved_change_to_show_fasting_tracking?
+    return if show_fasting_tracking?
+
+    fasting_sessions.active.each(&:finish!)
   end
 
   def generate_session_token

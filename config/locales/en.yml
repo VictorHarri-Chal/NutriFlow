@@ -24,6 +24,7 @@ en:
       locale_updated: "Language updated successfully."
       locale_error: "Error updating language."
       preferences_updated: "Preferences updated."
+      preferences_updated_fasting_stopped: "Preferences updated. Your active fast was stopped."
       preferences_error: "Error updating preferences."
       other_sessions_signed_out: "Other devices have been signed out."
       data_reset: "All your data has been deleted. You can start onboarding again."

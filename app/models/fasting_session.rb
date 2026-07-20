@@ -53,6 +53,10 @@ class FastingSession < ApplicationRecord
     [target_duration_hours - elapsed_hours, 0].max
   end
 
+  def finish!
+    update!(ended_at: Time.current)
+  end
+
   private
 
   def only_one_active_session_per_user

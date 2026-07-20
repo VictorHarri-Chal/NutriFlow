@@ -25,8 +25,15 @@ class SettingsController < ApplicationController
   end
 
   def update_preferences
+    # User#stop_active_fast_if_tracking_disabled does the actual stopping — this
+    # only needs to know beforehand whether that's about to happen, for the flash.
+    fast_being_stopped = current_user.show_fasting_tracking? &&
+                         preferences_params[:show_fasting_tracking] == "0" &&
+                         current_user.fasting_sessions.active.exists?
+
     if current_user.update(preferences_params)
-      redirect_to setting_path(tab: 'preferences'), notice: t("controllers.settings.preferences_updated")
+      notice = fast_being_stopped ? t("controllers.settings.preferences_updated_fasting_stopped") : t("controllers.settings.preferences_updated")
+      redirect_to setting_path(tab: 'preferences'), notice: notice
     else
       redirect_to setting_path(tab: 'preferences'), alert: t("controllers.settings.preferences_error")
     end

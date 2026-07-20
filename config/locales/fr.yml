@@ -24,6 +24,7 @@ fr:
       locale_updated: "Langue mise à jour avec succès."
       locale_error: "Erreur lors de la mise à jour de la langue."
       preferences_updated: "Préférences mises à jour."
+      preferences_updated_fasting_stopped: "Préférences mises à jour. Votre jeûne en cours a été arrêté."
       preferences_error: "Erreur lors de la mise à jour des préférences."
       other_sessions_signed_out: "Les autres appareils ont été déconnectés."
       data_reset: "Toutes vos données ont été supprimées. Vous pouvez recommencer l'onboarding."
