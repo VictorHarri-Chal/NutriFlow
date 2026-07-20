@@ -302,11 +302,12 @@ fr:
         status_in_progress: "En cours"
       disclaimer:
         title: "Avant de commencer"
-        intro: "Le jeûne intermittent ne convient pas à tout le monde. Consultez un professionnel de santé si vous êtes concerné par l'une de ces situations :"
+        intro: "Vérifiez que vous n'êtes pas concerné(e) par l'une de ces situations :"
         item_diabetes: "Diabète traité par insuline ou sulfamides hypoglycémiants"
         item_eating_disorder: "Antécédents de troubles du comportement alimentaire"
         item_pregnancy: "Grossesse ou allaitement"
         item_minor: "Adolescence ou croissance non terminée"
+        advice: "Si l'une de ces situations vous concerne, consultez un professionnel de santé avant de commencer votre jeûne."
         acknowledge: "J'ai compris, commencer mon jeûne"
         cancel: "Annuler"
 

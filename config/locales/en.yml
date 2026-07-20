@@ -302,11 +302,12 @@ en:
         status_in_progress: "In progress"
       disclaimer:
         title: "Before you start"
-        intro: "Intermittent fasting isn't right for everyone. Consult a healthcare professional if any of these apply to you:"
+        intro: "Check whether any of these situations apply to you:"
         item_diabetes: "Diabetes treated with insulin or sulfonylureas"
         item_eating_disorder: "History of eating disorders"
         item_pregnancy: "Pregnancy or breastfeeding"
         item_minor: "Adolescence or incomplete growth"
+        advice: "If any of these apply to you, consult a healthcare professional before starting your fast."
         acknowledge: "I understand, start my fast"
         cancel: "Cancel"
 

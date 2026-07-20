@@ -8,7 +8,10 @@
        data-modal-target="panel">
 
     <div class="flex items-center justify-between px-5 py-4 border-b border-surface-border/40 flex-shrink-0">
-      <h3 class="text-sm font-semibold text-ink-primary"><%= t("views.fasting_sessions.disclaimer.title") %></h3>
+      <h3 class="text-sm font-semibold text-ink-primary flex items-center gap-2">
+        <i class="fas fa-triangle-exclamation text-status-warning text-sm"></i>
+        <%= t("views.fasting_sessions.disclaimer.title") %>
+      </h3>
       <button type="button" class="btn-ghost w-8 h-8 !p-0 flex items-center justify-center flex-shrink-0"
               data-action="click->modal#close">
         <i class="fas fa-times text-sm"></i>
@@ -16,15 +19,20 @@
     </div>
 
     <div class="px-5 py-4 overflow-y-auto min-h-0">
-      <p class="text-sm text-ink-muted leading-relaxed mb-3">
-        <%= t("views.fasting_sessions.disclaimer.intro") %>
+      <div class="p-3.5 rounded-xl border border-status-warning/30 bg-status-warning/10">
+        <p class="text-sm text-ink-primary mb-2">
+          <%= t("views.fasting_sessions.disclaimer.intro") %>
+        </p>
+        <ul class="list-disc list-inside space-y-1 text-sm text-ink-primary">
+          <li><%= t("views.fasting_sessions.disclaimer.item_diabetes") %></li>
+          <li><%= t("views.fasting_sessions.disclaimer.item_eating_disorder") %></li>
+          <li><%= t("views.fasting_sessions.disclaimer.item_pregnancy") %></li>
+          <li><%= t("views.fasting_sessions.disclaimer.item_minor") %></li>
+        </ul>
+      </div>
+      <p class="text-sm text-ink-muted mt-3">
+        <%= t("views.fasting_sessions.disclaimer.advice") %>
       </p>
-      <ul class="list-disc list-inside space-y-1 text-sm text-ink-primary mb-3">
-        <li><%= t("views.fasting_sessions.disclaimer.item_diabetes") %></li>
-        <li><%= t("views.fasting_sessions.disclaimer.item_eating_disorder") %></li>
-        <li><%= t("views.fasting_sessions.disclaimer.item_pregnancy") %></li>
-        <li><%= t("views.fasting_sessions.disclaimer.item_minor") %></li>
-      </ul>
     </div>
 
     <div class="flex items-center justify-between gap-2 px-5 py-4 border-t border-surface-border/40 flex-shrink-0">
