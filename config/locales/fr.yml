@@ -228,10 +228,12 @@ fr:
         cancel: "Annuler"
         cancel_confirm: "Annuler ce jeûne ? Il ne sera pas conservé dans votre historique."
         expected_end: "Fin prévue à %{time}"
+        expected_end_tomorrow: "Fin prévue demain à %{time}"
+        in_duration: "dans %{duration}"
         goal_reached: "Objectif atteint, continuez si vous le souhaitez"
-        remaining: "Il vous reste %{duration}"
         idle_summary_empty: "Aucun jeûne enregistré pour l'instant"
         banner_text: "Jeûne %{protocol} en cours · reste %{remaining} · fin prévue à %{time}"
+        banner_text_tomorrow: "Jeûne %{protocol} en cours · reste %{remaining} · fin prévue demain à %{time}"
         idle_summary:
           one: "Série actuelle : %{count} jour · %{hours} h cumulées"
           other: "Série actuelle : %{count} jours · %{hours} h cumulées"

@@ -4,7 +4,7 @@ const TICK_INTERVAL_MS = 30_000
 
 export default class extends Controller {
   static targets = [
-    "elapsedValue", "ring", "remainingBox", "goalReachedBox", "remainingText", "bannerText"
+    "elapsedValue", "ring", "goalReachedBox", "remainingText", "bannerText"
   ]
   static values = {
     startedAt:         String,
@@ -34,14 +34,14 @@ export default class extends Controller {
 
     if (this.hasRemainingTextTarget && this.hasRemainingTemplateValue) {
       this.remainingTextTarget.textContent = this.remainingTemplateValue.replace("__DURATION__", formatDuration(remainingHours))
+      this.remainingTextTarget.classList.toggle("hidden", reachedTarget)
     }
 
     if (this.hasBannerTextTarget && this.hasBannerTemplateValue) {
       this.bannerTextTarget.textContent = this.bannerTemplateValue.replace("__DURATION__", formatDuration(remainingHours))
     }
 
-    if (this.hasRemainingBoxTarget && this.hasGoalReachedBoxTarget) {
-      this.remainingBoxTarget.classList.toggle("hidden", reachedTarget)
+    if (this.hasGoalReachedBoxTarget) {
       this.goalReachedBoxTarget.classList.toggle("hidden", !reachedTarget)
     }
   }

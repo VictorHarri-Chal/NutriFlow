@@ -228,10 +228,12 @@ en:
         cancel: "Cancel"
         cancel_confirm: "Cancel this fast? It won't be kept in your history."
         expected_end: "Expected to end at %{time}"
+        expected_end_tomorrow: "Expected to end tomorrow at %{time}"
+        in_duration: "in %{duration}"
         goal_reached: "Goal reached, keep going if you'd like"
-        remaining: "%{duration} remaining"
         idle_summary_empty: "No fast logged yet"
         banner_text: "%{protocol} fast in progress · %{remaining} left · expected to end at %{time}"
+        banner_text_tomorrow: "%{protocol} fast in progress · %{remaining} left · expected to end tomorrow at %{time}"
         idle_summary:
           one: "Current streak: %{count} day · %{hours} h total"
           other: "Current streak: %{count} days · %{hours} h total"

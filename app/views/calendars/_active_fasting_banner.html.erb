@@ -1,7 +1,8 @@
 <div id="active_fasting_banner" class="<%= 'mb-3' if active_fasting_session %>">
   <% if active_fasting_session %>
     <%
-      banner_template = t("views.calendars.fasting.banner_text",
+      banner_key      = fasting_ends_tomorrow?(active_fasting_session) ? "banner_text_tomorrow" : "banner_text"
+      banner_template = t("views.calendars.fasting.#{banner_key}",
                            protocol: t("enumerize.fasting_session.protocol.#{active_fasting_session.protocol}"),
                            remaining: "__DURATION__",
                            time: format_fasting_clock(active_fasting_session.expected_end_at))
@@ -16,7 +17,7 @@
           } do %>
       <i class="fas fa-hourglass-half text-brand text-xs"></i>
       <p class="text-xs font-medium text-brand" data-fasting-timer-target="bannerText">
-        <%= t("views.calendars.fasting.banner_text",
+        <%= t("views.calendars.fasting.#{banner_key}",
               protocol: t("enumerize.fasting_session.protocol.#{active_fasting_session.protocol}"),
               remaining: format_fasting_duration(active_fasting_session.remaining_hours),
               time: format_fasting_clock(active_fasting_session.expected_end_at)) %>
