@@ -50,6 +50,13 @@
             · <%= t("views.calendars.fasting.expected_end", time: format_fasting_clock(active_fasting_session.expected_end_at)) %>
           </p>
 
+          <% if fasting_stats[:current_streak] > 0 %>
+            <p class="text-[10px] text-ink-subtle flex items-center gap-1">
+              <i class="fas fa-fire"></i>
+              <span><%= t("views.calendars.fasting.idle_summary", count: fasting_stats[:current_streak], hours: fasting_stats[:total_hours]) %></span>
+            </p>
+          <% end %>
+
           <div data-fasting-timer-target="goalReachedBox"
                class="<%= 'hidden' unless active_fasting_session.progress_percentage >= 100 %> flex items-center gap-2 px-3 py-2 rounded-lg bg-status-success/10 border border-status-success/20">
             <i class="fas fa-check-circle text-status-success text-xs shrink-0"></i>
