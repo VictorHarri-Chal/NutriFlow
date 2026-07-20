@@ -1,9 +1,21 @@
 <div id="active_fasting_banner" class="<%= 'mb-3' if active_fasting_session %>">
   <% if active_fasting_session %>
+    <%
+      banner_template = t("views.calendars.fasting.banner_text",
+                           protocol: t("enumerize.fasting_session.protocol.#{active_fasting_session.protocol}"),
+                           remaining: "__DURATION__",
+                           time: format_fasting_clock(active_fasting_session.expected_end_at))
+    %>
     <%= link_to "#fasting_widget",
-          class: "flex items-center gap-2 px-4 py-2 rounded-xl bg-brand/10 border border-brand/25 hover:bg-brand/15 transition-colors" do %>
+          class: "flex items-center gap-2 px-4 py-2 rounded-xl bg-brand/10 border border-brand/25 hover:bg-brand/15 transition-colors",
+          data: {
+            controller: "fasting-timer",
+            fasting_timer_started_at_value: active_fasting_session.started_at.iso8601,
+            fasting_timer_target_hours_value: active_fasting_session.target_duration_hours,
+            fasting_timer_banner_template_value: banner_template
+          } do %>
       <i class="fas fa-hourglass-half text-brand text-xs"></i>
-      <p class="text-xs font-medium text-brand">
+      <p class="text-xs font-medium text-brand" data-fasting-timer-target="bannerText">
         <%= t("views.calendars.fasting.banner_text",
               protocol: t("enumerize.fasting_session.protocol.#{active_fasting_session.protocol}"),
               remaining: format_fasting_duration(active_fasting_session.remaining_hours),
