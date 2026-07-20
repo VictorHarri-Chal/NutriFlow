@@ -10,10 +10,12 @@
     <%= link_to "#fasting_widget",
           class: "flex items-center gap-2 px-4 py-2 rounded-xl bg-brand/10 border border-brand/25 hover:bg-brand/15 transition-colors",
           data: {
-            controller: "fasting-timer",
+            controller: "fasting-timer expand-link",
             fasting_timer_started_at_value: active_fasting_session.started_at.iso8601,
             fasting_timer_target_hours_value: active_fasting_session.target_duration_hours,
-            fasting_timer_banner_template_value: banner_template
+            fasting_timer_banner_template_value: banner_template,
+            expand_link_target_id_value: "fasting_widget",
+            action: "click->expand-link#requestOpen"
           } do %>
       <i class="fas fa-hourglass-half text-brand text-xs"></i>
       <p class="text-xs font-medium text-brand" data-fasting-timer-target="bannerText">

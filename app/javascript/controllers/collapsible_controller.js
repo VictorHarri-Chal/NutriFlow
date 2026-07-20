@@ -17,6 +17,9 @@ export default class extends Controller {
       this._boundGroupClose = this._onGroupOpen.bind(this)
       document.addEventListener("collapsible:open", this._boundGroupClose)
     }
+
+    this._boundOpenRequest = this._onOpenRequest.bind(this)
+    document.addEventListener("collapsible:open-request", this._boundOpenRequest)
   }
 
   disconnect() {
@@ -25,6 +28,7 @@ export default class extends Controller {
     if (this._boundGroupClose) {
       document.removeEventListener("collapsible:open", this._boundGroupClose)
     }
+    document.removeEventListener("collapsible:open-request", this._boundOpenRequest)
   }
 
   toggle() {
@@ -80,6 +84,15 @@ export default class extends Controller {
   _onGroupOpen(event) {
     if (event.detail.group === this.group && event.detail.source !== this.element) {
       this._close(false)
+    }
+  }
+
+  // Lets an element elsewhere on the page (e.g. a persistent status banner
+  // linking to this section) request that this specific instance open itself,
+  // identified by DOM id — see expand_link_controller.js.
+  _onOpenRequest(event) {
+    if (event.detail.id && event.detail.id === this.element.id) {
+      this._open(true)
     }
   }
 
