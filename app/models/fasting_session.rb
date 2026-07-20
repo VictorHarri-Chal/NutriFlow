@@ -56,6 +56,7 @@ class FastingSession < ApplicationRecord
   private
 
   def only_one_active_session_per_user
+    return unless active?
     return unless user.fasting_sessions.active.exists?
 
     errors.add(:base, :active_session_already_exists)
