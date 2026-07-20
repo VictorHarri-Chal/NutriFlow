@@ -562,6 +562,8 @@ en:
         remove: "Remove"
         error_food: "Select a food"
         error_quantity: "Invalid quantity (min. 1 g)"
+        error_missing_food_summary: "Select a food for every ingredient."
+        error_quantity_too_low_summary: "The quantity of every ingredient must be at least 1 g."
 
     recipes:
       title: "Recipe bank"
@@ -658,6 +660,8 @@ en:
         remove: "Remove"
         error_food: "Please select a food"
         error_quantity: "Invalid quantity (min. 1 g)"
+        error_missing_food_summary: "Select a food for every ingredient."
+        error_quantity_too_low_summary: "The quantity of every ingredient must be at least 1 g."
 
     profiles:
       show:

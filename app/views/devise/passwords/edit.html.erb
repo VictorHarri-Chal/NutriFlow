@@ -12,7 +12,8 @@
 
       <%= simple_form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: "space-y-5" }) do |f| %>
         <%= f.input :reset_password_token, as: :hidden %>
-        <%= f.full_error :reset_password_token %>
+        <%= render "shared/auth_flash_messages" %>
+        <%= render "shared/form_errors", record: resource, margin_class: "" %>
 
         <div>
           <label class="label-dark"><%= t("views.devise.passwords.edit.new_password") %></label>

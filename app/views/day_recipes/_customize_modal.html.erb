@@ -23,6 +23,13 @@
     </div>
 
     <div class="px-5 py-4 overflow-y-auto min-h-0 flex-1">
+      <div class="hidden mb-3 text-xs text-status-danger bg-status-danger/10 border border-status-danger/30 rounded-lg px-3 py-2"
+           data-ingredient-rows-target="errorBox"
+           data-missing-food-message="<%= t("views.day_recipes.item_fields.error_missing_food_summary") %>"
+           data-bad-quantity-message="<%= t("views.day_recipes.item_fields.error_quantity_too_low_summary") %>">
+        <ul class="list-disc list-inside space-y-0.5"></ul>
+      </div>
+
       <div data-controller="nested-form" data-nested-form-wrapper-selector-value=".day-recipe-items-container">
         <div class="text-center py-6 border-2 border-dashed border-surface-border/40 rounded-xl"
              data-nested-form-target="emptyState"
@@ -37,7 +44,7 @@
              data-day-recipe-customize-target="itemsContainer"
              data-day-recipe-preview-target="itemsContainer">
           <%= f.simple_fields_for :day_recipe_items do |item_fields| %>
-            <%= render "shared/ingredient_fields", f: item_fields, unit_class: DayRecipeItem, i18n_scope: "views.day_recipes.item_fields", width_class: "w-16", quantity_step: 0.1, quantity_round: 1 %>
+            <%= render "shared/ingredient_fields", f: item_fields, unit_class: DayRecipeItem, i18n_scope: "views.day_recipes.item_fields", width_class: "w-16", quantity_round: 1 %>
           <% end %>
         </div>
 
@@ -52,7 +59,7 @@
 
         <template data-nested-form-target="template" data-day-recipe-customize-target="template">
           <%= f.simple_fields_for :day_recipe_items, day_recipe.day_recipe_items.build, child_index: "NEW_RECORD" do |item_fields| %>
-            <%= render "shared/ingredient_fields", f: item_fields, unit_class: DayRecipeItem, i18n_scope: "views.day_recipes.item_fields", width_class: "w-16", quantity_step: 0.1, quantity_round: 1 %>
+            <%= render "shared/ingredient_fields", f: item_fields, unit_class: DayRecipeItem, i18n_scope: "views.day_recipes.item_fields", width_class: "w-16", quantity_round: 1 %>
           <% end %>
         </template>
       </div>
@@ -95,7 +102,7 @@
       <button type="button"
               data-day-recipe-customize-target="confirmButton"
               disabled
-              data-action="click->day-recipe-customize#confirm"
+              data-action="click->ingredient-rows#guardConfirm click->day-recipe-customize#confirm"
               class="btn-primary disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-brand disabled:shadow-none">
         <%= t("views.day_recipes.form.customize_confirm") %>
       </button>

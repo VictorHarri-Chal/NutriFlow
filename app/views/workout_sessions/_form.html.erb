@@ -34,13 +34,7 @@
     </div>
 
     <%# ── Validation errors ── %>
-    <% if workout_session.errors.any? %>
-      <div class="mb-4 text-xs text-status-danger bg-status-danger/10 border border-status-danger/30 rounded-lg px-3 py-2 space-y-0.5">
-        <% workout_session.errors.full_messages.each do |msg| %>
-          <p><%= msg %></p>
-        <% end %>
-      </div>
-    <% end %>
+    <%= render "shared/form_errors", record: workout_session, margin_class: "mb-4" %>
 
     <%# ── Exercise search + groups ── %>
     <div class="space-y-2 mb-4">

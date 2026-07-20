@@ -121,11 +121,7 @@
           body_measurement_form_entries_value: measurements_json
         },
         class: "space-y-3" do |f| %>
-      <% if @today_measurement.errors.any? %>
-        <div class="text-xs text-status-danger bg-status-danger_dim/20 rounded-lg px-3 py-2">
-          <%= @today_measurement.errors.full_messages.first %>
-        </div>
-      <% end %>
+      <%= render "shared/form_errors", record: @today_measurement, margin_class: "" %>
 
       <div>
         <label class="label-dark"><%= t("views.weight_entries.measurements.form.date_label") %></label>

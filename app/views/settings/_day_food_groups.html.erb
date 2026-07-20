@@ -10,7 +10,9 @@
 
   <%# ── Formulaire d'ajout ── %>
   <div class="border-t border-surface-border/40 pt-6" data-controller="form-validation">
-    <%= simple_form_for @day_food_group, url: day_food_groups_path, html: { class: "flex items-end gap-3" } do |f| %>
+    <%= simple_form_for @day_food_group, url: day_food_groups_path, html: { class: "flex flex-col gap-3" } do |f| %>
+      <%= render "shared/form_errors", record: @day_food_group, margin_class: "" %>
+      <div class="flex items-end gap-3">
       <div class="flex-1">
         <%= f.input :name,
             label: t("views.settings.food_groups.group_name_label"),
@@ -29,6 +31,7 @@
           class: "btn-primary cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shrink-0",
           data: { form_validation_target: "submit" },
           disabled: true %>
+      </div>
     <% end %>
   </div>
 

@@ -1,13 +1,5 @@
 <%= simple_form_for(food) do |f| %>
-  <% if food.errors.any? %>
-    <div class="text-xs text-status-danger bg-status-danger/10 border border-status-danger/30 rounded-lg px-3 py-2 mb-4">
-      <ul class="list-disc list-inside space-y-0.5">
-        <% food.errors.full_messages.uniq.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render "shared/form_errors", record: food, margin_class: "mb-4" %>
   <%# ── Hidden fields : données importées ── %>
   <%= f.hidden_field :source,           data: { "food-off-search-target": "sourceField" } %>
   <%= f.hidden_field :off_id,          data: { "food-off-search-target": "offIdField" } %>

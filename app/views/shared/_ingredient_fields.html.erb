@@ -1,10 +1,12 @@
-<%# locals: (f:, unit_class:, i18n_scope:, width_class: "w-16", quantity_step: 1, quantity_round: 0) %>
+<%# locals: (f:, unit_class:, i18n_scope:, width_class: "w-16", quantity_round: 1) %>
 <%# Une ligne "aliment + quantité + unité" dans une liste imbriquée (nested-form) —
-    partagée entre recipes/_form.html.erb (RecipeItem, grammes entiers) et
+    partagée entre recipes/_form.html.erb (RecipeItem) et
     day_recipes/_customize_modal.html.erb (DayRecipeItem, dixièmes de gramme
-    car issus d'une répartition proportionnelle). %>
+    car issus d'une répartition proportionnelle). Les deux appellent avec
+    quantity_round: 1. %>
 <div class="flex items-start gap-3 py-2 px-1 rounded-lg hover:bg-surface-base/50 transition-colors group"
-     data-nested-form-target="item">
+     data-nested-form-target="item"
+     data-ingredient-rows-target="row">
 
   <%# ── Combobox aliment ── %>
   <div class="flex-1 min-w-0 relative"
@@ -49,9 +51,12 @@
                           digit_limit_max_integer_digits_value: 4,
                           digit_limit_max_decimal_digits_value: 1 }
       %>
-      <%= f.number_field :quantity,
-            min: quantity_step, step: quantity_step,
-            value: f.object.quantity.present? ? f.object.quantity.round(quantity_round) : 100,
+      <%# type="text" (not "number"): a type="number" input silently swallows the "," keystroke
+          on a non-French browser locale, and digit-limit#limit needs the raw character to reach
+          the input event to normalize it to "." — inputmode keeps the numeric keypad on mobile. %>
+      <%= f.text_field :quantity,
+            inputmode: "decimal",
+            value: f.object.quantity.present? ? f.object.quantity.round(quantity_round) : nil,
             class: "input-dark text-sm text-center w-full #{f.object.errors[:quantity].any? ? 'border-status-danger focus:ring-status-danger/50 focus:border-status-danger' : ''}",
             placeholder: "100",
             data: quantity_data %>

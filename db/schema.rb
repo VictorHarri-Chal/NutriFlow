@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_17_103640) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_20_125747) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -124,7 +124,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_17_103640) do
   create_table "day_recipe_items", force: :cascade do |t|
     t.bigint "day_recipe_id", null: false
     t.bigint "food_id", null: false
-    t.decimal "quantity", default: "100.0", null: false
+    t.decimal "quantity", null: false
     t.string "unit", default: "g", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -313,7 +313,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_17_103640) do
   create_table "recipe_items", force: :cascade do |t|
     t.bigint "recipe_id", null: false
     t.bigint "food_id", null: false
-    t.decimal "quantity", default: "100.0", null: false
+    t.decimal "quantity", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "unit", default: "g", null: false

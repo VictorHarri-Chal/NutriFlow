@@ -1,9 +1,5 @@
 <%= form_with model: program, class: "space-y-5" do |f| %>
-  <% if program.errors.any? %>
-    <div class="bg-status-danger_dim/20 border border-status-danger/30 rounded-lg px-4 py-3 text-sm text-status-danger">
-      <%= program.errors.full_messages.first %>
-    </div>
-  <% end %>
+  <%= render "shared/form_errors", record: program, margin_class: "" %>
 
   <div>
     <%= f.label :name, t("views.workout_programs.form.name"), class: "label-dark block mb-1" %>

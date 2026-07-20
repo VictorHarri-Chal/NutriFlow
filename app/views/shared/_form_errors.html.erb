@@ -1,0 +1,14 @@
+<%# locals: (record: nil, messages: nil, margin_class: "mb-4") %>
+<%# Pass `record:` for a plain ActiveModel object, or `messages:` (an array of
+    already-formatted strings) when the errors come from somewhere else (e.g. a
+    session-stashed Devise error hash) instead of record.errors. %>
+<% messages ||= record&.errors&.full_messages&.uniq || [] %>
+<% if messages.any? %>
+  <div class="<%= margin_class %> text-xs text-status-danger bg-status-danger/10 border border-status-danger/30 rounded-lg px-3 py-2">
+    <ul class="list-disc list-inside space-y-0.5">
+      <% messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

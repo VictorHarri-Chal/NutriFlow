@@ -11,6 +11,7 @@
       </div>
 
       <%= simple_form_for @profile, url: onboarding_path, method: :patch do |f| %>
+        <%= render "shared/auth_flash_messages" %>
         <%= render "profiles/form_errors" %>
         <div class="space-y-8">
           <%= render "profiles/essential_fields", f: f %>

@@ -1,4 +1,5 @@
-<%= simple_form_for(recipe) do |f| %>
+<%= simple_form_for(recipe,
+      html: { data: { controller: "ingredient-rows", action: "submit->ingredient-rows#guardSubmit" } }) do |f| %>
 
   <%# ── Données aliments pour les combobox (lues par food_combobox_controller.js + recipe_builder_controller.js) ── %>
   <script id="foods-data" type="application/json">
@@ -49,6 +50,8 @@
       <%# ══════════════════ COLONNE GAUCHE ══════════════════ %>
       <div class="lg:col-span-3 space-y-6">
 
+        <%= render "shared/form_errors", record: recipe, margin_class: "" %>
+
         <%# Nom %>
         <%= f.input :name,
                     label: t("views.recipes.form.name"),
@@ -83,14 +86,13 @@
         <%# ── Ingrédients ── %>
         <div data-controller="nested-form" data-nested-form-wrapper-selector-value=".ingredients-container">
 
-          <div class="flex items-center justify-between mb-3">
-            <h2 class="text-base font-semibold text-ink-primary"><%= t("views.recipes.form.ingredients") %></h2>
-            <% if recipe.errors[:base].any? %>
-              <p class="text-xs text-status-danger flex items-center gap-1">
-                <i class="fas fa-circle-exclamation text-[10px]"></i>
-                <%= recipe.errors[:base].first %>
-              </p>
-            <% end %>
+          <h2 class="text-base font-semibold text-ink-primary mb-3"><%= t("views.recipes.form.ingredients") %></h2>
+
+          <div class="hidden mb-3 text-xs text-status-danger bg-status-danger/10 border border-status-danger/30 rounded-lg px-3 py-2"
+               data-ingredient-rows-target="errorBox"
+               data-missing-food-message="<%= t("views.recipes.item_fields.error_missing_food_summary") %>"
+               data-bad-quantity-message="<%= t("views.recipes.item_fields.error_quantity_too_low_summary") %>">
+            <ul class="list-disc list-inside space-y-0.5"></ul>
           </div>
 
           <%# En-têtes colonnes — masqués si liste vide %>
@@ -104,7 +106,7 @@
           <%# Liste des ingrédients %>
           <div class="ingredients-container divide-y divide-surface-border/30">
             <%= f.simple_fields_for :recipe_items do |item_fields| %>
-              <%= render "shared/ingredient_fields", f: item_fields, unit_class: RecipeItem, i18n_scope: "views.recipes.item_fields", width_class: "w-16", quantity_step: 0.1, quantity_round: 1 %>
+              <%= render "shared/ingredient_fields", f: item_fields, unit_class: RecipeItem, i18n_scope: "views.recipes.item_fields", width_class: "w-16", quantity_round: 1 %>
             <% end %>
 
             <%# Empty state %>
@@ -134,7 +136,7 @@
           <%# Template pour les nouveaux ingrédients %>
           <template data-nested-form-target="template">
             <%= f.simple_fields_for :recipe_items, recipe.recipe_items.build, child_index: "NEW_RECORD" do |item_fields| %>
-              <%= render "shared/ingredient_fields", f: item_fields, unit_class: RecipeItem, i18n_scope: "views.recipes.item_fields", width_class: "w-16", quantity_step: 0.1, quantity_round: 1 %>
+              <%= render "shared/ingredient_fields", f: item_fields, unit_class: RecipeItem, i18n_scope: "views.recipes.item_fields", width_class: "w-16", quantity_round: 1 %>
             <% end %>
           </template>
         </div>

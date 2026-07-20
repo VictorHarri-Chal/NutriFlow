@@ -7,6 +7,8 @@
        data-action="input->day-food-preview#update"
        class="space-y-4">
 
+    <%= render "shared/form_errors", record: day_food, margin_class: "" %>
+
     <%# ── Aliment ── %>
     <div>
       <label class="label-dark block mb-1.5"><%= t("views.day_foods.form.food_label") %></label>

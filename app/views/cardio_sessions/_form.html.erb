@@ -18,13 +18,7 @@
     </div>
 
     <%# Validation errors %>
-    <% if cardio_session.errors.any? %>
-      <div class="mb-4 p-3 rounded-lg bg-status-danger/10 border border-status-danger/30 text-status-danger text-xs space-y-0.5">
-        <% cardio_session.errors.full_messages.each do |msg| %>
-          <p><%= msg %></p>
-        <% end %>
-      </div>
-    <% end %>
+    <%= render "shared/form_errors", record: cardio_session, margin_class: "mb-4" %>
 
     <%= form_with model: (cardio_session.persisted? ? cardio_session : [day, cardio_session]),
           data: { controller: "cardio-form", turbo_frame: "cardio_item_form" },

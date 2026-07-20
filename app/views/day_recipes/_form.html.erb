@@ -15,22 +15,14 @@
 <%= simple_form_for(day_recipe.persisted? ? day_recipe : [day, day_recipe],
       html: {
         data: {
-          controller: "day-recipe-preview day-recipe-customize",
-          action: "input->day-recipe-preview#update input->day-recipe-customize#onFieldChange",
+          controller: "day-recipe-preview day-recipe-customize ingredient-rows",
+          action: "input->day-recipe-preview#update input->day-recipe-customize#onFieldChange submit->ingredient-rows#guardSubmit",
           "day-recipe-customize-open-on-connect-value": day_recipe.customized? && day_recipe.errors.any?
         }
       }) do |f| %>
   <div class="space-y-4">
 
-    <% if day_recipe.errors.any? %>
-      <div class="text-xs text-status-danger bg-status-danger/10 border border-status-danger/30 rounded-lg px-3 py-2">
-        <ul class="list-disc list-inside space-y-0.5">
-          <% day_recipe.errors.full_messages.uniq.each do |message| %>
-            <li><%= message %></li>
-          <% end %>
-        </ul>
-      </div>
-    <% end %>
+    <%= render "shared/form_errors", record: day_recipe, margin_class: "" %>
 
     <%# ── Recette ── %>
     <div>

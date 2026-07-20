@@ -179,11 +179,7 @@
           weight_entry_form_entries_value: entries_json
         },
         class: "space-y-4" do |f| %>
-      <% if @today_entry.errors.any? %>
-        <div class="text-xs text-status-danger bg-status-danger_dim/20 rounded-lg px-3 py-2">
-          <%= @today_entry.errors.full_messages.first %>
-        </div>
-      <% end %>
+      <%= render "shared/form_errors", record: @today_entry, margin_class: "" %>
 
       <div>
         <label class="label-dark"><%= t("views.weight_entries.form.weight_label") %></label>

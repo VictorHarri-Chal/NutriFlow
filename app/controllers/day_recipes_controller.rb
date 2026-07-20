@@ -34,7 +34,7 @@ class DayRecipesController < ApplicationController
       @recipes         = current_user.recipes.includes(recipe_items: :food).order(:name)
       @foods           = current_user.foods.order(:name)
       respond_to do |format|
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("food_item_form", partial: "day_recipes/form", locals: { day: @day, day_recipe: @day_recipe, submit_text: t("shared.add") }) }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("food_item_form", partial: "day_recipes/form_frame", locals: { day: @day, day_recipe: @day_recipe, title: t("views.day_recipes.new.title"), submit_text: t("shared.add") }) }
         format.html         { render :new, status: :unprocessable_entity }
       end
     end
@@ -60,7 +60,7 @@ class DayRecipesController < ApplicationController
       @recipes         = current_user.recipes.includes(recipe_items: :food).order(:name)
       @foods           = current_user.foods.order(:name)
       respond_to do |format|
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("food_item_form", partial: "day_recipes/form", locals: { day: @day, day_recipe: @day_recipe, submit_text: t("shared.update") }) }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("food_item_form", partial: "day_recipes/form_frame", locals: { day: @day, day_recipe: @day_recipe, title: t("views.day_recipes.edit.title"), submit_text: t("shared.update") }) }
         format.html         { render :edit, status: :unprocessable_entity }
       end
     end

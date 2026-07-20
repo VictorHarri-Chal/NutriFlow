@@ -13,25 +13,26 @@ export default class extends Controller {
     const value = input.value
     if (value === "") return
 
-    const negative = value.startsWith("-")
-    const raw = negative ? value.slice(1) : value
+    // None of the numeric fields this controller is used on (quantities, weights,
+    // reps, macros…) accept a negative value or letters — strip anything that
+    // isn't a digit, comma, or period outright instead of waiting for submit-time
+    // validation. This also covers type="text" fields (e.g. the ingredient
+    // quantity input), which — unlike type="number" — have no native keystroke
+    // filtering of their own.
+    // A French-locale user typing "," for the decimal separator would otherwise see
+    // the browser silently reject the keystroke on a type="number" input — normalize
+    // it to "." so the value is actually accepted.
+    const raw = value.replace(/[^\d,.]/g, "").replace(",", ".")
     const [integerPart, decimalPart] = raw.split(".")
 
     let truncatedInteger = integerPart
-    let changed = false
-
+    let truncatedDecimal = decimalPart
     if (integerPart.length > this.maxIntegerDigitsValue) {
       truncatedInteger = integerPart.slice(0, this.maxIntegerDigitsValue)
-      changed = true
     }
-
-    let truncatedDecimal = decimalPart
     if (decimalPart !== undefined && decimalPart.length > this.maxDecimalDigitsValue) {
       truncatedDecimal = decimalPart.slice(0, this.maxDecimalDigitsValue)
-      changed = true
     }
-
-    if (!changed) return
 
     // Only keep the decimal point if a decimal digit actually survives
     // truncation (e.g. maxDecimalDigits: 0) — writing back "1234." would be
@@ -39,6 +40,7 @@ export default class extends Controller {
     // resets to "", leaving the field stuck unable to accept further input.
     let truncated = truncatedInteger
     if (decimalPart !== undefined && truncatedDecimal.length > 0) truncated += `.${truncatedDecimal}`
-    input.value = negative ? `-${truncated}` : truncated
+
+    if (truncated !== value) input.value = truncated
   }
 }

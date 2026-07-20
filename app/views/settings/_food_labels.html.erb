@@ -11,6 +11,7 @@
   <%# ── Formulaire d'ajout ── %>
   <div class="border-t border-surface-border/40 pt-6" data-controller="form-validation">
     <%= simple_form_for @food_label, url: food_labels_path, html: { class: "space-y-3" } do |f| %>
+      <%= render "shared/form_errors", record: @food_label, margin_class: "" %>
 
       <div class="flex items-end gap-3">
         <div class="flex-1">

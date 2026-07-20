@@ -28,15 +28,11 @@
   <div class="border-t border-surface-border/40 pt-6">
     <h3 class="text-sm font-semibold text-ink-primary mb-1"><%= t("views.settings.security.change_email") %></h3>
     <p class="text-xs text-ink-subtle mb-4"><%= t("views.settings.security.current_email_hint", email: current_user.email) %></p>
-    <% if (email_errors = session.delete(:email_errors)).present? %>
-      <div class="mb-4 p-3 rounded-lg bg-status-danger/10 border border-status-danger/30">
-        <% email_errors.each do |field, messages| %>
-          <% messages.each do |message| %>
-            <p class="text-sm text-status-danger"><%= "#{current_user.class.human_attribute_name(field)} #{message}" %></p>
-          <% end %>
-        <% end %>
-      </div>
-    <% end %>
+    <%
+      email_errors = session.delete(:email_errors)
+      email_error_messages = email_errors.present? ? email_errors.flat_map { |field, msgs| msgs.map { |msg| "#{current_user.class.human_attribute_name(field)} #{msg}" } } : nil
+    %>
+    <%= render "shared/form_errors", messages: email_error_messages, margin_class: "mb-4" %>
     <%= form_with(model: current_user, url: registration_path(current_user), local: true, method: :patch, class: "space-y-4") do |form| %>
       <%= hidden_field_tag :change_type, 'email' %>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -62,15 +58,11 @@
   <%# ── Changement de mot de passe ── %>
   <div class="border-t border-surface-border/40 pt-6">
     <h3 class="text-sm font-semibold text-ink-primary mb-4"><%= t("views.settings.security.change_password") %></h3>
-    <% if (password_errors = session.delete(:password_errors)).present? %>
-      <div class="mb-4 p-3 rounded-lg bg-status-danger/10 border border-status-danger/30">
-        <% password_errors.each do |field, messages| %>
-          <% messages.each do |message| %>
-            <p class="text-sm text-status-danger"><%= "#{current_user.class.human_attribute_name(field)} #{message}" %></p>
-          <% end %>
-        <% end %>
-      </div>
-    <% end %>
+    <%
+      password_errors = session.delete(:password_errors)
+      password_error_messages = password_errors.present? ? password_errors.flat_map { |field, msgs| msgs.map { |msg| "#{current_user.class.human_attribute_name(field)} #{msg}" } } : nil
+    %>
+    <%= render "shared/form_errors", messages: password_error_messages, margin_class: "mb-4" %>
     <%= form_with(model: current_user, url: registration_path(current_user), local: true, method: :patch, class: "space-y-4") do |form| %>
       <%= hidden_field_tag :change_type, 'password' %>
       <div>

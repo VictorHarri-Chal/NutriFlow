@@ -562,6 +562,8 @@ fr:
         remove: "Retirer"
         error_food: "Sélectionnez un aliment"
         error_quantity: "Quantité invalide (min. 1 g)"
+        error_missing_food_summary: "Sélectionnez un aliment pour chaque ingrédient."
+        error_quantity_too_low_summary: "La quantité de chaque ingrédient doit être d'au moins 1 g."
 
     recipes:
       title: "Banque de recettes"
@@ -658,6 +660,8 @@ fr:
         remove: "Retirer"
         error_food: "Sélectionnez un aliment"
         error_quantity: "Quantité invalide (min. 1 g)"
+        error_missing_food_summary: "Sélectionnez un aliment pour chaque ingrédient."
+        error_quantity_too_low_summary: "La quantité de chaque ingrédient doit être d'au moins 1 g."
 
     profiles:
       show:
