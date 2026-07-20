@@ -15,7 +15,7 @@ Rails.application.routes.draw do
       post :copy_yesterday
     end
   end
-  resources :fasting_sessions, only: [:index, :create, :destroy] do
+  resources :fasting_sessions, only: [:create, :destroy] do
     member { patch :finish }
   end
   resources :foods do

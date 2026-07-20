@@ -5,11 +5,6 @@ class FastingSessionsController < ApplicationController
   before_action :require_fasting_tracking!
   before_action :set_fasting_session, only: [:finish, :destroy]
 
-  def index
-    @stats = FastingStatsCalculator.new(current_user).call
-    @sessions_pagy, @sessions = pagy(current_user.fasting_sessions.ordered, items: 10)
-  end
-
   def create
     if current_user.fasting_disclaimer_acknowledged_at.nil? && params[:acknowledge_disclaimer].blank?
       respond_to do |format|

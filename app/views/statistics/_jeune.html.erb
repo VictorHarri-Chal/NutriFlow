@@ -1,0 +1,84 @@
+<% period_label = t("views.statistics.period_labels.#{@period}") %>
+
+<% if @jeune_sessions.blank? %>
+  <%= render "statistics/empty_state",
+        icon:  "fa-hourglass-half",
+        title: t("views.statistics.jeune.no_data_title", period: period_label),
+        hint:  t("views.statistics.jeune.no_data_hint") %>
+<% else %>
+
+  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-5">
+    <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-3">
+      <%= t("views.statistics.jeune.kpi_streak") %>
+    </p>
+
+    <div class="flex items-baseline gap-1.5 leading-none mb-4">
+      <% if @jeune_current_streak > 0 %>
+        <i class="fas fa-fire text-sm text-brand"></i>
+        <span class="text-2xl font-bold text-brand"><%= @jeune_current_streak %></span>
+        <span class="text-xs text-ink-subtle"><%= t("views.statistics.jeune.streak_days", count: @jeune_current_streak) %></span>
+      <% else %>
+        <p class="text-lg font-bold text-ink-subtle/40 leading-none">—</p>
+      <% end %>
+    </div>
+
+    <div class="grid grid-cols-3 gap-3">
+      <div class="bg-surface-hover rounded-xl px-3 py-2.5">
+        <p class="text-[10px] font-medium text-ink-subtle uppercase tracking-wider mb-1.5">
+          <%= t("views.statistics.jeune.kpi_best_streak") %>
+        </p>
+        <p class="text-xl font-bold text-ink-primary"><%= @jeune_best_streak %></p>
+      </div>
+      <div class="bg-surface-hover rounded-xl px-3 py-2.5">
+        <p class="text-[10px] font-medium text-ink-subtle uppercase tracking-wider mb-1.5">
+          <%= t("views.statistics.jeune.kpi_total_hours") %>
+        </p>
+        <p class="text-xl font-bold text-ink-primary"><%= @jeune_total_hours %><span class="text-xs font-normal text-ink-subtle">h</span></p>
+      </div>
+      <div class="bg-surface-hover rounded-xl px-3 py-2.5">
+        <p class="text-[10px] font-medium text-ink-subtle uppercase tracking-wider mb-1.5">
+          <%= t("views.statistics.jeune.kpi_completion_rate") %>
+        </p>
+        <p class="text-xl font-bold text-ink-primary"><%= @jeune_completion_rate %><span class="text-xs font-normal text-ink-subtle">%</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl p-6 mt-4">
+    <h2 class="text-sm font-semibold text-ink-primary mb-1 flex items-center gap-2">
+      <i class="fas fa-clock-rotate-left text-brand text-xs"></i>
+      <%= t("views.statistics.jeune.history_title") %>
+    </h2>
+    <p class="text-xs text-ink-subtle mb-4"><%= t("views.statistics.jeune.history_period", period: period_label) %></p>
+
+    <div class="divide-y divide-surface-border/30">
+      <% @jeune_sessions.first(20).each do |session| %>
+        <div class="flex items-center justify-between py-2.5">
+          <div>
+            <p class="text-sm font-medium text-ink-primary"><%= l(session.started_at.to_date, format: :long) %></p>
+            <p class="text-xs text-ink-subtle"><%= t("enumerize.fasting_session.protocol.#{session.protocol}") %></p>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-semibold text-ink-primary"><%= format_fasting_duration(session.elapsed_hours) %></p>
+            <%
+              status_key, status_class = if session.active?
+                ["status_in_progress", "text-status-info"]
+              elsif session.reached_target?
+                ["status_completed", "text-status-success"]
+              else
+                ["status_cut_short", "text-status-warning"]
+              end
+            %>
+            <p class="text-xs font-medium <%= status_class %>"><%= t("views.statistics.jeune.#{status_key}") %></p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <% if @jeune_sessions.size > 20 %>
+      <p class="text-[10px] text-ink-subtle text-center mt-3">
+        <%= t("views.statistics.jeune.history_truncated", shown: 20, total: @jeune_sessions.size) %>
+      </p>
+    <% end %>
+  </div>
+
+<% end %>

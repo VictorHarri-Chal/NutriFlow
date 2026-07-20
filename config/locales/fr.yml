@@ -162,7 +162,6 @@ fr:
         weight: "Suivi poids"
         measurements: "Mesures"
         weight_and_measurements: "Poids & Mesures"
-        fasting: "Jeûne"
         exercises: "Entraînement"
         workout_programs: "Programmes"
         statistics: "Statistiques"
@@ -285,23 +284,6 @@ fr:
         add_first_food: "Ajouter votre premier aliment"
 
     fasting_sessions:
-      page_title: "Jeûne intermittent"
-      intro: "Le jeûne intermittent alterne une fenêtre de jeûne et une fenêtre d'alimentation. Écoutez votre corps et consultez un professionnel de santé en cas de doute, de traitement médical ou d'antécédents de troubles alimentaires."
-      kpi:
-        current_streak: "Série actuelle"
-        best_streak: "Meilleure série"
-        total_hours: "Heures cumulées"
-        completion_rate: "Taux de réussite"
-      history:
-        title: "Historique"
-        empty: "Vous n'avez pas encore démarré de jeûne."
-        date_col: "Date"
-        protocol_col: "Protocole"
-        duration_col: "Durée"
-        status_col: "Statut"
-        status_completed: "Terminé dans les temps"
-        status_cut_short: "Écourté"
-        status_in_progress: "En cours"
       disclaimer:
         title: "Avant de commencer"
         intro: "Vérifiez que vous n'êtes pas concerné(e) par l'une de ces situations :"
@@ -830,7 +812,7 @@ fr:
         show_body_measurements: "Mesures corporelles"
         show_body_measurements_hint: "Affiche l'onglet Mesures (tour de taille, hanches, etc.) sur la page Poids & Mesures. Désactivé, cet onglet devient inaccessible."
         show_fasting_tracking: "Jeûne intermittent"
-        show_fasting_tracking_hint: "Affiche le widget de jeûne dans le journal et la page Jeûne dans la navigation. Désactivé, cette section devient inaccessible."
+        show_fasting_tracking_hint: "Affiche le widget de jeûne dans le journal et l'onglet Jeûne dans les statistiques. Désactivé, cette section devient inaccessible."
         confirm_disable: "Désactiver « %{feature} » ? Vos données existantes seront conservées, mais cette section deviendra inaccessible."
       general:
         title: "Paramètres généraux"
@@ -1462,6 +1444,7 @@ fr:
         cardio: "Cardio"
         bien_etre: "Bien-être"
         hydratation: "Hydratation"
+        jeune: "Jeûne"
       periods:
         "7": "7 j"
         "30": "30 j"
@@ -1596,6 +1579,22 @@ fr:
       hydratation:
         no_data_title: "Aucune donnée d'hydratation sur %{period}"
         no_data_hint: "Ajoute ta consommation d'eau dans le calendrier pour suivre ton hydratation."
+      jeune:
+        no_data_title: "Aucun jeûne sur %{period}"
+        no_data_hint: "Démarre un jeûne depuis le calendrier pour voir tes statistiques ici."
+        kpi_streak: "Série actuelle"
+        kpi_best_streak: "Meilleure série"
+        kpi_total_hours: "Heures cumulées"
+        kpi_completion_rate: "Taux de réussite"
+        streak_days:
+          one: "%{count} jour"
+          other: "%{count} jours"
+        history_title: "Historique"
+        history_period: "Sur %{period}"
+        history_truncated: "Affichage limité aux %{shown} sessions les plus récentes (%{total} au total sur cette période)"
+        status_completed: "Terminé dans les temps"
+        status_cut_short: "Écourté"
+        status_in_progress: "En cours"
 
     cardio_sessions:
       confirm_delete: "Supprimer cette session cardio ?"

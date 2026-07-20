@@ -162,7 +162,6 @@ en:
         weight: "Weight tracking"
         measurements: "Measurements"
         weight_and_measurements: "Weight & Measurements"
-        fasting: "Fasting"
         exercises: "Training"
         workout_programs: "Programs"
         statistics: "Statistics"
@@ -285,23 +284,6 @@ en:
         add_first_food: "Add your first food"
 
     fasting_sessions:
-      page_title: "Intermittent fasting"
-      intro: "Intermittent fasting alternates a fasting window and an eating window. Listen to your body and consult a healthcare professional if in doubt, under medical treatment, or with a history of eating disorders."
-      kpi:
-        current_streak: "Current streak"
-        best_streak: "Best streak"
-        total_hours: "Total hours"
-        completion_rate: "Completion rate"
-      history:
-        title: "History"
-        empty: "You haven't started a fast yet."
-        date_col: "Date"
-        protocol_col: "Protocol"
-        duration_col: "Duration"
-        status_col: "Status"
-        status_completed: "Completed on time"
-        status_cut_short: "Cut short"
-        status_in_progress: "In progress"
       disclaimer:
         title: "Before you start"
         intro: "Check whether any of these situations apply to you:"
@@ -830,7 +812,7 @@ en:
         show_body_measurements: "Body measurements"
         show_body_measurements_hint: "Shows the Measurements tab (waist, hips, etc.) on the Weight & Measurements page. Disabled, this tab becomes inaccessible."
         show_fasting_tracking: "Intermittent fasting"
-        show_fasting_tracking_hint: "Shows the fasting widget in the diary and the Fasting page in navigation. When disabled, this section becomes inaccessible."
+        show_fasting_tracking_hint: "Shows the fasting widget in the diary and the Fasting tab in statistics. When disabled, this section becomes inaccessible."
         confirm_disable: "Disable \"%{feature}\"? Your existing data will be kept, but this section will become inaccessible."
       general:
         title: "General settings"
@@ -1462,6 +1444,7 @@ en:
         cardio: "Cardio"
         bien_etre: "Wellbeing"
         hydratation: "Hydration"
+        jeune: "Fasting"
       periods:
         "7": "7 d"
         "30": "30 d"
@@ -1596,6 +1579,22 @@ en:
       hydratation:
         no_data_title: "No hydration data for %{period}"
         no_data_hint: "Log your daily water intake in the calendar to track your hydration."
+      jeune:
+        no_data_title: "No fast for %{period}"
+        no_data_hint: "Start a fast from the calendar to see your stats here."
+        kpi_streak: "Current streak"
+        kpi_best_streak: "Best streak"
+        kpi_total_hours: "Total hours"
+        kpi_completion_rate: "Completion rate"
+        streak_days:
+          one: "%{count} day"
+          other: "%{count} days"
+        history_title: "History"
+        history_period: "Over %{period}"
+        history_truncated: "Showing the %{shown} most recent sessions (%{total} total for this period)"
+        status_completed: "Completed on time"
+        status_cut_short: "Cut short"
+        status_in_progress: "In progress"
 
     cardio_sessions:
       confirm_delete: "Delete this cardio session?"
