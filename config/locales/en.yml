@@ -308,7 +308,7 @@ en:
         item_pregnancy: "Pregnancy or breastfeeding"
         item_minor: "Adolescence or incomplete growth"
         advice: "If any of these apply to you, consult a healthcare professional before starting your fast."
-        acknowledge: "Start my fast"
+        acknowledge: "Start"
         cancel: "Cancel"
 
     foods:
