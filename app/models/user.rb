@@ -77,6 +77,8 @@ class User < ApplicationRecord
       day_food_groups.destroy_all
       weight_entries.destroy_all
       body_measurements.destroy_all
+      fasting_sessions.destroy_all
+      update_column(:fasting_disclaimer_acknowledged_at, nil)
       exercise_favorites.destroy_all
       workout_programs.destroy_all
       exercises.destroy_all
