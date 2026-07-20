@@ -45,21 +45,23 @@
 
         <%# Colonne droite %>
         <div class="flex flex-col flex-1 min-w-0 gap-2">
-          <p class="text-xs text-ink-muted">
-            <%= t("enumerize.fasting_session.protocol.#{active_fasting_session.protocol}") %>
-            · <%= fasting_expected_end_label(active_fasting_session) %>
-            <span data-fasting-timer-target="remainingText"
-                  class="<%= 'hidden' if active_fasting_session.progress_percentage >= 100 %> text-ink-subtle/70">
-              (<%= t("views.calendars.fasting.in_duration", duration: format_fasting_duration(active_fasting_session.remaining_hours)) %>)
-            </span>
-          </p>
-
-          <% if fasting_stats[:current_streak] > 0 %>
-            <p class="text-[10px] text-ink-subtle flex items-center gap-1">
-              <i class="fas fa-fire"></i>
-              <span><%= t("views.calendars.fasting.idle_summary", count: fasting_stats[:current_streak], hours: fasting_stats[:total_hours]) %></span>
+          <div class="flex items-center justify-between gap-2 flex-wrap px-3 py-2 rounded-lg bg-surface-hover/60 border border-surface-border/40">
+            <p class="text-xs text-ink-muted">
+              <%= t("enumerize.fasting_session.protocol.#{active_fasting_session.protocol}") %>
+              · <%= fasting_expected_end_label(active_fasting_session) %>
+              <span data-fasting-timer-target="remainingText"
+                    class="<%= 'hidden' if active_fasting_session.progress_percentage >= 100 %> text-ink-subtle/70">
+                (<%= t("views.calendars.fasting.in_duration", duration: format_fasting_duration(active_fasting_session.remaining_hours)) %>)
+              </span>
             </p>
-          <% end %>
+
+            <% if fasting_stats[:current_streak] > 0 %>
+              <p class="text-[10px] text-ink-subtle flex items-center gap-1">
+                <i class="fas fa-fire"></i>
+                <span><%= t("views.calendars.fasting.idle_summary", count: fasting_stats[:current_streak], hours: fasting_stats[:total_hours]) %></span>
+              </p>
+            <% end %>
+          </div>
 
           <div data-fasting-timer-target="goalReachedBox"
                class="<%= 'hidden' unless active_fasting_session.progress_percentage >= 100 %> flex items-center gap-2 px-3 py-2 rounded-lg bg-status-success/10 border border-status-success/20">
