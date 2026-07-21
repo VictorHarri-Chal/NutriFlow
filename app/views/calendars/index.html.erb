@@ -39,40 +39,40 @@
                tdee_breakdown:      @tdee_breakdown,
                day:                 @day %>
 
-    <%# ── Hydration widget ── %>
-    <% if current_user.show_water_tracking? %>
-      <%= render 'calendars/water_widget', day: @day, profile: @profile %>
-    <% end %>
-
-    <%# ── Workout widget ── %>
-    <% if current_user.show_workout_section? %>
-      <%= render 'calendars/workout_widget', day: @day %>
-      <%= turbo_frame_tag "workout_item_form" %>
-    <% end %>
-
-    <%# ── Cardio widget ── %>
-    <% if current_user.show_cardio_section? %>
-      <%= render 'calendars/cardio_widget', day: @day %>
-      <%= turbo_frame_tag "cardio_item_form" %>
-    <% end %>
-
-    <%# ── Fasting widget ── %>
-    <% if current_user.show_fasting_tracking? %>
-      <%= render 'calendars/fasting_widget', active_fasting_session: @active_fasting_session, fasting_stats: @fasting_stats %>
-      <div id="fasting_disclaimer_modal_root"></div>
-    <% end %>
-
-    <%# ── Food widget ── %>
-    <%= render 'calendars/food_widget',
-               all_day_items:           @all_day_items,
-               day_items_by_group:      @day_items_by_group,
-               day_items_without_group: @day_items_without_group,
-               day:                     @day %>
-    <%= turbo_frame_tag "food_item_form" %>
-
-    <%# ── Daily note ── %>
-    <% if current_user.show_day_note? %>
-      <%= render 'calendars/day_note', day: @day %>
+    <%# ── Sections réorganisables (ordre personnalisé, masquage existant préservé) ── %>
+    <% current_user.section_order.each do |section_key| %>
+      <% case section_key %>
+      <% when "water" %>
+        <% if current_user.show_water_tracking? %>
+          <%= render 'calendars/water_widget', day: @day, profile: @profile %>
+        <% end %>
+      <% when "workout" %>
+        <% if current_user.show_workout_section? %>
+          <%= render 'calendars/workout_widget', day: @day %>
+          <%= turbo_frame_tag "workout_item_form" %>
+        <% end %>
+      <% when "cardio" %>
+        <% if current_user.show_cardio_section? %>
+          <%= render 'calendars/cardio_widget', day: @day %>
+          <%= turbo_frame_tag "cardio_item_form" %>
+        <% end %>
+      <% when "fasting" %>
+        <% if current_user.show_fasting_tracking? %>
+          <%= render 'calendars/fasting_widget', active_fasting_session: @active_fasting_session, fasting_stats: @fasting_stats %>
+          <div id="fasting_disclaimer_modal_root"></div>
+        <% end %>
+      <% when "food" %>
+        <%= render 'calendars/food_widget',
+                   all_day_items:           @all_day_items,
+                   day_items_by_group:      @day_items_by_group,
+                   day_items_without_group: @day_items_without_group,
+                   day:                     @day %>
+        <%= turbo_frame_tag "food_item_form" %>
+      <% when "day_note" %>
+        <% if current_user.show_day_note? %>
+          <%= render 'calendars/day_note', day: @day %>
+        <% end %>
+      <% end %>
     <% end %>
 
   </div>
