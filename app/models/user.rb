@@ -9,7 +9,7 @@ class User < ApplicationRecord
     Atlantic/Canary Indian/Reunion
   ].freeze
 
-  CALENDAR_SECTION_KEYS = %w[food water workout cardio fasting day_note].freeze
+  CALENDAR_SECTION_KEYS = %w[water workout cardio fasting food day_note].freeze
 
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
