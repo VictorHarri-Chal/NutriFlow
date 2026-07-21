@@ -1,12 +1,14 @@
-<div class="flex items-start justify-between gap-6 py-3">
-  <div>
-    <label for="<%= input_id %>" class="text-sm font-medium text-ink-primary block mb-0.5 cursor-pointer">
-      <%= t(label_key) %>
-    </label>
-    <p class="text-xs text-ink-subtle"><%= t(hint_key) %></p>
-  </div>
+<div class="flex items-center gap-3 py-3"<% if draggable %> data-sortable-id="<%= sortable_id %>"<% end %>>
+  <% if draggable %>
+    <i class="fas fa-grip-vertical text-surface-border cursor-grab" data-drag-handle></i>
+  <% end %>
 
-  <label class="flex items-center cursor-pointer shrink-0 mt-0.5">
+  <label for="<%= input_id %>" class="text-sm font-medium text-ink-primary flex-1 flex items-center gap-1.5 cursor-pointer">
+    <%= t(label_key) %>
+    <i class="fas fa-circle-info text-[10px] text-ink-subtle/40 hover:text-ink-subtle cursor-default" title="<%= t(hint_key) %>"></i>
+  </label>
+
+  <label class="flex items-center cursor-pointer shrink-0">
     <input type="hidden" name="<%= field_name %>" value="0">
 
     <% if requires_confirmation? %>

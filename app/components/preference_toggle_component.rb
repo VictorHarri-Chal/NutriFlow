@@ -1,16 +1,18 @@
 # frozen_string_literal: true
 
 class PreferenceToggleComponent < ApplicationComponent
-  def initialize(field:, checked:, url:, has_existing_data: false)
+  def initialize(field:, checked:, url:, has_existing_data: false, draggable: false, sortable_id: nil)
     @field = field
     @checked = checked
     @url = url
     @has_existing_data = has_existing_data
+    @draggable = draggable
+    @sortable_id = sortable_id
   end
 
   private
 
-  attr_reader :field, :checked, :url, :has_existing_data
+  attr_reader :field, :checked, :url, :has_existing_data, :draggable, :sortable_id
 
   def input_id
     "user_#{field}"
