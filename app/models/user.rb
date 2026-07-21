@@ -9,12 +9,15 @@ class User < ApplicationRecord
     Atlantic/Canary Indian/Reunion
   ].freeze
 
+  CALENDAR_SECTION_KEYS = %w[food water workout cardio fasting day_note].freeze
+
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
          :confirmable, :trackable
 
   validates :locale, inclusion: { in: AVAILABLE_LOCALES }
   validates :time_zone, inclusion: { in: AVAILABLE_TIME_ZONES }
+  validate :section_order_is_a_permutation_of_calendar_section_keys
 
   # Declaration order matters for account/data destruction: Food guards
   # itself with dependent: :restrict_with_error against day_foods/recipe_items,
@@ -92,6 +95,12 @@ class User < ApplicationRecord
 
   def create_profile
     create_profile!
+  end
+
+  def section_order_is_a_permutation_of_calendar_section_keys
+    return if section_order.sort == CALENDAR_SECTION_KEYS.sort
+
+    errors.add(:section_order, :invalid)
   end
 
   # Enforced here rather than only in the settings controller so any future
