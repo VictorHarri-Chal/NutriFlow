@@ -20,6 +20,9 @@ export default class extends Controller {
 
     this._boundOpenRequest = this._onOpenRequest.bind(this)
     document.addEventListener("collapsible:open-request", this._boundOpenRequest)
+
+    this._boundCloseAll = this._onCloseAll.bind(this)
+    document.addEventListener("collapsible:close-all", this._boundCloseAll)
   }
 
   disconnect() {
@@ -29,6 +32,7 @@ export default class extends Controller {
       document.removeEventListener("collapsible:open", this._boundGroupClose)
     }
     document.removeEventListener("collapsible:open-request", this._boundOpenRequest)
+    document.removeEventListener("collapsible:close-all", this._boundCloseAll)
   }
 
   toggle() {
@@ -94,6 +98,10 @@ export default class extends Controller {
     if (event.detail.id && event.detail.id === this.element.id) {
       this._open(true)
     }
+  }
+
+  _onCloseAll() {
+    this._close(true)
   }
 
   get storageKey() {
