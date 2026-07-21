@@ -1,14 +1,14 @@
 <%# locals: (label_key:, hint_key:, sortable_id: nil) %>
 <div class="flex items-center gap-3 py-3"<% if sortable_id %> data-sortable-id="<%= sortable_id %>"<% end %>>
   <% if sortable_id %>
-    <i class="fas fa-grip-vertical w-4 text-center text-surface-border cursor-grab" data-drag-handle></i>
+    <i class="fas fa-grip-vertical w-4 text-center text-surface-border cursor-grab active:cursor-grabbing" data-drag-handle></i>
   <% else %>
     <span class="w-4"></span>
   <% end %>
 
   <span class="text-sm font-medium text-ink-primary flex-1 flex items-center gap-1.5">
     <%= t(label_key) %>
-    <i class="fas fa-circle-info text-[10px] text-ink-subtle/40 hover:text-ink-subtle cursor-default" title="<%= t(hint_key) %>"></i>
+    <i class="fas fa-circle-info text-xs text-ink-subtle/40 hover:text-ink-subtle cursor-default" title="<%= t(hint_key) %>"></i>
   </span>
 
   <span class="text-[10px] text-ink-subtle uppercase tracking-wide">

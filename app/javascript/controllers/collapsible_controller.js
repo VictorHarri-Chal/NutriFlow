@@ -101,6 +101,8 @@ export default class extends Controller {
   }
 
   _onCloseAll() {
+    if (this.element.dataset.collapsibleScope !== "page-section") return
+
     this._close(true)
   }
 

@@ -1,11 +1,11 @@
 <div class="flex items-center gap-3 py-3"<% if draggable %> data-sortable-id="<%= sortable_id %>"<% end %>>
   <% if draggable %>
-    <i class="fas fa-grip-vertical w-4 text-center text-surface-border cursor-grab" data-drag-handle></i>
+    <i class="fas fa-grip-vertical w-4 text-center text-surface-border cursor-grab active:cursor-grabbing" data-drag-handle></i>
   <% end %>
 
   <label for="<%= input_id %>" class="text-sm font-medium text-ink-primary flex-1 flex items-center gap-1.5 cursor-pointer">
     <%= t(label_key) %>
-    <i class="fas fa-circle-info text-[10px] text-ink-subtle/40 hover:text-ink-subtle cursor-default" title="<%= t(hint_key) %>"></i>
+    <i class="fas fa-circle-info text-xs text-ink-subtle/40 hover:text-ink-subtle cursor-default" title="<%= t(hint_key) %>"></i>
   </label>
 
   <label class="flex items-center cursor-pointer shrink-0">
