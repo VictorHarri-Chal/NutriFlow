@@ -1,6 +1,6 @@
 <div class="flex items-center gap-2">
 
-  <%# ── Nouveau cluster de 4 boutons ── %>
+  <%# ── Action buttons: today / monthly view / collapse all / customize display ── %>
   <div class="flex items-center gap-1">
 
     <% if selected_date == Date.current %>
@@ -26,7 +26,8 @@
     </button>
 
     <button type="button"
-            onclick='document.dispatchEvent(new CustomEvent("collapsible:close-all"))'
+            data-controller="collapse-all"
+            data-action="click->collapse-all#closeAll"
             class="w-8 h-8 flex items-center justify-center rounded-xl text-ink-primary bg-surface-raised border border-surface-border/50 hover:bg-surface-hover hover:text-brand transition-all"
             title="<%= t("views.calendars.collapse_all_button") %>">
       <i class="fas fa-compress text-xs"></i>
@@ -40,7 +41,7 @@
 
   </div>
 
-  <%# ── Sélecteur de date (inchangé) ── %>
+  <%# ── Date picker pill ── %>
   <div class="flex items-center bg-surface-raised border border-surface-border/50 rounded-xl overflow-hidden text-sm">
     <%= link_to calendars_path(date: (selected_date - 1.day).strftime('%Y-%m-%d')),
                 class: "w-8 h-8 flex items-center justify-center text-ink-subtle hover:text-ink-primary hover:bg-surface-hover transition-colors",
