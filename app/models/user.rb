@@ -17,7 +17,7 @@ class User < ApplicationRecord
 
   validates :locale, inclusion: { in: AVAILABLE_LOCALES }
   validates :time_zone, inclusion: { in: AVAILABLE_TIME_ZONES }
-  validate :section_order_is_a_permutation_of_calendar_section_keys
+  validate :section_order_must_be_a_permutation
 
   # Declaration order matters for account/data destruction: Food guards
   # itself with dependent: :restrict_with_error against day_foods/recipe_items,
@@ -97,8 +97,8 @@ class User < ApplicationRecord
     create_profile!
   end
 
-  def section_order_is_a_permutation_of_calendar_section_keys
-    return if section_order.sort == CALENDAR_SECTION_KEYS.sort
+  def section_order_must_be_a_permutation
+    return if Array(section_order).tally == CALENDAR_SECTION_KEYS.tally
 
     errors.add(:section_order, :invalid)
   end
