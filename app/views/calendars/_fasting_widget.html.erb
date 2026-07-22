@@ -1,5 +1,6 @@
 <div id="fasting_widget"
      data-controller="collapsible<%= ' fasting-timer' if active_fasting_session %>"
+     data-collapsible-scope="page-section"
      data-collapsible-storage-key="fasting-widget"
      <%= 'data-collapsible-force-open' if local_assigns[:force_open] %>
      <% if active_fasting_session %>

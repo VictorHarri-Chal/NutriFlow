@@ -37,6 +37,7 @@ Rails.application.routes.draw do
   end
   resource :setting, only: [:show, :update] do
     patch :update_preferences
+    patch :reorder_calendar_sections
     delete :sign_out_other_sessions
     delete :reset_data
   end

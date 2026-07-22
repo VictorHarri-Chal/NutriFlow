@@ -39,6 +39,14 @@ class SettingsController < ApplicationController
     end
   end
 
+  def reorder_calendar_sections
+    if current_user.update(section_order: Array(params[:ids]))
+      head :ok
+    else
+      head :unprocessable_entity
+    end
+  end
+
   def sign_out_other_sessions
     current_user.invalidate_other_sessions!
     bypass_sign_in(current_user)

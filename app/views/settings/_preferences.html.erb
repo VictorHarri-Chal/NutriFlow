@@ -8,28 +8,71 @@
     <p class="text-sm text-ink-subtle mt-1"><%= t("views.settings.preferences.description") %></p>
   </div>
 
-  <%= form_with url: update_preferences_setting_path, method: :patch do |f| %>
+  <%# ── Sections du calendrier : ordre + masquage ── %>
+  <div id="calendar-sections" class="border-t border-surface-border/40 pt-6">
+    <h3 class="text-sm font-semibold text-ink-primary mb-1">
+      <%= t("views.settings.preferences.calendar_sections_title") %>
+    </h3>
+    <p class="text-xs text-ink-subtle/70 mb-2">
+      <%= t("views.settings.preferences.calendar_sections_hint") %>
+    </p>
 
-    <div class="border-t border-surface-border/40 pt-6 divide-y divide-surface-border/30">
-      <% %i[
-           show_tdee_breakdown
-           show_water_tracking
-           show_workout_section
-           show_cardio_section
-           show_day_note
-           show_weight_tracking
-           show_body_measurements
-           show_fasting_tracking
-         ].each do |field| %>
-        <%= render PreferenceToggleComponent.new(
-              field: field,
-              checked: current_user.public_send("#{field}?"),
-              url: update_preferences_setting_path,
-              has_existing_data: @preference_data_presence.fetch(field, false)
-            ) %>
-      <% end %>
-    </div>
+    <%= render "settings/calendar_section_static_row",
+          label_key: "views.settings.preferences.calories",
+          hint_key: "views.settings.preferences.calories_hint" %>
 
-  <% end %>
+    <% section_toggle_fields = {
+         "water"    => :show_water_tracking,
+         "workout"  => :show_workout_section,
+         "cardio"   => :show_cardio_section,
+         "fasting"  => :show_fasting_tracking,
+         "day_note" => :show_day_note
+       } %>
+
+    <%= form_with url: update_preferences_setting_path, method: :patch do %>
+      <div class="divide-y divide-surface-border/30"
+           data-controller="sortable-list"
+           data-sortable-list-url-value="<%= reorder_calendar_sections_setting_path %>">
+        <% current_user.section_order.each do |key| %>
+          <% if key == "food" %>
+            <%= render "settings/calendar_section_static_row",
+                  label_key: "views.settings.preferences.food",
+                  hint_key: "views.settings.preferences.food_hint",
+                  sortable_id: "food" %>
+          <% else %>
+            <% field = section_toggle_fields.fetch(key) %>
+            <%= render PreferenceToggleComponent.new(
+                  field: field,
+                  checked: current_user.public_send("#{field}?"),
+                  url: update_preferences_setting_path,
+                  has_existing_data: @preference_data_presence.fetch(field, false),
+                  draggable: true,
+                  sortable_id: key
+                ) %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# ── Autres préférences (non liées à l'ordre du calendrier) ── %>
+  <div class="border-t border-surface-border/40 pt-6">
+    <h3 class="text-sm font-semibold text-ink-primary mb-1">
+      <%= t("views.settings.preferences.other_preferences_title") %>
+    </h3>
+
+    <%= form_with url: update_preferences_setting_path, method: :patch do %>
+      <div class="divide-y divide-surface-border/30">
+        <% %i[show_tdee_breakdown show_weight_tracking show_body_measurements].each do |field| %>
+          <%= render PreferenceToggleComponent.new(
+                field: field,
+                checked: current_user.public_send("#{field}?"),
+                url: update_preferences_setting_path,
+                has_existing_data: @preference_data_presence.fetch(field, false)
+              ) %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
 
 </div>
