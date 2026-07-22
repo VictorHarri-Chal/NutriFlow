@@ -17,7 +17,7 @@
     </div>
     <div class="flex-1 min-w-0">
       <label class="text-[9px] text-ink-subtle/60 uppercase tracking-wider block mb-0.5"><%= t("views.workout_sets.set_editor.rpe_label") %></label>
-      <div data-controller="custom-select" class="relative min-w-0">
+      <div data-controller="custom-select" data-custom-select-label-mode-value="value" class="relative min-w-0">
         <%= f.select :rpe, options_for_select(rpe_select_options, f.object.rpe),
               { include_blank: "—" },
               class: "sr-only", data: { custom_select_target: "select" } %>

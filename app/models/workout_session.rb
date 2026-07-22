@@ -128,13 +128,14 @@ class WorkoutSession < ApplicationRecord
     rows.map { |exercise_id, reps, _rest| [reps, rest_by_exercise[exercise_id]] }
   end
 
-  # Scale MET based on RPE (Rate of Perceived Exertion)
+  # Scale MET by perceived effort (RPE). Linear from 1.00 at RPE 6 (or below)
+  # to 1.30 at RPE 10 — keeps the original anchor points (6→1.00, 8→1.15,
+  # 10→1.30) but fills the gaps so every average RPE has a distinct,
+  # proportional impact (the old tiered version left holes at 7.x/9.x that
+  # silently fell back to 1.00).
+  RPE_MULTIPLIER_PER_POINT = 0.075 # (1.30 - 1.00) / (10 - 6)
+
   def rpe_multiplier
-    case average_rpe
-    when 6..7  then 1.00
-    when 8..9  then 1.15
-    when 10    then 1.30
-    else 1.00
-    end
+    1.0 + (average_rpe.clamp(6.0, 10.0) - 6.0) * RPE_MULTIPLIER_PER_POINT
   end
 end

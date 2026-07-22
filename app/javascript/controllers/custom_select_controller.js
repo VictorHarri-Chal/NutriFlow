@@ -2,6 +2,10 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["select", "label", "dropdown"]
+  // labelMode "value" collapses the trigger button to just the option's value
+  // (e.g. "7") instead of its full text — for narrow fields where the full
+  // label would truncate. The dropdown always shows the full option text.
+  static values = { labelMode: { type: String, default: "text" } }
 
   connect() {
     this.buildDropdown()
@@ -51,7 +55,8 @@ export default class extends Controller {
     const sel = this.selectTarget
     const opt = sel.options[sel.selectedIndex]
     const hasValue = sel.value !== ""
-    this.labelTarget.textContent = opt ? opt.text : "—"
+    this.labelTarget.textContent =
+      (this.labelModeValue === "value" && hasValue) ? sel.value : (opt ? opt.text : "—")
     this.labelTarget.classList.remove("text-ink-primary", "text-ink-subtle")
     this.labelTarget.classList.add(hasValue ? "text-ink-primary" : "text-ink-subtle")
   }
