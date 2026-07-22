@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 const SECONDS_PER_REP = 3 // mirrors DurationEstimatable::SECONDS_PER_REP (app/models/concerns/duration_estimatable.rb)
-const MINIMUM_MINUTES = 10 // mirrors DurationEstimatable::MINIMUM_MINUTES (app/models/concerns/duration_estimatable.rb)
+const MINIMUM_MINUTES = 1 // mirrors DurationEstimatable::MINIMUM_MINUTES (app/models/concerns/duration_estimatable.rb)
 
 // Mirrors SetTypesHelper#set_type_pill_classes (size: :md) — Tailwind classes must
 // appear as literal strings for the JIT scanner to pick them up, so this is duplicated

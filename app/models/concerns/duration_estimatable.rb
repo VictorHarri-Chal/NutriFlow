@@ -2,7 +2,7 @@ module DurationEstimatable
   extend ActiveSupport::Concern
 
   SECONDS_PER_REP = 3
-  MINIMUM_MINUTES = 10
+  MINIMUM_MINUTES = 1
 
   # Plausible session length from logged reps and rest — a rep takes roughly
   # the same time regardless of exercise, so this is far more accurate than a
