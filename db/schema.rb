@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_21_225849) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_21_141016) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -291,7 +291,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_21_225849) do
     t.datetime "updated_at", null: false
     t.integer "duration_minutes"
     t.text "notes"
-    t.boolean "duration_manually_set", default: false, null: false
     t.index ["workout_program_id", "day_of_week"], name: "index_program_days_on_workout_program_id_and_day_of_week", unique: true
     t.index ["workout_program_id"], name: "index_program_days_on_workout_program_id"
   end

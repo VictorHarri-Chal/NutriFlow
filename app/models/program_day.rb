@@ -43,15 +43,6 @@ class ProgramDay < ApplicationRecord
     end
   end
 
-  # Auto-refreshes duration_minutes from logged reps/rest — no-ops once the
-  # user has edited the field directly (duration_manually_set), so we never
-  # silently overwrite a value they chose themselves.
-  def recompute_estimated_duration!
-    return if duration_manually_set?
-
-    update_column(:duration_minutes, estimated_duration_minutes)
-  end
-
   def duration_estimate_pairs
     ProgramExerciseSet.joins(:program_exercise)
                        .where(program_exercises: { program_day_id: id })

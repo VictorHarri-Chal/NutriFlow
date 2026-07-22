@@ -62,10 +62,9 @@ class WorkoutProgramsController < ApplicationController
     @program.program_days.includes(program_exercises: :program_exercise_sets).each do |source_day|
       target_day = copy.program_days.find_by!(day_of_week: source_day.day_of_week)
       target_day.update!(
-        name:                  source_day.name,
-        duration_minutes:      source_day.duration_minutes,
-        duration_manually_set: source_day.duration_manually_set,
-        notes:                 source_day.notes
+        name:             source_day.name,
+        duration_minutes: source_day.duration_minutes,
+        notes:            source_day.notes
       )
       source_day.copy_exercises_to!(target_day)
     end

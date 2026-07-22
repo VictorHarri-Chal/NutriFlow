@@ -20,7 +20,7 @@ const SET_TYPE_PILL_CLASSES = {
 // - handles add/remove set per exercise
 // - fetches "last performance" for context when an exercise is added
 export default class extends Controller {
-  static targets = ["exercisesList", "emptyHint", "noExerciseError", "noWeightError", "durationInput"]
+  static targets = ["exercisesList", "emptyHint", "noExerciseError", "noWeightError", "durationInput", "durationHint", "durationEstimate"]
   static values = {
     lastPerfPath:       String,
     exerciseSearchPath: String,
@@ -55,11 +55,6 @@ export default class extends Controller {
         if (exerciseId) this._fetchLastPerformance(exerciseId, group)
       })
     }
-    // A brand-new session has nothing manually entered yet — seed the
-    // duration from the pre-filled sets. An existing (edit) session already
-    // holds a value the user chose (or a program's own estimate) — leave it
-    // alone until they touch the field themselves.
-    this._durationTouched = this.sessionIdValue > 0 || (this.hasDurationInputTarget && this.durationInputTarget.value !== "")
     this.recalculateDuration()
   }
 
@@ -209,18 +204,24 @@ export default class extends Controller {
     })
   }
 
-  // ── Duration suggestion ───────────────────────────────────────────
-
-  markDurationTouched() {
-    this._durationTouched = true
-  }
+  // ── Duration estimate ─────────────────────────────────────────────
+  // The duration field stays fully user-controlled. We only compute an
+  // estimate (reps × 3s + rest per set, floored at 10 min) and surface it in
+  // a call-out with a "use" button — shown only when it differs from the
+  // current input value, mirroring the profile's water-goal estimator.
 
   recalculateDuration() {
-    if (!this.hasDurationInputTarget || this._durationTouched) return
-    if (!this.hasExercisesListTarget) return
+    if (!this.hasDurationInputTarget || !this.hasExercisesListTarget) return
+
+    const groups = this.exercisesListTarget.querySelectorAll(".exercise-group:not(.hidden)")
+    if (groups.length === 0) {
+      this._durationEstimate = null
+      if (this.hasDurationHintTarget) this.durationHintTarget.classList.add("hidden")
+      return
+    }
 
     let totalSeconds = 0
-    this.exercisesListTarget.querySelectorAll(".exercise-group:not(.hidden)").forEach(group => {
+    groups.forEach(group => {
       const repsInputs = group.querySelectorAll(".set-row:not(.hidden) input[name*='[reps]']")
       repsInputs.forEach(input => {
         totalSeconds += (parseInt(input.value, 10) || 0) * SECONDS_PER_REP
@@ -228,7 +229,25 @@ export default class extends Controller {
       const restInput = group.querySelector("input[name*='[rest_seconds]']")
       if (restInput) totalSeconds += (parseInt(restInput.value, 10) || 0) * repsInputs.length
     })
-    this.durationInputTarget.value = Math.max(MINIMUM_MINUTES, Math.round(totalSeconds / 60))
+    this._durationEstimate = Math.max(MINIMUM_MINUTES, Math.round(totalSeconds / 60))
+    this._syncDurationHint()
+  }
+
+  useDuration() {
+    if (this._durationEstimate == null) return
+    this.durationInputTarget.value = this._durationEstimate
+    if (this.hasDurationHintTarget) this.durationHintTarget.classList.add("hidden")
+  }
+
+  _syncDurationHint() {
+    if (!this.hasDurationHintTarget) return
+    const current = parseInt(this.durationInputTarget.value, 10) || 0
+    if (this._durationEstimate == null || this._durationEstimate === current) {
+      this.durationHintTarget.classList.add("hidden")
+    } else {
+      if (this.hasDurationEstimateTarget) this.durationEstimateTarget.textContent = `${this._durationEstimate} min`
+      this.durationHintTarget.classList.remove("hidden")
+    }
   }
 
   // ── Private ───────────────────────────────────────────────────────
