@@ -16,14 +16,14 @@ class ProgramDaysController < ApplicationController
   end
 
   def copy_to
-    @target_day = @program.program_days.find(params[:target_day_id])
-    @target_day.program_exercises.destroy_all
-    @day.copy_exercises_to!(@target_day)
-    @target_day = @program.program_days.includes(program_exercises: [:exercise, :program_exercise_sets]).find(@target_day.id)
+    target_day = @program.program_days.find(params[:target_day_id])
+    target_day.program_exercises.destroy_all
+    @day.copy_exercises_to!(target_day)
     @program.preload_tension_balance_data!
+    flash.now[:notice] = t("views.workout_programs.day.copy_success")
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to @program }
+      format.html { redirect_to @program, notice: flash.now[:notice] }
     end
   end
 

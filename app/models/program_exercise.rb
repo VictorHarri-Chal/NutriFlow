@@ -9,6 +9,7 @@ class ProgramExercise < ApplicationRecord
 
   validates :rest_seconds, numericality: { greater_than_or_equal_to: 0, only_integer: true }, allow_nil: true
   validate :exercise_accessible_to_user
+  validate :min_sets_count
   validate :max_sets_count
 
   before_create :set_position
@@ -19,6 +20,11 @@ class ProgramExercise < ApplicationRecord
     return unless exercise && program_day&.workout_program
 
     errors.add(:exercise, :invalid) unless Exercise.accessible_to(program_day.workout_program.user).exists?(exercise.id)
+  end
+
+  def min_sets_count
+    active = program_exercise_sets.reject(&:marked_for_destruction?)
+    errors.add(:base, I18n.t("activerecord.errors.models.program_exercise.no_sets")) if active.empty?
   end
 
   def max_sets_count

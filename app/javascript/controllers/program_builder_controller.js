@@ -1,12 +1,13 @@
 import { Controller } from "@hotwired/stimulus"
 
 // Controls the exercise search combobox inside a program day column.
-// Submits via fetch (Turbo) to ProgramExercisesController#create.
+// Opens the configuration modal via fetch (Turbo) to ProgramExercisesController#new —
+// the ProgramExercise itself is only persisted once the modal is saved.
 export default class extends Controller {
   static targets = ["input", "dropdown", "hiddenId", "addRow"]
   static values  = {
     searchPath:     String,
-    createPath:     String,
+    newPath:        String,
     noResults:      String,
     favoritesPath:  String,
     favoritesLabel: String,
@@ -52,13 +53,12 @@ export default class extends Controller {
   select(e) {
     const item = e.currentTarget
     const exerciseId = item.dataset.exerciseId
-    const name       = item.dataset.name
 
     // Avoid duplicates within same day
     const existing = this.element.querySelectorAll(`[data-pe-exercise-id="${exerciseId}"]`)
     if (existing.length > 0) { this._close(); this._reset(); return }
 
-    this._submitCreate(exerciseId, name)
+    this._openModal(exerciseId)
   }
 
   // ── Private ─────────────────────────────────────────────────────────────
@@ -121,7 +121,6 @@ export default class extends Controller {
       const el = document.createElement("div")
       el.className = "flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-surface-hover text-sm text-ink-primary transition-colors"
       el.dataset.exerciseId = item.id
-      el.dataset.name       = item.name
       el.innerHTML = `
         <span class="flex-1 truncate">${item.name}</span>
         <span class="text-[10px] text-ink-subtle/60 shrink-0">${item.body_part_label || ""}</span>
@@ -139,23 +138,12 @@ export default class extends Controller {
     items[this.#highlighted].scrollIntoView({ block: "nearest" })
   }
 
-  async _submitCreate(exerciseId, name) {
+  async _openModal(exerciseId) {
     this._close()
     this._reset()
 
-    const form = new FormData()
-    form.append("program_exercise[exercise_id]", exerciseId)
-    form.append("program_exercise[sets]", 3)
-    form.append("program_exercise[reps_target]", 10)
-
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content
-    await fetch(this.createPathValue, {
-      method:  "POST",
-      headers: {
-        "X-CSRF-Token": csrfToken,
-        Accept: "text/vnd.turbo-stream.html, text/html",
-      },
-      body: form,
+    await fetch(`${this.newPathValue}?exercise_id=${encodeURIComponent(exerciseId)}`, {
+      headers: { Accept: "text/vnd.turbo-stream.html, text/html" },
     }).then(r => r.text()).then(html => {
       if (html.includes("turbo-stream")) Turbo.renderStreamMessage(html)
     })

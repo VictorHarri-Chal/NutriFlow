@@ -62,7 +62,7 @@ Rails.application.routes.draw do
     end
     resources :program_days, only: [:update], shallow: true do
       member { post :copy_to }
-      resources :program_exercises, only: [:create, :edit, :update, :destroy], shallow: true do
+      resources :program_exercises, only: [:new, :create, :edit, :update, :destroy], shallow: true do
         collection { patch :reorder }
         member     { patch :move }
       end

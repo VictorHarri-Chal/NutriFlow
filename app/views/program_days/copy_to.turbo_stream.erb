@@ -1,9 +1,24 @@
-<%= turbo_stream.replace "program_day_#{@target_day.id}" do %>
-  <%= render "workout_programs/day_column", program: @program, day: @target_day %>
+<%# Re-render every day column: copying changes the target day's exercises, and
+    each other column's copy panel bakes in a "has exercises?" state (confirm vs
+    direct copy) that would otherwise go stale until a full page reload. Replacing
+    the source column too collapses its now-used copy panel. %>
+<% @program.program_days.each do |day| %>
+  <%= turbo_stream.replace "program_day_#{day.id}" do %>
+    <%= render "workout_programs/day_column", program: @program, day: day %>
+  <% end %>
 <% end %>
 
 <%# Copying replaces the target day's whole exercise list, which changes the
     program's tension balance %>
 <%= turbo_stream.replace "tension_balance_panel" do %>
   <%= render "workout_programs/tension_balance_panel", program: @program %>
+<% end %>
+
+<%# Success toast %>
+<%= turbo_stream.prepend "flash_messages" do %>
+  <div class="pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl bg-status-success/15 border border-status-success/40 shadow-lg text-sm text-status-success max-w-sm"
+       data-controller="auto-dismiss">
+    <i class="fas fa-check-circle text-base shrink-0"></i>
+    <span><%= flash[:notice] %></span>
+  </div>
 <% end %>

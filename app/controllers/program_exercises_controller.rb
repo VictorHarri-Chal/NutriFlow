@@ -2,8 +2,17 @@ class ProgramExercisesController < ApplicationController
   include FeatureGuard
 
   before_action :require_workout_section!
-  before_action :set_program_day, only: [:create, :reorder]
+  before_action :set_program_day, only: [:new, :create, :reorder]
   before_action :set_exercise,    only: [:edit, :update, :destroy, :move]
+
+  def new
+    exercise = Exercise.accessible_to(current_user).find(params[:exercise_id])
+    @exercise = @day.program_exercises.build(exercise: exercise)
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to @program }
+    end
+  end
 
   def create
     @exercise = @day.program_exercises.build(exercise_params)
@@ -15,7 +24,14 @@ class ProgramExercisesController < ApplicationController
         format.html { redirect_to @program }
       end
     else
-      head :unprocessable_entity
+      respond_to do |format|
+        format.turbo_stream do
+          # Without a resolved exercise there's nothing valid to render the modal for
+          # (e.g. a tampered/missing exercise_id) — fail without re-rendering it.
+          @exercise.exercise ? render(:new, status: :unprocessable_entity) : head(:unprocessable_entity)
+        end
+        format.html { redirect_to @program }
+      end
     end
   end
 
@@ -58,7 +74,9 @@ class ProgramExercisesController < ApplicationController
     @source_day = @day
     @target_day = target_day
 
-    @exercise.update!(program_day: target_day, position: new_position)
+    # Structural move only — skip validations (a legacy zero-set exercise must
+    # still be movable), consistent with the position repack below.
+    @exercise.update_columns(program_day_id: target_day.id, position: new_position)
 
     # Repack positions on both days to avoid gaps
     @source_day.program_exercises.order(:position).each_with_index do |pe, i|

@@ -15,4 +15,5 @@ en:
     errors:
       models:
         program_exercise:
+          no_sets: "Add at least one set before saving."
           too_many_sets: "You can't add more than 10 sets per exercise."
