@@ -107,8 +107,8 @@
             <%# Column headers %>
             <div class="grid grid-cols-[16px_1fr_1fr_1fr_28px_20px] gap-2 text-xs text-ink-subtle">
               <span>#</span>
-              <span><%= t("views.workout_sessions.form.weight_kg") %></span>
               <span><%= t("views.workout_sessions.form.reps") %></span>
+              <span><%= t("views.workout_sessions.form.weight_kg") %></span>
               <span><%= t("views.workout_sets.set_editor.rpe_label") %></span>
               <span></span>
               <span></span>
@@ -129,19 +129,19 @@
                   <div class="grid grid-cols-[16px_1fr_1fr_1fr_28px_20px] gap-2 items-center">
                     <span class="text-xs text-ink-subtle set-number"><%= i + 1 %></span>
                     <input type="number"
+                           name="workout_session[workout_sets_attributes][<%= ws_key %>][reps]"
+                           value="<%= ws.reps %>" min="1" step="1"
+                           data-controller="digit-limit"
+                           data-action="input->digit-limit#limit input->workout-form#recalculateDuration"
+                           data-digit-limit-max-integer-digits-value="4"
+                           class="input-dark text-sm py-1.5 cursor-text">
+                    <input type="number"
                            name="workout_session[workout_sets_attributes][<%= ws_key %>][weight_kg]"
-                           value="<%= ws.weight_kg %>" placeholder="0" min="0" step="0.5"
+                           value="<%= ws.weight_kg %>" min="0" step="0.5"
                            data-controller="digit-limit"
                            data-action="input->workout-form#checkPr input->digit-limit#limit"
                            data-digit-limit-max-integer-digits-value="4"
                            data-digit-limit-max-decimal-digits-value="1"
-                           class="input-dark text-sm py-1.5 cursor-text">
-                    <input type="number"
-                           name="workout_session[workout_sets_attributes][<%= ws_key %>][reps]"
-                           value="<%= ws.reps.presence || 10 %>" min="1" step="1"
-                           data-controller="digit-limit"
-                           data-action="input->digit-limit#limit input->workout-form#recalculateDuration"
-                           data-digit-limit-max-integer-digits-value="4"
                            class="input-dark text-sm py-1.5 cursor-text">
                     <div data-controller="custom-select" class="relative min-w-0">
                       <%= select_tag "workout_session[workout_sets_attributes][#{ws_key}][rpe]",
