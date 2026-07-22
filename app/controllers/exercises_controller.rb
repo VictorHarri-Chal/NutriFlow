@@ -184,6 +184,7 @@ class ExercisesController < ApplicationController
     @exercise.exercise_id    = "custom_#{current_user.id}_#{SecureRandom.hex(6)}"
 
     if @exercise.save
+      current_user.exercise_favorites.create(exercise: @exercise)
       redirect_to exercise_path(@exercise), notice: t("views.exercises.custom.flash.created")
     else
       render :new, status: :unprocessable_entity
