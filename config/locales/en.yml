@@ -1127,6 +1127,7 @@ en:
         copy_to_title: "Copy to"
         copy_to_confirm: "This day already has exercises, they will be replaced. Continue?"
         copy_confirm_btn: "Copy"
+        copy_success: "Exercises copied."
         exercise_count:
           zero: "empty"
           one: "1 ex."
@@ -1143,6 +1144,7 @@ en:
           Weight: a value of 0 indicates a bodyweight exercise.
         bodyweight_abbr: "BW"
         rpe_label: "RPE"
+        exercise_info_toggle: "View details"
         remove_set: "Remove set"
         add_set: "+ Add a set"
         max_sets: "max 10"

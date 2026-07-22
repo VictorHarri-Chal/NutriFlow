@@ -1,4 +1,5 @@
 <%# pe: ProgramExercise, last_performance: { at:, sets: } | nil %>
+<% exercise = pe.exercise %>
 <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
      data-controller="modal"
      data-action="click->modal#handleBackdropClick keydown@document->modal#handleEscape">
@@ -9,7 +10,7 @@
 
     <div class="flex items-center justify-between px-5 py-4 border-b border-surface-border/40 flex-shrink-0">
       <div class="flex items-center gap-1.5 min-w-0">
-        <h3 class="text-sm font-semibold text-ink-primary break-words"><%= pe.exercise.name.capitalize %></h3>
+        <h3 class="text-sm font-semibold text-ink-primary break-words"><%= exercise.name.capitalize %></h3>
         <i class="fas fa-circle-info text-xs text-ink-subtle/40 hover:text-ink-subtle cursor-default transition-colors shrink-0"
            title="<%= t('views.workout_sets.set_editor.info_tooltip') %>"></i>
       </div>
@@ -19,14 +20,57 @@
       </button>
     </div>
 
-    <%= form_with model: pe, url: program_exercise_path(pe), method: :patch, scope: :program_exercise,
+    <%= form_with model: pe,
+          url: pe.persisted? ? program_exercise_path(pe) : program_day_program_exercises_path(pe.program_day),
+          method: pe.persisted? ? :patch : :post,
+          scope: :program_exercise,
           html: { novalidate: true,
                   data: { controller: "nested-form", nested_form_wrapper_selector_value: ".pe-sets-container",
                           nested_form_max_items_value: 10 } },
           class: "flex flex-col flex-1 min-h-0" do |f| %>
 
+      <%= f.hidden_field :exercise_id %>
+
       <div class="px-5 py-4 overflow-y-auto min-h-0 flex-1">
         <%= render "shared/form_errors", record: pe, margin_class: "mb-3" %>
+
+        <% info_primary_rows = [
+             (exercise.target_muscle.present? ? [t("views.exercises.show.primary_muscle"), t_muscle(exercise.target_muscle)] : nil),
+             (exercise.secondary_muscles.present? ? [t("views.exercises.show.secondary_muscles"), exercise.secondary_muscles.map { |m| t_muscle(m) }.join(", ")] : nil),
+           ].compact
+           info_detail_rows = [
+             (exercise.difficulty.present? ? [t("views.exercises.filter_difficulty"), t("views.exercises.difficulty.#{exercise.difficulty}", default: exercise.difficulty)] : nil),
+             (exercise.equipment.present? ? [t("views.exercises.filter_equipment"), t_equipment(exercise.equipment)] : nil),
+             (exercise.category.present? ? [t("views.exercises.custom.fields.category"), t_category(exercise.category)] : nil),
+             (exercise.tension_profile.present? ? [t("views.exercises.filter_tension_profile"), t("views.exercises.tension_profile.#{exercise.tension_profile}", default: exercise.tension_profile)] : nil),
+           ].compact
+        %>
+        <% if info_primary_rows.any? || info_detail_rows.any? %>
+          <div class="bg-surface-base border border-surface-border/40 rounded-xl divide-y divide-surface-border/30 mb-4"
+               <%= 'data-controller="collapsible"'.html_safe if info_detail_rows.any? %>>
+            <% info_primary_rows.each do |label, value| %>
+              <div class="flex items-baseline justify-between gap-3 px-3.5 py-2">
+                <span class="text-[11px] text-ink-subtle flex-shrink-0"><%= label %></span>
+                <span class="text-[11.5px] text-ink-muted text-right break-words"><%= value %></span>
+              </div>
+            <% end %>
+            <% if info_detail_rows.any? %>
+              <div class="hidden divide-y divide-surface-border/30" data-collapsible-target="content">
+                <% info_detail_rows.each do |label, value| %>
+                  <div class="flex items-baseline justify-between gap-3 px-3.5 py-2">
+                    <span class="text-[11px] text-ink-subtle flex-shrink-0"><%= label %></span>
+                    <span class="text-[11.5px] text-ink-muted text-right break-words"><%= value %></span>
+                  </div>
+                <% end %>
+              </div>
+              <div class="flex items-center gap-1.5 px-3.5 py-2 text-[10.5px] text-ink-subtle hover:text-ink-muted cursor-pointer select-none transition-colors"
+                   data-action="click->collapsible#toggle" data-collapsible-target="trigger">
+                <i class="fas fa-chevron-down text-[9px] transition-transform duration-200" data-collapsible-target="icon"></i>
+                <%= t("views.workout_sets.set_editor.exercise_info_toggle") %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
 
         <div>
           <template data-nested-form-target="template">

@@ -40,7 +40,11 @@ class WorkoutProgramsController < ApplicationController
   end
 
   def destroy
+    was_active = @program.is_active?
     @program.destroy
+    if was_active
+      current_user.workout_programs.order(created_at: :asc).first&.activate!
+    end
     redirect_to workout_programs_path, notice: t("controllers.workout_programs.destroyed")
   end
 

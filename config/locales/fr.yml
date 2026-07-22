@@ -1127,6 +1127,7 @@ fr:
         copy_to_title: "Copier vers"
         copy_to_confirm: "Ce jour a déjà des exercices, ils seront remplacés. Continuer ?"
         copy_confirm_btn: "Copier"
+        copy_success: "Exercices copiés."
         exercise_count:
           zero: "vide"
           one: "1 exo"
@@ -1143,6 +1144,7 @@ fr:
           Charge : une valeur à 0 correspond à un exercice réalisé au poids de corps.
         bodyweight_abbr: "PDC"
         rpe_label: "RPE"
+        exercise_info_toggle: "Voir les détails"
         remove_set: "Supprimer la série"
         add_set: "+ Ajouter une série"
         max_sets: "max 10"
