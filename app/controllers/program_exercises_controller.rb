@@ -19,6 +19,7 @@ class ProgramExercisesController < ApplicationController
     if @exercise.save
       @exercise = ProgramExercise.includes(:exercise, :program_exercise_sets).find(@exercise.id)
       @program.preload_tension_balance_data!
+      @day.recompute_estimated_duration!
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to @program }
@@ -45,6 +46,7 @@ class ProgramExercisesController < ApplicationController
 
   def update
     if @exercise.update(exercise_params)
+      @day.recompute_estimated_duration!
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to @program }
@@ -61,6 +63,7 @@ class ProgramExercisesController < ApplicationController
   def destroy
     @exercise.destroy
     @program.preload_tension_balance_data!
+    @day.recompute_estimated_duration!
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to @program }
@@ -89,6 +92,9 @@ class ProgramExercisesController < ApplicationController
     # Reload with :exercise preloaded for the turbo_stream render below
     @source_day = ProgramDay.includes(program_exercises: [:exercise, :program_exercise_sets]).find(@source_day.id)
     @target_day = ProgramDay.includes(program_exercises: [:exercise, :program_exercise_sets]).find(@target_day.id)
+
+    @source_day.recompute_estimated_duration!
+    @target_day.recompute_estimated_duration!
 
     respond_to do |format|
       format.turbo_stream

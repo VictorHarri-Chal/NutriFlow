@@ -1134,6 +1134,7 @@ en:
         reps: "Reps"
         weight_kg: "kg"
         duration_placeholder: "Duration"
+        duration_tooltip: "Estimated effective training time for this day, excluding changing rooms and breaks."
         notes_placeholder: "Notes..."
         copy_to_title: "Copy to"
         copy_to_confirm: "This day already has exercises, they will be replaced. Continue?"
@@ -1155,6 +1156,12 @@ en:
           Weight: a value of 0 indicates a bodyweight exercise.
         bodyweight_abbr: "BW"
         rpe_label: "RPE"
+        rpe_options:
+          value_6: "6: easy, 4+ reps left in the tank"
+          value_7: "7: moderate, 3 reps left"
+          value_8: "8: hard, 2 reps left"
+          value_9: "9: very hard, 1 rep left"
+          value_10: "10: complete failure, nothing left"
         exercise_info_toggle: "View details"
         remove_set: "Remove set"
         add_set: "+ Add a set"
@@ -1664,6 +1671,7 @@ en:
         weight_kg: "Weight (kg)"
         reps: "Reps"
         duration: "Duration"
+        duration_tooltip: "Shows the time actually spent training: adds up the time under tension for each set plus the rest between them."
         notes: "Notes"
         notes_placeholder: "How you felt, observations..."
         empty_hint: "Search an exercise and click Add to start"

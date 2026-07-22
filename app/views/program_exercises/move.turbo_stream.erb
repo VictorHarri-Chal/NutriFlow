@@ -15,3 +15,11 @@
 <%= turbo_stream.replace "copy_btn_day_#{@target_day.id}" do %>
   <%= render "workout_programs/copy_button", program: @program, day: @target_day %>
 <% end %>
+
+<%= turbo_stream.replace "program_day_duration_#{@source_day.id}" do %>
+  <%= render "workout_programs/day_duration_field", day: @source_day %>
+<% end %>
+
+<%= turbo_stream.replace "program_day_duration_#{@target_day.id}" do %>
+  <%= render "workout_programs/day_duration_field", day: @target_day %>
+<% end %>

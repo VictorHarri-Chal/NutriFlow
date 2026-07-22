@@ -4,9 +4,11 @@ module RpeSetType
   SET_TYPES = %w[warmup working failure dropset].freeze
   DISPLAY_PRIORITY = %w[failure dropset warmup].freeze
   DEFAULT_RPE_BY_TYPE = { "failure" => 10, "dropset" => 9, "warmup" => 5 }.freeze
+  MIN_RPE = 6
+  MAX_RPE = 10
 
   included do
-    validates :rpe, numericality: { only_integer: true, greater_than_or_equal_to: 6, less_than_or_equal_to: 10 },
+    validates :rpe, numericality: { only_integer: true, greater_than_or_equal_to: MIN_RPE, less_than_or_equal_to: MAX_RPE },
                     allow_nil: true
     validate :set_types_must_be_known
     before_validation :strip_blank_set_types

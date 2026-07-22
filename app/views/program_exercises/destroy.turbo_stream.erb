@@ -17,3 +17,7 @@
 <%= turbo_stream.replace "tension_balance_panel" do %>
   <%= render "workout_programs/tension_balance_panel", program: @program %>
 <% end %>
+
+<%= turbo_stream.replace "program_day_duration_#{@day.id}" do %>
+  <%= render "workout_programs/day_duration_field", day: @day %>
+<% end %>

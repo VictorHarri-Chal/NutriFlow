@@ -36,4 +36,11 @@ module SetTypesHelper
 
     labels.map { |type| I18n.t("views.workout_sets.set_editor.set_types_abbr.#{type}") }.join("+")
   end
+
+  # Shared between workout_sessions/_form.html.erb and
+  # workout_programs/_set_fields.html.erb — both render a 6–10 RPE select
+  # with the same descriptive labels.
+  def rpe_select_options
+    (RpeSetType::MIN_RPE..RpeSetType::MAX_RPE).map { |v| [t("views.workout_sets.set_editor.rpe_options.value_#{v}"), v] }
+  end
 end

@@ -1134,6 +1134,7 @@ fr:
         reps: "Reps"
         weight_kg: "kg"
         duration_placeholder: "Durée"
+        duration_tooltip: "Temps d'entraînement effectif estimé pour ce jour, hors vestiaires et pauses."
         notes_placeholder: "Notes..."
         copy_to_title: "Copier vers"
         copy_to_confirm: "Ce jour a déjà des exercices, ils seront remplacés. Continuer ?"
@@ -1155,6 +1156,12 @@ fr:
           Charge : une valeur à 0 correspond à un exercice réalisé au poids de corps.
         bodyweight_abbr: "PDC"
         rpe_label: "RPE"
+        rpe_options:
+          value_6: "6 : facile, il restait 4 répétitions ou plus"
+          value_7: "7 : modéré, il restait 3 répétitions"
+          value_8: "8 : difficile, il restait 2 répétitions"
+          value_9: "9 : très difficile, il restait 1 répétition"
+          value_10: "10 : échec total, aucune répétition en réserve"
         exercise_info_toggle: "Voir les détails"
         remove_set: "Supprimer la série"
         add_set: "+ Ajouter une série"
@@ -1664,6 +1671,7 @@ fr:
         weight_kg: "Poids (kg)"
         reps: "Répétitions"
         duration: "Durée"
+        duration_tooltip: "Indique le temps réellement passé à vous entraîner : additionne le temps sous tension de chaque série et les repos entre elles."
         notes: "Notes"
         notes_placeholder: "Sensations, observations..."
         empty_hint: "Cherchez un exercice et cliquez Ajouter pour commencer"

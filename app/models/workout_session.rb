@@ -1,4 +1,6 @@
 class WorkoutSession < ApplicationRecord
+  include DurationEstimatable
+
   belongs_to :day
 
   # Must be declared before the `has_many :workout_sets, dependent: :destroy`
@@ -42,7 +44,7 @@ class WorkoutSession < ApplicationRecord
   DEFAULT_MET = 3.5
 
   # Formula: MET × weight_kg × hours  (Harris-Benedict / Compendium standard)
-  # When no explicit duration: estimate 3 min per set (work + rest), min 10 min
+  # When no explicit duration: estimate from logged reps + rest_seconds
   def estimated_calories(weight_kg = nil)
     return calories_burned if calories_burned.present?
 
@@ -51,10 +53,10 @@ class WorkoutSession < ApplicationRecord
     hours = if duration_minutes.present? && duration_minutes > 0
       duration_minutes / 60.0
     else
-      [workout_sets.size * 3, 10].max / 60.0
+      estimated_duration_minutes / 60.0
     end
 
-    (primary_body_part_met * rpe_multiplier * w * hours).round
+    (weighted_met * rpe_multiplier * w * hours).round
   end
 
   def total_volume
@@ -103,9 +105,27 @@ class WorkoutSession < ApplicationRecord
     errors.add(:base, I18n.t("activerecord.errors.models.workout_session.too_many_sets_per_exercise")) if too_many
   end
 
-  def primary_body_part_met
-    body_part = workout_sets.includes(:exercise).map { |s| s.exercise&.body_part }.compact.first
-    MET_BY_BODY_PART[body_part] || DEFAULT_MET
+  # Weighted average MET across every body part trained in the session, one
+  # set = one weight unit — replaces the old "MET of the first logged
+  # exercise" shortcut, which made the result depend on set entry order.
+  def weighted_met
+    sets_by_body_part = workout_sets.includes(:exercise).group_by { |s| s.exercise&.body_part }
+    return DEFAULT_MET if sets_by_body_part.empty?
+
+    total        = sets_by_body_part.sum { |_, sets| sets.size }
+    weighted_sum = sets_by_body_part.sum { |bp, sets| (MET_BY_BODY_PART[bp] || DEFAULT_MET) * sets.size }
+    weighted_sum / total.to_f
+  end
+
+  # rest_seconds is stored once per exercise (on its first set); apply it to
+  # every set of that exercise so rest scales with set count — consistent with
+  # ProgramDay#duration_estimate_pairs and physically closer to real rest time.
+  def duration_estimate_pairs
+    rows = workout_sets.pluck(:exercise_id, :reps, :rest_seconds)
+    rest_by_exercise = rows.each_with_object({}) do |(exercise_id, _reps, rest), acc|
+      acc[exercise_id] = rest if rest.present? && !acc.key?(exercise_id)
+    end
+    rows.map { |exercise_id, reps, _rest| [reps, rest_by_exercise[exercise_id]] }
   end
 
   # Scale MET based on RPE (Rate of Perceived Exertion)

@@ -1,5 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
+const SECONDS_PER_REP = 3 // mirrors DurationEstimatable::SECONDS_PER_REP (app/models/concerns/duration_estimatable.rb)
+const MINIMUM_MINUTES = 10 // mirrors DurationEstimatable::MINIMUM_MINUTES (app/models/concerns/duration_estimatable.rb)
+
 // Mirrors SetTypesHelper#set_type_pill_classes (size: :md) — Tailwind classes must
 // appear as literal strings for the JIT scanner to pick them up, so this is duplicated
 // here rather than fetched from the server (same tradeoff as the rest of this file's
@@ -17,13 +20,14 @@ const SET_TYPE_PILL_CLASSES = {
 // - handles add/remove set per exercise
 // - fetches "last performance" for context when an exercise is added
 export default class extends Controller {
-  static targets = ["exercisesList", "emptyHint", "noExerciseError", "noWeightError"]
+  static targets = ["exercisesList", "emptyHint", "noExerciseError", "noWeightError", "durationInput"]
   static values = {
     lastPerfPath:       String,
     exerciseSearchPath: String,
     labelWeight:        { type: String, default: "Poids (kg)" },
     labelReps:          { type: String, default: "Reps" },
     labelRpe:           { type: String, default: "RPE" },
+    rpeOptions:         { type: Array, default: [] },
     labelAddSet:        { type: String, default: "Série" },
     labelLastPerf:      { type: String, default: "Dernière fois" },
     labelMaxSets:       { type: String, default: "max 10" },
@@ -51,6 +55,12 @@ export default class extends Controller {
         if (exerciseId) this._fetchLastPerformance(exerciseId, group)
       })
     }
+    // A brand-new session has nothing manually entered yet — seed the
+    // duration from the pre-filled sets. An existing (edit) session already
+    // holds a value the user chose (or a program's own estimate) — leave it
+    // alone until they touch the field themselves.
+    this._durationTouched = this.sessionIdValue > 0 || (this.hasDurationInputTarget && this.durationInputTarget.value !== "")
+    this.recalculateDuration()
   }
 
   // ── Form submit validation ────────────────────────────────────────
@@ -115,6 +125,7 @@ export default class extends Controller {
       if (container) this._renumberSets(container)
       this._syncEmptyHint()
       this._recomputeGroupPrBadges(existing)
+      this.recalculateDuration()
       return
     }
 
@@ -122,6 +133,7 @@ export default class extends Controller {
     this.exercisesListTarget.appendChild(group)
     this._syncEmptyHint()
     this._fetchLastPerformance(id, group)
+    this.recalculateDuration()
   }
 
   // ── Set management ────────────────────────────────────────────────
@@ -133,6 +145,7 @@ export default class extends Controller {
     if (visible.length >= 10) return
     container.appendChild(this._buildSetRow(group.dataset.exerciseId))
     this._renumberSets(container)
+    this.recalculateDuration()
   }
 
   removeSet(event) {
@@ -150,6 +163,7 @@ export default class extends Controller {
     }
     if (container) this._renumberSets(container)
     if (group) this._recomputeGroupPrBadges(group)
+    this.recalculateDuration()
   }
 
   removeExercise(event) {
@@ -162,6 +176,7 @@ export default class extends Controller {
       group.remove()
     }
     this._syncEmptyHint()
+    this.recalculateDuration()
   }
 
   // ── PR detection ─────────────────────────────────────────────────
@@ -192,6 +207,28 @@ export default class extends Controller {
       badge.classList.toggle("hidden", !isPr)
       if (val > runningMax) runningMax = val
     })
+  }
+
+  // ── Duration suggestion ───────────────────────────────────────────
+
+  markDurationTouched() {
+    this._durationTouched = true
+  }
+
+  recalculateDuration() {
+    if (!this.hasDurationInputTarget || this._durationTouched) return
+    if (!this.hasExercisesListTarget) return
+
+    let totalSeconds = 0
+    this.exercisesListTarget.querySelectorAll(".exercise-group:not(.hidden)").forEach(group => {
+      const repsInputs = group.querySelectorAll(".set-row:not(.hidden) input[name*='[reps]']")
+      repsInputs.forEach(input => {
+        totalSeconds += (parseInt(input.value, 10) || 0) * SECONDS_PER_REP
+      })
+      const restInput = group.querySelector("input[name*='[rest_seconds]']")
+      if (restInput) totalSeconds += (parseInt(restInput.value, 10) || 0) * repsInputs.length
+    })
+    this.durationInputTarget.value = Math.max(MINIMUM_MINUTES, Math.round(totalSeconds / 60))
   }
 
   // ── Private ───────────────────────────────────────────────────────
@@ -292,12 +329,18 @@ export default class extends Controller {
                data-action="input->digit-limit#limit"
                data-digit-limit-max-integer-digits-value="4"
                class="input-dark text-sm py-1.5 cursor-text">
-        <input type="number" name="workout_session[workout_sets_attributes][${idx}][rpe]"
-               placeholder="—" min="6" max="10" step="1"
-               data-controller="digit-limit"
-               data-action="input->digit-limit#limit"
-               data-digit-limit-max-integer-digits-value="2"
-               class="input-dark text-sm py-1.5 cursor-text text-center">
+        <div data-controller="custom-select" class="relative min-w-0">
+          <select name="workout_session[workout_sets_attributes][${idx}][rpe]" class="sr-only" data-custom-select-target="select">
+            <option value="">—</option>
+            ${this.rpeOptionsValue.map(([label, value]) => `<option value="${value}">${label}</option>`).join("")}
+          </select>
+          <button type="button" data-action="click->custom-select#toggle"
+                  class="input-dark text-sm py-1.5 px-1 cursor-pointer w-full flex items-center justify-center">
+            <span data-custom-select-target="label" class="text-ink-subtle truncate min-w-0"></span>
+          </button>
+          <div data-custom-select-target="dropdown"
+               class="hidden absolute z-50 w-56 right-0 mt-1 bg-surface-raised border border-surface-border/60 rounded-lg shadow-2xl max-h-52 overflow-y-auto"></div>
+        </div>
         <span data-pr-badge
               class="hidden flex items-center justify-center text-[9px] font-bold text-brand bg-brand/10 border border-brand/30 rounded px-1.5 py-0.5 leading-none whitespace-nowrap">
           PR

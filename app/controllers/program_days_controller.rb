@@ -5,7 +5,11 @@ class ProgramDaysController < ApplicationController
   before_action :set_day
 
   def update
+    previous_duration = @day.duration_minutes
     if @day.update(program_day_params)
+      if program_day_params[:duration_minutes].present? && @day.duration_minutes != previous_duration
+        @day.update_column(:duration_manually_set, true)
+      end
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to @program }
@@ -19,6 +23,7 @@ class ProgramDaysController < ApplicationController
     target_day = @program.program_days.find(params[:target_day_id])
     target_day.program_exercises.destroy_all
     @day.copy_exercises_to!(target_day)
+    target_day.recompute_estimated_duration!
     @program.preload_tension_balance_data!
     flash.now[:notice] = t("views.workout_programs.day.copy_success")
     respond_to do |format|
