@@ -1680,7 +1680,6 @@ en:
         rest_placeholder: "Rest between sets"
         set_notes_placeholder: "Exercise notes"
         set_type_toggle: "Set type"
-        section_session: "The session"
         empty_hint: "Search an exercise and click Add to start"
         search_hint: "Type to search an exercise"
         no_exercises_error: "Add at least one exercise before saving the session."

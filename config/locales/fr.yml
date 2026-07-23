@@ -1680,7 +1680,6 @@ fr:
         rest_placeholder: "Repos entre séries"
         set_notes_placeholder: "Notes de l'exercice"
         set_type_toggle: "Type de série"
-        section_session: "La séance"
         empty_hint: "Cherchez un exercice et cliquez Ajouter pour commencer"
         search_hint: "Tapez pour rechercher un exercice"
         no_exercises_error: "Ajoutez au moins un exercice avant d'enregistrer la séance."

@@ -328,7 +328,6 @@ export default class extends Controller {
         </div>
       </div>
       <div class="last-perf hidden rounded-lg bg-surface-hover border border-surface-border/30 px-3 py-1.5 flex items-center gap-2">
-        <i class="fas fa-history text-[10px] text-ink-subtle shrink-0"></i>
         <span class="last-perf-text text-xs text-ink-muted flex-1"></span>
         <span class="last-perf-delta hidden text-[10px] font-semibold shrink-0"></span>
       </div>
