@@ -1683,7 +1683,6 @@ fr:
         section_session: "La séance"
         empty_hint: "Cherchez un exercice et cliquez Ajouter pour commencer"
         search_hint: "Tapez pour rechercher un exercice"
-        last_perf_prefix: "Dernière fois"
         no_exercises_error: "Ajoutez au moins un exercice avant d'enregistrer la séance."
         no_weight_error: "Renseignez le poids, les répétitions et la durée avant d'enregistrer."
         submit_add: "Ajouter"

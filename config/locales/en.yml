@@ -1683,7 +1683,6 @@ en:
         section_session: "The session"
         empty_hint: "Search an exercise and click Add to start"
         search_hint: "Type to search an exercise"
-        last_perf_prefix: "Last time"
         no_exercises_error: "Add at least one exercise before saving the session."
         no_weight_error: "Fill in weight, reps, and duration before saving."
         submit_add: "Add"

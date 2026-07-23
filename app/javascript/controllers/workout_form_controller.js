@@ -513,12 +513,12 @@ export default class extends Controller {
       const parts = data.sets.map(s => {
         const w = (s.weight_kg && s.weight_kg > 0) ? `${s.weight_kg} kg` : this.labelBodyweightValue
         return `${s.reps} × ${w}`
-      }).join("  ·  ")
+      }).join(" · ")
 
       const lastPerf = group.querySelector(".last-perf")
       const text     = group.querySelector(".last-perf-text")
       if (lastPerf && text) {
-        text.textContent = `${this.labelLastPerfValue} (${data.date}) : ${parts}`
+        text.textContent = `${this.labelLastPerfValue} · ${data.date} · ${parts}`
         lastPerf.classList.remove("hidden")
       }
 
