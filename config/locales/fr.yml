@@ -1135,7 +1135,7 @@ fr:
         weight_kg: "kg"
         duration_placeholder: "Durée"
         duration_tooltip: "Indique le temps réellement passé à vous entraîner : additionne le temps sous tension de chaque série et les repos entre elles."
-        duration_estimate_hint: "Durée estimée : %{minutes} min. Cliquez pour l'appliquer."
+        duration_estimate_hint: "Durée estimée d'après les répétitions et le temps de repos : %{minutes} min. Cliquez pour l'appliquer à ce jour."
         notes_placeholder: "Notes..."
         copy_to_title: "Copier vers"
         copy_to_confirm: "Ce jour a déjà des exercices, ils seront remplacés. Continuer ?"

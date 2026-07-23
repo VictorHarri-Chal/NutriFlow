@@ -1135,7 +1135,7 @@ en:
         weight_kg: "kg"
         duration_placeholder: "Duration"
         duration_tooltip: "Shows the time actually spent training: adds up the time under tension for each set plus the rest between them."
-        duration_estimate_hint: "Estimated duration: %{minutes} min. Click to apply."
+        duration_estimate_hint: "Estimated duration from reps and rest time: %{minutes} min. Click to apply to this day."
         notes_placeholder: "Notes..."
         copy_to_title: "Copy to"
         copy_to_confirm: "This day already has exercises, they will be replaced. Continue?"
