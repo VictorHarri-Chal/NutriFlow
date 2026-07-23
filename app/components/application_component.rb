@@ -9,9 +9,7 @@ class ApplicationComponent < ViewComponent::Base
   include ApplicationHelper
 
   delegate :nested_dom_id,
-           :money_with_cents,
            :allowed_to?,
-           :modal_with,
            to: :helpers,
            private: true
 end
