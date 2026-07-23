@@ -1,0 +1,10 @@
+<div>
+  <%= label_tag name, label, class: "label-dark" %>
+  <%= text_field_tag name, value, type: type, class: "input-dark", **input_options %>
+  <% if hint.present? %>
+    <p class="mt-1 text-xs text-ink-subtle"><%= hint %></p>
+  <% end %>
+  <% errors.each do |msg| %>
+    <p class="mt-1 text-xs text-status-danger"><%= msg %></p>
+  <% end %>
+</div>
