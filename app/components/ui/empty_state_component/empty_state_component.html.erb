@@ -1,0 +1,10 @@
+<div class="flex flex-col items-center justify-center text-center border-2 border-dashed border-surface-border/40 rounded-panel <%= size[:wrap] %>">
+  <div class="<%= size[:circle] %> rounded-full bg-surface-raised flex items-center justify-center mb-4">
+    <i class="fas <%= icon %> text-brand <%= size[:icon] %>"></i>
+  </div>
+  <p class="<%= size[:title] %> font-semibold text-ink-primary mb-1"><%= title %></p>
+  <% if hint.present? %>
+    <p class="<%= size[:hint] %> text-ink-muted mb-5 leading-relaxed"><%= hint %></p>
+  <% end %>
+  <% if cta? %><%= cta %><% end %>
+</div>
