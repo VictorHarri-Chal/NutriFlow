@@ -141,7 +141,17 @@ export default class extends Controller {
     const container = group.querySelector(".sets-container")
     const visible   = container.querySelectorAll(".set-row:not(.hidden)")
     if (visible.length >= 10) return
-    container.appendChild(this._buildSetRow(group.dataset.exerciseId))
+    // Carry reps + weight from the previous set (not RPE, not set types) so
+    // similar sets are quicker to log.
+    const last = visible[visible.length - 1]
+    const opts = {}
+    if (last) {
+      const repsInput   = last.querySelector("input[name*='[reps]']")
+      const weightInput = last.querySelector("input[name*='[weight_kg]']")
+      if (repsInput && repsInput.value !== "")   opts.reps     = repsInput.value
+      if (weightInput && weightInput.value !== "") opts.weightKg = weightInput.value
+    }
+    container.appendChild(this._buildSetRow(group.dataset.exerciseId, opts))
     this._renumberSets(container)
     this.recalculateDuration()
   }

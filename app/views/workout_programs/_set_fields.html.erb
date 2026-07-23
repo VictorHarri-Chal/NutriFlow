@@ -8,12 +8,12 @@
     <div class="flex-1">
       <label class="text-[9px] text-ink-subtle/60 uppercase tracking-wider block mb-0.5"><%= t("views.workout_programs.day.reps") %></label>
       <%= f.number_field :reps_target, min: 1, step: 1, class: compact_input_class,
-            data: { controller: "digit-limit", action: "input->digit-limit#limit", digit_limit_max_integer_digits_value: 4 } %>
+            data: { controller: "digit-limit", action: "input->digit-limit#limit", digit_limit_max_integer_digits_value: 4, carry_over: "reps" } %>
     </div>
     <div class="flex-1">
       <label class="text-[9px] text-ink-subtle/60 uppercase tracking-wider block mb-0.5"><%= t("views.workout_programs.day.weight_kg") %></label>
       <%= f.number_field :weight_target, min: 0, step: 0.5, class: compact_input_class,
-            data: { controller: "digit-limit", action: "input->digit-limit#limit", digit_limit_max_integer_digits_value: 4, digit_limit_max_decimal_digits_value: 1 } %>
+            data: { controller: "digit-limit", action: "input->digit-limit#limit", digit_limit_max_integer_digits_value: 4, digit_limit_max_decimal_digits_value: 1, carry_over: "weight" } %>
     </div>
     <div class="flex-1 min-w-0">
       <label class="text-[9px] text-ink-subtle/60 uppercase tracking-wider block mb-0.5"><%= t("views.workout_sets.set_editor.rpe_label") %></label>
