@@ -1134,7 +1134,7 @@ fr:
         reps: "Reps"
         weight_kg: "kg"
         duration_placeholder: "Durée"
-        duration_tooltip: "Temps d'entraînement effectif estimé pour ce jour, hors vestiaires et pauses."
+        duration_tooltip: "Indique le temps réellement passé à vous entraîner : additionne le temps sous tension de chaque série et les repos entre elles."
         duration_estimate_hint: "Durée estimée : %{minutes} min. Cliquez pour l'appliquer."
         notes_placeholder: "Notes..."
         copy_to_title: "Copier vers"

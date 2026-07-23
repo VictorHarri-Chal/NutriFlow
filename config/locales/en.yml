@@ -1134,7 +1134,7 @@ en:
         reps: "Reps"
         weight_kg: "kg"
         duration_placeholder: "Duration"
-        duration_tooltip: "Estimated effective training time for this day, excluding changing rooms and breaks."
+        duration_tooltip: "Shows the time actually spent training: adds up the time under tension for each set plus the rest between them."
         duration_estimate_hint: "Estimated duration: %{minutes} min. Click to apply."
         notes_placeholder: "Notes..."
         copy_to_title: "Copy to"
