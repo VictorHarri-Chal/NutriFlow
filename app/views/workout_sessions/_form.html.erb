@@ -162,15 +162,25 @@
                     </button>
                   </div>
 
-                  <div class="flex flex-wrap gap-2 pl-6 mt-1.5">
-                    <% WorkoutSet::SET_TYPES.each do |type| %>
-                      <% checkbox_id = "workout_set_#{ws_key}_set_types_#{type}" %>
-                      <%= check_box_tag "workout_session[workout_sets_attributes][#{ws_key}][set_types][]", type,
-                            ws.set_types.include?(type), id: checkbox_id, class: "hidden peer/#{type}" %>
-                      <%= label_tag checkbox_id, t("views.workout_sets.set_editor.set_types.#{type}"),
-                            class: set_type_pill_classes(type, size: :md) %>
-                    <% end %>
-                    <%= hidden_field_tag "workout_session[workout_sets_attributes][#{ws_key}][set_types][]", "", id: nil %>
+                  <div class="pl-6 mt-1.5" data-set-types-wrapper>
+                    <% has_non_working = (ws.set_types - ["working"]).any? %>
+                    <button type="button" data-action="click->workout-form#toggleSetTypes"
+                            class="flex items-center gap-1.5 text-[10px] text-ink-subtle hover:text-ink-primary transition-colors cursor-pointer">
+                      <span data-set-type-dot class="<%= "hidden" unless has_non_working %> w-1.5 h-1.5 rounded-full bg-brand shrink-0"></span>
+                      <span><%= t("views.workout_sessions.form.set_type_toggle") %></span>
+                      <i class="fas fa-chevron-down text-[8px] transition-transform"></i>
+                    </button>
+                    <div data-set-types class="hidden flex flex-wrap gap-2 mt-1.5">
+                      <% WorkoutSet::SET_TYPES.each do |type| %>
+                        <% checkbox_id = "workout_set_#{ws_key}_set_types_#{type}" %>
+                        <%= check_box_tag "workout_session[workout_sets_attributes][#{ws_key}][set_types][]", type,
+                              ws.set_types.include?(type), id: checkbox_id, class: "hidden peer/#{type}",
+                              data: { action: "change->workout-form#syncSetTypeIndicator" } %>
+                        <%= label_tag checkbox_id, t("views.workout_sets.set_editor.set_types.#{type}"),
+                              class: set_type_pill_classes(type, size: :md) %>
+                      <% end %>
+                      <%= hidden_field_tag "workout_session[workout_sets_attributes][#{ws_key}][set_types][]", "", id: nil %>
+                    </div>
                   </div>
                 </div>
               <% end %>

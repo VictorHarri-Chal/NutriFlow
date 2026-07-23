@@ -375,8 +375,16 @@ export default class extends Controller {
         </button>
       </div>
 
-      <div class="flex flex-wrap gap-2 pl-6 mt-1.5">
-        ${this._buildSetTypePills(idx)}
+      <div class="pl-6 mt-1.5" data-set-types-wrapper>
+        <button type="button" data-action="click->workout-form#toggleSetTypes"
+                class="flex items-center gap-1.5 text-[10px] text-ink-subtle hover:text-ink-primary transition-colors cursor-pointer">
+          <span data-set-type-dot class="hidden w-1.5 h-1.5 rounded-full bg-brand shrink-0"></span>
+          <span>${this.labelSetTypeToggleValue}</span>
+          <i class="fas fa-chevron-down text-[8px] transition-transform"></i>
+        </button>
+        <div data-set-types class="hidden flex flex-wrap gap-2 mt-1.5">
+          ${this._buildSetTypePills(idx)}
+        </div>
       </div>
     `
     return div
@@ -394,11 +402,33 @@ export default class extends Controller {
       const checked    = key === "working" ? "checked" : ""
       return `
         <input type="checkbox" name="workout_session[workout_sets_attributes][${idx}][set_types][]" value="${key}" ${checked}
-               id="${checkboxId}" class="hidden peer/${key}">
+               id="${checkboxId}" class="hidden peer/${key}"
+               data-action="change->workout-form#syncSetTypeIndicator">
         <label for="${checkboxId}" class="${SET_TYPE_PILL_CLASSES[key]}">${label}</label>
       `
     }).join("")
     return `${pills}<input type="hidden" name="workout_session[workout_sets_attributes][${idx}][set_types][]" value="">`
+  }
+
+  // ── Set-type disclosure ───────────────────────────────────────────
+
+  toggleSetTypes(event) {
+    const wrapper = event.currentTarget.closest("[data-set-types-wrapper]")
+    if (!wrapper) return
+    const pills   = wrapper.querySelector("[data-set-types]")
+    const chevron = event.currentTarget.querySelector(".fa-chevron-down")
+    const nowHidden = pills.classList.toggle("hidden")
+    if (chevron) chevron.classList.toggle("rotate-180", !nowHidden)
+  }
+
+  syncSetTypeIndicator(event) {
+    const wrapper = event.currentTarget.closest("[data-set-types-wrapper]")
+    if (!wrapper) return
+    const dot = wrapper.querySelector("[data-set-type-dot]")
+    if (!dot) return
+    const hasNonWorking = [...wrapper.querySelectorAll("input[type=checkbox]:checked")]
+      .some(c => c.value !== "working")
+    dot.classList.toggle("hidden", !hasNonWorking)
   }
 
   _renumberSets(container) {
