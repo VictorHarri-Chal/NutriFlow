@@ -65,6 +65,7 @@ group :development do
   gem 'web-console'
   gem 'bullet'
   gem 'brakeman', require: false
+  gem "lookbook"
 end
 
 gem 'view_component'

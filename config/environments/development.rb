@@ -78,4 +78,7 @@ Rails.application.configure do
     Bullet.add_footer    = false
     Bullet.alert         = false
   end
+
+  config.view_component.preview_paths << Rails.root.join("spec/components/previews")
+  config.lookbook.preview_paths = config.view_component.preview_paths
 end
