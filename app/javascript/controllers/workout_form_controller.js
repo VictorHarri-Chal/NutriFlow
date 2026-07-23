@@ -29,7 +29,10 @@ export default class extends Controller {
     labelRpe:           { type: String, default: "RPE" },
     rpeOptions:         { type: Array, default: [] },
     labelAddSet:        { type: String, default: "Série" },
-    labelLastPerf:      { type: String, default: "Dernière fois" },
+    labelRestPlaceholder:  { type: String, default: "Repos entre séries" },
+    labelNotesPlaceholder: { type: String, default: "Notes de l'exercice" },
+    labelSetTypeToggle:    { type: String, default: "Type de série" },
+    labelLastPerf:      { type: String, default: "Dernière perf" },
     labelMaxSets:       { type: String, default: "max 10" },
     noExerciseError:    { type: String, default: "Ajoutez au moins un exercice." },
     sessionId:          { type: Number, default: 0 },
@@ -272,7 +275,7 @@ export default class extends Controller {
           <i class="fas fa-times"></i>
         </button>
       </div>
-      <div class="grid grid-cols-[16px_1fr_1fr_1fr_28px_20px] gap-2 text-xs text-ink-subtle">
+      <div class="grid grid-cols-[16px_1fr_1fr_1fr_28px_20px] gap-2 text-[9px] font-medium uppercase tracking-wider text-ink-subtle/60">
         <span>#</span>
         <span>${this.labelRepsValue}</span>
         <span>${this.labelWeightValue}</span>
@@ -291,24 +294,26 @@ export default class extends Controller {
       </div>
       <div class="space-y-1 border-t border-surface-border/20 pt-2 mt-1">
         <div class="flex items-center gap-1.5">
-          <i class="fas fa-hourglass-half text-[9px] text-ink-subtle/40 shrink-0 w-3 text-center"></i>
+          <i class="fas fa-hourglass-half text-[9px] text-ink-subtle/70 shrink-0 w-3 text-center"></i>
           <div class="relative flex-1">
             <input type="number"
                    name="workout_session[workout_sets_attributes][${firstSetIdx}][rest_seconds]"
                    min="0" step="5"
+                   placeholder="${this.labelRestPlaceholderValue}"
                    data-controller="digit-limit"
                    data-action="input->digit-limit#limit input->workout-form#recalculateDuration"
                    data-digit-limit-max-integer-digits-value="4"
-                   class="w-full pr-7 text-[11px] bg-transparent border border-transparent rounded px-1 py-0.5 text-ink-muted placeholder:text-ink-subtle/30 hover:border-surface-border/50 focus:border-brand/40 focus:outline-none focus:bg-surface-hover transition-colors cursor-text">
+                   class="w-full pr-7 text-[11px] bg-transparent border border-transparent rounded px-1 py-0.5 text-ink-muted placeholder:text-ink-subtle/50 hover:border-surface-border/50 focus:border-brand/40 focus:outline-none focus:bg-surface-hover transition-colors cursor-text">
             <span class="absolute right-1.5 top-1/2 -translate-y-1/2 text-[9px] text-ink-subtle/30 pointer-events-none">sec</span>
           </div>
         </div>
         <div class="flex items-start gap-1.5">
-          <i class="fas fa-comment-alt text-[9px] text-ink-subtle/40 shrink-0 w-3 text-center mt-1.5"></i>
+          <i class="fas fa-comment-alt text-[9px] text-ink-subtle/70 shrink-0 w-3 text-center mt-1.5"></i>
           <textarea name="workout_session[workout_sets_attributes][${firstSetIdx}][notes]"
                     rows="1"
+                    placeholder="${this.labelNotesPlaceholderValue}"
                     style="resize: none; overflow-y: hidden;"
-                    class="w-full text-[11px] bg-transparent border border-transparent rounded px-1 py-0.5 text-ink-muted placeholder:text-ink-subtle/30 hover:border-surface-border/50 focus:border-brand/40 focus:outline-none focus:bg-surface-hover transition-all cursor-text min-h-[20px] focus:min-h-[48px]"></textarea>
+                    class="w-full text-[11px] bg-transparent border border-transparent rounded px-1 py-0.5 text-ink-muted placeholder:text-ink-subtle/50 hover:border-surface-border/50 focus:border-brand/40 focus:outline-none focus:bg-surface-hover transition-all cursor-text min-h-[20px] focus:min-h-[48px]"></textarea>
         </div>
       </div>
       <div class="last-perf hidden rounded-lg bg-surface-hover border border-surface-border/30 px-3 py-1.5 flex items-center gap-2">
