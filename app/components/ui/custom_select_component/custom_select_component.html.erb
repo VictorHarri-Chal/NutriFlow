@@ -1,0 +1,11 @@
+<div data-controller="custom-select" class="relative <%= width %>">
+  <%= select_tag name, options_for_select(choices, selected), class: "sr-only", data: { custom_select_target: "select" }, **select_options %>
+  <button type="button"
+          data-action="click->custom-select#toggle"
+          class="input-dark flex items-center justify-between cursor-pointer w-full text-left">
+    <span data-custom-select-target="label" class="truncate <%= selected.present? ? "text-ink-primary" : "text-ink-subtle" %>"><%= label || selected_label %></span>
+    <%= helpers.ui_icon(:chevron_down, css: "text-xs text-ink-subtle ml-2 flex-shrink-0") %>
+  </button>
+  <div data-custom-select-target="dropdown"
+       class="hidden absolute z-50 w-full mt-1 bg-surface-raised border border-surface-border/60 rounded-control shadow-card <%= dropdown_max_h %> overflow-y-auto"></div>
+</div>
