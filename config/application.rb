@@ -38,6 +38,12 @@ module NutriFlow
 
     config.middleware.use Rack::Attack
 
+    # Ui:: component library uses a directory-per-component layout
+    # (app/components/ui/<name>_component/<name>_component.rb). Collapse each
+    # component directory so Zeitwerk maps it to Ui::<Name>Component instead
+    # of the nested Ui::<Name>Component::<Name>Component.
+    Rails.autoloaders.main.collapse("#{root}/app/components/ui/*")
+
     # Don't generate system test files.
     config.generators.system_tests = nil
 
