@@ -272,11 +272,6 @@ export default class extends Controller {
           <i class="fas fa-times"></i>
         </button>
       </div>
-      <div class="last-perf hidden rounded-lg bg-surface-hover border border-surface-border/30 px-3 py-1.5 flex items-center gap-2">
-        <i class="fas fa-history text-[10px] text-ink-subtle shrink-0"></i>
-        <span class="last-perf-text text-xs text-ink-subtle flex-1"></span>
-        <span class="last-perf-delta hidden text-[10px] font-semibold shrink-0"></span>
-      </div>
       <div class="grid grid-cols-[16px_1fr_1fr_1fr_28px_20px] gap-2 text-xs text-ink-subtle">
         <span>#</span>
         <span>${this.labelRepsValue}</span>
@@ -315,6 +310,11 @@ export default class extends Controller {
                     style="resize: none; overflow-y: hidden;"
                     class="w-full text-[11px] bg-transparent border border-transparent rounded px-1 py-0.5 text-ink-muted placeholder:text-ink-subtle/30 hover:border-surface-border/50 focus:border-brand/40 focus:outline-none focus:bg-surface-hover transition-all cursor-text min-h-[20px] focus:min-h-[48px]"></textarea>
         </div>
+      </div>
+      <div class="last-perf hidden rounded-lg bg-surface-hover border border-surface-border/30 px-3 py-1.5 flex items-center gap-2">
+        <i class="fas fa-history text-[10px] text-ink-subtle shrink-0"></i>
+        <span class="last-perf-text text-xs text-ink-subtle flex-1"></span>
+        <span class="last-perf-delta hidden text-[10px] font-semibold shrink-0"></span>
       </div>
     `
     div.querySelector(".exercise-name-label").textContent = exerciseName
