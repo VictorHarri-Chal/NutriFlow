@@ -1,0 +1,100 @@
+<%# app/views/settings/_export.html.erb %>
+<div class="space-y-6">
+
+  <div>
+    <h2 class="text-base font-semibold text-ink-primary flex items-center gap-2">
+      <i class="fas fa-file-export text-brand text-sm"></i>
+      <%= t("views.settings.export.title") %>
+    </h2>
+    <p class="text-sm text-ink-subtle mt-1"><%= t("views.settings.export.description") %></p>
+  </div>
+
+  <%= form_with url: exports_path, method: :post, data: { turbo: false, controller: "export-form" } do %>
+    <div class="border-t border-surface-border/40 pt-6 space-y-6">
+
+      <div>
+        <p class="label-dark mb-2"><%= t("views.settings.export.period_label") %></p>
+        <%#
+          Les classes named-peer sont écrites en chaînes littérales complètes (et
+          non interpolées) pour que le scanner de contenu de Tailwind les voie et
+          les compile : interpoler le nom du peer (peer-checked/#{value}:) produit
+          des classes que le JIT ne génère jamais, laissant la pill sélectionnée
+          sans style. Même raison d'être que set_types_helper.rb pour la muscu.
+        %>
+        <% period_pills = {
+             "all" => {
+               peer:   "peer/all",
+               active: "peer-checked/all:bg-brand/20 peer-checked/all:text-brand peer-checked/all:border-brand/50",
+               label:  t("views.settings.export.periods.all")
+             },
+             "last_12_months" => {
+               peer:   "peer/last_12_months",
+               active: "peer-checked/last_12_months:bg-brand/20 peer-checked/last_12_months:text-brand peer-checked/last_12_months:border-brand/50",
+               label:  t("views.settings.export.periods.last_12_months")
+             },
+             "custom" => {
+               peer:   "peer/custom",
+               active: "peer-checked/custom:bg-brand/20 peer-checked/custom:text-brand peer-checked/custom:border-brand/50",
+               label:  t("views.settings.export.periods.custom")
+             }
+           } %>
+        <div class="flex flex-wrap items-center gap-2">
+          <% period_pills.each do |value, pill| %>
+            <input type="radio" name="period" id="period_<%= value %>" value="<%= value %>"
+                   <%= "checked" if value == "all" %>
+                   class="hidden <%= pill[:peer] %>"
+                   data-export-form-target="periodRadio"
+                   data-action="change->export-form#periodChanged">
+            <label for="period_<%= value %>"
+                   class="px-3 py-1.5 rounded-full text-xs font-medium border transition-colors cursor-pointer text-ink-subtle border-surface-border/50 hover:border-brand/30 hover:text-ink-muted <%= pill[:active] %>">
+              <%= pill[:label] %>
+            </label>
+          <% end %>
+        </div>
+
+        <div data-export-form-target="customDates" class="hidden mt-3 flex items-center gap-3">
+          <div>
+            <label class="label-dark block mb-1" for="export_date_from"><%= t("views.settings.export.date_from") %></label>
+            <input type="date" name="date_from" id="export_date_from" class="input-dark">
+          </div>
+          <div>
+            <label class="label-dark block mb-1" for="export_date_to"><%= t("views.settings.export.date_to") %></label>
+            <input type="date" name="date_to" id="export_date_to" class="input-dark">
+          </div>
+        </div>
+      </div>
+
+      <% Exports::CategoryRegistry::SECTIONS.each do |section| %>
+        <% categories_in_section = @export_categories.select { |c| c[:section] == section } %>
+        <% next if categories_in_section.empty? %>
+        <div>
+          <p class="label-dark mb-2"><%= t("views.settings.export.sections.#{section}") %></p>
+          <div class="space-y-1">
+            <% categories_in_section.each do |category| %>
+              <label class="flex items-center gap-3 py-1.5 cursor-pointer">
+                <%= render CheckboxComponent.new(
+                      name: "categories[]",
+                      value: category[:key],
+                      data: { "export-form-target": "categoryCheckbox", action: "change->export-form#categoryChanged" }
+                    ) %>
+                <span class="text-sm text-ink-primary"><%= t("views.settings.export.categories.#{category[:key]}") %></span>
+              </label>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="pt-2">
+        <button type="submit"
+                data-export-form-target="submitButton"
+                disabled
+                class="btn-primary text-sm gap-2 opacity-40 cursor-not-allowed">
+          <i class="fas fa-file-arrow-down text-xs"></i>
+          <%= t("views.settings.export.submit") %>
+        </button>
+      </div>
+
+    </div>
+  <% end %>
+
+</div>

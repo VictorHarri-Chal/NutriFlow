@@ -28,6 +28,9 @@ en:
       preferences_error: "Error updating preferences."
       other_sessions_signed_out: "Other devices have been signed out."
       data_reset: "All your data has been deleted. You can start onboarding again."
+    exports:
+      no_category_selected: "Select at least one category to export."
+      invalid_period: "The custom period is invalid (check both dates)."
     foods:
       created: "Food created successfully."
       updated: "Food updated successfully."
@@ -802,6 +805,7 @@ en:
         preferences: "Preferences"
         food_groups: "Food groups"
         food_labels: "Food labels"
+        export: "Export"
         security: "Security"
       preferences:
         title: "Preferences"
@@ -919,6 +923,38 @@ en:
           teal: "Teal"
           blue: "Blue"
           violet: "Violet"
+      export:
+        title: "Data export"
+        description: "Download your NutriFlow data as an Excel file."
+        period_label: "Period"
+        periods:
+          all: "Full history"
+          last_12_months: "Last 12 months"
+          custom: "Custom"
+        date_from: "From"
+        date_to: "To"
+        submit: "Generate export"
+        sections:
+          profile: "Profile"
+          journal_nutrition: "Journal & nutrition"
+          training: "Training"
+          body_tracking: "Body tracking"
+          wellbeing: "Wellbeing"
+          summary: "Statistics summary"
+        categories:
+          profile: "Profile"
+          journal: "Food journal"
+          foods: "Foods"
+          recipes: "Recipes"
+          strength_training: "Strength training sessions"
+          cardio: "Cardio sessions"
+          workout_programs: "Workout programs"
+          weight: "Weight"
+          body_measurements: "Body measurements"
+          fasting: "Intermittent fasting"
+          nutrition_summary: "Nutrition summary"
+          training_summary: "Training summary"
+          wellbeing_summary: "Wellbeing & hydration summary"
 
     confirm:
       title: "Confirmation required"

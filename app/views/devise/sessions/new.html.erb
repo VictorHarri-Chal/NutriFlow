@@ -37,12 +37,10 @@
         </div>
 
         <% if devise_mapping.rememberable? %>
-          <div class="flex items-center gap-2">
-            <%= f.input :remember_me, as: :boolean, label: t("views.devise.sessions.remember_me"),
-                  label_html: { class: "text-sm text-ink-muted cursor-pointer" },
-                  input_html: { class: "rounded border-surface-border bg-surface-hover text-brand focus:ring-brand/50" },
-                  wrapper: false %>
-          </div>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <%= render CheckboxComponent.new(name: "#{resource_name}[remember_me]", value: "1") %>
+            <span class="text-sm text-ink-muted"><%= t("views.devise.sessions.remember_me") %></span>
+          </label>
         <% end %>
 
         <div class="pt-1">

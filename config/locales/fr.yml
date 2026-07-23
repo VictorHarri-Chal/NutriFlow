@@ -28,6 +28,9 @@ fr:
       preferences_error: "Erreur lors de la mise à jour des préférences."
       other_sessions_signed_out: "Les autres appareils ont été déconnectés."
       data_reset: "Toutes vos données ont été supprimées. Vous pouvez recommencer l'onboarding."
+    exports:
+      no_category_selected: "Sélectionnez au moins une catégorie à exporter."
+      invalid_period: "La période personnalisée n'est pas valide (vérifiez les deux dates)."
     foods:
       created: "Aliment créé avec succès."
       updated: "Aliment mis à jour avec succès."
@@ -802,6 +805,7 @@ fr:
         preferences: "Préférences"
         food_groups: "Groupes d'aliments"
         food_labels: "Labels d'aliments"
+        export: "Export"
         security: "Sécurité"
       preferences:
         title: "Préférences"
@@ -919,6 +923,38 @@ fr:
           teal: "Bleu-vert"
           blue: "Bleu"
           violet: "Violet"
+      export:
+        title: "Export de données"
+        description: "Téléchargez vos données NutriFlow dans un fichier Excel."
+        period_label: "Période"
+        periods:
+          all: "Tout l'historique"
+          last_12_months: "12 derniers mois"
+          custom: "Personnalisée"
+        date_from: "Du"
+        date_to: "Au"
+        submit: "Générer l'export"
+        sections:
+          profile: "Profil"
+          journal_nutrition: "Journal & nutrition"
+          training: "Entraînement"
+          body_tracking: "Suivi corporel"
+          wellbeing: "Bien-être"
+          summary: "Résumé statistique"
+        categories:
+          profile: "Profil"
+          journal: "Journal alimentaire"
+          foods: "Aliments"
+          recipes: "Recettes"
+          strength_training: "Séances de musculation"
+          cardio: "Séances de cardio"
+          workout_programs: "Programmes d'entraînement"
+          weight: "Poids"
+          body_measurements: "Mesures corporelles"
+          fasting: "Jeûne intermittent"
+          nutrition_summary: "Résumé nutrition"
+          training_summary: "Résumé entraînement"
+          wellbeing_summary: "Résumé bien-être & hydratation"
 
     confirm:
       title: "Confirmation requise"

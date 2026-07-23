@@ -1,0 +1,18 @@
+<span class="relative inline-flex shrink-0 items-center justify-center">
+  <%= tag.input type: "checkbox", name: @name, value: @value, checked: @checked,
+        class: "peer sr-only", **@attributes %>
+  <span aria-hidden="true"
+        class="w-4 h-4 rounded border border-surface-border bg-surface-base transition-colors
+               peer-checked:bg-brand peer-checked:border-brand
+               peer-focus-visible:ring-2 peer-focus-visible:ring-brand/50"></span>
+  <%# The SVG must be a sibling of the input (not nested in the box): Tailwind's
+      peer-checked: compiles to a general-sibling selector, so it only reaches
+      elements that are siblings of the .peer input. Absolutely centered over the
+      16px box via the relative wrapper. %>
+  <svg aria-hidden="true"
+       class="absolute inset-0 m-auto w-3 h-3 text-surface-base opacity-0 transition-opacity peer-checked:opacity-100"
+       viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5"
+       stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3.5 8.5l3 3 6-7" />
+  </svg>
+</span>

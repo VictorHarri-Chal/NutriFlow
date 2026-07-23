@@ -8,6 +8,7 @@ class SettingsController < ApplicationController
     "preferences"     => { icon: "fa-toggle-on",      label_key: "preferences" },
     "day_food_groups" => { icon: "fa-utensils",       label_key: "food_groups" },
     "food_labels"     => { icon: "fa-tag",             label_key: "food_labels" },
+    "export"          => { icon: "fa-file-export",     label_key: "export" },
     "security"        => { icon: "fa-shield-halved",   label_key: "security" }
   }.freeze
 

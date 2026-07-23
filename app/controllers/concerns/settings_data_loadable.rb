@@ -17,5 +17,6 @@ module SettingsDataLoadable
     @food_labels = current_user.food_labels.includes(:foods)
     @food_label ||= FoodLabel.new
     @preference_data_presence = PreferenceDataPresenceLoader.new(current_user).call
+    @export_categories = Exports::CategoryRegistry.visible_for(current_user)
   end
 end
