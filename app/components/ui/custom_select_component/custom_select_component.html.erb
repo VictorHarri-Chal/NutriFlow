@@ -3,7 +3,7 @@
   <button type="button"
           data-action="click->custom-select#toggle"
           class="input-dark flex items-center justify-between cursor-pointer w-full text-left">
-    <span data-custom-select-target="label" class="truncate <%= selected.present? ? "text-ink-primary" : "text-ink-subtle" %>"><%= label || selected_label %></span>
+    <span data-custom-select-target="label" class="truncate <%= selected.present? ? "text-ink-primary" : "text-ink-subtle" %>"><%= selected_label %></span>
     <%= helpers.ui_icon(:chevron_down, css: "text-xs text-ink-subtle ml-2 flex-shrink-0") %>
   </button>
   <div data-custom-select-target="dropdown"
