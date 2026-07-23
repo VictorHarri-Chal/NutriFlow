@@ -1,7 +1,7 @@
 <div class="space-y-8"
      data-controller="water-goal-estimator goal-rate-estimator"
      data-water-goal-estimator-activity-labels-value="<%= {
-       desk_job:       t('enumerize.profile.job_activity_level.desk_job'),
+       sedentary:      t('enumerize.profile.job_activity_level.sedentary'),
        light_activity: t('enumerize.profile.job_activity_level.light_activity'),
        standing_job:   t('enumerize.profile.job_activity_level.standing_job'),
        physical_job:   t('enumerize.profile.job_activity_level.physical_job')
@@ -25,7 +25,7 @@
     <p class="text-xs text-ink-subtle mb-4"><%= t("views.profiles.edit.job_activity_level_hint") %></p>
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
       <% [
-        { value: "desk_job",       icon: "fa-laptop" },
+        { value: "sedentary",      icon: "fa-laptop" },
         { value: "light_activity", icon: "fa-person" },
         { value: "standing_job",   icon: "fa-person-walking" },
         { value: "physical_job",   icon: "fa-hard-hat" }
