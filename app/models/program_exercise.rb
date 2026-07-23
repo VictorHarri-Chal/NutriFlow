@@ -1,20 +1,36 @@
 class ProgramExercise < ApplicationRecord
   belongs_to :program_day
   belongs_to :exercise
+  has_many :program_exercise_sets, -> { order(:position) },
+           inverse_of: :program_exercise, dependent: :destroy
+  accepts_nested_attributes_for :program_exercise_sets, allow_destroy: true
 
-  validates :sets,        presence: true, numericality: { greater_than: 0, only_integer: true }
-  validates :reps_target, presence: true, numericality: { greater_than: 0, only_integer: true }
-  validates :weight_target, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
-  validates :rest_seconds,  numericality: { greater_than: 0, only_integer: true }, allow_nil: true
+  MAX_SETS = 10
+
+  validates :rest_seconds, numericality: { greater_than_or_equal_to: 0, only_integer: true }, allow_nil: true
+  validate :exercise_accessible_to_user
+  validate :min_sets_count
+  validate :max_sets_count
 
   before_create :set_position
 
-  def label
-    base = "#{sets}×#{reps_target}"
-    weight_target.present? && weight_target > 0 ? "#{base} @ #{weight_target}kg" : base
+  private
+
+  def exercise_accessible_to_user
+    return unless exercise && program_day&.workout_program
+
+    errors.add(:exercise, :invalid) unless Exercise.accessible_to(program_day.workout_program.user).exists?(exercise.id)
   end
 
-  private
+  def min_sets_count
+    active = program_exercise_sets.reject(&:marked_for_destruction?)
+    errors.add(:base, I18n.t("activerecord.errors.models.program_exercise.no_sets")) if active.empty?
+  end
+
+  def max_sets_count
+    active = program_exercise_sets.reject(&:marked_for_destruction?)
+    errors.add(:base, I18n.t("activerecord.errors.models.program_exercise.too_many_sets")) if active.size > MAX_SETS
+  end
 
   def set_position
     self.position = (program_day.program_exercises.maximum(:position) || -1) + 1

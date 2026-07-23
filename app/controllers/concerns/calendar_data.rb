@@ -3,13 +3,14 @@ module CalendarData
 
   private
 
-  def load_month_heatmap(date)
-    start_of_month = date.beginning_of_month
-    end_of_month   = date.end_of_month
+  def load_month_heatmap(date, heatmap_month = nil)
+    month_anchor   = parse_heatmap_month(heatmap_month) || date
+    start_of_month = month_anchor.beginning_of_month
+    end_of_month   = month_anchor.end_of_month
 
     month_days = current_user.days
                    .where(date: start_of_month..end_of_month)
-                   .includes(day_foods: :food, day_recipes: { recipe: { recipe_items: :food } })
+                   .includes(day_foods: :food, day_recipes: { recipe: { recipe_items: :food }, day_recipe_items: :food })
 
     @month_heatmap = month_days.each_with_object({}) do |d, h|
       foods_cals   = d.day_foods.sum(&:total_calories)
@@ -25,5 +26,18 @@ module CalendarData
     ::CalendarDataLoader.new(current_user, day).call.each do |key, value|
       instance_variable_set("@#{key}", value)
     end
+  end
+
+  def load_fasting_data
+    @active_fasting_session = current_user.fasting_sessions.active.first
+    @fasting_stats          = FastingStatsCalculator.new(current_user).call
+  end
+
+  def parse_heatmap_month(value)
+    return nil if value.blank?
+
+    Date.strptime(value, "%Y-%m")
+  rescue ArgumentError, Date::Error
+    nil
   end
 end

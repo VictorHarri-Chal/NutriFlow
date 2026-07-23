@@ -9,26 +9,66 @@ module ExercisesHelper
     DIFFICULTY_CLASSES[difficulty.to_s.downcase] || "bg-surface-hover text-ink-muted border border-surface-border/40"
   end
 
+  # Font Awesome icon per tension profile — "mixed" is intentionally excluded,
+  # the pill is never rendered for it (see #tension_profile_visible?).
+  TENSION_PROFILE_ICONS = {
+    "stretch"     => "fa-expand",
+    "contraction" => "fa-compress",
+  }.freeze
+
+  def tension_profile_icon(tension_profile)
+    TENSION_PROFILE_ICONS.fetch(tension_profile.to_s)
+  end
+
+  # Only stretch/contraction are shown — "mixed" (the default for compound
+  # movements) and nil (not yet classified) are not informative to the user.
+  def tension_profile_visible?(tension_profile)
+    tension_profile.to_s.in?(%w[stretch contraction])
+  end
+
+  TENSION_PROFILE_FILTER_VALUES = (Exercise::TENSION_PROFILES.map(&:to_s) + ["none"]).freeze
+
+  # Label for the tension filter dropdown's active state. Returns nil for
+  # anything outside the known values (including a malformed param like a
+  # Hash from ?tension_profile[foo]=bar) so the view can fall back to the
+  # neutral placeholder instead of rendering a "translation missing" string.
+  def tension_profile_filter_label(value)
+    return nil unless TENSION_PROFILE_FILTER_VALUES.include?(value)
+
+    value == "none" ? t("views.exercises.tension_profile.none") : t("views.exercises.tension_profile.#{value}")
+  end
+
   # Translate a body_part value (e.g. "upper arms") using the i18n locale file.
   # Falls back to the raw string if no key is found.
+  #
+  # blank? guard is required, not cosmetic: a blank value would build the key
+  # "views.exercises.body_parts." (trailing dot). I18n splits keys on "." and
+  # Ruby's String#split drops trailing empty segments, so that key resolves to
+  # the *parent* translation node — the entire body_parts Hash — instead of
+  # missing-key behavior, and I18n never falls back to `default:`. The caller
+  # then renders that Hash's #to_s directly on the page.
   def t_body_part(body_part)
+    return "" if body_part.blank?
     key = body_part.to_s.downcase.gsub(" ", "_")
     t("views.exercises.body_parts.#{key}", default: body_part.to_s.capitalize)
   end
 
   # Translate an equipment value (e.g. "leverage machine") using the i18n locale file.
   def t_equipment(equipment)
+    return "" if equipment.blank?
     key = equipment.to_s.downcase.gsub(" ", "_")
     t("views.exercises.equipment.#{key}", default: equipment.to_s.capitalize)
   end
 
   # Translate a category value (e.g. "strength") using the i18n locale file.
   def t_category(category)
+    return "" if category.blank?
     t("views.exercises.categories.#{category.to_s.downcase}", default: category.to_s.capitalize)
   end
 
   # Translate a muscle name (e.g. "levator scapulae") using the i18n locale file.
   def t_muscle(muscle)
+    return "" if muscle.blank?
     key = muscle.to_s.downcase.gsub(" ", "_")
     t("views.exercises.muscles.#{key}", default: muscle.to_s.capitalize)
   end

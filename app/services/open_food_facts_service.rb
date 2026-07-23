@@ -17,8 +17,11 @@ class OpenFoodFactsService
     salt:         "salt_100g"
   }.freeze
 
-  # Micronutriments (stockés en JSONB, zéros exclus)
-  MICRONUTRIENTS = {
+  # Micronutriments (stockés en JSONB, zéros exclus) — mapping clé→champ OFF, dérivé du registre
+  # Micronutrient → nom du champ dans l'API Open Food Facts. La LISTE des clés
+  # vient de Micronutrient::KEYS (source unique) ; seul le nom du champ OFF est
+  # une donnée propre à ce service.
+  MICRONUTRIENT_OFF_FIELDS = {
     calcium:     "calcium_100g",
     iron:        "iron_100g",
     magnesium:   "magnesium_100g",
@@ -42,7 +45,7 @@ class OpenFoodFactsService
   TAG_FIELDS = %i[allergens traces additives labels].freeze
 
   FIELDS = [
-    "product_name", "brands", "nutriments",
+    "product_name", "brands", "nutriments", "image_url",
     "nutriscore_grade", "nova_group", "id", "ecoscore_grade",
     "ingredients_text",
     *TAG_FIELDS.map { |f| "#{f}_tags" }
@@ -73,10 +76,13 @@ class OpenFoodFactsService
     required = REQUIRED_NUTRIMENTS.transform_values { |k| n[k].to_f.round(1) }
     optional = OPTIONAL_NUTRIMENTS.transform_values { |k| n[k]&.to_f&.round(1) }
 
-    micronutrients = MICRONUTRIENTS
-      .transform_values { |k| n[k]&.to_f }
-      .compact
-      .reject { |_, v| v == 0.0 }
+    micronutrients = Micronutrient::KEYS.each_with_object({}) do |key, acc|
+      field = MICRONUTRIENT_OFF_FIELDS[key]
+      next unless field
+
+      value = n[field]&.to_f
+      acc[key] = value if value.present? && value != 0.0
+    end
 
     tags = TAG_FIELDS.each_with_object({}) { |f, h| h[f] = parse_tags(product["#{f}_tags"]) }
 
@@ -88,6 +94,7 @@ class OpenFoodFactsService
       nova_group:       (1..4).include?(product["nova_group"]&.to_i) ? product["nova_group"].to_i : nil,
       ecoscore_grade:   VALID_ECO_GRADES.include?(product["ecoscore_grade"]&.downcase) ? product["ecoscore_grade"].downcase : nil,
       ingredients_text: product["ingredients_text"].to_s.strip.presence,
+      image_url:        product["image_url"].to_s.strip.presence,
       micronutrients:   micronutrients.presence || {},
       **required,
       **optional,

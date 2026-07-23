@@ -1,16 +1,7 @@
 <%= form_with model: exercise, multipart: true do |f| %>
 
   <%# ── Erreurs ── %>
-  <% if exercise.errors.any? %>
-    <div class="mb-6 flex items-start gap-3 px-4 py-3 rounded-xl bg-status-danger/10 border border-status-danger/30 text-sm text-status-danger">
-      <i class="fas fa-circle-exclamation mt-0.5 shrink-0"></i>
-      <ul class="list-none space-y-0.5">
-        <% exercise.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render "shared/form_errors", record: exercise, margin_class: "mb-6" %>
 
   <div class="space-y-8">
 
@@ -24,7 +15,7 @@
       <%# Nom %>
       <div class="mb-4">
         <%= f.label :name, t("views.exercises.custom.fields.name"), class: "label-dark block mb-1.5" %>
-        <%= f.text_field :name, class: "input-dark cursor-text", autocomplete: "off" %>
+        <%= f.text_field :name, class: "input-dark cursor-text", autocomplete: "off", maxlength: 80 %>
       </div>
 
       <%# Image %>
@@ -79,7 +70,7 @@
               <span data-custom-select-target="label" class="text-ink-subtle">—</span>
               <i class="fas fa-chevron-down text-xs text-ink-subtle flex-shrink-0"></i>
             </button>
-            <div data-custom-select-target="dropdown" data-custom-select-dropdown
+            <div data-custom-select-target="dropdown"
                  class="hidden absolute z-50 w-full mt-1 bg-surface-raised border border-surface-border/60 rounded-lg shadow-2xl max-h-52 overflow-y-auto"></div>
           </div>
         </div>
@@ -97,7 +88,7 @@
               <span data-custom-select-target="label" class="text-ink-subtle">—</span>
               <i class="fas fa-chevron-down text-xs text-ink-subtle flex-shrink-0"></i>
             </button>
-            <div data-custom-select-target="dropdown" data-custom-select-dropdown
+            <div data-custom-select-target="dropdown"
                  class="hidden absolute z-50 w-full mt-1 bg-surface-raised border border-surface-border/60 rounded-lg shadow-2xl max-h-52 overflow-y-auto"></div>
           </div>
         </div>
@@ -115,7 +106,7 @@
               <span data-custom-select-target="label" class="text-ink-subtle">—</span>
               <i class="fas fa-chevron-down text-xs text-ink-subtle flex-shrink-0"></i>
             </button>
-            <div data-custom-select-target="dropdown" data-custom-select-dropdown
+            <div data-custom-select-target="dropdown"
                  class="hidden absolute z-50 w-full mt-1 bg-surface-raised border border-surface-border/60 rounded-lg shadow-2xl max-h-52 overflow-y-auto"></div>
           </div>
         </div>
@@ -126,7 +117,8 @@
           <%= f.text_field :secondary_muscles_raw,
               value: Array(exercise.secondary_muscles).join(", "),
               class: "input-dark cursor-text",
-              autocomplete: "off" %>
+              autocomplete: "off",
+              maxlength: 100 %>
           <p class="text-xs text-ink-subtle/60 mt-1"><%= t("views.exercises.custom.fields.secondary_muscles_hint") %></p>
         </div>
 
@@ -155,7 +147,7 @@
               <span data-custom-select-target="label" class="text-ink-subtle">—</span>
               <i class="fas fa-chevron-down text-xs text-ink-subtle flex-shrink-0"></i>
             </button>
-            <div data-custom-select-target="dropdown" data-custom-select-dropdown
+            <div data-custom-select-target="dropdown"
                  class="hidden absolute z-50 w-full mt-1 bg-surface-raised border border-surface-border/60 rounded-lg shadow-2xl max-h-52 overflow-y-auto"></div>
           </div>
         </div>
@@ -196,14 +188,14 @@
       <%# Description %>
       <div class="mb-4">
         <%= f.label :description, t("views.exercises.custom.fields.description"), class: "label-dark block mb-1.5" %>
-        <%= f.text_area :description, rows: 3, class: "input-dark resize-none cursor-text" %>
+        <%= f.text_area :description, rows: 3, maxlength: 2000, class: "input-dark resize-none cursor-text" %>
       </div>
 
       <%# Instructions %>
       <div>
         <%= f.label :instructions, t("views.exercises.custom.fields.instructions"), class: "label-dark block mb-1.5" %>
         <p class="text-xs text-ink-subtle/60 mb-1.5"><%= t("views.exercises.custom.fields.instructions_hint") %></p>
-        <%= f.text_area :instructions, rows: 6, class: "input-dark resize-none cursor-text" %>
+        <%= f.text_area :instructions, rows: 6, maxlength: 2000, class: "input-dark resize-none cursor-text" %>
       </div>
     </div>
 

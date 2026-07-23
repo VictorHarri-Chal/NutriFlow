@@ -1,0 +1,48 @@
+<%# food: Food, usage: { day_foods:, recipes:, day_recipe_items: } %>
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4"
+     data-controller="modal"
+     data-action="click->modal#handleBackdropClick keydown@document->modal#handleEscape">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+  <div class="relative w-full max-w-sm bg-surface-raised border border-surface-border/50 rounded-2xl shadow-2xl transition-all duration-200 ease-out scale-95 opacity-0 flex flex-col max-h-[85vh] overflow-hidden"
+       data-modal-target="panel">
+
+    <div class="flex items-center justify-between px-5 py-4 border-b border-surface-border/40 flex-shrink-0">
+      <h3 class="text-sm font-semibold text-ink-primary"><%= t("views.foods.delete_blocked.title") %></h3>
+      <button type="button" class="btn-ghost w-8 h-8 !p-0 flex items-center justify-center flex-shrink-0"
+              data-action="click->modal#close">
+        <i class="fas fa-times text-sm"></i>
+      </button>
+    </div>
+
+    <div class="px-5 py-4 overflow-y-auto min-h-0">
+      <p class="text-sm text-ink-muted leading-relaxed mb-3">
+        <%= t("views.foods.delete_blocked.intro", name: food.name) %>
+      </p>
+      <ul class="list-disc list-inside space-y-1 text-sm text-ink-primary mb-3">
+        <% if usage[:day_foods] > 0 %>
+          <li><%= t("views.foods.delete_blocked.day_foods", count: usage[:day_foods]) %></li>
+        <% end %>
+        <% if usage[:recipes] > 0 %>
+          <li><%= t("views.foods.delete_blocked.recipes", count: usage[:recipes]) %></li>
+        <% end %>
+        <% if usage[:day_recipe_items] > 0 %>
+          <li><%= t("views.foods.delete_blocked.day_recipe_items", count: usage[:day_recipe_items]) %></li>
+        <% end %>
+      </ul>
+    </div>
+
+    <div class="flex items-center justify-between gap-2 px-5 py-4 border-t border-surface-border/40 flex-shrink-0">
+      <%= delete_link_with_confirm(
+            force_destroy_food_path(food),
+            confirm: t("views.foods.delete_blocked.force_delete_confirm", name: food.name),
+            class: "btn-danger text-sm",
+            text: t("views.foods.delete_blocked.force_delete"),
+            title: t("views.foods.delete_blocked.force_delete")
+          ) %>
+      <button type="button" class="btn-primary" data-action="click->modal#close">
+        <%= t("views.foods.delete_blocked.confirm") %>
+      </button>
+    </div>
+  </div>
+</div>

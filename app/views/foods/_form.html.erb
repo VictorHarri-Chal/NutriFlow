@@ -1,4 +1,5 @@
 <%= simple_form_for(food) do |f| %>
+  <%= render "shared/form_errors", record: food, margin_class: "mb-4" %>
   <%# ── Hidden fields : données importées ── %>
   <%= f.hidden_field :source,           data: { "food-off-search-target": "sourceField" } %>
   <%= f.hidden_field :off_id,          data: { "food-off-search-target": "offIdField" } %>
@@ -23,13 +24,13 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
       <%= f.input :name,
                   label: t("activerecord.attributes.food.name"),
-                  input_html: { class: "input-dark", autocomplete: "off", autofocus: true,
+                  input_html: { class: "input-dark", autocomplete: "off", autofocus: true, maxlength: 80,
                                 data: { "food-preview-target": "nameField" } },
                   label_html: { class: "label-dark" } %>
       <%= f.input :brand,
                   label: t("activerecord.attributes.food.brand"),
                   required: false,
-                  input_html: { class: "input-dark", autocomplete: "off",
+                  input_html: { class: "input-dark", autocomplete: "off", maxlength: 80,
                                 data: { "food-preview-target": "brandField" } },
                   label_html: { class: "label-dark" } %>
     </div>
@@ -44,7 +45,9 @@
       <%# Calories ── pleine largeur %>
       <%= f.input :calories,
                   label: t("activerecord.attributes.food.calories"),
-                  input_html: { class: "input-dark", step: 1, data: { "food-preview-target": "calories" } },
+                  input_html: { class: "input-dark", step: 1,
+                                data: { "food-preview-target": "calories", controller: "digit-limit", action: "input->digit-limit#limit",
+                                        digit_limit_max_integer_digits_value: 4 } },
                   label_html: { class: "label-dark" },
                   append: "kcal" %>
 
@@ -53,25 +56,33 @@
         <%= f.input :proteins,
                     label: t("activerecord.attributes.food.proteins"),
                     required: false,
-                    input_html: { class: "input-dark", step: 0.1, data: { "food-preview-target": "proteins" } },
+                    input_html: { class: "input-dark", step: 0.1,
+                                  data: { "food-preview-target": "proteins", controller: "digit-limit", action: "input->digit-limit#limit",
+                                          digit_limit_max_integer_digits_value: 4, digit_limit_max_decimal_digits_value: 1 } },
                     label_html: { class: "label-dark" },
                     append: "g" %>
         <%= f.input :carbs,
                     label: t("activerecord.attributes.food.carbs"),
                     required: false,
-                    input_html: { class: "input-dark", step: 0.1, data: { "food-preview-target": "carbs" } },
+                    input_html: { class: "input-dark", step: 0.1,
+                                  data: { "food-preview-target": "carbs", controller: "digit-limit", action: "input->digit-limit#limit",
+                                          digit_limit_max_integer_digits_value: 4, digit_limit_max_decimal_digits_value: 1 } },
                     label_html: { class: "label-dark" },
                     append: "g" %>
         <%= f.input :fats,
                     label: t("activerecord.attributes.food.fats"),
                     required: false,
-                    input_html: { class: "input-dark", step: 0.1, data: { "food-preview-target": "fats" } },
+                    input_html: { class: "input-dark", step: 0.1,
+                                  data: { "food-preview-target": "fats", controller: "digit-limit", action: "input->digit-limit#limit",
+                                          digit_limit_max_integer_digits_value: 4, digit_limit_max_decimal_digits_value: 1 } },
                     label_html: { class: "label-dark" },
                     append: "g" %>
         <%= f.input :sugars,
                     label: t("activerecord.attributes.food.sugars"),
                     required: false,
-                    input_html: { class: "input-dark", step: 0.1, data: { "food-preview-target": "sugars" } },
+                    input_html: { class: "input-dark", step: 0.1,
+                                  data: { "food-preview-target": "sugars", controller: "digit-limit", action: "input->digit-limit#limit",
+                                          digit_limit_max_integer_digits_value: 4, digit_limit_max_decimal_digits_value: 1 } },
                     label_html: { class: "label-dark" },
                     append: "g" %>
       </div>
@@ -82,21 +93,24 @@
                     label: t("views.foods.show.nutrients.fiber"),
                     required: false,
                     input_html: { class: "input-dark", step: 0.1,
-                                  data: { "food-off-search-target": "fiberField" } },
+                                  data: { "food-off-search-target": "fiberField", controller: "digit-limit", action: "input->digit-limit#limit",
+                                          digit_limit_max_integer_digits_value: 4, digit_limit_max_decimal_digits_value: 1 } },
                     label_html: { class: "label-dark" },
                     append: "g" %>
         <%= f.input :saturated_fat,
                     label: t("views.foods.show.nutrients.saturated_fat"),
                     required: false,
                     input_html: { class: "input-dark", step: 0.1,
-                                  data: { "food-off-search-target": "saturatedFatField" } },
+                                  data: { "food-off-search-target": "saturatedFatField", controller: "digit-limit", action: "input->digit-limit#limit",
+                                          digit_limit_max_integer_digits_value: 4, digit_limit_max_decimal_digits_value: 1 } },
                     label_html: { class: "label-dark" },
                     append: "g" %>
         <%= f.input :salt,
                     label: t("views.foods.show.nutrients.salt"),
                     required: false,
                     input_html: { class: "input-dark", step: 0.01,
-                                  data: { "food-off-search-target": "saltField" } },
+                                  data: { "food-off-search-target": "saltField", controller: "digit-limit", action: "input->digit-limit#limit",
+                                          digit_limit_max_integer_digits_value: 4, digit_limit_max_decimal_digits_value: 2 } },
                     label_html: { class: "label-dark" },
                     append: "g" %>
       </div>
@@ -170,7 +184,8 @@
     <%
       _has_advanced = food.allergens.present? || food.traces.present? ||
                       food.additives.present? || food.labels.present? ||
-                      (food.micronutrients.present? && food.micronutrients.any?)
+                      (food.micronutrients.present? && food.micronutrients.any?) ||
+                      food.source == :manual
     %>
     <div class="border-t border-surface-border/40 pt-5 mb-6 <%= 'hidden' unless _has_advanced %>"
          data-controller="collapsible"
@@ -248,39 +263,103 @@
             </div>
           </div>
 
-          <%# Micronutriments ── lecture seule. Toujours dans le DOM (targets JS), wrapper masqué si vide. %>
+          <%# Micronutriments — lecture seule (import), dérivé du registre Micronutrient.
+              Toujours dans le DOM (targets JS), wrapper masqué si vide. %>
           <%
             mn = (food.micronutrients || {}).transform_keys(&:to_s)
-            all_nutrients = %w[calcium iron magnesium potassium sodium zinc cholesterol vitamin_c vitamin_d vitamin_b12 vitamin_a vitamin_b9 epa dha]
-            mn_units = { "calcium" => "mg", "iron" => "mg", "magnesium" => "mg", "potassium" => "mg",
-                         "sodium" => "mg", "zinc" => "mg", "cholesterol" => "mg",
-                         "vitamin_c" => "mg", "vitamin_d" => "µg", "vitamin_b12" => "µg",
-                         "vitamin_a" => "µg", "vitamin_b9" => "µg", "epa" => "g", "dha" => "g" }
-            present_nutrients = all_nutrients.select { |key| mn[key].present? }
+            present_nutrients = Micronutrient::KEYS.select { |key| mn[key.to_s].present? }
           %>
-          <div class="<%= 'hidden' if present_nutrients.empty? %>" data-food-preview-target="micronutrientsSection">
-            <p class="text-sm font-medium text-ink-muted mb-3"><%= t("views.foods.show.minerals") %> & <%= t("views.foods.show.vitamins") %></p>
-            <div class="divide-y divide-surface-border/20">
-              <% all_nutrients.each do |key| %>
-                <div class="flex items-center justify-between py-2 <%= 'hidden' if mn[key].blank? %>" data-nutrient-row>
-                  <span class="text-xs text-ink-muted"><%= t("views.foods.show.nutrients.#{key}") %></span>
-                  <% if mn[key].present? %>
-                    <span class="text-xs font-semibold text-ink-primary"
-                          data-food-preview-target="micronutrientDisplay"
-                          data-nutrient="<%= key %>"
-                          data-unit="<%= mn_units[key] %>">
-                      <%= mn[key] %> <%= mn_units[key] %>
-                    </span>
-                  <% else %>
-                    <span class="text-xs text-ink-subtle"
-                          data-food-preview-target="micronutrientDisplay"
-                          data-nutrient="<%= key %>"
-                          data-unit="<%= mn_units[key] %>">—</span>
-                  <% end %>
-                </div>
-              <% end %>
+          <%# Masqué pour un aliment manuel : la liste du widget d'ajout juste en dessous
+              affiche déjà les valeurs présentes (avec suppression), pas besoin de les
+              montrer deux fois. Le bloc reste quand même dans le DOM (uniquement masqué
+              en CSS, pas retiré du rendu) pour que food_preview_controller.js puisse
+              encore le révéler en JS sur foods/new si l'utilisateur choisit un import
+              Ciqual ou Open Food Facts sans recharger la page.
+              Sur foods/edit en revanche, `source` d'un aliment persisté ne change jamais
+              côté client (pas de food-off-search sur cette page) : pour un aliment manuel
+              déjà existant, ce bloc ne pourra donc jamais être révélé — on ne le rend
+              carrément pas, plutôt que de le laisser en markup mort dans le DOM. %>
+          <% unless food.persisted? && food.source == :manual %>
+            <div class="<%= 'hidden' if present_nutrients.empty? || food.source == :manual %>"
+                 data-food-preview-target="micronutrientsSection"
+                 data-food-off-search-target="micronutrientsSection">
+              <p class="text-sm font-medium text-ink-muted mb-3"><%= t("views.foods.show.minerals") %> & <%= t("views.foods.show.vitamins") %></p>
+              <div class="divide-y divide-surface-border/20">
+                <% Micronutrient::ALL.each do |entry| %>
+                  <div class="flex items-center justify-between py-2 <%= 'hidden' if mn[entry.key.to_s].blank? %>" data-nutrient-row>
+                    <span class="text-xs text-ink-muted"><%= entry.label %></span>
+                    <% if mn[entry.key.to_s].present? %>
+                      <span class="text-xs font-semibold text-ink-primary"
+                            data-food-preview-target="micronutrientDisplay"
+                            data-nutrient="<%= entry.key %>"
+                            data-unit="<%= entry.unit %>">
+                        <%= mn[entry.key.to_s] %> <%= entry.unit %>
+                      </span>
+                    <% else %>
+                      <span class="text-xs text-ink-subtle"
+                            data-food-preview-target="micronutrientDisplay"
+                            data-nutrient="<%= entry.key %>"
+                            data-unit="<%= entry.unit %>">—</span>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
             </div>
-          </div>
+          <% end %>
+
+          <%# Ajout manuel — uniquement pour un aliment créé à la main, jamais pour un import Ciqual/OFF.
+              Le rendu serveur suffit pour /edit (source ne change jamais côté client sur cette page) ;
+              sur /new, food_off_search_controller.js (Tâche 16) masque ce bloc en JS dès qu'un import
+              Ciqual/OFF est choisi, sans attendre un rechargement de page. %>
+          <% if food.source == :manual %>
+            <div data-controller="micronutrient-editor"
+                 data-food-off-search-target="manualMicronutrientSection"
+                 class="mt-4">
+              <script type="application/json" data-micronutrient-editor-target="registry">
+                <%= json_escape(Micronutrient::ALL.map { |e| { key: e.key, label: e.label, unit: e.unit } }.to_json).html_safe %>
+              </script>
+
+              <div class="flex gap-2 mb-3">
+                <div data-controller="custom-select" class="relative flex-1">
+                  <select data-micronutrient-editor-target="select"
+                          data-custom-select-target="select"
+                          data-action="change->micronutrient-editor#syncUnit"
+                          class="sr-only">
+                    <option value="" selected disabled><%= t("views.foods.form.micronutrient_select_placeholder") %></option>
+                    <% Micronutrient::ALL.each do |entry| %>
+                      <option value="<%= entry.key %>"><%= entry.label %></option>
+                    <% end %>
+                  </select>
+                  <button type="button" data-action="click->custom-select#toggle"
+                          class="input-dark flex items-center justify-between cursor-pointer w-full text-left text-sm">
+                    <span data-custom-select-target="label" class="text-ink-subtle"></span>
+                    <i class="fas fa-chevron-down text-xs text-ink-subtle flex-shrink-0"></i>
+                  </button>
+                  <div data-custom-select-target="dropdown"
+                       class="hidden absolute z-50 w-full mt-1 bg-surface-raised border border-surface-border/60 rounded-lg shadow-2xl max-h-52 overflow-y-auto"></div>
+                </div>
+                <div class="relative w-32">
+                  <input type="number" step="0.01" min="0"
+                         data-micronutrient-editor-target="value"
+                         class="input-dark w-full text-sm pr-10"
+                         data-controller="digit-limit"
+                         data-digit-limit-max-integer-digits-value="5"
+                         data-digit-limit-max-decimal-digits-value="2"
+                         data-action="input->digit-limit#limit input->micronutrient-editor#updateAddButtonState">
+                  <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none"
+                        data-micronutrient-editor-target="unit"></span>
+                </div>
+                <button type="button" class="btn-secondary text-sm px-4 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-surface-hover"
+                        data-micronutrient-editor-target="addButton"
+                        data-action="click->micronutrient-editor#add"
+                        disabled>
+                  <%= t("views.foods.form.add_micronutrient") %>
+                </button>
+              </div>
+
+              <div class="divide-y divide-surface-border/20" data-micronutrient-editor-target="list"></div>
+            </div>
+          <% end %>
 
         </div>
       </div>

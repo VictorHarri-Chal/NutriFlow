@@ -1,0 +1,16 @@
+<%# Auth pages (login, sign-up, password reset...) show flash messages as a
+    persistent box in the page flow, not the app-wide top-right toast — a wrong
+    password / expired link is easy to miss if it auto-dismisses before the
+    user looks up from typing. Same visual family as shared/_form_errors. %>
+<% if flash[:notice] %>
+  <div class="mb-4 flex items-center gap-2 text-xs text-status-success bg-status-success/10 border border-status-success/30 rounded-lg px-3 py-2">
+    <i class="fas fa-check-circle text-[10px] shrink-0"></i>
+    <span><%= flash[:notice] %></span>
+  </div>
+<% end %>
+<% if flash[:alert] %>
+  <div class="mb-4 flex items-center gap-2 text-xs text-status-danger bg-status-danger/10 border border-status-danger/30 rounded-lg px-3 py-2">
+    <i class="fas fa-circle-exclamation text-[10px] shrink-0"></i>
+    <span><%= flash[:alert] %></span>
+  </div>
+<% end %>

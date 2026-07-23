@@ -1,0 +1,19 @@
+en:
+  activerecord:
+    models:
+      program_exercise: "Program exercise"
+      program_exercises: "Program exercises"
+    attributes:
+      program_exercise:
+        rest_seconds: "Rest time"
+        notes: "Notes"
+      program_exercise/program_exercise_sets:
+        reps_target: "Reps"
+        weight_target: "Weight"
+        rpe: "RPE"
+        set_types: "Set types"
+    errors:
+      models:
+        program_exercise:
+          no_sets: "Add at least one set before saving."
+          too_many_sets: "You can't add more than 10 sets per exercise."

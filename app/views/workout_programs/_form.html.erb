@@ -1,13 +1,9 @@
 <%= form_with model: program, class: "space-y-5" do |f| %>
-  <% if program.errors.any? %>
-    <div class="bg-status-danger_dim/20 border border-status-danger/30 rounded-lg px-4 py-3 text-sm text-status-danger">
-      <%= program.errors.full_messages.first %>
-    </div>
-  <% end %>
+  <%= render "shared/form_errors", record: program, margin_class: "" %>
 
   <div>
     <%= f.label :name, t("views.workout_programs.form.name"), class: "label-dark block mb-1" %>
-    <%= f.text_field :name, class: "input-dark", placeholder: t("views.workout_programs.form.name_placeholder"), autofocus: true %>
+    <%= f.text_field :name, class: "input-dark", placeholder: t("views.workout_programs.form.name_placeholder"), autofocus: true, maxlength: 80 %>
   </div>
 
   <div>
@@ -22,7 +18,7 @@
         <span data-custom-select-target="label" class="text-ink-subtle"></span>
         <i class="fas fa-chevron-down text-xs text-ink-subtle flex-shrink-0"></i>
       </button>
-      <div data-custom-select-target="dropdown" data-custom-select-dropdown
+      <div data-custom-select-target="dropdown"
            class="hidden absolute z-50 w-full mt-1 bg-surface-raised border border-surface-border/60 rounded-lg shadow-2xl max-h-52 overflow-y-auto"></div>
     </div>
   </div>

@@ -1,13 +1,14 @@
 class DayFoodGroupComponent < ApplicationComponent
-  def initialize(day_food_group: nil, day_foods:, day:)
-    @day_food_group = day_food_group
-    @day_foods      = day_foods
-    @day            = day
+  def initialize(day_food_group: nil, day_foods:, day:, fasting_sessions: [])
+    @day_food_group    = day_food_group
+    @day_foods         = day_foods
+    @day               = day
+    @fasting_sessions  = fasting_sessions
   end
 
   private
 
-  attr_reader :day_food_group, :day_foods, :day
+  attr_reader :day_food_group, :day_foods, :day, :fasting_sessions
 
   def group_totals
     {
@@ -19,20 +20,12 @@ class DayFoodGroupComponent < ApplicationComponent
     }
   end
 
-  def item_count_text
-    I18n.t("views.components.day_food_group.item_count", count: day_foods.count)
-  end
-
   def group_title
     day_food_group ? day_food_group.name : I18n.t("views.components.day_food_group.ungrouped_title")
   end
 
-  def group_bg_class
-    day_food_group ? "from-brand-muted/30 to-brand-muted/10" : "from-surface-hover to-surface-hover"
-  end
-
-  def badge_bg_class
-    day_food_group ? "bg-brand-muted text-brand" : "bg-surface-hover text-ink-muted"
+  def accent_border_class
+    day_food_group ? "border-l-brand" : "border-l-surface-border/50"
   end
 
   def storage_key
@@ -53,15 +46,19 @@ class DayFoodGroupComponent < ApplicationComponent
   end
 
   def edit_path(item)
-    is_recipe?(item) ? edit_day_day_recipe_path(item.day, item) : edit_day_day_food_path(item.day, item)
+    is_recipe?(item) ? edit_day_recipe_path(item) : edit_day_food_path(item)
   end
 
   def delete_path(item)
-    is_recipe?(item) ? day_day_recipe_path(item.day, item) : day_day_food_path(item.day, item)
+    is_recipe?(item) ? day_recipe_path(item) : day_food_path(item)
   end
 
   def delete_confirm_message(item)
     key = is_recipe?(item) ? "delete_recipe_confirm" : "delete_food_confirm"
     I18n.t("views.components.day_food_group.#{key}")
+  end
+
+  def logged_during_fasting?(item)
+    fasting_sessions.any? { |s| item.created_at >= s.started_at && (s.ended_at.nil? || item.created_at <= s.ended_at) }
   end
 end

@@ -1,0 +1,11 @@
+fr:
+  activerecord:
+    models:
+      program_exercise_set: "Série"
+      program_exercise_sets: "Séries"
+    attributes:
+      program_exercise_set:
+        reps_target: "Répétitions"
+        weight_target: "Charge"
+        rpe: "RPE"
+        set_types: "Types de série"

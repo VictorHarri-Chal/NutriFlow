@@ -1,18 +1,11 @@
 # frozen_string_literal: true
 
 class RecipeSidebarComponent < ApplicationComponent
-  MICRONUTRIENT_ORDER = %w[calcium iron magnesium potassium sodium zinc cholesterol
-                            vitamin_c vitamin_d vitamin_b12 vitamin_a vitamin_b9 epa dha].freeze
-  MICRONUTRIENT_UNITS = {
-    "calcium" => "mg", "iron" => "mg", "magnesium" => "mg", "potassium" => "mg",
-    "sodium" => "mg", "zinc" => "mg", "cholesterol" => "mg",
-    "vitamin_c" => "mg", "vitamin_d" => "µg", "vitamin_b12" => "µg",
-    "vitamin_a" => "µg", "vitamin_b9" => "µg", "epa" => "g", "dha" => "g"
-  }.freeze
-
-  def initialize(recipe:, current_user:)
-    @recipe = recipe
-    @current_user = current_user
+  def initialize(recipe:, current_user:, times_cooked: 0, last_cooked_date: nil)
+    @recipe          = recipe
+    @current_user    = current_user
+    @times_cooked    = times_cooked
+    @last_cooked_date = last_cooked_date
   end
 
   private
@@ -43,10 +36,16 @@ class RecipeSidebarComponent < ApplicationComponent
   end
 
   def ordered_micronutrients
-    MICRONUTRIENT_ORDER.filter_map do |key|
-      value = micronutrients[key]
-      next unless value.present? && value != 0
-      { key: key, value: value, unit: MICRONUTRIENT_UNITS[key] }
+    goals = weekly_goals
+    Micronutrient::ALL.filter_map do |entry|
+      total_value = micronutrients[entry.key.to_s]
+      next unless total_value.present? && total_value != 0
+
+      per_100g_value = per_100g_micronutrients[entry.key.to_s].to_f
+      goal = goals[entry.key]
+
+      { key: entry.key, unit: entry.unit, total_value: total_value,
+        per_100g_coverage_pct: Micronutrient.coverage_percentage(per_100g_value, goal) }
     end
   end
 
@@ -58,17 +57,13 @@ class RecipeSidebarComponent < ApplicationComponent
     @traces ||= recipe.aggregated_traces
   end
 
-  def times_cooked
-    @times_cooked ||= DayRecipe
-      .joins(:day)
-      .where(days: { user_id: current_user.id }, recipe_id: recipe.id)
-      .count
+  def per_100g_micronutrients
+    @per_100g_micronutrients ||= recipe.per_100g_micronutrients
   end
 
-  def last_cooked_date
-    @last_cooked_date ||= DayRecipe
-      .joins(:day)
-      .where(days: { user_id: current_user.id }, recipe_id: recipe.id)
-      .maximum("days.date")
+  def weekly_goals
+    @weekly_goals ||= current_user.profile&.weekly_micronutrient_goals || {}
   end
+
+  attr_reader :times_cooked, :last_cooked_date
 end

@@ -17,4 +17,27 @@ class ProgramDay < ApplicationRecord
   def day_abbr
     I18n.t("views.workout_programs.day_abbrs.#{WorkoutProgram::DAY_KEYS[day_of_week]}")
   end
+
+  def copy_exercises_to!(target_day)
+    program_exercises.order(:position).each do |pe|
+      next if pe.program_exercise_sets.empty?
+
+      new_pe = target_day.program_exercises.build(
+        exercise_id:  pe.exercise_id,
+        rest_seconds: pe.rest_seconds,
+        notes:        pe.notes,
+        position:     pe.position
+      )
+      pe.program_exercise_sets.each do |set|
+        new_pe.program_exercise_sets.build(
+          position:      set.position,
+          reps_target:   set.reps_target,
+          weight_target: set.weight_target,
+          rpe:           set.rpe,
+          set_types:     set.set_types
+        )
+      end
+      new_pe.save!
+    end
+  end
 end

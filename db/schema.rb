@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_07_163630) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_21_141016) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,22 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_163630) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "body_measurements", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.date "date", null: false
+    t.decimal "waist_cm", precision: 5, scale: 2
+    t.decimal "hips_cm", precision: 5, scale: 2
+    t.decimal "chest_cm", precision: 5, scale: 2
+    t.decimal "biceps_cm", precision: 5, scale: 2
+    t.decimal "thighs_cm", precision: 5, scale: 2
+    t.decimal "calves_cm", precision: 5, scale: 2
+    t.decimal "neck_cm", precision: 5, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "date"], name: "index_body_measurements_on_user_id_and_date", unique: true
+    t.index ["user_id"], name: "index_body_measurements_on_user_id"
   end
 
   create_table "cardio_blocks", force: :cascade do |t|
@@ -89,7 +105,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_163630) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_day_food_groups_on_user_id"
+    t.index ["name", "user_id"], name: "index_day_food_groups_on_name_and_user_id", unique: true
   end
 
   create_table "day_foods", force: :cascade do |t|
@@ -105,6 +121,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_163630) do
     t.index ["food_id"], name: "index_day_foods_on_food_id"
   end
 
+  create_table "day_recipe_items", force: :cascade do |t|
+    t.bigint "day_recipe_id", null: false
+    t.bigint "food_id", null: false
+    t.decimal "quantity", null: false
+    t.string "unit", default: "g", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["day_recipe_id"], name: "index_day_recipe_items_on_day_recipe_id"
+    t.index ["food_id"], name: "index_day_recipe_items_on_food_id"
+  end
+
   create_table "day_recipes", force: :cascade do |t|
     t.bigint "day_id", null: false
     t.bigint "recipe_id", null: false
@@ -113,6 +140,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_163630) do
     t.boolean "use_recipe_quantity", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "customized", default: false, null: false
     t.index ["day_food_group_id"], name: "index_day_recipes_on_day_food_group_id"
     t.index ["day_id"], name: "index_day_recipes_on_day_id"
     t.index ["recipe_id"], name: "index_day_recipes_on_recipe_id"
@@ -162,11 +190,23 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_163630) do
     t.text "name_fr"
     t.text "description_fr"
     t.text "instructions_fr"
+    t.string "tension_profile"
     t.index ["body_part"], name: "index_exercises_on_body_part"
     t.index ["custom_user_id"], name: "index_exercises_on_custom_user_id"
     t.index ["exercise_id"], name: "index_exercises_on_exercise_id", unique: true
     t.index ["name"], name: "index_exercises_on_name"
     t.index ["target_muscle"], name: "index_exercises_on_target_muscle"
+  end
+
+  create_table "fasting_sessions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "protocol", default: "sixteen_eight", null: false
+    t.datetime "started_at", null: false
+    t.datetime "ended_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_fasting_sessions_on_user_id"
+    t.index ["user_id"], name: "index_one_active_fasting_session_per_user", unique: true, where: "(ended_at IS NULL)"
   end
 
   create_table "food_labels", force: :cascade do |t|
@@ -244,7 +284,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_163630) do
     t.string "name"
     t.decimal "weight"
     t.decimal "height"
-    t.integer "age"
     t.string "gender"
     t.string "goal"
     t.datetime "created_at", null: false
@@ -252,7 +291,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_163630) do
     t.integer "water_goal_ml", default: 2000, null: false
     t.decimal "goal_weight", precision: 5, scale: 2
     t.string "job_activity_level", default: "light_activity", null: false
-    t.integer "default_daily_steps", default: 6000, null: false
+    t.integer "default_daily_steps", null: false
+    t.decimal "goal_rate_kg_per_week", precision: 4, scale: 2, default: "0.0", null: false
+    t.date "date_of_birth"
     t.index ["user_id"], name: "index_profiles_on_user_id"
   end
 
@@ -268,12 +309,22 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_163630) do
     t.index ["workout_program_id"], name: "index_program_days_on_workout_program_id"
   end
 
+  create_table "program_exercise_sets", force: :cascade do |t|
+    t.bigint "program_exercise_id", null: false
+    t.integer "position", default: 0, null: false
+    t.integer "reps_target", null: false
+    t.decimal "weight_target", precision: 6, scale: 2
+    t.integer "rpe"
+    t.string "set_types", default: ["working"], null: false, array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["program_exercise_id", "position"], name: "idx_on_program_exercise_id_position_76c2d97a5b"
+    t.index ["program_exercise_id"], name: "index_program_exercise_sets_on_program_exercise_id"
+  end
+
   create_table "program_exercises", force: :cascade do |t|
     t.bigint "program_day_id", null: false
     t.bigint "exercise_id", null: false
-    t.integer "sets", default: 3, null: false
-    t.integer "reps_target", default: 10, null: false
-    t.decimal "weight_target", precision: 6, scale: 2
     t.integer "rest_seconds"
     t.integer "position", default: 0, null: false
     t.text "notes"
@@ -287,7 +338,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_163630) do
   create_table "recipe_items", force: :cascade do |t|
     t.bigint "recipe_id", null: false
     t.bigint "food_id", null: false
-    t.decimal "quantity", default: "100.0", null: false
+    t.decimal "quantity", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "unit", default: "g", null: false
@@ -340,6 +391,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_163630) do
     t.string "name", default: "Ma liste", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "archived_at"
+    t.index ["user_id", "archived_at"], name: "index_shopping_lists_on_user_id_and_archived_at"
     t.index ["user_id"], name: "index_shopping_lists_on_user_id"
   end
 
@@ -358,7 +411,23 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_163630) do
     t.boolean "show_water_tracking", default: true, null: false
     t.boolean "show_tdee_breakdown", default: true, null: false
     t.boolean "show_weight_tracking", default: true, null: false
+    t.string "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string "unconfirmed_email"
+    t.integer "sign_in_count", default: 0, null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string "current_sign_in_ip"
+    t.string "last_sign_in_ip"
+    t.string "time_zone", default: "Europe/Paris", null: false
+    t.string "session_token", null: false
+    t.boolean "show_body_measurements", default: true, null: false
+    t.datetime "fasting_disclaimer_acknowledged_at"
+    t.boolean "show_fasting_tracking", default: true, null: false
+    t.string "section_order", default: ["water", "workout", "cardio", "fasting", "food", "day_note"], null: false, array: true
     t.string "jti", default: "", null: false
+    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -388,7 +457,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_163630) do
   create_table "workout_sessions", force: :cascade do |t|
     t.bigint "day_id", null: false
     t.integer "duration_minutes"
-    t.integer "rpe"
     t.text "notes"
     t.integer "calories_burned"
     t.datetime "created_at", null: false
@@ -407,6 +475,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_163630) do
     t.integer "rest_seconds"
     t.text "notes"
     t.boolean "is_pr", default: false, null: false
+    t.integer "rpe"
+    t.string "set_types", default: ["working"], null: false, array: true
     t.index ["exercise_id"], name: "index_workout_sets_on_exercise_id"
     t.index ["workout_session_id", "position"], name: "index_workout_sets_on_workout_session_id_and_position"
     t.index ["workout_session_id"], name: "index_workout_sets_on_workout_session_id"
@@ -414,18 +484,23 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_163630) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "body_measurements", "users"
   add_foreign_key "cardio_blocks", "cardio_sessions"
   add_foreign_key "cardio_sessions", "days"
   add_foreign_key "day_food_groups", "users"
   add_foreign_key "day_foods", "day_food_groups"
   add_foreign_key "day_foods", "days"
   add_foreign_key "day_foods", "foods"
+  add_foreign_key "day_recipe_items", "day_recipes"
+  add_foreign_key "day_recipe_items", "foods"
   add_foreign_key "day_recipes", "day_food_groups"
   add_foreign_key "day_recipes", "days"
   add_foreign_key "day_recipes", "recipes"
   add_foreign_key "days", "users"
   add_foreign_key "exercise_favorites", "exercises"
   add_foreign_key "exercise_favorites", "users"
+  add_foreign_key "exercises", "users", column: "custom_user_id"
+  add_foreign_key "fasting_sessions", "users"
   add_foreign_key "food_labels", "users"
   add_foreign_key "food_labels_foods", "food_labels"
   add_foreign_key "food_labels_foods", "foods"
@@ -433,6 +508,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_163630) do
   add_foreign_key "identities", "users"
   add_foreign_key "profiles", "users"
   add_foreign_key "program_days", "workout_programs"
+  add_foreign_key "program_exercise_sets", "program_exercises"
   add_foreign_key "program_exercises", "exercises"
   add_foreign_key "program_exercises", "program_days"
   add_foreign_key "recipe_items", "foods"

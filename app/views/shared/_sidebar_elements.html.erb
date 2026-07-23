@@ -7,7 +7,7 @@
         <% end %>
 
         <%= link_to foods_path, class: current_page?(foods_path) ? "nav-link-active" : "nav-link" do %>
-            <i class="fas fa-utensils w-5 h-5 mr-3"></i>
+            <i class="fas fa-apple-whole w-5 h-5 mr-3"></i>
             <span class="font-medium pb-1"><%= t("views.shared.sidebar.foods") %></span>
         <% end %>
 
@@ -23,22 +23,22 @@
             <%= render "shared/shopping_badge", count: shopping_unchecked %>
         <% end %>
 
-        <% if current_user.show_workout_section? %>
-          <%= link_to exercises_path, class: current_page?(exercises_path) ? "nav-link-active" : "nav-link" do %>
-              <i class="fas fa-dumbbell w-5 h-5 mr-3"></i>
-              <span class="font-medium pb-1"><%= t("views.shared.sidebar.exercises") %></span>
-          <% end %>
+        <%= link_to exercises_path, class: current_page?(exercises_path) ? "nav-link-active" : "nav-link" do %>
+            <i class="fas fa-dumbbell w-5 h-5 mr-3"></i>
+            <span class="font-medium pb-1"><%= t("views.shared.sidebar.exercises") %></span>
+        <% end %>
 
+        <% if current_user.show_workout_section? %>
           <%= link_to workout_programs_path, class: request.path.start_with?(workout_programs_path) ? "nav-link-active" : "nav-link" do %>
               <i class="fas fa-clipboard-list w-5 h-5 mr-3"></i>
               <span class="font-medium pb-1"><%= t("views.shared.sidebar.workout_programs") %></span>
           <% end %>
         <% end %>
 
-        <% if current_user.show_weight_tracking? %>
+        <% if current_user.show_weight_tracking? || current_user.show_body_measurements? %>
           <%= link_to weight_entries_path, class: current_page?(weight_entries_path) ? "nav-link-active" : "nav-link" do %>
               <i class="fas fa-weight-scale w-5 h-5 mr-3"></i>
-              <span class="font-medium pb-1"><%= t("views.shared.sidebar.weight") %></span>
+              <span class="font-medium pb-1"><%= t("views.shared.sidebar.#{weight_sidebar_label_key(current_user)}") %></span>
           <% end %>
         <% end %>
 

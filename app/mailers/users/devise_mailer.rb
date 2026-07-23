@@ -1,4 +1,9 @@
 class Users::DeviseMailer < Devise::Mailer
+  def new_device_sign_in(record, ip, opts = {})
+    @ip = ip
+    devise_mail(record, :new_device_sign_in, opts)
+  end
+
   private
 
   def initialize_from_record(record)

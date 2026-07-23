@@ -33,6 +33,7 @@
               class: "input-dark pl-10 pr-10 py-1.5 text-sm",
               placeholder: t("views.foods.search_placeholder"),
               autocomplete: "off",
+              maxlength: 50,
               data: { action: "input->search#input", search_target: "input" } %>
 
           <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-ink-subtle pointer-events-none"></i>
@@ -299,7 +300,7 @@
           <i class="fas fa-list"></i>
           <%= t("views.foods.no_out_of_stock.see_all") %>
         <% end %>
-      <% elsif params[:query].present? || params[:q]&.values&.any?(&:present?) || params[:label_id].present? || @filtering_favorites || @filtering_in_stock || @filtering_out_of_stock %>
+      <% elsif params[:query].present? || params[:q]&.except(:s)&.values&.any?(&:present?) || params[:label_id].present? || @filtering_favorites || @filtering_in_stock || @filtering_out_of_stock %>
         <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.foods.no_results.title") %></h3>
         <% search_term = params[:query].presence || params.dig(:q, :name_cont).presence %>
         <p class="text-ink-muted mb-4">
@@ -348,3 +349,5 @@
   <% end %>
   <% end %> <%# /turbo_frame_tag foods_results %>
 </div>
+
+<div id="food_delete_blocked_modal_root"></div>

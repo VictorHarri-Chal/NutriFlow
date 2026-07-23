@@ -47,6 +47,7 @@
            px-3 py-2 text-ink-primary placeholder-ink-subtle
            hover:border-surface-hover
            focus:outline-none focus:ring-2 focus:ring-brand/50 focus:border-brand
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-surface-border
            transition;
   }
   .input-dark::-webkit-calendar-picker-indicator {
@@ -144,6 +145,15 @@
     @apply shadow-2xl scale-[1.01];
   }
 
+  /* Variante liste de courses : pas de box-shadow (convention "pas d'ombre
+     sur les éléments internes"), bordure ambrée à la place. */
+  .shopping-sortable-ghost {
+    @apply opacity-30 bg-surface-hover;
+  }
+  .shopping-sortable-drag {
+    @apply border-2 border-brand bg-surface-hover/40;
+  }
+
   /* ---- Devise forms ---- */
   .devise-form input[type="email"],
   .devise-form input[type="password"],
@@ -166,7 +176,8 @@
     opacity: 0;
     transform: translateY(4px);
     transition: opacity 0.12s ease, transform 0.12s ease;
-    @apply px-2.5 py-1.5 rounded-lg text-xs font-medium max-w-xs;
+    white-space: pre-line;
+    @apply px-3 py-2 rounded-lg text-xs font-medium max-w-sm leading-relaxed;
     @apply bg-surface-raised text-ink-primary;
     @apply border border-surface-border/50;
     box-shadow: 0 4px 16px rgb(0 0 0 / 0.35), 0 0 0 1px rgb(82 82 91 / 0.15);

@@ -6,6 +6,11 @@
 
   <div class="max-w-6xl mx-auto px-4 lg:px-0" id="calendar-content">
 
+    <%# ── Jeûne : bannière persistante (visible quelle que soit la date affichée) ── %>
+    <% if current_user.show_fasting_tracking? %>
+      <%= render 'calendars/active_fasting_banner', active_fasting_session: @active_fasting_session %>
+    <% end %>
+
     <%# ── Header: date + controls ── %>
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 py-4">
       <h1 class="text-2xl font-bold text-ink-primary"><%= l(@selected_date, format: :long) %></h1>
@@ -19,6 +24,9 @@
                total_carbs:         @total_carbs,
                total_fats:          @total_fats,
                total_sugars:        @total_sugars,
+               total_fiber:         @total_fiber,
+               total_saturated_fat: @total_saturated_fat,
+               total_salt:          @total_salt,
                profile:             @profile,
                daily_calorie_goal:  @daily_calorie_goal,
                daily_protein_goal:  @daily_protein_goal,
@@ -31,34 +39,40 @@
                tdee_breakdown:      @tdee_breakdown,
                day:                 @day %>
 
-    <%# ── Hydration widget ── %>
-    <% if current_user.show_water_tracking? %>
-      <%= render 'calendars/water_widget', day: @day, profile: @profile %>
-    <% end %>
-
-    <%# ── Workout widget ── %>
-    <% if current_user.show_workout_section? %>
-      <%= render 'calendars/workout_widget', day: @day %>
-    <% end %>
-
-    <%# ── Cardio widget ── %>
-    <% if current_user.show_cardio_section? %>
-      <%= render 'calendars/cardio_widget', day: @day %>
-    <% end %>
-
-    <%# ── Inline form (turbo frame) ── %>
-    <%= turbo_frame_tag "item_form" %>
-
-    <%# ── Food widget ── %>
-    <%= render 'calendars/food_widget',
-               all_day_items:           @all_day_items,
-               day_items_by_group:      @day_items_by_group,
-               day_items_without_group: @day_items_without_group,
-               day:                     @day %>
-
-    <%# ── Daily note ── %>
-    <% if current_user.show_day_note? %>
-      <%= render 'calendars/day_note', day: @day %>
+    <%# ── Sections réorganisables (ordre personnalisé, masquage existant préservé) ── %>
+    <% current_user.section_order.each do |section_key| %>
+      <% case section_key %>
+      <% when "water" %>
+        <% if current_user.show_water_tracking? %>
+          <%= render 'calendars/water_widget', day: @day, profile: @profile %>
+        <% end %>
+      <% when "workout" %>
+        <% if current_user.show_workout_section? %>
+          <%= render 'calendars/workout_widget', day: @day %>
+          <%= turbo_frame_tag "workout_item_form" %>
+        <% end %>
+      <% when "cardio" %>
+        <% if current_user.show_cardio_section? %>
+          <%= render 'calendars/cardio_widget', day: @day %>
+          <%= turbo_frame_tag "cardio_item_form" %>
+        <% end %>
+      <% when "fasting" %>
+        <% if current_user.show_fasting_tracking? %>
+          <%= render 'calendars/fasting_widget', active_fasting_session: @active_fasting_session, fasting_stats: @fasting_stats %>
+          <div id="fasting_disclaimer_modal_root"></div>
+        <% end %>
+      <% when "food" %>
+        <%= render 'calendars/food_widget',
+                   all_day_items:           @all_day_items,
+                   day_items_by_group:      @day_items_by_group,
+                   day_items_without_group: @day_items_without_group,
+                   day:                     @day %>
+        <%= turbo_frame_tag "food_item_form" %>
+      <% when "day_note" %>
+        <% if current_user.show_day_note? %>
+          <%= render 'calendars/day_note', day: @day %>
+        <% end %>
+      <% end %>
     <% end %>
 
   </div>
@@ -83,14 +97,14 @@
       </div>
 
       <%# Contenu heatmap %>
-      <div id="month_heatmap">
+      <%= turbo_frame_tag "month_heatmap" do %>
         <%= render 'calendars/month_heatmap',
                    month_heatmap:      @month_heatmap,
                    heatmap_start:      @heatmap_start,
                    heatmap_end:        @heatmap_end,
                    selected_date:      @selected_date,
                    daily_calorie_goal: @daily_calorie_goal %>
-      </div>
+      <% end %>
 
     </div>
   </div>

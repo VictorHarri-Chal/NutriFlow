@@ -6,8 +6,9 @@ class CalendarsController < ApplicationController
     selected_date = parse_date(params[:date])
     day = find_or_create_day(selected_date)
     load_calendar_data(day)
+    load_fasting_data if current_user.show_fasting_tracking?
     @selected_date = selected_date
-    load_month_heatmap(selected_date)
+    load_month_heatmap(selected_date, params[:heatmap_month])
   end
 
   def copy_yesterday

@@ -3,47 +3,50 @@
      data-collapsible-storage-key="<%= storage_key %>">
 
   <%# ── Group header ──────────────────────────────────────────────────── %>
-  <div class="bg-gradient-to-r <%= group_bg_class %> px-4 py-3 border-b border-surface-border/50">
-    <div class="flex items-center justify-between gap-3">
+  <div class="bg-surface-base border-l-4 <%= accent_border_class %> border-b border-surface-border/40 px-4 py-3.5">
+    <div class="flex items-center justify-between gap-3 flex-wrap">
 
-      <%# Left: toggle + title + badge %>
+      <%# Left: toggle + title %>
       <div class="flex items-center gap-3 min-w-0">
         <button class="text-ink-muted hover:text-brand transition-colors flex-shrink-0 w-6 h-6 flex items-center justify-center"
                 data-action="click->collapsible#toggle"
                 data-collapsible-target="trigger">
           <i class="fas fa-chevron-down text-xs transition-transform duration-200" data-collapsible-target="icon"></i>
         </button>
-        <h3 class="text-sm font-semibold text-ink-primary truncate"><%= group_title %></h3>
-        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 <%= badge_bg_class %>">
-          <%= item_count_text %>
-        </span>
+        <h3 class="text-sm font-semibold text-ink-primary break-words"><%= group_title %></h3>
       </div>
 
       <%# Right: totals + add buttons %>
-      <div class="flex items-center gap-4">
-        <%# Compact totals %>
-        <div class="hidden md:flex items-center gap-3 text-xs text-ink-subtle">
-          <span class="font-semibold text-brand"><%= group_totals[:calories].round(1) %> kcal</span>
-          <span><%= group_totals[:proteins].round(1) %> g <%= t("views.components.day_food_group.proteins_abbr") %></span>
-          <span><%= group_totals[:carbs].round(1) %> g <%= t("views.components.day_food_group.carbs_abbr") %></span>
-          <span><%= group_totals[:fats].round(1) %> g <%= t("views.components.day_food_group.fats_abbr") %></span>
+      <div class="flex items-center gap-2 flex-wrap">
+        <%# Macro chips — calories in brand accent, other macros neutral %>
+        <div class="hidden md:flex items-center gap-1.5">
+          <span class="inline-flex items-baseline gap-1 rounded-full bg-brand/10 border border-brand/25 text-brand text-[11px] font-semibold px-2.5 py-1">
+            <%= group_totals[:calories].round %><span class="font-normal opacity-75">kcal</span>
+          </span>
+          <span class="inline-flex items-baseline gap-1 rounded-full bg-surface-hover text-ink-muted text-[11px] font-semibold px-2.5 py-1">
+            <%= group_totals[:proteins].round %> g <span class="font-normal text-ink-subtle"><%= t("views.components.day_food_group.proteins_abbr") %></span>
+          </span>
+          <span class="inline-flex items-baseline gap-1 rounded-full bg-surface-hover text-ink-muted text-[11px] font-semibold px-2.5 py-1">
+            <%= group_totals[:carbs].round %> g <span class="font-normal text-ink-subtle"><%= t("views.components.day_food_group.carbs_abbr") %></span>
+          </span>
+          <span class="inline-flex items-baseline gap-1 rounded-full bg-surface-hover text-ink-muted text-[11px] font-semibold px-2.5 py-1">
+            <%= group_totals[:fats].round %> g <span class="font-normal text-ink-subtle"><%= t("views.components.day_food_group.fats_abbr") %></span>
+          </span>
         </div>
 
-        <%# + buttons %>
-        <div class="flex items-center gap-1">
+        <%# Add shortcuts %>
+        <div class="flex items-center gap-1.5">
           <%= link_to add_food_path,
-                class: "inline-flex items-center gap-1 px-2 py-1 text-xs text-ink-subtle hover:text-brand hover:bg-surface-hover rounded-md transition-colors",
-                data: { turbo_frame: "item_form" },
+                class: "w-8 h-8 inline-flex items-center justify-center rounded-lg bg-brand/15 border border-brand/30 text-brand hover:bg-brand hover:text-zinc-900 transition-colors",
+                data: { turbo_frame: "food_item_form" },
                 title: t("views.calendars.add_food") do %>
-            <i class="fas fa-plus text-xs"></i>
-            <span class="hidden sm:inline"><%= t("views.components.day_food_group.add_food") %></span>
+            <i class="fas fa-apple-whole text-xs" aria-hidden="true"></i>
           <% end %>
           <%= link_to add_recipe_path,
-                class: "inline-flex items-center gap-1 px-2 py-1 text-xs text-ink-subtle hover:text-brand hover:bg-surface-hover rounded-md transition-colors",
-                data: { turbo_frame: "item_form" },
+                class: "w-8 h-8 inline-flex items-center justify-center rounded-lg bg-brand/15 border border-brand/30 text-brand hover:bg-brand hover:text-zinc-900 transition-colors",
+                data: { turbo_frame: "food_item_form" },
                 title: t("views.calendars.add_recipe") do %>
-            <i class="fas fa-plus text-xs"></i>
-            <span class="hidden sm:inline"><%= t("views.components.day_food_group.add_recipe") %></span>
+            <i class="fas fa-utensils text-xs" aria-hidden="true"></i>
           <% end %>
         </div>
       </div>
@@ -58,37 +61,50 @@
         <thead>
           <tr>
             <th class="text-left"><%= Food.human_attribute_name(:name) %></th>
-            <th class="text-left hidden sm:table-cell"><%= Food.human_attribute_name(:brand) %></th>
             <th class="text-left"><%= t("views.components.day_food_group.quantity_col") %></th>
             <th class="text-left"><%= Food.human_attribute_name(:calories) %></th>
+            <th class="text-left" title="<%= Food.human_attribute_name(:proteins) %>"><%= t("views.components.day_food_group.proteins_abbr") %></th>
+            <th class="text-left" title="<%= Food.human_attribute_name(:carbs) %>"><%= t("views.components.day_food_group.carbs_abbr") %></th>
+            <th class="text-left" title="<%= Food.human_attribute_name(:fats) %>"><%= t("views.components.day_food_group.fats_abbr") %></th>
             <th class="text-center w-24"><%= t("views.components.day_food_group.actions_col") %></th>
           </tr>
         </thead>
         <tbody>
           <% day_foods.each do |item| %>
             <tr>
-              <td class="font-medium text-ink-primary"><%= item.food_name %></td>
-
-              <td class="hidden sm:table-cell">
+              <td class="align-top font-medium text-ink-primary">
+                <span class="break-words"><%= item.food_name %></span>
+                <% if logged_during_fasting?(item) %>
+                  <i class="fas fa-hourglass-half text-ink-subtle/70 text-[10px] ml-1"
+                     title="<%= t("views.calendars.fasting.meal_logged_during_fast") %>"></i>
+                <% end %>
                 <% if is_recipe?(item) %>
-                  <span class="text-brand text-xs font-medium"><%= t("views.components.day_food_group.recipe_label") %></span>
-                <% else %>
-                  <span class="text-ink-muted"><%= item.food.brand.presence || "—" %></span>
+                  <div class="text-xs text-brand font-medium">
+                    <%= t("views.components.day_food_group.recipe_label") %>
+                    <% if item.customized? %>
+                      <i class="fas fa-sliders text-ink-subtle/70 text-[10px] ml-1"
+                         title="<%= t("views.components.day_food_group.customized_tooltip") %>"></i>
+                    <% end %>
+                  </div>
                 <% end %>
               </td>
 
-              <td>
+              <td class="align-top whitespace-nowrap">
                 <span class="text-ink-primary"><%= item.display_quantity %></span>
               </td>
 
-              <td class="font-semibold text-brand"><%= item.total_calories %> kcal</td>
+              <td class="align-top whitespace-nowrap font-semibold text-brand"><%= item.total_calories.round %> kcal</td>
+
+              <td class="align-top whitespace-nowrap font-semibold text-ink-muted"><%= item.total_proteins.round %> g</td>
+              <td class="align-top whitespace-nowrap font-semibold text-ink-muted"><%= item.total_carbs.round %> g</td>
+              <td class="align-top whitespace-nowrap font-semibold text-ink-muted"><%= item.total_fats.round %> g</td>
 
               <%# Actions: edit + delete with clear separation %>
-              <td class="text-center w-24">
+              <td class="align-top text-center w-24">
                 <div class="flex items-center justify-center gap-3">
                   <%= link_to edit_path(item),
                         class: "w-8 h-8 inline-flex items-center justify-center rounded-lg text-ink-subtle hover:text-brand hover:bg-surface-hover transition-colors",
-                        data: { turbo_frame: "item_form" },
+                        data: { turbo_frame: "food_item_form" },
                         title: t("shared.edit") do %>
                     <i class="fas fa-pen text-xs"></i>
                   <% end %>

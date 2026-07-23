@@ -28,9 +28,13 @@ class Day < ApplicationRecord
       workout_sessions.sum(:calories_burned).to_i
     end
 
-    cardio_kcal = CardioBlock.joins(:cardio_session)
-                             .where(cardio_sessions: { day_id: id })
-                             .sum(:calories_burned).to_i
+    cardio_kcal = if cardio_sessions.loaded? && cardio_sessions.all? { |cs| cs.cardio_blocks.loaded? }
+      cardio_sessions.sum { |cs| cs.cardio_blocks.sum { |cb| cb.calories_burned.to_i } }
+    else
+      CardioBlock.joins(:cardio_session)
+                 .where(cardio_sessions: { day_id: id })
+                 .sum(:calories_burned).to_i
+    end
 
     strength_kcal + cardio_kcal
   end
@@ -53,6 +57,44 @@ class Day < ApplicationRecord
 
   def total_sugars
     preloaded_day_foods.sum(&:total_sugars) + preloaded_day_recipes.sum(&:total_sugars)
+  end
+
+  def aggregated_micronutrients
+    @aggregated_micronutrients ||= (preloaded_day_foods + preloaded_day_recipes)
+      .each_with_object({}) do |item, acc|
+        item.scaled_micronutrients.each { |key, value| acc[key] = (acc[key] || 0) + value }
+      end.transform_values { |v| v.round(2) }.reject { |_, v| v.zero? }
+  end
+
+  # Accepte un `user:` déjà chargé (ex: CalendarDataLoader a déjà `current_user`
+  # en mémoire) pour éviter un aller-retour SQL évitable sur `user` — sinon
+  # `self.user` (l'association `belongs_to`) déclenche sa propre requête,
+  # distincte de toute instance de User déjà en mémoire côté appelant.
+  def week_aggregated_micronutrients(user: self.user)
+    week_range = date.beginning_of_week..date.end_of_week
+    user.days.where(date: week_range)
+        .includes(day_foods: :food, day_recipes: { recipe: { recipe_items: :food }, day_recipe_items: :food })
+        .each_with_object({}) do |d, acc|
+          d.aggregated_micronutrients.each { |key, value| acc[key] = (acc[key] || 0) + value }
+        end.transform_values { |v| v.round(2) }
+  end
+
+  # Toujours les 14 clés de Micronutrient::ALL, même à 0 — jamais seulement
+  # celles consommées (le panneau calendrier doit montrer les manques).
+  def micronutrient_coverage(user: self.user, profile: user&.profile)
+    consumed = week_aggregated_micronutrients(user: user)
+    goals    = profile&.weekly_micronutrient_goals || {}
+
+    Micronutrient::ALL.each_with_object({}) do |entry, acc|
+      value = consumed[entry.key.to_s].to_f
+      goal  = goals[entry.key]
+      acc[entry.key] = {
+        consumed:   value,
+        goal:       goal,
+        percentage: Micronutrient.coverage_percentage(value, goal),
+        nature:     entry.nature
+      }
+    end
   end
 
   private

@@ -1,6 +1,9 @@
 <%= turbo_stream.replace "workout_widget" do %>
   <%= render "calendars/workout_widget", day: @day %>
 <% end %>
+<%= turbo_stream.replace "water_widget" do %>
+  <%= render "calendars/water_widget", day: @day, profile: @profile %>
+<% end %>
 <%= turbo_stream.replace "daily_panel" do %>
   <%= render "calendars/daily_panel",
              total_calories:      @total_calories,
@@ -8,6 +11,9 @@
              total_carbs:         @total_carbs,
              total_fats:          @total_fats,
              total_sugars:        @total_sugars,
+             total_fiber:         @total_fiber,
+             total_saturated_fat: @total_saturated_fat,
+             total_salt:          @total_salt,
              profile:             @profile,
              daily_calorie_goal:  @daily_calorie_goal,
              daily_protein_goal:  @daily_protein_goal,

@@ -5,10 +5,38 @@ class ApplicationController < ActionController::Base
   include Pagy::Backend
 
   before_action :authenticate_user!
+  around_action :set_time_zone
   before_action :set_locale
   before_action :set_sentry_context
+  before_action :require_onboarding_complete!
+  before_action :set_active_storage_url_options
 
   private
+
+  # Required for Active Storage direct URL generation (.variant(...).processed.url,
+  # .url) outside the built-in redirect controller — without it, the Disk service
+  # raises ArgumentError in development/test. Production (Cloudflare R2) doesn't
+  # need this since CloudflareR2Service builds URLs from a fixed CDN host instead.
+  def set_active_storage_url_options
+    ActiveStorage::Current.url_options = { host: request.host, port: request.port, protocol: request.protocol }
+  end
+
+  def set_time_zone(&block)
+    if user_signed_in?
+      Time.use_zone(current_user.time_zone, &block)
+    else
+      block.call
+    end
+  end
+
+  def require_onboarding_complete!
+    return unless user_signed_in?
+    return if devise_controller?
+    return if controller_path == "onboarding"
+    return if current_user.profile.onboarding_complete?
+
+    redirect_to edit_onboarding_path
+  end
 
   def set_sentry_context
     return unless current_user

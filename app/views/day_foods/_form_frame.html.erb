@@ -1,0 +1,20 @@
+<%# locals: (day:, day_food:, title:, submit_text:) %>
+<%# Full contents of the "food_item_form" turbo frame — used by new.html.erb/edit.html.erb
+    on the initial GET, and by DayFoodsController on a failed create/update, so a validation
+    error re-render keeps the same card wrapper/header instead of leaving the bare form fields
+    floating with no turbo-frame boundary around them. %>
+<%= turbo_frame_tag "food_item_form" do %>
+  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl p-5 mt-4 mb-4">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="text-sm font-semibold text-ink-primary"><%= title %></h3>
+      <button type="button"
+              data-controller="close-frame"
+              data-action="click->close-frame#close"
+              class="p-1.5 text-ink-subtle/50 hover:text-ink-primary transition-colors rounded">
+        <i class="fas fa-times text-sm"></i>
+      </button>
+    </div>
+
+    <%= render "form", day: day, day_food: day_food, submit_text: submit_text %>
+  </div>
+<% end %>

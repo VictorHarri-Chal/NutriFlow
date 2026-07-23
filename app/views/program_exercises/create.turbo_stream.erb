@@ -3,7 +3,7 @@
 
 <%# Append the new exercise card to the day's exercise list %>
 <%= turbo_stream.append "program_day_exercises_#{@day.id}" do %>
-  <%= render "workout_programs/program_exercise", program: @program, day: @day, pe: @exercise, open: true %>
+  <%= render "workout_programs/program_exercise", program: @program, day: @day, pe: @exercise %>
 <% end %>
 
 <%# Show copy button if this is the first exercise added %>
@@ -12,3 +12,12 @@
     <%= render "workout_programs/copy_button", program: @program, day: @day %>
   <% end %>
 <% end %>
+
+<%# Keep the tension balance panel in sync — it's populated at page load and
+    otherwise never reflects exercises added since %>
+<%= turbo_stream.replace "tension_balance_panel" do %>
+  <%= render "workout_programs/tension_balance_panel", program: @program %>
+<% end %>
+
+<%# The exercise was just persisted with its sets — close the modal %>
+<%= turbo_stream.update "program_exercise_modal_root" %>

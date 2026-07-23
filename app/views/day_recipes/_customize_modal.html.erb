@@ -1,0 +1,111 @@
+<%# day_recipe: DayRecipe, f: form builder for day_recipe, day: Day %>
+<div class="fixed inset-0 z-50 hidden flex items-center justify-center p-4"
+     data-day-recipe-customize-target="modal"
+     data-action="click->day-recipe-customize#handleBackdropClick keydown@document->day-recipe-customize#handleEscape">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+  <div class="relative w-full max-w-xl bg-surface-raised border border-surface-border/50 rounded-2xl shadow-2xl transition-all duration-200 ease-out flex flex-col max-h-[85vh] overflow-hidden"
+       data-day-recipe-customize-target="panel">
+
+    <div class="flex items-center justify-between px-5 py-4 border-b border-surface-border/40 flex-shrink-0">
+      <div class="min-w-0">
+        <h3 class="text-sm font-semibold text-ink-primary break-words" data-day-recipe-customize-target="title">
+          <%= day_recipe.recipe&.name %>
+        </h3>
+        <p class="text-[11px] text-ink-subtle mt-0.5">
+          <%= t("views.day_recipes.form.customize_caption", date: l(day.date, format: :long)) %>
+        </p>
+      </div>
+      <button type="button" class="btn-ghost w-8 h-8 !p-0 flex items-center justify-center flex-shrink-0"
+              data-action="click->day-recipe-customize#cancel">
+        <i class="fas fa-times text-sm"></i>
+      </button>
+    </div>
+
+    <div class="px-5 py-4 overflow-y-auto min-h-0 flex-1">
+      <div class="hidden mb-3 text-xs text-status-danger bg-status-danger/10 border border-status-danger/30 rounded-lg px-3 py-2"
+           data-ingredient-rows-target="errorBox"
+           data-missing-food-message="<%= t("views.day_recipes.item_fields.error_missing_food_summary") %>"
+           data-bad-quantity-message="<%= t("views.day_recipes.item_fields.error_quantity_too_low_summary") %>">
+        <ul class="list-disc list-inside space-y-0.5"></ul>
+      </div>
+
+      <div data-controller="nested-form" data-nested-form-wrapper-selector-value=".day-recipe-items-container">
+        <div class="text-center py-6 border-2 border-dashed border-surface-border/40 rounded-xl"
+             data-nested-form-target="emptyState"
+             style="<%= day_recipe.day_recipe_items.any? ? 'display:none;' : '' %>">
+          <p class="text-xs text-ink-muted mb-2"><%= t("views.day_recipes.form.customize_empty") %></p>
+          <button type="button" class="btn-primary text-xs px-3 py-1.5" data-action="nested-form#add">
+            <%= t("views.day_recipes.form.customize_add_first") %>
+          </button>
+        </div>
+
+        <div class="day-recipe-items-container divide-y divide-surface-border/30"
+             data-day-recipe-customize-target="itemsContainer"
+             data-day-recipe-preview-target="itemsContainer">
+          <%= f.simple_fields_for :day_recipe_items do |item_fields| %>
+            <%= render "shared/ingredient_fields", f: item_fields, unit_class: DayRecipeItem, i18n_scope: "views.day_recipes.item_fields", width_class: "w-16", quantity_round: 1 %>
+          <% end %>
+        </div>
+
+        <button type="button"
+                class="mt-3 w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm text-ink-subtle hover:text-brand border border-dashed border-surface-border/50 hover:border-brand/50 rounded-lg hover:bg-brand/5 transition-colors"
+                data-action="nested-form#add"
+                data-nested-form-target="addButton"
+                style="<%= day_recipe.day_recipe_items.any? ? '' : 'display:none;' %>">
+          <i class="fas fa-plus text-xs"></i>
+          <%= t("views.day_recipes.form.customize_add_ingredient") %>
+        </button>
+
+        <template data-nested-form-target="template" data-day-recipe-customize-target="template">
+          <%= f.simple_fields_for :day_recipe_items, day_recipe.day_recipe_items.build, child_index: "NEW_RECORD" do |item_fields| %>
+            <%= render "shared/ingredient_fields", f: item_fields, unit_class: DayRecipeItem, i18n_scope: "views.day_recipes.item_fields", width_class: "w-16", quantity_round: 1 %>
+          <% end %>
+        </template>
+      </div>
+
+      <div class="mt-4 bg-surface-base rounded-lg border border-surface-border/40 px-4 py-3">
+        <p class="text-[11px] text-ink-subtle mb-2"><%= t("views.day_recipes.form.customize_total_label") %></p>
+        <div class="flex items-center gap-4">
+          <div class="text-center shrink-0 w-14">
+            <div class="text-xl font-bold text-brand leading-tight" data-day-recipe-preview-target="calories">0</div>
+            <div class="text-xs text-ink-subtle">kcal</div>
+          </div>
+          <div class="flex-1 grid grid-cols-3 gap-2 border-l border-surface-border/40 pl-4">
+            <div class="text-center">
+              <div class="text-sm font-semibold text-ink-primary">
+                <span data-day-recipe-preview-target="proteins">0</span><span class="text-xs font-normal text-ink-subtle">g</span>
+              </div>
+              <div class="text-xs text-ink-subtle"><%= t("views.recipes.show.proteins_short") %></div>
+            </div>
+            <div class="text-center">
+              <div class="text-sm font-semibold text-ink-primary">
+                <span data-day-recipe-preview-target="carbs">0</span><span class="text-xs font-normal text-ink-subtle">g</span>
+              </div>
+              <div class="text-xs text-ink-subtle"><%= t("views.recipes.show.carbs_short") %></div>
+            </div>
+            <div class="text-center">
+              <div class="text-sm font-semibold text-ink-primary">
+                <span data-day-recipe-preview-target="fats">0</span><span class="text-xs font-normal text-ink-subtle">g</span>
+              </div>
+              <div class="text-xs text-ink-subtle"><%= t("views.recipes.show.fats_short") %></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-2 px-5 py-4 border-t border-surface-border/40 flex-shrink-0">
+      <button type="button" class="btn-secondary" data-action="click->day-recipe-customize#cancel">
+        <%= t("shared.cancel") %>
+      </button>
+      <button type="button"
+              data-day-recipe-customize-target="confirmButton"
+              disabled
+              data-action="click->ingredient-rows#guardConfirm click->day-recipe-customize#confirm"
+              class="btn-primary disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-brand disabled:shadow-none">
+        <%= t("views.day_recipes.form.customize_confirm") %>
+      </button>
+    </div>
+  </div>
+</div>

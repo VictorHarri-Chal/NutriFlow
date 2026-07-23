@@ -11,3 +11,9 @@
     <%= render "workout_programs/copy_button", program: @program, day: @day %>
   <% end %>
 <% end %>
+
+<%# Keep the tension balance panel in sync — it's populated at page load and
+    otherwise never reflects exercises removed since %>
+<%= turbo_stream.replace "tension_balance_panel" do %>
+  <%= render "workout_programs/tension_balance_panel", program: @program %>
+<% end %>

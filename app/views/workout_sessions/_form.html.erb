@@ -1,15 +1,22 @@
-<%= form_with model: [day, workout_session],
+<%= form_with model: (workout_session.persisted? ? workout_session : [day, workout_session]),
     data: { controller: "workout-form",
             action: "submit->workout-form#validateSubmit",
             workout_form_last_perf_path_value:       last_performance_exercise_path(":id"),
             workout_form_exercise_search_path_value: search_exercises_path,
             workout_form_label_weight_value:         t("views.workout_sessions.form.weight_kg"),
             workout_form_label_reps_value:           t("views.workout_sessions.form.reps"),
+            workout_form_label_rpe_value:            t("views.workout_sets.set_editor.rpe_label"),
             workout_form_label_add_set_value:        t("views.workout_sessions.form.add_set"),
             workout_form_label_last_perf_value:      t("views.workout_sessions.form.last_perf_prefix"),
             workout_form_no_exercise_error_value:    t("views.workout_sessions.form.no_exercises_error"),
-            workout_form_label_max_sets_value:       t("views.workout_sessions.form.max_sets"),
-            workout_form_session_id_value:           workout_session.persisted? ? workout_session.id : 0 } do |f| %>
+            workout_form_label_max_sets_value:       t("views.workout_sets.set_editor.max_sets"),
+            workout_form_session_id_value:           workout_session.persisted? ? workout_session.id : 0,
+            workout_form_session_date_value:         day.date.iso8601,
+            workout_form_info_tooltip_value:         t("views.workout_sets.set_editor.info_tooltip"),
+            workout_form_label_set_type_warmup_value:  t("views.workout_sets.set_editor.set_types.warmup"),
+            workout_form_label_set_type_working_value: t("views.workout_sets.set_editor.set_types.working"),
+            workout_form_label_set_type_failure_value: t("views.workout_sets.set_editor.set_types.failure"),
+            workout_form_label_set_type_dropset_value: t("views.workout_sets.set_editor.set_types.dropset") } do |f| %>
 
   <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4 mb-4">
 
@@ -27,13 +34,7 @@
     </div>
 
     <%# ── Validation errors ── %>
-    <% if workout_session.errors.any? %>
-      <div class="mb-4 text-xs text-status-danger bg-status-danger/10 border border-status-danger/30 rounded-lg px-3 py-2 space-y-0.5">
-        <% workout_session.errors.full_messages.each do |msg| %>
-          <p><%= msg %></p>
-        <% end %>
-      </div>
-    <% end %>
+    <%= render "shared/form_errors", record: workout_session, margin_class: "mb-4" %>
 
     <%# ── Exercise search + groups ── %>
     <div class="space-y-2 mb-4">
@@ -85,7 +86,11 @@
 
             <%# Group header %>
             <div class="flex items-center justify-between gap-2">
-              <span class="text-sm font-semibold text-ink-primary capitalize truncate"><%= exercise.name %></span>
+              <div class="flex items-center gap-1.5 min-w-0">
+                <span class="text-sm font-semibold text-ink-primary capitalize break-words"><%= exercise.name %></span>
+                <i class="fas fa-circle-info text-xs text-ink-subtle/40 hover:text-ink-subtle cursor-default transition-colors shrink-0"
+                   title="<%= t('views.workout_sets.set_editor.info_tooltip') %>"></i>
+              </div>
               <button type="button" data-action="click->workout-form#removeExercise"
                       class="text-xs text-ink-subtle hover:text-status-danger transition-colors cursor-pointer shrink-0">
                 <i class="fas fa-times"></i>
@@ -99,18 +104,19 @@
             </div>
 
             <%# Column headers %>
-            <div class="grid grid-cols-[16px_1fr_1fr_28px_20px] gap-2 text-xs text-ink-subtle">
+            <div class="grid grid-cols-[16px_1fr_1fr_1fr_28px_20px] gap-2 text-xs text-ink-subtle">
               <span>#</span>
               <span><%= t("views.workout_sessions.form.weight_kg") %></span>
               <span><%= t("views.workout_sessions.form.reps") %></span>
+              <span><%= t("views.workout_sets.set_editor.rpe_label") %></span>
               <span></span>
               <span></span>
             </div>
 
-            <div class="sets-container space-y-1.5">
+            <div class="sets-container divide-y divide-surface-border/20">
               <% sets.each_with_index do |ws, i| %>
                 <% ws_key = ws.persisted? ? ws.id : 1_000_000 + set_position_counter %>
-                <div class="set-row">
+                <div class="set-row py-2">
                   <% if ws.persisted? %>
                     <input type="hidden" name="workout_session[workout_sets_attributes][<%= ws_key %>][id]" value="<%= ws.id %>">
                     <input type="hidden" name="workout_session[workout_sets_attributes][<%= ws_key %>][_destroy]" value="false" data-destroy-flag="true">
@@ -119,17 +125,30 @@
                   <input type="hidden" name="workout_session[workout_sets_attributes][<%= ws_key %>][position]" value="<%= set_position_counter %>" data-position-input="true">
                   <% set_position_counter += 1 %>
 
-                  <div class="grid grid-cols-[16px_1fr_1fr_28px_20px] gap-2 items-center">
+                  <div class="grid grid-cols-[16px_1fr_1fr_1fr_28px_20px] gap-2 items-center">
                     <span class="text-xs text-ink-subtle set-number"><%= i + 1 %></span>
                     <input type="number"
                            name="workout_session[workout_sets_attributes][<%= ws_key %>][weight_kg]"
                            value="<%= ws.weight_kg %>" placeholder="0" min="0" step="0.5"
-                           data-action="input->workout-form#checkPr"
+                           data-controller="digit-limit"
+                           data-action="input->workout-form#checkPr input->digit-limit#limit"
+                           data-digit-limit-max-integer-digits-value="4"
+                           data-digit-limit-max-decimal-digits-value="1"
                            class="input-dark text-sm py-1.5 cursor-text">
                     <input type="number"
                            name="workout_session[workout_sets_attributes][<%= ws_key %>][reps]"
-                           value="<%= ws.reps.presence || 10 %>" min="0" step="1"
+                           value="<%= ws.reps.presence || 10 %>" min="1" step="1"
+                           data-controller="digit-limit"
+                           data-action="input->digit-limit#limit"
+                           data-digit-limit-max-integer-digits-value="4"
                            class="input-dark text-sm py-1.5 cursor-text">
+                    <input type="number"
+                           name="workout_session[workout_sets_attributes][<%= ws_key %>][rpe]"
+                           value="<%= ws.rpe %>" placeholder="—" min="6" max="10" step="1"
+                           data-controller="digit-limit"
+                           data-action="input->digit-limit#limit"
+                           data-digit-limit-max-integer-digits-value="2"
+                           class="input-dark text-sm py-1.5 cursor-text text-center">
                     <span data-pr-badge
                           class="<%= ws.is_pr ? '' : 'hidden' %> flex items-center justify-center text-[9px] font-bold text-brand bg-brand/10 border border-brand/30 rounded px-1.5 py-0.5 leading-none whitespace-nowrap">
                       PR
@@ -138,6 +157,17 @@
                             class="text-ink-subtle hover:text-status-danger transition-colors text-xs flex items-center justify-center cursor-pointer <%= i == 0 ? 'invisible pointer-events-none' : '' %>">
                       <i class="fas fa-times"></i>
                     </button>
+                  </div>
+
+                  <div class="flex flex-wrap gap-2 pl-6 mt-1.5">
+                    <% WorkoutSet::SET_TYPES.each do |type| %>
+                      <% checkbox_id = "workout_set_#{ws_key}_set_types_#{type}" %>
+                      <%= check_box_tag "workout_session[workout_sets_attributes][#{ws_key}][set_types][]", type,
+                            ws.set_types.include?(type), id: checkbox_id, class: "hidden peer/#{type}" %>
+                      <%= label_tag checkbox_id, t("views.workout_sets.set_editor.set_types.#{type}"),
+                            class: set_type_pill_classes(type, size: :md) %>
+                    <% end %>
+                    <%= hidden_field_tag "workout_session[workout_sets_attributes][#{ws_key}][set_types][]", "", id: nil %>
                   </div>
                 </div>
               <% end %>
@@ -149,7 +179,7 @@
                 <i class="fas fa-plus text-[10px]"></i>
                 <%= t("views.workout_sessions.form.add_set") %>
               </button>
-              <span class="hidden text-[10px] text-ink-subtle/40" data-add-set-max-hint><%= t("views.workout_sessions.form.max_sets") %></span>
+              <span class="hidden text-[10px] text-ink-subtle/40" data-add-set-max-hint><%= t("views.workout_sets.set_editor.max_sets") %></span>
             </div>
 
             <%# ── Rest + Notes per exercise (bound to first set) ── %>
@@ -161,6 +191,9 @@
                          name="workout_session[workout_sets_attributes][<%= first_ws_key %>][rest_seconds]"
                          value="<%= first_ws.rest_seconds %>"
                          min="0" step="5"
+                         data-controller="digit-limit"
+                         data-action="input->digit-limit#limit"
+                         data-digit-limit-max-integer-digits-value="4"
                          class="w-full pr-7 text-[11px] bg-transparent border border-transparent rounded px-1 py-0.5 text-ink-muted placeholder:text-ink-subtle/30 hover:border-surface-border/50 focus:border-brand/40 focus:outline-none focus:bg-surface-hover transition-colors cursor-text">
                   <span class="absolute right-1.5 top-1/2 -translate-y-1/2 text-[9px] text-ink-subtle/30 pointer-events-none">sec</span>
                 </div>
@@ -169,6 +202,7 @@
                 <i class="fas fa-comment-alt text-[9px] text-ink-subtle/40 shrink-0 w-3 text-center mt-1.5"></i>
                 <textarea name="workout_session[workout_sets_attributes][<%= first_ws_key %>][notes]"
                           rows="1"
+                          maxlength="500"
                           class="w-full text-[11px] bg-transparent border border-transparent rounded px-1 py-0.5 text-ink-muted placeholder:text-ink-subtle/30 hover:border-surface-border/50 focus:border-brand/40 focus:outline-none focus:bg-surface-hover transition-all cursor-text min-h-[20px] focus:min-h-[48px] resize-none overflow-y-hidden"><%= first_ws.notes %></textarea>
               </div>
             </div>
@@ -179,46 +213,21 @@
 
     </div>
 
-    <%# ── Duration + RPE ── %>
-    <div class="grid grid-cols-2 gap-4 mb-4">
-      <div>
-        <%= f.label :duration_minutes, t("views.workout_sessions.form.duration"), class: "label-dark block mb-1" %>
-        <div class="relative">
-          <%= f.number_field :duration_minutes, min: 1, step: 1, value: workout_session.duration_minutes || 60,
-              class: "input-dark pr-10 cursor-text" %>
-          <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">min</span>
-        </div>
-      </div>
-
-      <div>
-        <%= f.label :rpe, t("views.workout_sessions.form.rpe"), class: "label-dark block mb-1" %>
-        <div class="space-y-2">
-          <div class="flex items-center gap-2">
-            <span class="text-xs text-ink-subtle w-3 text-center shrink-0">1</span>
-            <input type="range" min="1" max="10" step="1"
-                   value="<%= workout_session.rpe || 5 %>"
-                   data-workout-form-target="rpeSlider"
-                   data-action="input->workout-form#updateRpe"
-                   class="flex-1 h-1.5 rounded-full appearance-none bg-surface-hover cursor-pointer accent-brand">
-            <span class="text-xs text-ink-subtle w-5 text-center shrink-0">10</span>
-            <span class="text-sm font-bold text-brand w-8 text-right shrink-0"
-                  data-workout-form-target="rpeDisplay">
-              <%= workout_session.rpe ? "#{workout_session.rpe}/10" : "—" %>
-            </span>
-          </div>
-          <div class="flex justify-between text-[10px] text-ink-subtle/60 px-5">
-            <span><%= t("views.workout_sessions.form.rpe_light") %></span>
-            <span><%= t("views.workout_sessions.form.rpe_max") %></span>
-          </div>
-        </div>
-        <%= f.hidden_field :rpe, value: workout_session.rpe, data: { workout_form_target: "rpeValue" } %>
+    <%# ── Duration ── %>
+    <div class="mb-4">
+      <%= f.label :duration_minutes, t("views.workout_sessions.form.duration"), class: "label-dark block mb-1" %>
+      <div class="relative">
+        <%= f.number_field :duration_minutes, min: 1, step: 1, value: workout_session.duration_minutes || 60,
+            class: "input-dark pr-10 cursor-text",
+            data: { controller: "digit-limit", action: "input->digit-limit#limit", digit_limit_max_integer_digits_value: 4 } %>
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">min</span>
       </div>
     </div>
 
     <%# ── Notes ── %>
     <div class="mb-4">
       <%= f.label :notes, t("views.workout_sessions.form.notes"), class: "label-dark block mb-1" %>
-      <%= f.text_area :notes, rows: 2, class: "input-dark resize-none cursor-text" %>
+      <%= f.text_area :notes, rows: 2, maxlength: 500, class: "input-dark resize-none cursor-text" %>
     </div>
 
     <%# ── Actions ── %>

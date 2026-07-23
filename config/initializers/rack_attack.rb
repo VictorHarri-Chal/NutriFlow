@@ -38,6 +38,18 @@ Rack::Attack.throttle("passwords/email", limit: 3, period: 1.hour) do |req|
   end
 end
 
+# --- Confirmation email resend ---
+
+Rack::Attack.throttle("confirmations/ip", limit: 5, period: 1.hour) do |req|
+  req.real_ip if req.path == "/users/confirmation" && req.post?
+end
+
+Rack::Attack.throttle("confirmations/email", limit: 3, period: 1.hour) do |req|
+  if req.path == "/users/confirmation" && req.post?
+    req.params.dig("user", "email")&.downcase&.strip
+  end
+end
+
 # --- Registration ---
 
 Rack::Attack.throttle("registrations/ip", limit: 5, period: 1.day) do |req|

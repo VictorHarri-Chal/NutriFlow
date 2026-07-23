@@ -10,7 +10,9 @@
 
   <%# ── Formulaire d'ajout ── %>
   <div class="border-t border-surface-border/40 pt-6" data-controller="form-validation">
-    <%= simple_form_for @day_food_group, url: day_food_groups_path, html: { class: "flex items-end gap-3" } do |f| %>
+    <%= simple_form_for @day_food_group, url: day_food_groups_path, html: { class: "flex flex-col gap-3" } do |f| %>
+      <%= render "shared/form_errors", record: @day_food_group, margin_class: "" %>
+      <div class="flex items-end gap-3">
       <div class="flex-1">
         <%= f.input :name,
             label: t("views.settings.food_groups.group_name_label"),
@@ -29,6 +31,7 @@
           class: "btn-primary cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shrink-0",
           data: { form_validation_target: "submit" },
           disabled: true %>
+      </div>
     <% end %>
   </div>
 
@@ -37,24 +40,7 @@
     <% if @day_food_groups.any? %>
       <div class="divide-y divide-surface-border/30">
         <% @day_food_groups.each do |group| %>
-          <div class="flex items-center justify-between py-3 group">
-            <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-lg bg-surface-hover flex items-center justify-center shrink-0">
-                <i class="fas fa-utensils text-xs text-ink-subtle"></i>
-              </div>
-              <div>
-                <div class="text-sm font-medium text-ink-primary"><%= group.name %></div>
-              </div>
-            </div>
-            <div class="opacity-0 group-hover:opacity-100 transition-opacity">
-              <%= delete_link_with_confirm(
-                    day_food_group_path(group),
-                    confirm: t("views.settings.food_groups.delete_confirm"),
-                    icon_class: "fas fa-trash text-sm",
-                    title: t("shared.delete"),
-                    class: "inline-flex items-center justify-center w-8 h-8 rounded-lg text-ink-subtle hover:text-status-danger hover:bg-status-danger_dim/20 transition-colors") %>
-            </div>
-          </div>
+          <%= render "day_food_groups/day_food_group", day_food_group: group %>
         <% end %>
       </div>
     <% else %>

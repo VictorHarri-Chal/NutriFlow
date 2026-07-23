@@ -1,5 +1,13 @@
 class WorkoutSession < ApplicationRecord
   belongs_to :day
+
+  # Must be declared before the `has_many :workout_sets, dependent: :destroy`
+  # below: before_destroy callbacks run in declaration order, so this needs
+  # to capture the exercise ids before Rails' own dependent-destroy callback
+  # wipes the workout_sets rows.
+  before_destroy :capture_pr_recalc_context
+  after_destroy :recalculate_prs_after_destroy
+
   has_many :workout_sets, -> { order(:position) }, dependent: :destroy, inverse_of: :workout_session
   has_many :exercises, through: :workout_sets
 
@@ -7,9 +15,11 @@ class WorkoutSession < ApplicationRecord
     allow_destroy: true,
     reject_if: ->(attrs) { attrs[:exercise_id].blank? }
 
-  validates :rpe, numericality: { in: 1..10, only_integer: true }, allow_nil: true
+  MAX_SETS_PER_EXERCISE = 10
+
   validates :duration_minutes, numericality: { greater_than: 0, only_integer: true }, allow_nil: true
   validate :must_have_at_least_one_exercise
+  validate :max_sets_per_exercise
 
   delegate :user, to: :day
 
@@ -51,6 +61,12 @@ class WorkoutSession < ApplicationRecord
     workout_sets.sum { |s| (s.weight_kg || 0) * (s.reps || 0) }
   end
 
+  def average_rpe
+    return 0.0 if workout_sets.empty?
+
+    workout_sets.map(&:effective_rpe).sum.to_f / workout_sets.size
+  end
+
   def grouped_sets
     if new_record?
       # In-memory: exercises were preloaded via set.exercise = pe.exercise in the controller,
@@ -65,9 +81,26 @@ class WorkoutSession < ApplicationRecord
 
   private
 
+  def capture_pr_recalc_context
+    @pr_recalc_user = user
+    @pr_recalc_exercise_ids = workout_sets.pluck(:exercise_id).uniq
+  end
+
+  def recalculate_prs_after_destroy
+    return if @pr_recalc_exercise_ids.blank?
+
+    PrRecalculator.new(@pr_recalc_user, @pr_recalc_exercise_ids).call
+  end
+
   def must_have_at_least_one_exercise
     active = workout_sets.reject(&:marked_for_destruction?)
     errors.add(:base, I18n.t("activerecord.errors.models.workout_session.at_least_one_exercise")) if active.empty?
+  end
+
+  def max_sets_per_exercise
+    active = workout_sets.reject(&:marked_for_destruction?)
+    too_many = active.group_by(&:exercise_id).values.any? { |sets| sets.size > MAX_SETS_PER_EXERCISE }
+    errors.add(:base, I18n.t("activerecord.errors.models.workout_session.too_many_sets_per_exercise")) if too_many
   end
 
   def primary_body_part_met
@@ -77,9 +110,7 @@ class WorkoutSession < ApplicationRecord
 
   # Scale MET based on RPE (Rate of Perceived Exertion)
   def rpe_multiplier
-    case rpe
-    when 1..3  then 0.70
-    when 4..5  then 0.85
+    case average_rpe
     when 6..7  then 1.00
     when 8..9  then 1.15
     when 10    then 1.30

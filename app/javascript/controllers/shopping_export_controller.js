@@ -21,6 +21,10 @@ export default class extends Controller {
     )
   }
 
+  print() {
+    window.print()
+  }
+
   share() {
     const text = this._buildText()
     if (!text) return
@@ -43,7 +47,10 @@ export default class extends Controller {
     if (!this.titleValue) return ""
 
     const CATS  = this.categoriesValue
-    const ORDER = ["proteins", "grains", "vegetables", "fruits", "dairy", "beverages", "condiments", "other"]
+    // Ordre dérivé des clés envoyées par le serveur (déjà dans l'ordre
+    // d'affichage) plutôt qu'une liste dupliquée ici, qui désynchronise
+    // silencieusement dès qu'une catégorie est ajoutée côté modèle.
+    const ORDER = Object.keys(CATS)
 
     // Group items by category (preserving server-side order)
     const grouped = {}
@@ -60,7 +67,7 @@ export default class extends Controller {
       const { emoji, label } = CATS[cat] || CATS.other
       lines.push(`${emoji} ${label.toUpperCase()}`)
       grouped[cat].forEach(({ name, quantity }) => {
-        lines.push(`□ ${name}${quantity ? `  —  ${quantity}` : ""}`)
+        lines.push(`□ ${name}${quantity ? `  ·  ${quantity}` : ""}`)
       })
       if (idx < activeCats.length - 1) lines.push("")
     })

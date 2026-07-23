@@ -1,0 +1,38 @@
+<%= turbo_frame_tag dom_id(food_label) do %>
+  <div class="py-2 space-y-3" data-controller="form-validation">
+    <%= simple_form_for food_label, html: { class: "space-y-3" } do |f| %>
+      <div class="flex items-center gap-3">
+        <div class="flex-1">
+          <%= f.input :name,
+              label: false,
+              wrapper: :default_with_inline_error,
+              wrapper_html: { class: "mb-0" },
+              input_html: {
+                class: "input-dark",
+                maxlength: 20,
+                data: {
+                  form_validation_target: "input",
+                  action: "input->form-validation#input keyup->form-validation#keyup"
+                }
+              } %>
+        </div>
+        <%= button_tag type: "submit",
+              class: "btn-primary w-8 h-8 p-0 shrink-0 flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed",
+              data: { form_validation_target: "submit" },
+              title: t("shared.update"),
+              "aria-label": t("shared.update") do %>
+          <i class="fas fa-check text-xs"></i>
+        <% end %>
+        <%= link_to setting_path(tab: 'food_labels'),
+              data: { turbo_frame: dom_id(food_label), role: "cancel-edit" },
+              title: t("shared.cancel"),
+              "aria-label": t("shared.cancel"),
+              class: "inline-flex items-center justify-center w-8 h-8 rounded-lg border border-status-danger/40 text-status-danger hover:bg-status-danger/10 transition-colors shrink-0" do %>
+          <i class="fas fa-xmark text-xs"></i>
+        <% end %>
+      </div>
+
+      <%= render "food_labels/color_picker", f: f, id_prefix: dom_id(food_label) %>
+    <% end %>
+  </div>
+<% end %>

@@ -9,3 +9,12 @@ fr:
         recipe: "Recette"
         quantity: "Quantité"
         use_recipe_quantity: "Utiliser la quantité de la recette"
+      day_recipe/day_recipe_items:
+        food: "Aliment"
+        food_id: "Aliment"
+        quantity: "Quantité"
+        unit: "Unité"
+    errors:
+      models:
+        day_recipe:
+          at_least_one_ingredient: "Au moins un ingrédient est requis"

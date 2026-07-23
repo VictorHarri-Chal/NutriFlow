@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>NutriFlow — <%= yield(:title).presence || t("views.devise.sessions.title") %></title>
+    <title>NutriFlow · <%= yield(:title).presence || t("views.devise.sessions.title") %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -23,22 +23,6 @@
   </head>
 
   <body class="bg-surface-base min-h-screen flex items-center justify-center">
-    <div class="fixed top-4 right-4 z-50 space-y-2">
-      <% if flash[:notice] %>
-        <div class="flex items-center gap-3 px-4 py-3 rounded-xl bg-status-success/15 border border-status-success/40 shadow-lg text-sm text-status-success max-w-sm"
-             data-controller="auto-dismiss">
-          <i class="fas fa-check-circle text-base shrink-0"></i>
-          <span><%= flash[:notice] %></span>
-        </div>
-      <% end %>
-      <% if flash[:alert] %>
-        <div class="flex items-center gap-3 px-4 py-3 rounded-xl bg-status-danger/15 border border-status-danger/40 shadow-lg text-sm text-status-danger max-w-sm"
-             data-controller="auto-dismiss">
-          <i class="fas fa-circle-exclamation text-base shrink-0"></i>
-          <span><%= flash[:alert] %></span>
-        </div>
-      <% end %>
-    </div>
     <div class="w-full max-w-md px-4">
       <%= yield %>
     </div>

@@ -1,13 +1,21 @@
 # frozen_string_literal: true
 
 class PaginationComponent < ApplicationComponent
-  def initialize(pagy: nil, full_result_option: false)
+  def initialize(pagy: nil, full_result_option: false, turbo_stream_links: false)
     super
     @pagy = pagy
     @full_result_option = full_result_option
+    @turbo_stream_links = turbo_stream_links
   end
 
   private
+
+  # Permet d'utiliser ce composant à l'intérieur d'une modale injectée par
+  # turbo_stream (ex: historique paginé) sans que les liens de pagination
+  # ne déclenchent une navigation plein écran classique.
+  def link_data
+    @turbo_stream_links ? { turbo_stream: true } : {}
+  end
 
   def pagination_links_class
     <<-TXT.squish
@@ -20,7 +28,9 @@ class PaginationComponent < ApplicationComponent
   def pagination_active_class(page)
     return unless @pagy
     page_number = (params[:page].presence || 1).to_i
-    "z-10 bg-brand-muted border-brand text-brand" if page_number == page
+    return unless page_number == page
+
+    "z-10 !bg-brand/20 !border-brand/50 !text-brand font-bold hover:!bg-brand hover:!text-zinc-900"
   end
 
   def right_arrow_class
@@ -28,30 +38,17 @@ class PaginationComponent < ApplicationComponent
   end
 
   def full_result_path
-    current_path = request.fullpath.dup
-    return current_path if current_path.include?("full_result=true")
-
-    if current_path.include?("?")
-      current_path["?"] = "?full_result=true&"
-    else
-      current_path << "?full_result=true"
-    end
-
-    current_path.sub!(/&page=\d/, "")
-
-    current_path
+    build_path(request.query_parameters.except("page").merge("full_result" => "true"))
   end
 
   def pagy_result_path
-    current_path = request.fullpath.dup
+    build_path(request.query_parameters.except("full_result", "page"))
+  end
 
-    if current_path.include?("&")
-      current_path.sub!("full_result=true&", "")
-    else
-      current_path.sub!("?full_result=true", "")
-    end
-
-    current_path
+  def build_path(query_params)
+    uri = URI.parse(request.path)
+    uri.query = query_params.present? ? URI.encode_www_form(query_params) : nil
+    uri.to_s
   end
 
   def full_result?
@@ -62,7 +59,8 @@ class PaginationComponent < ApplicationComponent
     return unless @pagy
     link_to page,
             helpers.pagy_url_for(@pagy, page),
-            class: "#{pagination_links_class} #{pagination_active_class(page)} px-4"
+            class: "#{pagination_links_class} #{pagination_active_class(page)} px-4",
+            data: link_data
   end
 
   def page_ellipsis

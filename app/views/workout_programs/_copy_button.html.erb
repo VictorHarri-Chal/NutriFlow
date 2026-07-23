@@ -1,6 +1,6 @@
 <%# locals: (program:, day:) %>
 <span id="copy_btn_day_<%= day.id %>">
-  <% if day.program_exercises.reload.any? %>
+  <% if day.program_exercises.any? %>
     <button type="button"
             data-action="click->collapsible#toggle"
             title="<%= t("views.workout_programs.day.copy_to_title") %>"

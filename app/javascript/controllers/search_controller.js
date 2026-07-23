@@ -38,24 +38,24 @@ export default class extends Controller {
   }
 
   // Lit les filtres/tris actifs depuis l'URL courante et les injecte dans le form
-  // pour qu'une recherche reste cumulative avec les filtres et tris déjà appliqués.
+  // pour qu'une recherche reste cumulative avec les filtres et tris déjà appliqués,
+  // quel que soit le nom de ces filtres (générique, pas lié à une page en particulier).
+  // "page" est exclu : une nouvelle recherche doit repartir de la première page.
   _syncFilterParams() {
     const current = new URLSearchParams(window.location.search)
-    const keys = ["favorites", "in_stock", "out_of_stock", "label_id", "category", "sort_usages", "q[s]"]
+    const skip = new Set(["query", "page"])
 
     Array.from(this.element.querySelectorAll('input[type="hidden"]'))
-      .filter(el => keys.includes(el.name))
+      .filter(el => current.has(el.name) && !skip.has(el.name))
       .forEach(el => el.remove())
 
-    keys.forEach(key => {
-      const value = current.get(key)
-      if (value !== null) {
-        const input = document.createElement("input")
-        input.type = "hidden"
-        input.name = key
-        input.value = value
-        this.element.appendChild(input)
-      }
+    current.forEach((value, key) => {
+      if (skip.has(key)) return
+      const input = document.createElement("input")
+      input.type = "hidden"
+      input.name = key
+      input.value = value
+      this.element.appendChild(input)
     })
   }
 }

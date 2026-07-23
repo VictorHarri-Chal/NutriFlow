@@ -41,7 +41,7 @@
     <%= render 'shared/sidebar' %>
 
     <!-- Flash messages -->
-    <div id="flash_messages" class="fixed top-4 right-4 z-[200] space-y-2 pointer-events-none">
+    <div id="flash_messages" class="fixed top-4 right-4 z-[200] space-y-2 pointer-events-none print:hidden">
       <% if flash[:notice] %>
         <div class="pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl bg-status-success/15 border border-status-success/40 shadow-lg text-sm text-status-success max-w-sm"
              data-controller="auto-dismiss">
@@ -59,13 +59,13 @@
     </div>
 
     <!-- Main Content -->
-    <div data-sidebar-target="topMenu" class="md:pl-64 transition-[padding-left] duration-300 ease-in-out">
+    <div data-sidebar-target="topMenu" class="md:pl-64 print:pl-0 transition-[padding-left] duration-300 ease-in-out">
       <main class="p-6">
         <%= yield %>
       </main>
     </div>
     <%# Food detail slide-over panel — loaded lazily via Turbo Frame %>
-    <div data-controller="food-detail-panel">
+    <div data-controller="food-detail-panel" class="print:hidden">
       <div data-food-detail-panel-target="overlay"
            class="fixed inset-0 bg-black/60 opacity-0 pointer-events-none transition-opacity duration-300 z-40"
            data-action="click->food-detail-panel#close"></div>
@@ -74,5 +74,8 @@
         <turbo-frame id="food_show_panel"></turbo-frame>
       </div>
     </div>
+
+    <%# Scan produit — modale globale, ouverte depuis l'icône navbar sur toutes les pages %>
+    <div id="scan_modal_root" class="print:hidden"></div>
   </body>
 </html>

@@ -1,5 +1,6 @@
 class DayFoodsController < ApplicationController
   include CalendarData
+  include DayScoped
 
   before_action :set_day,      only: [:new, :create]
   before_action :set_day_food, only: [:edit, :update, :destroy]
@@ -31,7 +32,7 @@ class DayFoodsController < ApplicationController
       @day_food_groups = current_user.day_food_groups.order(:name)
       @foods           = current_user.foods.order(:name)
       respond_to do |format|
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("item_form", partial: "day_foods/form", locals: { day: @day, day_food: @day_food, submit_text: t("shared.add") }) }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("food_item_form", partial: "day_foods/form_frame", locals: { day: @day, day_food: @day_food, title: t("views.day_foods.new.title"), submit_text: t("shared.add") }) }
         format.html         { render :new, status: :unprocessable_entity }
       end
     end
@@ -44,19 +45,18 @@ class DayFoodsController < ApplicationController
 
   def update
     if @day_food.update(day_food_params)
+      load_calendar_data(@day)
+      @selected_date = @day.date
+      load_month_heatmap(@day.date)
       respond_to do |format|
-        format.turbo_stream do
-          load_calendar_data(@day)
-          @selected_date = @day.date
-          load_month_heatmap(@day.date)
-        end
+        format.turbo_stream
         format.html { redirect_to calendars_path(date: @day.date) }
       end
     else
       @day_food_groups = current_user.day_food_groups.order(:name)
       @foods           = current_user.foods.order(:name)
       respond_to do |format|
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("item_form", partial: "day_foods/form", locals: { day: @day, day_food: @day_food, submit_text: t("shared.update") }) }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("food_item_form", partial: "day_foods/form_frame", locals: { day: @day, day_food: @day_food, title: t("views.day_foods.edit.title"), submit_text: t("shared.update") }) }
         format.html         { render :edit, status: :unprocessable_entity }
       end
     end
@@ -81,7 +81,7 @@ class DayFoodsController < ApplicationController
   end
 
   def set_day_food
-    @day_food = DayFood.joins(:day).where(days: { user_id: current_user.id }).find(params[:id])
+    @day_food = find_day_scoped(DayFood, params[:id])
     @day = @day_food.day
   end
 

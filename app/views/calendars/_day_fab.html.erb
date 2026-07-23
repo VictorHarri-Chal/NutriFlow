@@ -1,39 +1,51 @@
-<% fab_class = "inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface-raised border border-surface-border/50 text-sm text-ink-subtle hover:text-ink-primary hover:border-surface-border transition-colors shadow-lg cursor-pointer" %>
-
-<div class="fixed bottom-6 right-6 z-40 flex items-center gap-2">
+<div class="fixed bottom-6 right-6 z-40"
+     data-controller="exclusive-frame fab">
   <% if current_user.show_workout_section? %>
     <%= link_to new_day_workout_session_path(day),
-          class: fab_class,
+          class: "absolute bottom-0 right-0 flex h-[50px] w-[50px] items-center justify-center rounded-full border border-surface-border/40 bg-surface-raised text-ink-subtle shadow-lg transition-all duration-200 ease-out opacity-0 scale-50 translate-x-0 translate-y-0 pointer-events-none hover:text-brand",
+          title: t("views.workout_sessions.widget.add_session"),
           aria: { label: t("views.workout_sessions.widget.add_session") },
-          data: { turbo_frame: "item_form" } do %>
-      <i class="fas fa-plus text-xs" aria-hidden="true"></i>
-      <span class="hidden sm:inline"><%= t("views.workout_sessions.widget.add_session") %></span>
+          tabindex: "-1",
+          data: { fab_target: "item", turbo_frame: "workout_item_form", action: "click->exclusive-frame#clear click->fab#close" } do %>
+      <i class="fas fa-dumbbell text-base" aria-hidden="true"></i>
     <% end %>
   <% end %>
 
   <% if current_user.show_cardio_section? %>
     <%= link_to new_day_cardio_session_path(day),
-          class: fab_class,
+          class: "absolute bottom-0 right-0 flex h-[50px] w-[50px] items-center justify-center rounded-full border border-surface-border/40 bg-surface-raised text-ink-subtle shadow-lg transition-all duration-200 ease-out opacity-0 scale-50 translate-x-0 translate-y-0 pointer-events-none hover:text-brand",
+          title: t("views.cardio_sessions.widget.add"),
           aria: { label: t("views.cardio_sessions.widget.add") },
-          data: { turbo_frame: "item_form" } do %>
-      <i class="fas fa-plus text-xs" aria-hidden="true"></i>
-      <span class="hidden sm:inline"><%= t("views.cardio_sessions.widget.add") %></span>
+          tabindex: "-1",
+          data: { fab_target: "item", turbo_frame: "cardio_item_form", action: "click->exclusive-frame#clear click->fab#close" } do %>
+      <i class="fas fa-heart-pulse text-base" aria-hidden="true"></i>
     <% end %>
   <% end %>
 
   <%= link_to new_day_day_recipe_path(day),
-        class: fab_class,
+        class: "absolute bottom-0 right-0 flex h-[50px] w-[50px] items-center justify-center rounded-full border border-surface-border/40 bg-surface-raised text-ink-subtle shadow-lg transition-all duration-200 ease-out opacity-0 scale-50 translate-x-0 translate-y-0 pointer-events-none hover:text-brand",
+        title: t("views.calendars.add_recipe"),
         aria: { label: t("views.calendars.add_recipe") },
-        data: { turbo_frame: "item_form" } do %>
-    <i class="fas fa-plus text-xs" aria-hidden="true"></i>
-    <span class="hidden sm:inline"><%= t("views.calendars.add_recipe") %></span>
+        tabindex: "-1",
+        data: { fab_target: "item", turbo_frame: "food_item_form", action: "click->exclusive-frame#clear click->fab#close" } do %>
+    <i class="fas fa-utensils text-base" aria-hidden="true"></i>
   <% end %>
 
   <%= link_to new_day_day_food_path(day),
-        class: fab_class,
+        class: "absolute bottom-0 right-0 flex h-[50px] w-[50px] items-center justify-center rounded-full border border-surface-border/40 bg-surface-raised text-ink-subtle shadow-lg transition-all duration-200 ease-out opacity-0 scale-50 translate-x-0 translate-y-0 pointer-events-none hover:text-brand",
+        title: t("views.calendars.add_food"),
         aria: { label: t("views.calendars.add_food") },
-        data: { turbo_frame: "item_form" } do %>
-    <i class="fas fa-plus text-xs" aria-hidden="true"></i>
-    <span class="hidden sm:inline"><%= t("views.calendars.add_food") %></span>
+        tabindex: "-1",
+        data: { fab_target: "item", turbo_frame: "food_item_form", action: "click->exclusive-frame#clear click->fab#close" } do %>
+    <i class="fas fa-apple-whole text-base" aria-hidden="true"></i>
   <% end %>
+
+  <button type="button"
+          class="relative z-10 flex h-[58px] w-[58px] items-center justify-center rounded-full bg-brand text-zinc-900 shadow-lg transition-colors hover:bg-brand-hover"
+          aria-label="<%= t("views.calendars.fab_toggle") %>"
+          aria-expanded="false"
+          data-fab-target="button"
+          data-action="click->fab#toggle">
+    <i class="fas fa-plus text-xl transition-transform duration-200" data-fab-target="icon" aria-hidden="true"></i>
+  </button>
 </div>

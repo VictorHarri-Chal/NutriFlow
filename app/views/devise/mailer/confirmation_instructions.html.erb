@@ -1,5 +1,8 @@
-<p>Welcome <%= @email %>!</p>
+<p style="margin:0 0 16px 0;"><%= t("views.devise.mailer.confirmation.greeting", email: @email) %></p>
 
-<p>You can confirm your account email through the link below:</p>
+<p style="margin:0 0 24px 0;"><%= t("views.devise.mailer.confirmation.intro") %></p>
 
-<p><%= link_to 'Confirm my account', confirmation_url(@resource, confirmation_token: @token) %></p>
+<p style="margin:0; text-align:center;">
+  <%= link_to t("views.devise.mailer.confirmation.action"), confirmation_url(@resource, confirmation_token: @token),
+        style: "display:inline-block; background-color:#EAB308; color:#18181B; text-decoration:none; padding:12px 24px; border-radius:8px; font-weight:600; font-size:14px;" %>
+</p>

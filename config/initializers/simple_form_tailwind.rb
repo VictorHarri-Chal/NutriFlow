@@ -9,7 +9,26 @@ INPUT_CLASSES = 'input-dark'
 BUTTON_CLASSES = 'btn-primary cursor-pointer'
 
 SimpleForm.setup do |config| # rubocop:disable Metrics/BlockLength
+  # No `b.use :error` here — the app shows one aggregate error box per form
+  # (see app/views/shared/_form_errors.html.erb) instead of a per-field message,
+  # so a field's own inline error text would just duplicate that box. The
+  # `error_class:` options below are kept: they still drive the red
+  # border/label highlighting on the invalid field itself.
   config.wrappers :default, class: 'min-h-fit' do |b|
+    b.use :html5
+    b.use :placeholder
+    b.use :label, class: LABEL_CLASSES, error_class: 'text-status-danger'
+    b.wrapper tag: "div", class: "flex items-center" do |ba|
+      ba.use :input, class: INPUT_CLASSES,
+                    error_class: 'border-status-danger focus:ring-status-danger/50 focus:border-status-danger'
+      ba.optional :append
+    end
+  end
+
+  # Same as :default, but keeps the inline per-field error message — for the
+  # compact turbo-frame row forms (e.g. editing a food label or meal group
+  # in place) that have no room for a top-level aggregate error box.
+  config.wrappers :default_with_inline_error, class: 'min-h-fit' do |b|
     b.use :html5
     b.use :placeholder
     b.use :label, class: LABEL_CLASSES, error_class: 'text-status-danger'
@@ -27,7 +46,6 @@ SimpleForm.setup do |config| # rubocop:disable Metrics/BlockLength
 
     b.use :label, class: 'ml-2 block text-sm text-ink-muted',
                   error_class: 'underline decoration-status-danger decoration-2 underline-offset-4 decoration-dashed'
-    b.use :error, wrap_with: { tag: :p, class: 'ml-2 text-sm text-status-danger' }
   end
 
   config.wrappers :radio_buttons, item_wrapper_class: 'flex items-center',
@@ -53,19 +71,6 @@ SimpleForm.setup do |config| # rubocop:disable Metrics/BlockLength
     b.wrapper :radios, class: 'flex space-x-4' do |ba|
       ba.use :input, class: 'h-4 w-4 border-surface-border text-brand focus:ring-brand/50 bg-surface-hover', error_class: ''
     end
-  end
-
-  config.wrappers :tom_select, tag: 'div', class: 'mb-6', error_class: 'form-group-invalid',
-                               valid_class: 'form-group-valid' do |b|
-    b.use :html5
-    b.use :label, class: LABEL_CLASSES
-    b.wrapper tag: "div", class: "flex items-center" do |ba|
-      ba.use :input, data: { controller: 'tom-select' }
-      ba.optional :append
-    end
-
-    b.use :full_error, wrap_with: { tag: 'div', class: 'block text-sm font-medium text-status-danger mt-1 max-w-fit' }
-    b.use :hint, wrap_with: { tag: 'small', class: 'block text-sm font-medium text-ink-subtle mt-1' }
   end
 end
 

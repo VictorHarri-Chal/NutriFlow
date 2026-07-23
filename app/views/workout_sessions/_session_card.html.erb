@@ -12,27 +12,25 @@
           <%= workout_session.duration_minutes %> min
         </span>
       <% end %>
-      <% if workout_session.rpe.present? %>
-        <span class="flex items-center gap-1 text-[11px] text-ink-muted">
-          <i class="fas fa-fire text-ink-subtle/60 text-[9px]"></i>
-          RPE <%= workout_session.rpe %>
-        </span>
-      <% end %>
+      <span class="flex items-center gap-1 text-[11px] text-ink-muted">
+        <i class="fas fa-fire text-ink-subtle/60 text-[9px]"></i>
+        RPE <%= number_with_precision(workout_session.average_rpe, precision: 1, strip_insignificant_zeros: true) %>/10
+      </span>
       <% cal = workout_session.estimated_calories(current_user.profile&.weight&.to_f) %>
-      <span class="flex items-center gap-1 text-[11px] text-brand/70 font-medium">
-        <i class="fas fa-bolt text-[9px]"></i>
+      <span class="flex items-center gap-1 text-[11px] text-status-success/80 font-medium">
+        <i class="fas fa-fire-alt text-[9px]"></i>
         ~<%= cal %> kcal
       </span>
     </div>
 
     <% if defined?(show_actions) && show_actions %>
       <div class="flex items-center gap-0.5 opacity-0 group-hover/card:opacity-100 transition-opacity flex-shrink-0">
-        <%= link_to edit_day_workout_session_path(workout_session.day, workout_session),
+        <%= link_to edit_workout_session_path(workout_session),
             class: "p-1.5 text-ink-subtle/50 hover:text-ink-primary transition-colors rounded",
-            data: { turbo_frame: "item_form" } do %>
+            data: { turbo_frame: "workout_item_form" } do %>
           <i class="fas fa-pen text-[11px]"></i>
         <% end %>
-        <%= link_to day_workout_session_path(workout_session.day, workout_session),
+        <%= link_to workout_session_path(workout_session),
             class: "p-1.5 text-ink-subtle/50 hover:text-status-danger transition-colors rounded",
             data: {
               turbo_method: :delete,
@@ -46,12 +44,12 @@
   </div>
 
   <%# Muscle group chips — tinted brand to distinguish from set badges %>
-  <% body_parts = grouped.keys.filter_map(&:body_part).uniq %>
+  <% body_parts = grouped.keys.filter_map { |ex| ex.body_part.presence }.uniq %>
   <% if body_parts.any? %>
     <div class="flex flex-wrap gap-1">
       <% body_parts.first(3).each do |bp| %>
         <span class="text-[10px] px-2 py-0.5 rounded-full bg-brand/10 border border-brand/20 text-brand/60 leading-none font-medium">
-          <%= t("views.exercises.body_parts.#{bp.parameterize(separator: '_')}", default: bp.split.map(&:capitalize).join(" ")) %>
+          <%= t_body_part(bp) %>
         </span>
       <% end %>
       <% if body_parts.size > 3 %>
@@ -69,7 +67,7 @@
       <div class="space-y-0.5">
         <div class="flex items-start gap-3">
           <div class="flex items-center gap-1 min-w-0 flex-1 pt-px">
-            <span class="text-[11px] font-medium text-ink-primary capitalize truncate">
+            <span class="text-[11px] font-medium text-ink-primary capitalize break-words">
               <%= exercise.name %>
             </span>
             <% if sets.any?(&:is_pr) %>

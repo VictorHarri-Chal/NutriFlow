@@ -1,5 +1,8 @@
 class Exercise < ApplicationRecord
+  extend Enumerize
   include PgSearch::Model
+
+  TENSION_PROFILES = %i[stretch contraction mixed].freeze
 
   belongs_to :custom_user, class_name: "User", foreign_key: :custom_user_id, optional: true
   has_one_attached :image do |attachable|
@@ -7,6 +10,8 @@ class Exercise < ApplicationRecord
     attachable.variant :medium,    resize_to_limit: [800, 800]
   end
   has_many :exercise_favorites, dependent: :destroy
+
+  enumerize :tension_profile, in: TENSION_PROFILES
 
   validates :exercise_id, presence: true, uniqueness: true
   validates :name, presence: true
@@ -22,6 +27,11 @@ class Exercise < ApplicationRecord
   scope :accessible_to, ->(user) { where(custom_user_id: [nil, user.id]) }
   scope :by_body_part, ->(part) { where(body_part: part) }
   scope :by_equipment, ->(eq) { where(equipment: eq) }
+  scope :by_tension_profile, ->(value) {
+    next none unless value.is_a?(String) || value.is_a?(Array)
+
+    value == "none" ? where(tension_profile: nil) : where(tension_profile: value)
+  }
   scope :with_gif, -> { where(gif_status: "ok") }
   scope :visible, -> { where(gif_status: [nil, "ok"]) }
 

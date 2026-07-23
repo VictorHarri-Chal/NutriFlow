@@ -66,6 +66,7 @@ asset_path: /rails/public/assets
 # Configure the image builder.
 builder:
   arch: amd64
+  provenance: false
 
 # Use a different ssh user than root
 # ssh:

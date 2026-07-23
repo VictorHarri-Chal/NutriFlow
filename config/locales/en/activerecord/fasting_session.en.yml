@@ -1,0 +1,16 @@
+en:
+  activerecord:
+    models:
+      fasting_session: "Fast"
+      fasting_sessions: "Fasts"
+    attributes:
+      fasting_session:
+        protocol: "Protocol"
+        started_at: "Start"
+        ended_at: "End"
+    errors:
+      models:
+        fasting_session:
+          attributes:
+            base:
+              active_session_already_exists: "You already have an active fast."

@@ -21,6 +21,9 @@ class RecipesController < ApplicationController
   end
 
   def show
+    cooked            = DayRecipe.joins(:day).where(days: { user_id: current_user.id }, recipe_id: @recipe.id)
+    @times_cooked     = cooked.count
+    @last_cooked_date = cooked.maximum("days.date")
   end
 
   def new
@@ -94,9 +97,7 @@ class RecipesController < ApplicationController
       return
     end
 
-    @shopping_list = current_user.shopping_lists.order(created_at: :asc).first_or_create!(
-      name: t("views.shopping_lists.default_name")
-    )
+    @shopping_list = current_user.active_shopping_list
 
     items.each do |item|
       canonical_unit = %w[mL L].include?(item.unit) ? "mL" : "g"

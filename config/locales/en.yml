@@ -3,6 +3,14 @@ en:
     formats:
       month_year: "%b %Y"
 
+  feature_guard:
+    workout_disabled: "The workout section is disabled in your preferences."
+    cardio_disabled: "The cardio section is disabled in your preferences."
+    weight_page_disabled: "Weight and measurement tracking is disabled in your preferences."
+    measurements_disabled: "Body measurement tracking is disabled in your preferences."
+    water_disabled: "Water tracking is disabled in your preferences."
+    fasting_disabled: "Intermittent fasting tracking is disabled in your preferences."
+
   pagination_component:
     results: "Results"
     to: "to"
@@ -16,11 +24,16 @@ en:
       locale_updated: "Language updated successfully."
       locale_error: "Error updating language."
       preferences_updated: "Preferences updated."
+      preferences_updated_fasting_stopped: "Preferences updated. Your active fast was stopped."
       preferences_error: "Error updating preferences."
+      other_sessions_signed_out: "Other devices have been signed out."
+      data_reset: "All your data has been deleted. You can start onboarding again."
     foods:
       created: "Food created successfully."
       updated: "Food updated successfully."
       destroyed: "Food deleted successfully."
+      force_destroyed: "Food and all its history deleted successfully."
+      delete_blocked: "This food is still in use and cannot be deleted."
       duplicated: "Food duplicated. Edit it before saving."
       duplicate_name: "Copy of %{name}"
       duplicate_error: "Unable to duplicate this food."
@@ -37,8 +50,13 @@ en:
     days:
       food_added: "Food added successfully."
       food_add_error: "Error adding food."
+    fasting_sessions:
+      disclaimer_required: "Confirm the disclaimer to start your fast."
     weight_entries:
       saved: "Weight saved."
+      deleted: "Entry deleted."
+    body_measurements:
+      saved: "Measurements saved."
       deleted: "Entry deleted."
     recipe_ratings:
       created: "Rating saved successfully."
@@ -61,6 +79,8 @@ en:
       duplicate_error: "Unable to duplicate this recipe."
     profiles:
       updated: "Profile updated successfully."
+    onboarding:
+      completed: "Profile completed successfully. Welcome to NutriFlow!"
     users:
       passwords:
         reset_sent: "A password reset email has been sent to your email address."
@@ -68,28 +88,33 @@ en:
       registrations:
         password_updated: "Your password has been updated successfully."
         email_updated: "Your email address has been updated successfully."
+        email_confirmation_sent: "A confirmation email has been sent to your new address. Click the link to finalize the change."
 
   activerecord:
     attributes:
-      user:
-        current_password: "Current password"
-        password: "Password"
-        password_confirmation: "Password confirmation"
-        email: "Email address"
-      food:
+      profile:
         name: "Name"
-        brand: "Brand"
-        calories: "Calories"
-        proteins: "Proteins"
-        carbs: "Carbohydrates"
-        fats: "Fats"
-        sugars: "Sugars"
+        weight: "Weight"
+        height: "Height"
+        date_of_birth: "Date of birth"
+        gender: "Gender"
+        goal_weight: "Target weight"
+        goal_rate_kg_per_week: "Desired rate"
+        water_goal_ml: "Daily water goal"
+        default_daily_steps: "Steps per day"
     errors:
       models:
-        recipe:
-          at_least_one_ingredient: "At least one ingredient is required"
+        profile:
+          attributes:
+            goal_rate_kg_per_week:
+              must_be_negative_for_weight_loss: "must be negative for a weight loss goal"
+              must_be_positive_for_muscle_gain: "must be positive for a muscle gain goal"
+            date_of_birth:
+              cannot_be_in_the_future: "cannot be in the future"
+              too_far_in_the_past: "is not a plausible date"
         workout_session:
           at_least_one_exercise: "Add at least one exercise before saving the session."
+          too_many_sets_per_exercise: "You can't add more than 10 sets per exercise."
         cardio_session:
           at_least_one_block: "Add at least one machine before saving the cardio session."
         recipe_rating:
@@ -110,8 +135,9 @@ en:
     quantity: "Quantity"
     not_defined: "Not defined"
     not_provided: "Not provided"
-    select_blank: "— Select —"
+    select_blank: "Select..."
     food_count:
+      zero: "0 food"
       one: "1 food"
       other: "%{count} foods"
     no_food_groups: "No meal groups"
@@ -128,7 +154,6 @@ en:
       sidebar:
         calendar: "Calendar"
         foods: "Foods"
-        calorie_requirement: "Calorie requirement"
         recipes: "Recipes"
         settings: "Settings"
         logout: "Log out"
@@ -136,8 +161,10 @@ en:
         profile: "My profile"
         collapse: "Collapse"
         weight: "Weight tracking"
+        measurements: "Measurements"
+        weight_and_measurements: "Weight & Measurements"
         exercises: "Training"
-        workout_programs: "My program"
+        workout_programs: "Programs"
         statistics: "Statistics"
         shopping_list: "Shopping list"
 
@@ -145,36 +172,39 @@ en:
       page_title: "Calendar"
       add_recipe: "Add a dish"
       add_food: "Add a food"
+      fab_toggle: "Add"
       today: "Today"
       previous_day: "Previous day"
       next_day: "Next day"
-      exceeded: "EXCEEDED"
-      reached: "REACHED"
-      excellent: "EXCELLENT"
-      goal_reached: "Goal reached"
-      day_complete: "Day complete — all goals reached!"
+      collapse_all_button: "Collapse all"
+      customize_display_button: "Customize display"
+      today_button_disabled: "You're already on today"
+      day_complete: "Day complete: all goals reached!"
       calories: "Calories"
       proteins: "Proteins"
       fats: "Fats"
       carbs: "Carbs"
-      carbs_adaptive_hint: "adaptive"
-      sugars_of_carbs: "(of which carbs)"
       sugars: "Sugars"
+      fiber: "Fiber"
+      saturated_fat: "Sat. fat"
+      salt: "Salt"
+      micronutrients:
+        trigger_title: "View micronutrients"
+        week_range: "Week of %{start} to %{end}"
+        ceiling_suffix: " (max)"
+        info_title: "Where do these targets come from?"
+        info_text: "These weekly targets are based on ANSES (French health agency) nutritional references from 2021, multiplied by 7. They are fixed by sex and don't vary with your weight or activity level. Sodium is shown as a ceiling not to exceed (\"max\"), not a minimum to reach. Cholesterol has no official reference: its value is shown for information only, without a numeric target."
       nutrition_summary: "Daily nutritional summary"
-      daily_objectives: "Daily goals"
-      objectives_unavailable: "Goals unavailable"
-      objectives_unavailable_hint: "To display your goals, please enter your weight in your profile."
-      complete_profile: "Complete profile"
-      complete_profile_hint: "Complete your profile to display your goals"
-      copy_yesterday: "Copy yesterday"
       copy_yesterday_title: "Copy foods from the previous day"
       heatmap:
         title: "%{month}"
         open_button: "Monthly view"
+        previous_month: "Previous month"
+        next_month: "Next month"
+        current_month: "Current month"
         legend_goal: "≥ 95%"
         legend_partial: "70–95%"
         legend_low: "< 70%"
-        goal_hint: "Goal: %{goal} kcal / day"
         stats_logged: "days logged"
         stats_goal_reached: "goal reached"
         stats_avg_kcal: "avg kcal"
@@ -195,6 +225,27 @@ en:
         small_glass: "Small glass"
         medium_glass: "Large glass"
         bottle: "Bottle"
+      fasting:
+        title: "Intermittent fasting"
+        finish: "Finish fast"
+        cancel: "Cancel"
+        cancel_confirm: "Cancel this fast? It won't be kept in your history."
+        expected_end: "Expected to end at %{time}"
+        expected_end_tomorrow: "Expected to end tomorrow at %{time}"
+        in_duration: "in %{duration}"
+        goal_reached: "Goal reached, keep going if you'd like"
+        idle_summary_empty: "No fast logged yet"
+        banner_text: "%{protocol} fast in progress · %{remaining} left · expected to end at %{time}"
+        banner_text_tomorrow: "%{protocol} fast in progress · %{remaining} left · expected to end tomorrow at %{time}"
+        idle_summary:
+          one: "Current streak: %{count} day · %{hours} h total"
+          other: "Current streak: %{count} days · %{hours} h total"
+        protocol_tooltip:
+          sixteen_eight: "16h fasting, 8h eating window. Level: easy to moderate."
+          eighteen_six: "18h fasting, 6h eating window. Level: moderate."
+          omad: "One meal, about 1h. Level: hard."
+          circadian_12_12: "12h fast aligned with the night, 12h eating window. Level: very easy."
+        meal_logged_during_fast: "Logged during a fasting window"
       copy_success: "Yesterday's foods have been copied successfully."
       copy_error: "Some foods could not be copied."
       copy_nothing_to_copy: "No foods logged yesterday."
@@ -207,11 +258,18 @@ en:
         sleep: "Sleep"
       breakdown:
         title: "Estimated expenditure"
+        info_title: "How this estimate is calculated"
+        info_bmr: "Basal metabolic rate: Mifflin-St Jeor formula, based on your weight, height, age and gender."
+        info_job: "Physical effort at work: fixed estimate based on your job type, including a typical average step count for that job (desk, standing, physical labor)."
+        info_steps: "Walking: calories estimated from the steps beyond your job's average, adjusted to your weight."
+        info_workout: "Workout & cardio: calculated session by session (MET values for strength training, ACSM equations for cardio)."
+        info_disclaimer: "These are estimates, not measurements. They may differ from reality depending on your individual metabolism."
         bmr: "Basal metabolic rate"
-        job_neat: "Activity (job)"
-        steps: "Walking"
+        job_neat: "Physical effort at work"
+        steps: "Walking (excess)"
         steps_unit: "steps"
-        steps_default_hint: "profile default"
+        steps_manual_hint: "Manual estimate"
+        steps_manual_hint_title: "Manual entry for now. Only the steps beyond your job's average (adjustable in your profile) increase the calories shown here. Automatic sync (Apple Health / Google Fit) is coming with the mobile app."
         workout: "Workout & cardio"
         total_tdee: "Total expenditure"
         goal_label:
@@ -220,7 +278,6 @@ en:
           muscle_gain: "Muscle gain goal (+10 %)"
         goal_intake_hint: "→ to eat today"
         no_workout: "No workout logged"
-        steps_edit_title: "Edit today's steps"
         reset_steps: "Reset to profile default"
       food_widget:
         title: "Food"
@@ -230,12 +287,39 @@ en:
         description: "You haven't added any foods for this day yet."
         add_first_food: "Add your first food"
 
+    fasting_sessions:
+      disclaimer:
+        title: "Before you start"
+        intro: "Check whether any of these situations apply to you:"
+        item_diabetes: "Diabetes treated with insulin or sulfonylureas"
+        item_eating_disorder: "History of eating disorders"
+        item_pregnancy: "Pregnancy or breastfeeding"
+        item_minor: "Adolescence or incomplete growth"
+        advice: "If any of these apply to you, consult a healthcare professional before starting your fast."
+        acknowledge: "Start"
+        cancel: "Cancel"
+
     foods:
       page_title: "Food bank"
       title: "My foods"
       add_food: "Add a food"
       edit_food: "Edit food"
       delete_confirm: "Are you sure you want to delete \"%{name}\"?"
+      delete_blocked:
+        title: "Cannot delete"
+        intro: "\"%{name}\" is still in use and cannot be deleted right now:"
+        day_foods:
+          one: "%{count} log entry"
+          other: "%{count} log entries"
+        recipes:
+          one: "%{count} recipe"
+          other: "%{count} recipes"
+        day_recipe_items:
+          one: "%{count} customized recipe"
+          other: "%{count} customized recipes"
+        confirm: "Got it"
+        force_delete: "Delete everything"
+        force_delete_confirm: "Delete \"%{name}\" and everything linked to it (recipes, customized recipes, and log entries)? This action is irreversible."
       search_placeholder: "Search for a food..."
       labels_col: "Labels"
       usages_col: "Uses"
@@ -314,6 +398,8 @@ en:
         category: "Category"
         category_none: "None"
         create_labels_hint: "Create food labels in settings"
+        add_micronutrient: "Add"
+        micronutrient_select_placeholder: "Choose a micronutrient..."
       new:
         tab_manual: "Manual"
         tab_off: "Quick import"
@@ -504,9 +590,24 @@ en:
         no_recipe_found: "No recipe found"
         use_recipe_quantity: "Use the total recipe quantity"
         food_group: "Meal group"
+        customize_tooltip: "Customize the ingredients for this entry"
+        customize_caption: "Ingredients for this entry · %{date}"
+        customize_empty: "No ingredients"
+        customize_add_first: "Add a food"
+        customize_add_ingredient: "Add a food"
+        customize_total_label: "Recalculated total"
+        customize_confirm: "Confirm"
+      item_fields:
+        search_food: "Search a food..."
+        remove: "Remove"
+        error_food: "Select a food"
+        error_quantity: "Invalid quantity (min. 1 g)"
+        error_missing_food_summary: "Select a food for every ingredient."
+        error_quantity_too_low_summary: "The quantity of every ingredient must be at least 1 g."
 
     recipes:
-      title: "My recipes"
+      title: "Recipe bank"
+      heading: "My recipes"
       new_recipe: "New recipe"
       search_placeholder: "Search for a recipe..."
       no_recipes: "No recipes"
@@ -514,6 +615,7 @@ en:
       no_results_for: "No recipe matches your search \"%{query}\""
       create_first: "Create your first recipe to see it here."
       recipe_count:
+        zero: "0 recipe"
         one: "1 recipe"
         other: "%{count} recipes"
       sort_label: "Sort:"
@@ -557,6 +659,9 @@ en:
         ingredients: "Ingredients"
         food_col: "Food"
         quantity_col: "Quantity"
+        proteins_abbr: "prot"
+        carbs_abbr: "carb"
+        fats_abbr: "fat"
         instructions: "Instructions"
         no_instructions: "No instructions provided"
         back_to_list: "Back to recipes"
@@ -589,28 +694,43 @@ en:
         food: "Food *"
         food_col: "Food"
         quantity_col: "Quantity"
-        select_blank: "— Select —"
+        select_blank: "Select..."
         search_food: "Search for a food..."
         quantity: "Quantity (g) *"
         remove: "Remove"
         error_food: "Please select a food"
         error_quantity: "Invalid quantity (min. 1 g)"
+        error_missing_food_summary: "Select a food for every ingredient."
+        error_quantity_too_low_summary: "The quantity of every ingredient must be at least 1 g."
 
     profiles:
       show:
         title: "My Profile"
         edit_link: "Edit profile"
-        incomplete_hint: "Your profile is incomplete. Enter your weight, height and age to calculate your nutritional needs."
-        complete_cta: "Complete profile"
         calorie_needs_title: "My calorie needs"
         calories_to_eat_per_day: "kcal / day"
         tdee_label: "TDEE"
-        macro_goals_hint: "Based on your current goal"
+        weight_loss: "Weight loss"
+        maintenance: "Maintenance"
+        muscle_gain: "Muscle gain"
+        macro_goals_title: "Macronutrient goals"
         carbs_residual_hint: "residual calories"
+        per_kg: "%{value} g / kg"
+        fat_percent_hint: "%{percent}% of calories"
+        macro_kcal_suffix: "%{kcal} kcal"
+        macro_low_calorie_warning: "Your calorie goal is too low to cover your protein and fat needs, carbs are at 0 g. Reconsider your rate or check your profile."
+        macro_info_title: "How these goals are calculated"
+        macro_info_protein: "Protein: 2 g per kg of bodyweight, the standard to preserve muscle mass regardless of the goal."
+        macro_info_fat: "Fat: 25% of total calories, so it adapts automatically to a deficit or a surplus."
+        macro_info_carbs: "Carbs: whatever calories remain once protein and fat are covered."
+        bmi_info_title: "An indicative measure"
+        bmi_info_text: "BMI doesn't distinguish muscle mass from fat mass, a very muscular profile can be wrongly classified as overweight."
         tdee_estimate_note: "Estimated with %{steps} steps/day · no workout · Adapts in real time in the calendar."
         formula_hint_title: "Mifflin-St Jeor + NEAT"
-        formula_hint_formula: "TDEE = BMR + Job NEAT + (steps × 0.04 × weight/70)"
-        formula_hint_goals: "Loss −15% · Maintenance ×1 · Muscle gain +10%"
+        formula_hint_formula: "TDEE = BMR + Job NEAT + (steps beyond job average × 0.04 × weight/70) + Training NEAT"
+        formula_hint_goals: "Loss: chosen weekly rate · Maintenance: TDEE · Muscle gain: chosen weekly rate"
+        rate_per_week: "%{rate} kg/week"
+        goal_weight_estimate: "%{weeks} weeks at current rate"
         personal_info: "Personal information"
         physical_data: "Physical data"
         lifestyle_section: "Lifestyle"
@@ -620,14 +740,12 @@ en:
         weight: "Weight"
         height: "Height"
         gender: "Gender"
-        job_activity_level: "Daily activity"
-        job_activity_level_hint: "Excluding sports — describes your usual activity level at work and in daily life"
-        default_daily_steps: "Steps per day (average)"
-        default_daily_steps_hint: "Used as a default if you don't log your steps in the calendar"
+        job_activity_level: "Physical effort at work"
+        default_daily_steps: "Daily steps (average)"
         water_goal: "Daily hydration goal"
         water_goal_estimated: "Recommended: %{ml} ml"
         goal: "Goal"
-        age_years: "%{age} years old"
+        age_unit: "years"
         bmi: "BMI"
         goal_weight: "Target weight"
         bmi_underweight: "Underweight"
@@ -637,22 +755,44 @@ en:
       edit:
         title: "Edit profile"
         name: "Name"
-        age: "Age"
+        date_of_birth: "Date of birth"
         weight: "Weight"
+        weight_synced_hint: "This weight updates automatically each time you log a new weigh-in in weight tracking."
         height: "Height"
         water_goal_ml: "Daily water goal"
         goal_weight: "Target weight"
+        goal_requires_weight: "Enter your weight, height and date of birth above to set your goal."
         gender: "Gender"
         gender_male: "Male"
         gender_female: "Female"
         gender_other: "Other"
-        job_activity_level: "Daily activity"
-        job_activity_level_hint: "Excluding sports — describes your usual activity level at work and in daily life"
-        default_daily_steps: "Steps per day (average)"
-        default_daily_steps_hint: "Used as a default if you don't log your steps in the calendar"
-        water_goal_estimated_prefix: "Estimated:"
+        job_activity_level: "Physical effort at work"
+        job_activity_level_hint: "This category estimates the energy expenditure specific to your professional activity: posture, usual movement and physical effort. Each option includes a typical average step count, shown below. The \"Daily steps\" field only counts the steps beyond this average, so the same walking is never counted twice."
+        job_activity_steps_included: "≈ %{count} steps included"
+        default_daily_steps: "Daily steps"
+        default_daily_steps_hint: "Total real step count for the day. Used as a default if you don't log anything in the calendar. Only the steps beyond your job's average (above) add to your calorie expenditure."
+        water_goal_estimated_prefix: "Estimated"
         water_goal_use_estimated: "Use"
         goal: "Goal"
+        goal_locked_title: "How the goal is determined"
+        goal_locked_loss: "Lower target weight → Weight loss"
+        goal_locked_maintenance: "Same target weight → Maintenance"
+        goal_locked_gain: "Higher target weight → Muscle gain"
+        goal_rate: "Desired rate"
+        goal_rate_hint: "Converted into calories added to or removed from your total expenditure each day."
+        goal_rate_computed_hint: "Starting value calculated from your profile"
+        goal_rate_unit: "kg/week"
+        goal_rate_attention_prefix: "Warning"
+        goal_rate_warning_loss: "Beyond 1 kg per week, you're more likely to lose muscle along with fat."
+        goal_rate_warning_gain: "Beyond 0.5 kg per week, more of the gain tends to be fat rather than muscle."
+        goal_rate_estimate_prefix: "Estimate"
+        goal_rate_estimate_template: "%{weeks} weeks to reach %{weight} kg"
+
+    onboarding:
+      edit:
+        title: "Complete your profile"
+        subtitle: "This information lets us offer you an experience tailored to your needs."
+        submit: "Finish my profile"
 
     settings:
       show:
@@ -665,26 +805,55 @@ en:
       preferences:
         title: "Preferences"
         description: "Customize the display and behavior of the application."
-        journal_section: "Daily journal"
-        navigation_section: "Navigation"
-        show_day_note: "Notes & well-being section"
-        show_day_note_hint: "Shows the free-text area, as well as the energy, mood and sleep indicators at the bottom of each day."
-        show_workout_section: "Workout section"
-        show_workout_section_hint: "Shows the workout widget and the quick-add button in the calendar."
-        show_cardio_section: "Cardio section"
-        show_cardio_section_hint: "Shows the cardio widget and the quick-add button in the calendar."
-        show_water_tracking: "Hydration tracking"
-        show_water_tracking_hint: "Shows the water widget in the journal and hydration data in statistics."
+        calendar_sections_title: "Calendar sections"
+        calendar_sections_hint: "Drag to reorder how sections are displayed in the daily journal."
+        other_preferences_title: "Other preferences"
+        always_shown: "Always shown"
+        calories: "Calories"
+        calories_hint: "Always shown at the top of the calendar: calories consumed, macros and daily goal."
+        food: "Food & recipes"
+        food_hint: "Meals and recipes added to the day's journal."
+        show_day_note: "Notes & well-being"
+        show_day_note_hint: "Shows the free-text area and energy, mood and sleep indicators in the daily journal, and adds the Well-being tab in statistics."
+        show_workout_section: "Training"
+        show_workout_section_hint: "Shows the workout widget and quick-add button in the journal, programs in the navigation, and the Training tab in statistics. Disabled, these pages become inaccessible."
+        show_cardio_section: "Cardio"
+        show_cardio_section_hint: "Shows the cardio widget and quick-add button in the journal, and the Cardio tab in statistics. Disabled, these pages become inaccessible."
+        show_water_tracking: "Hydration"
+        show_water_tracking_hint: "Shows the water widget in the daily journal and adds the Hydration tab in statistics. Disabled, both sections become inaccessible."
         show_tdee_breakdown: "Energy expenditure breakdown"
-        show_tdee_breakdown_hint: "Shows the BMR / NEAT / Steps / Workout section below the macro bars in the journal."
+        show_tdee_breakdown_hint: "Shows the breakdown of estimated calorie expenditure (basal metabolic rate, activity at work, walking, workout) below the macro bars in the daily journal."
         show_weight_tracking: "Weight tracking"
-        show_weight_tracking_hint: "Shows the weight tracking page and its link in the navigation menu."
+        show_weight_tracking_hint: "Gives access to the body weight tracking page and shows its link in the navigation menu. Disabled, the page becomes inaccessible."
+        show_body_measurements: "Body measurements"
+        show_body_measurements_hint: "Shows the Measurements tab (waist, hips, etc.) on the Weight & Measurements page. Disabled, this tab becomes inaccessible."
+        show_fasting_tracking: "Intermittent fasting"
+        show_fasting_tracking_hint: "Shows the fasting widget in the diary and the Fasting tab in statistics. When disabled, this section becomes inaccessible."
+        confirm_disable: "Disable \"%{feature}\"? Your existing data will be kept, but this section will become inaccessible."
       general:
         title: "General settings"
         description: "Customize your NutriFlow experience."
         language: "Interface language"
         language_hint: "The language will be applied immediately."
         save: "Save"
+        time_zone: "Time zone"
+        time_zone_hint: "Determines today's date in your daily journal and statistics."
+        time_zones:
+          europe_paris: "Paris (France)"
+          europe_london: "London (United Kingdom)"
+          europe_brussels: "Brussels (Belgium)"
+          europe_zurich: "Zurich (Switzerland)"
+          europe_madrid: "Madrid (Spain)"
+          europe_berlin: "Berlin (Germany)"
+          europe_lisbon: "Lisbon (Portugal)"
+          america_new_york: "New York (US, Eastern)"
+          america_chicago: "Chicago (US, Central)"
+          america_denver: "Denver (US, Mountain)"
+          america_los_angeles: "Los Angeles (US, Pacific)"
+          america_toronto: "Toronto (Canada)"
+          america_montreal: "Montreal (Canada)"
+          atlantic_canary: "Canary Islands (Spain)"
+          indian_reunion: "Réunion (France)"
       security:
         title: "Account security"
         description: "Manage your email address, password and account access."
@@ -702,13 +871,18 @@ en:
         confirm_password: "Confirm new password"
         confirm_password_placeholder: "Confirm your new password"
         update_password: "Update password"
-        forgot_password: "Forgot password?"
-        forgot_password_hint: "If you forgot your password, you can request a reset link by email."
-        email_address: "Email address"
-        send_reset_link: "Send reset link"
+        reset_data: "Reset my data"
+        reset_data_warning: "This action is irreversible. All your foods, recipes, workouts, programs, shopping lists and your calendar will be permanently deleted, and you'll start onboarding again. Your account stays active."
+        reset_data_button: "Reset my data"
         delete_account: "Delete my account"
         delete_account_warning: "This action is irreversible. All your data will be permanently deleted."
         delete_account_button: "Delete account"
+        pending_reconfirmation: "Email change pending to %{email}. Check your inbox to confirm."
+        resend_confirmation: "Resend email"
+        sign_out_other_sessions: "Sign out other devices"
+        sign_out_other_sessions_hint: "Ends all your active sessions on other browsers and devices. You stay signed in here."
+        sign_out_other_sessions_button: "Sign out"
+        sign_out_other_sessions_confirm: "Are you sure you want to sign out all your other devices? You'll need to sign in again on each of them."
       food_groups:
         title: "Food groups"
         description: "Organize your meals by time of day."
@@ -735,6 +909,15 @@ en:
         explanation: "Labels allow you to categorize your foods with tags like \"Proteins\", \"Carbs\", \"Fats\", \"Organic\", etc."
         color_label: "Color"
         delete_confirm: "Delete this label?"
+        colors:
+          red: "Red"
+          orange: "Orange"
+          amber: "Amber"
+          yellow: "Yellow"
+          green: "Green"
+          teal: "Teal"
+          blue: "Blue"
+          violet: "Violet"
 
     confirm:
       title: "Confirmation required"
@@ -752,7 +935,7 @@ en:
         badge: "Nutrition + Training"
         title_line1: "Take control of your"
         title_line2: "body & nutrition"
-        subtitle: "Track your meals, hit your nutritional goals and explore 1,100+ exercises — all in one place."
+        subtitle: "Track your meals, hit your nutritional goals and explore 1,100+ exercises, all in one place."
         cta_start: "Get started for free"
         cta_login: "Log in"
         free_label: "100% free"
@@ -776,7 +959,7 @@ en:
         recipes_title: "Custom recipes"
         recipes_desc: "Compose recipes with their ingredients and quantities. Macros are calculated automatically to the gram."
         calories_title: "Calorie needs"
-        calories_desc: "Calculate your ideal intake based on your profile, activity level and goal — weight loss, maintenance or muscle gain."
+        calories_desc: "Calculate your ideal intake based on your profile, activity level and goal: weight loss, maintenance or muscle gain."
         ratings_title: "Ratings & comments"
         ratings_desc: "Rate your recipes from 1 to 5 stars and leave comments to find your favourites again."
         labels_title: "Labels & groups"
@@ -839,6 +1022,7 @@ en:
       not_calculable_hint: "To calculate your daily calorie needs, please fill in your age, height and weight in your profile."
       complete_profile: "Complete profile"
 
+
     components:
       recipe_card:
         ingredient_count:
@@ -870,6 +1054,7 @@ en:
           other: "%{count} times"
         last_cooked_label: "Last prepared"
         micronutrients: "Micronutrients"
+        weekly_coverage: "%{per_100g}%% weekly RDA (100g)"
         allergens_and_traces: "Allergens & Traces"
         allergens: "Allergens"
         traces: "Possible traces"
@@ -883,16 +1068,13 @@ en:
         update_btn: "Update"
         edit_btn: "Edit"
         no_comment: "No note written."
+        not_rated_yet: "You haven't rated this recipe yet."
         delete_note: "Clear"
       day_food_group:
         quantity_col: "Quantity"
         actions_col: "Actions"
         recipe_label: "Dish"
-        add_food: "Food"
-        add_recipe: "Dish"
-        item_count:
-          one: "1 item"
-          other: "%{count} items"
+        customized_tooltip: "Ingredients modified for this entry"
         ungrouped_title: "Ungrouped items"
         delete_recipe_confirm: "Are you sure you want to delete this dish?"
         delete_food_confirm: "Are you sure you want to delete this food?"
@@ -918,7 +1100,8 @@ en:
         friday: "Fri"
         saturday: "Sat"
         sunday: "Sun"
-      title: "My programs"
+      title: "Programs"
+      heading: "My programs"
       subtitle: "Build your weekly templates and load them directly from the calendar."
       new_program: "New program"
       active: "Active"
@@ -927,6 +1110,24 @@ en:
       set_active: "Set as active"
       edit_program: "Edit"
       duplicate_btn: "Duplicate"
+      tension_balance:
+        open_button: "Balance"
+        title: "Stretch / contraction balance"
+        info_tooltip: |-
+          Shows, for each muscle group, whether the program's exercises load the muscle more in a stretched or contracted position. Ideally, combine both for complete muscle development.
+
+          Exercises without a stretch or contraction classification don't appear in this breakdown.
+        hint: "Across the whole program"
+        coverage_title: "Muscle groups worked"
+        no_exercises: "Add exercises to your program to see which muscle groups you're working and their stretch / contraction balance."
+        no_classified: "No exercise in this program is classified stretch/contraction yet."
+        gap:
+          stretch: "No stretch-biased exercise for %{body_part} this week."
+          contraction: "No contraction-biased exercise for %{body_part} this week."
+        legend:
+          stretch: "Stretch"
+          contraction: "Contraction"
+          mixed: "Mixed"
       back: "My programs"
       back_to_program: "Back to program"
       delete_confirm: "Delete « %{name} »? This cannot be undone."
@@ -954,6 +1155,8 @@ en:
         description: "Create your first program to plan your training weeks."
       day:
         rest_placeholder: "Rest"
+        rest_min_abbr: "min"
+        rest_sec_abbr: "s"
         empty_hint: "Add exercises"
         add_exercise: "Add an exercise..."
         no_exercise_found: "No exercise found"
@@ -965,18 +1168,55 @@ en:
         copy_to_title: "Copy to"
         copy_to_confirm: "This day already has exercises, they will be replaced. Continue?"
         copy_confirm_btn: "Copy"
+        copy_success: "Exercises copied."
         exercise_count:
           zero: "empty"
           one: "1 ex."
           other: "%{count} ex."
+    workout_sets:
+      set_editor:
+        info_tooltip: |-
+          Sets: add as many as needed, each with its own reps and weight.
+
+          Types: freely combine Warm-up, Working, Dead set and Drop-set on the same set.
+
+          RPE: rates how hard the set felt, from 6 (easy) to 10 (complete failure).
+
+          Weight: a value of 0 indicates a bodyweight exercise.
+        bodyweight_abbr: "BW"
+        rpe_label: "RPE"
+        exercise_info_toggle: "View details"
+        remove_set: "Remove set"
+        add_set: "+ Add a set"
+        max_sets: "max 10"
+        no_sets_title: "No sets yet"
+        no_sets_description: "Add your first set to configure this exercise."
+        rest_label: "Rest time (sec)"
+        notes_label: "Notes"
+        save_btn: "Save"
+        cancel_btn: "Cancel"
+        last_performance_title: "Last performance"
+        last_performance_ago: "%{time} ago"
+        last_performance_pr_badge: "PR"
+        set_types:
+          warmup: "Warm-up"
+          working: "Working"
+          failure: "Dead set"
+          dropset: "Drop set"
+        set_types_abbr:
+          warmup: "WU"
+          failure: "Dead"
+          dropset: "Drop"
     exercises:
       page_title: "Training"
       title: "Exercise Library"
       exercise_count:
+        zero: "0 exercise"
         one: "1 exercise"
         other: "%{count} exercises"
       search_placeholder: "Search for an exercise..."
       filter_body_part: "Muscle group"
+      filter_tension_profile: "Tension"
       filter_equipment: "Equipment"
       all: "All"
       back_to_list: "Back to exercises"
@@ -1014,6 +1254,14 @@ en:
         plyometrics: "Plyometrics"
         balance: "Balance"
         rehabilitation: "Rehabilitation"
+      tension_profile:
+        stretch: "Stretch-biased"
+        contraction: "Contraction-biased"
+        mixed: "Mixed"
+        none: "Unclassified"
+        tooltip:
+          stretch: "This exercise loads the muscle in a lengthened position under tension. Pair it during the week with a contraction-biased exercise for complete muscle development."
+          contraction: "This exercise loads the muscle in a shortened/contracted position. Pair it during the week with a stretch-biased exercise for complete muscle development."
       show:
         muscles: "Muscles"
         primary_muscle: "Primary muscle"
@@ -1157,14 +1405,16 @@ en:
         wrists: "Wrists"
 
     weight_entries:
-      page_title: "Weight tracking"
+      page_title:
+        weight: "Weight tracking"
+        measurements: "Measurements"
+        weight_and_measurements: "Weight & Measurements"
       stats:
         current: "Current weight"
         delta_30d: "Last 30 days"
         delta_90d: "Last 90 days"
         goal: "Goal"
         not_enough_data: "Not enough data"
-        set_goal: "Set in profile"
         bmi_label: "BMI"
         bmi_category:
           underweight: "Underweight"
@@ -1175,6 +1425,7 @@ en:
         to_lose: "%{kg} kg to lose"
         to_gain: "%{kg} kg to gain"
         goal_reached: "Goal reached!"
+        trend_unit: "kg/wk"
       chart:
         title: "Weight curve"
         not_enough_data: "Add at least 2 measurements to display the chart"
@@ -1185,11 +1436,54 @@ en:
         weight_label: "Weight"
         date_label: "Date"
         submit: "Save"
-        existing_entry: "Existing entry · %{weight} kg — value will be updated"
+        existing_entry: "Existing entry · %{weight} kg (value will be updated)"
       history:
         title: "History"
         empty: "No measurements recorded"
         delete_confirm: "Delete this entry?"
+      tabs:
+        poids: "Weight"
+        mesures: "Measurements"
+      measurements:
+        stats:
+          waist: "Waist"
+          waist_info: "A direct reflection of abdominal fat. Cardiometabolic risk increases above 94 cm (men) or 80 cm (women), and rises sharply above 102 cm / 88 cm (WHO benchmarks)."
+          waist_hip_ratio: "Waist/hip ratio"
+          waist_hip_ratio_info: "Reflects fat distribution. Increased risk above 0.90 for men and 0.85 for women (WHO thresholds)."
+          waist_height_ratio: "Waist/height ratio"
+          waist_height_ratio_info: "A simple benchmark: keep this ratio under 0.5 (waist circumference less than half your height). Risk is considered high above 0.6."
+          body_fat: "Estimated body fat"
+          body_fat_info: "Estimated using the US Navy formula. Rough guide (ACE): athlete level 6-13% (men) / 14-20% (women), fitness level 14-17% (men) / 21-24% (women), average level 18-24% (men) / 25-31% (women)."
+        chart:
+          title: "Measurement trend"
+          not_enough_data: "Add at least 2 measurements to display the chart"
+        form:
+          title: "Log my measurements"
+          date_label: "Date"
+          photo_label: "Photo (optional)"
+          photo_choose: "Choose a file"
+          photo_hint: "JPG or PNG"
+          submit: "Save"
+        history:
+          title: "History"
+          empty: "No measurements recorded"
+          delete_confirm: "Delete this entry?"
+        fields:
+          waist_cm: "Waist"
+          hips_cm: "Hips"
+          chest_cm: "Chest"
+          biceps_cm: "Biceps"
+          thighs_cm: "Thighs"
+          calves_cm: "Calves"
+          neck_cm: "Neck"
+        fields_short:
+          waist_cm: "Waist"
+          hips_cm: "Hips"
+          chest_cm: "Chest"
+          biceps_cm: "Biceps"
+          thighs_cm: "Thighs"
+          calves_cm: "Calves"
+          neck_cm: "Neck"
     statistics:
       page_title: "Statistics"
       tabs:
@@ -1197,6 +1491,8 @@ en:
         training: "Training"
         cardio: "Cardio"
         bien_etre: "Wellbeing"
+        hydratation: "Hydration"
+        jeune: "Fasting"
       periods:
         "7": "7 d"
         "30": "30 d"
@@ -1222,6 +1518,7 @@ en:
         protein_title: "Protein evolution"
         protein_unit: "g"
         meal_title: "Breakdown by meal"
+        micronutrient_trend_title: "Micronutrient trend"
         goal_line: "Goal"
         no_group: "Ungrouped"
         macro_proteins: "Proteins"
@@ -1327,6 +1624,25 @@ en:
         days_logged:
           one: "%{count} day logged"
           other: "%{count} days logged"
+      hydratation:
+        no_data_title: "No hydration data for %{period}"
+        no_data_hint: "Log your daily water intake in the calendar to track your hydration."
+      jeune:
+        no_data_title: "No fast for %{period}"
+        no_data_hint: "Start a fast from the calendar to see your stats here."
+        kpi_streak: "Current streak"
+        kpi_best_streak: "Best streak"
+        kpi_total_hours: "Total hours"
+        kpi_completion_rate: "Completion rate"
+        streak_days:
+          one: "%{count} day"
+          other: "%{count} days"
+        history_title: "History"
+        history_period: "Over %{period}"
+        history_truncated: "Showing the %{shown} most recent sessions (%{total} total for this period)"
+        status_completed: "Completed on time"
+        status_cut_short: "Cut short"
+        status_in_progress: "In progress"
 
     cardio_sessions:
       confirm_delete: "Delete this cardio session?"
@@ -1363,6 +1679,7 @@ en:
       widget:
         title: "Workout"
         session_count:
+          zero: "0 session"
           one: "1 session"
           other: "%{count} sessions"
         empty: "No workout session today"
@@ -1377,17 +1694,13 @@ en:
         weight_kg: "Weight (kg)"
         reps: "Reps"
         duration: "Duration"
-        rpe: "Intensity (RPE)"
         notes: "Notes"
         notes_placeholder: "How you felt, observations..."
         empty_hint: "Search an exercise and click Add to start"
         search_hint: "Type to search an exercise"
         last_perf_prefix: "Last time"
-        rpe_light: "Light"
-        rpe_max: "Max"
         no_exercises_error: "Add at least one exercise before saving the session."
         no_weight_error: "Fill in weight, reps, and duration before saving."
-        max_sets: "max 10"
         submit_add: "Add"
         from_program: "Load from « %{name} »"
       picker:
@@ -1412,6 +1725,7 @@ en:
         one: "1 item remaining"
         other: "%{count} items remaining"
       delete_item: "Delete"
+      edit_quantity: "Edit quantity"
       clear_checked: "Clear checked and put in stock"
       clear_checked_modal_label: "Put in stock"
       clear_checked_confirm: "Remove checked items and put them in stock?"
@@ -1423,10 +1737,47 @@ en:
       copy_success: "List copied to clipboard."
       copy_error: "Failed to copy the list."
       export_share: "Share"
-      export_title: "Shopping list — %{date}"
+      export_print: "Print"
+      export_title: "Shopping list for %{date}"
       empty_state:
         title: "Your list is empty"
         hint: "Add items or generate from a recipe."
+      history_link: "History"
+      archive_button: "Archive"
+      archived: "List archived."
+      archived_label: "List from %{date}"
+      archive_name_label: "List name (optional)"
+      merged_from_archive: "Items added to the current list."
+      replaced_from_archive: "Current list replaced."
+      merge_into_current_label: "Add to current list"
+      replace_current_label: "Replace"
+      replace_current_confirm: "Replace the current list with the contents of this archived list? The current items will be deleted."
+      history_heading: "Archived lists"
+      history_empty_state:
+        title: "No archived lists"
+        hint: "Lists you archive will appear here."
+      history_item_count:
+        zero: "0 items"
+        one: "1 item"
+        other: "%{count} items"
+      history_preview_toggle: "View items"
+      archive_confirm: "Archive the current list? A new empty list will be created."
+      suggestions_label: "Frequently bought"
+      suggestions_empty_state:
+        title: "No suggestions yet"
+        hint: "Log a few meals in your days to see your most frequent foods appear here."
+      week_generation:
+        button_label: "Generate from the last 7 days"
+        modal_title: "Ingredients from the last 7 days"
+        modal_subtitle:
+          zero: "No missing items detected"
+          one: "1 missing item detected"
+          other: "%{count} missing items detected"
+        selected_count: "%{selected} / %{total} selected"
+        empty_state:
+          title: "Nothing to add"
+          hint: "Everything eaten this week is already in stock."
+        submit: "Add to list"
       add_form:
         placeholder: "Search or enter a food"
         quantity_placeholder: "Qty"
@@ -1445,6 +1796,17 @@ en:
         supplements: "Supplements"
         other: "Other"
 
+    scans:
+      navbar_tooltip: "Scan a product"
+      modal_title: "Scan a product"
+      add_to_bank: "Add to my food bank"
+      view_existing_food: "View food"
+      added_notice: "Added to your food bank."
+      view_food: "View food"
+      scan_another: "Scan another"
+      close: "Close"
+      of_which: "of which"
+
     devise:
       shared:
         email: "Email address"
@@ -1462,6 +1824,7 @@ en:
         submit: "Sign in"
         no_account: "No account yet?"
         sign_up_link: "Create an account"
+        resend_confirmation: "Didn't receive the confirmation email?"
       registrations:
         title: "Create an account"
         subtitle: "Start tracking your nutrition"
@@ -1470,6 +1833,11 @@ en:
         submit: "Create my account"
         already_account: "Already have an account?"
         sign_in_link: "Sign in"
+      confirmations:
+        new:
+          title: "Confirm your account"
+          subtitle: "A confirmation email has been sent to you. Didn't receive it? Enter your address below to get a new one."
+          submit: "Resend instructions"
       passwords:
         new:
           title: "Forgot your password?"
@@ -1482,6 +1850,10 @@ en:
           confirm_password: "Confirm password"
           submit: "Reset password"
       mailer:
+        confirmation:
+          greeting: "Welcome %{email}!"
+          intro: "You can confirm your email address through the link below."
+          action: "Confirm my account"
         reset_password:
           greeting: "Hello %{email}!"
           intro: "Someone has requested a link to change your password. You can do this through the link below."
@@ -1491,7 +1863,13 @@ en:
         password_changed:
           greeting: "Hello %{email}!"
           body: "Your password has been changed successfully."
+          ignore: "If you didn't make this change, contact us immediately and reset your password."
         email_changed:
           greeting: "Hello %{email}!"
           body_pending: "Your email address is being changed to %{new_email}."
           body_confirmed: "Your email address has been changed to %{new_email}."
+          ignore: "If you didn't make this change, contact us immediately."
+        new_device_sign_in:
+          greeting: "Hello %{email}!"
+          intro: "A sign-in from a new IP address (%{ip}) was just detected on your account."
+          ignore: "If this was you, you can ignore this email. Otherwise, change your password as soon as possible."

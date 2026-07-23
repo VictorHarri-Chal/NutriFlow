@@ -1,12 +1,17 @@
 class WorkoutProgramsController < ApplicationController
+  include FeatureGuard
+
+  before_action :require_workout_section!
   before_action :set_program, only: [:show, :edit, :update, :destroy, :activate, :duplicate]
 
   def index
-    @programs = current_user.workout_programs.includes(:program_days).order(created_at: :asc)
+    programs = current_user.workout_programs.includes(:program_days).order(created_at: :asc)
+    @pagy, @programs = pagy(programs, items: 6)
   end
 
   def show
-    @program_days = @program.program_days.includes(program_exercises: :exercise)
+    @program.preload_tension_balance_data!
+    @program_days = @program.program_days
   end
 
   def new
@@ -35,7 +40,11 @@ class WorkoutProgramsController < ApplicationController
   end
 
   def destroy
+    was_active = @program.is_active?
     @program.destroy
+    if was_active
+      current_user.workout_programs.order(created_at: :asc).first&.activate!
+    end
     redirect_to workout_programs_path, notice: t("controllers.workout_programs.destroyed")
   end
 
@@ -50,24 +59,14 @@ class WorkoutProgramsController < ApplicationController
     copy.is_active  = false
     copy.save!
 
-    @program.program_days.includes(:program_exercises).each do |source_day|
+    @program.program_days.includes(program_exercises: :program_exercise_sets).each do |source_day|
       target_day = copy.program_days.find_by!(day_of_week: source_day.day_of_week)
       target_day.update!(
         name:             source_day.name,
         duration_minutes: source_day.duration_minutes,
         notes:            source_day.notes
       )
-      source_day.program_exercises.each do |pe|
-        target_day.program_exercises.create!(
-          exercise_id:   pe.exercise_id,
-          sets:          pe.sets,
-          reps_target:   pe.reps_target,
-          weight_target: pe.weight_target,
-          rest_seconds:  pe.rest_seconds,
-          notes:         pe.notes,
-          position:      pe.position
-        )
-      end
+      source_day.copy_exercises_to!(target_day)
     end
 
     redirect_to copy, notice: t("controllers.workout_programs.duplicated")

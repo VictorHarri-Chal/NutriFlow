@@ -3,7 +3,9 @@
 
 <div id="workout_widget"
      data-controller="collapsible"
+     data-collapsible-scope="page-section"
      data-collapsible-storage-key="workout-widget"
+     <%= 'data-collapsible-force-open' if local_assigns[:force_open] %>
      class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-3 mb-4">
 
   <%# Header (click to toggle) %>
@@ -19,7 +21,7 @@
     </div>
     <% if sessions.any? %>
       <div class="flex items-center gap-2">
-        <span class="inline-flex items-center gap-1 text-xs font-medium text-emerald-400/75">
+        <span class="inline-flex items-center gap-1 text-xs font-medium text-status-success/70">
           <i class="fas fa-fire-alt text-[9px]"></i>
           <%= total_cal %> kcal
         </span>

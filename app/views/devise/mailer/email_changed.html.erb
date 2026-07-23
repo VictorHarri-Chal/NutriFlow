@@ -1,7 +1,9 @@
-<p><%= t("views.devise.mailer.email_changed.greeting", email: @email) %></p>
+<p style="margin:0 0 16px 0;"><%= t("views.devise.mailer.email_changed.greeting", email: @email) %></p>
 
 <% if @resource.try(:unconfirmed_email?) %>
-  <p><%= t("views.devise.mailer.email_changed.body_pending", new_email: @resource.unconfirmed_email) %></p>
+  <p style="margin:0 0 16px 0;"><%= t("views.devise.mailer.email_changed.body_pending", new_email: @resource.unconfirmed_email) %></p>
 <% else %>
-  <p><%= t("views.devise.mailer.email_changed.body_confirmed", new_email: @resource.email) %></p>
+  <p style="margin:0 0 16px 0;"><%= t("views.devise.mailer.email_changed.body_confirmed", new_email: @resource.email) %></p>
 <% end %>
+
+<p style="margin:0; color:#71717A; font-size:13px;"><%= t("views.devise.mailer.email_changed.ignore") %></p>

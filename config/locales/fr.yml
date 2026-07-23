@@ -3,6 +3,14 @@ fr:
     formats:
       month_year: "%b %Y"
 
+  feature_guard:
+    workout_disabled: "La section entraînement est désactivée dans vos préférences."
+    cardio_disabled: "La section cardio est désactivée dans vos préférences."
+    weight_page_disabled: "Le suivi de poids et des mesures est désactivé dans vos préférences."
+    measurements_disabled: "Le suivi des mesures corporelles est désactivé dans vos préférences."
+    water_disabled: "Le suivi d'hydratation est désactivé dans vos préférences."
+    fasting_disabled: "Le suivi du jeûne intermittent est désactivé dans vos préférences."
+
   pagination_component:
     results: "Résultats"
     to: "à"
@@ -16,11 +24,16 @@ fr:
       locale_updated: "Langue mise à jour avec succès."
       locale_error: "Erreur lors de la mise à jour de la langue."
       preferences_updated: "Préférences mises à jour."
+      preferences_updated_fasting_stopped: "Préférences mises à jour. Votre jeûne en cours a été arrêté."
       preferences_error: "Erreur lors de la mise à jour des préférences."
+      other_sessions_signed_out: "Les autres appareils ont été déconnectés."
+      data_reset: "Toutes vos données ont été supprimées. Vous pouvez recommencer l'onboarding."
     foods:
       created: "Aliment créé avec succès."
       updated: "Aliment mis à jour avec succès."
       destroyed: "Aliment supprimé avec succès."
+      force_destroyed: "Aliment et tout son historique supprimés avec succès."
+      delete_blocked: "Cet aliment est encore utilisé et ne peut pas être supprimé."
       duplicated: "Aliment dupliqué. Modifiez-le avant de sauvegarder."
       duplicate_name: "Copie de %{name}"
       duplicate_error: "Impossible de dupliquer cet aliment."
@@ -37,8 +50,13 @@ fr:
     days:
       food_added: "Aliment ajouté avec succès."
       food_add_error: "Erreur lors de l'ajout de l'aliment."
+    fasting_sessions:
+      disclaimer_required: "Confirmez l'avertissement pour démarrer votre jeûne."
     weight_entries:
       saved: "Poids enregistré."
+      deleted: "Entrée supprimée."
+    body_measurements:
+      saved: "Mesures enregistrées."
       deleted: "Entrée supprimée."
     recipe_ratings:
       created: "Notation enregistrée avec succès."
@@ -61,6 +79,8 @@ fr:
       duplicate_error: "Impossible de dupliquer cette recette."
     profiles:
       updated: "Profil mis à jour avec succès."
+    onboarding:
+      completed: "Profil complété avec succès. Bienvenue sur NutriFlow !"
     users:
       passwords:
         reset_sent: "Un email de réinitialisation de mot de passe a été envoyé à votre adresse email."
@@ -68,28 +88,33 @@ fr:
       registrations:
         password_updated: "Votre mot de passe a été mis à jour avec succès."
         email_updated: "Votre adresse e-mail a été mise à jour avec succès."
+        email_confirmation_sent: "Un e-mail de confirmation a été envoyé à votre nouvelle adresse. Cliquez sur le lien reçu pour finaliser le changement."
 
   activerecord:
     attributes:
-      user:
-        current_password: "Mot de passe actuel"
-        password: "Mot de passe"
-        password_confirmation: "Confirmation du mot de passe"
-        email: "Adresse e-mail"
-      food:
+      profile:
         name: "Nom"
-        brand: "Marque"
-        calories: "Calories"
-        proteins: "Protéines"
-        carbs: "Glucides"
-        fats: "Lipides"
-        sugars: "Sucres"
+        weight: "Poids"
+        height: "Taille"
+        date_of_birth: "Date de naissance"
+        gender: "Genre"
+        goal_weight: "Poids cible"
+        goal_rate_kg_per_week: "Rythme souhaité"
+        water_goal_ml: "Objectif eau quotidien"
+        default_daily_steps: "Pas par jour"
     errors:
       models:
-        recipe:
-          at_least_one_ingredient: "Au moins un ingrédient est requis"
+        profile:
+          attributes:
+            goal_rate_kg_per_week:
+              must_be_negative_for_weight_loss: "doit être négatif pour un objectif de perte de poids"
+              must_be_positive_for_muscle_gain: "doit être positif pour un objectif de prise de muscle"
+            date_of_birth:
+              cannot_be_in_the_future: "ne peut pas être dans le futur"
+              too_far_in_the_past: "n'est pas une date plausible"
         workout_session:
           at_least_one_exercise: "Ajoutez au moins un exercice avant d'enregistrer la séance."
+          too_many_sets_per_exercise: "Vous ne pouvez pas ajouter plus de 10 séries par exercice."
         cardio_session:
           at_least_one_block: "Ajoutez au moins une machine avant d'enregistrer la session cardio."
         recipe_rating:
@@ -110,8 +135,9 @@ fr:
     quantity: "Quantité"
     not_defined: "Non défini"
     not_provided: "Non renseigné"
-    select_blank: "— Sélectionner —"
+    select_blank: "Sélectionner..."
     food_count:
+      zero: "0 aliment"
       one: "1 aliment"
       other: "%{count} aliments"
     no_food_groups: "Aucun groupe de repas"
@@ -128,16 +154,17 @@ fr:
       sidebar:
         calendar: "Calendrier"
         foods: "Aliments"
-        calorie_requirement: "Besoin calorique"
         recipes: "Recettes"
         settings: "Paramètres"
         logout: "Déconnexion"
-        logout_confirm: "Es-tu sûr de vouloir te déconnecter ?"
+        logout_confirm: "Êtes-vous sûr de vouloir vous déconnecter ?"
         profile: "Mon profil"
         collapse: "Réduire"
         weight: "Suivi poids"
+        measurements: "Mesures"
+        weight_and_measurements: "Poids & Mesures"
         exercises: "Entraînement"
-        workout_programs: "Mon programme"
+        workout_programs: "Programmes"
         statistics: "Statistiques"
         shopping_list: "Liste de courses"
 
@@ -145,36 +172,39 @@ fr:
       page_title: "Calendrier"
       add_recipe: "Ajouter un plat"
       add_food: "Ajouter un aliment"
+      fab_toggle: "Ajouter"
       today: "Aujourd'hui"
       previous_day: "Jour précédent"
       next_day: "Jour suivant"
-      exceeded: "DÉPASSÉ"
-      reached: "ATTEINT"
-      excellent: "EXCELLENT"
-      goal_reached: "Objectif atteint"
-      day_complete: "Journée complète — tous les objectifs atteints !"
+      collapse_all_button: "Tout replier"
+      customize_display_button: "Personnaliser l'affichage"
+      today_button_disabled: "Vous êtes déjà sur aujourd'hui"
+      day_complete: "Journée complète : tous les objectifs atteints !"
       calories: "Calories"
       proteins: "Protéines"
       fats: "Lipides"
       carbs: "Glucides"
-      carbs_adaptive_hint: "adaptatif"
-      sugars_of_carbs: "(dont gluc.)"
       sugars: "Sucres"
+      fiber: "Fibres"
+      saturated_fat: "Ac. saturés"
+      salt: "Sel"
+      micronutrients:
+        trigger_title: "Voir les micronutriments"
+        week_range: "Semaine du %{start} au %{end}"
+        ceiling_suffix: " (max)"
+        info_title: "D'où viennent ces objectifs ?"
+        info_text: "Ces repères hebdomadaires sont basés sur les références nutritionnelles de l'ANSES (2021), multipliées par 7. Ils sont fixes selon votre sexe et ne varient pas avec votre poids ou votre activité physique. Le sodium est un plafond à ne pas dépasser (« max »), pas un minimum à atteindre. Le cholestérol n'a pas de référence officielle : sa valeur est affichée à titre indicatif, sans objectif chiffré."
       nutrition_summary: "Résumé nutritionnel du jour"
-      daily_objectives: "Objectifs du jour"
-      objectives_unavailable: "Objectifs non disponibles"
-      objectives_unavailable_hint: "Pour afficher vos objectifs, veuillez renseigner votre poids dans votre profil."
-      complete_profile: "Compléter le profil"
-      complete_profile_hint: "Complétez votre profil pour afficher vos objectifs"
-      copy_yesterday: "Copier hier"
       copy_yesterday_title: "Copier les aliments du jour précédent"
       heatmap:
         title: "%{month}"
         open_button: "Vue mensuelle"
+        previous_month: "Mois précédent"
+        next_month: "Mois suivant"
+        current_month: "Mois actuel"
         legend_goal: "≥ 95%"
         legend_partial: "70–95%"
         legend_low: "< 70%"
-        goal_hint: "Objectif : %{goal} kcal / jour"
         stats_logged: "jours loggés"
         stats_goal_reached: "objectif atteint"
         stats_avg_kcal: "kcal moy."
@@ -195,6 +225,27 @@ fr:
         small_glass: "Petit verre"
         medium_glass: "Grand verre"
         bottle: "Bouteille"
+      fasting:
+        title: "Jeûne intermittent"
+        finish: "Terminer le jeûne"
+        cancel: "Annuler"
+        cancel_confirm: "Annuler ce jeûne ? Il ne sera pas conservé dans votre historique."
+        expected_end: "Fin prévue à %{time}"
+        expected_end_tomorrow: "Fin prévue demain à %{time}"
+        in_duration: "dans %{duration}"
+        goal_reached: "Objectif atteint, continuez si vous le souhaitez"
+        idle_summary_empty: "Aucun jeûne enregistré pour l'instant"
+        banner_text: "Jeûne %{protocol} en cours · reste %{remaining} · fin prévue à %{time}"
+        banner_text_tomorrow: "Jeûne %{protocol} en cours · reste %{remaining} · fin prévue demain à %{time}"
+        idle_summary:
+          one: "Série actuelle : %{count} jour · %{hours} h cumulées"
+          other: "Série actuelle : %{count} jours · %{hours} h cumulées"
+        protocol_tooltip:
+          sixteen_eight: "16h de jeûne, 8h pour manger. Niveau : facile à modéré."
+          eighteen_six: "18h de jeûne, 6h pour manger. Niveau : modéré."
+          omad: "Un seul repas, environ 1h. Niveau : difficile."
+          circadian_12_12: "12h de jeûne alignées sur la nuit, 12h pour manger. Niveau : très facile."
+        meal_logged_during_fast: "Enregistré pendant une fenêtre de jeûne"
       copy_success: "Les aliments d'hier ont été copiés avec succès."
       copy_error: "Impossible de copier certains aliments."
       copy_nothing_to_copy: "Aucun aliment enregistré hier."
@@ -207,11 +258,18 @@ fr:
         sleep: "Sommeil"
       breakdown:
         title: "Dépenses estimées"
+        info_title: "Comment cette estimation est calculée"
+        info_bmr: "Métabolisme de base : formule de Mifflin-St Jeor, à partir de votre poids, taille, âge et genre."
+        info_job: "Effort physique au travail : estimation fixe selon votre type de poste, incluant une moyenne de pas typique pour ce poste (bureau, debout, port de charges)."
+        info_steps: "Marche : calories estimées à partir de l'excédent de pas au-delà de la moyenne de votre poste, ajustées à votre poids."
+        info_workout: "Entraînement & cardio : calculées séance par séance (valeurs MET pour la musculation, équations ACSM pour le cardio)."
+        info_disclaimer: "Ce sont des estimations, pas des mesures. Elles peuvent varier de la réalité selon votre métabolisme individuel."
         bmr: "Métabolisme de base"
-        job_neat: "Activité (poste)"
-        steps: "Marche"
+        job_neat: "Effort physique au travail"
+        steps: "Marche (excédent)"
         steps_unit: "pas"
-        steps_default_hint: "défaut profil"
+        steps_manual_hint: "Estimation manuelle"
+        steps_manual_hint_title: "Saisie manuelle pour le moment. Seul l'excédent de pas au-delà de la moyenne de votre poste (réglable dans le profil) augmente les calories affichées ici. La synchronisation automatique (Apple Santé / Google Fit) arrivera avec l'application mobile."
         workout: "Entraînement & cardio"
         total_tdee: "Total dépenses"
         goal_label:
@@ -220,7 +278,6 @@ fr:
           muscle_gain: "Objectif prise de muscle (+10 %)"
         goal_intake_hint: "→ à ingérer aujourd'hui"
         no_workout: "Aucun entraînement loggé"
-        steps_edit_title: "Modifier les pas du jour"
         reset_steps: "Réinitialiser au défaut profil"
       food_widget:
         title: "Alimentation"
@@ -230,12 +287,39 @@ fr:
         description: "Vous n'avez pas encore ajouté d'aliments pour cette journée."
         add_first_food: "Ajouter votre premier aliment"
 
+    fasting_sessions:
+      disclaimer:
+        title: "Avant de commencer"
+        intro: "Vérifiez que vous n'êtes pas concerné(e) par l'une de ces situations :"
+        item_diabetes: "Diabète traité par insuline ou sulfamides hypoglycémiants"
+        item_eating_disorder: "Antécédents de troubles du comportement alimentaire"
+        item_pregnancy: "Grossesse ou allaitement"
+        item_minor: "Adolescence ou croissance non terminée"
+        advice: "Si l'une de ces situations vous concerne, consultez un professionnel de santé avant de commencer votre jeûne."
+        acknowledge: "Commencer"
+        cancel: "Annuler"
+
     foods:
       page_title: "Banque d'aliments"
       title: "Mes aliments"
       add_food: "Ajouter un aliment"
       edit_food: "Modifier un aliment"
       delete_confirm: "Es-tu sûr de vouloir supprimer « %{name} » ?"
+      delete_blocked:
+        title: "Impossible de supprimer"
+        intro: "« %{name} » est encore utilisé et ne peut pas être supprimé pour l'instant :"
+        day_foods:
+          one: "%{count} entrée de journal"
+          other: "%{count} entrées de journal"
+        recipes:
+          one: "%{count} recette"
+          other: "%{count} recettes"
+        day_recipe_items:
+          one: "%{count} recette personnalisée"
+          other: "%{count} recettes personnalisées"
+        confirm: "Compris"
+        force_delete: "Tout supprimer"
+        force_delete_confirm: "Supprimer « %{name} » et tout son historique lié (recettes, recettes personnalisées et entrées de journal) ? Cette action est irréversible."
       search_placeholder: "Rechercher un aliment..."
       labels_col: "Labels"
       usages_col: "Utilisations"
@@ -314,6 +398,8 @@ fr:
         readonly_import: "Données importées"
         category: "Catégorie"
         category_none: "Aucun"
+        add_micronutrient: "Ajouter"
+        micronutrient_select_placeholder: "Choisir un micronutriment..."
       new:
         tab_manual: "Manuel"
         tab_off: "Import rapide"
@@ -504,9 +590,24 @@ fr:
         no_recipe_found: "Aucune recette trouvée"
         use_recipe_quantity: "Utiliser la quantité totale de la recette"
         food_group: "Groupe de repas"
+        customize_tooltip: "Personnaliser les ingrédients pour cet ajout"
+        customize_caption: "Ingrédients de cet ajout · %{date}"
+        customize_empty: "Aucun ingrédient"
+        customize_add_first: "Ajouter un aliment"
+        customize_add_ingredient: "Ajouter un aliment"
+        customize_total_label: "Total recalculé"
+        customize_confirm: "Valider"
+      item_fields:
+        search_food: "Rechercher un aliment..."
+        remove: "Retirer"
+        error_food: "Sélectionnez un aliment"
+        error_quantity: "Quantité invalide (min. 1 g)"
+        error_missing_food_summary: "Sélectionnez un aliment pour chaque ingrédient."
+        error_quantity_too_low_summary: "La quantité de chaque ingrédient doit être d'au moins 1 g."
 
     recipes:
-      title: "Mes recettes"
+      title: "Banque de recettes"
+      heading: "Mes recettes"
       new_recipe: "Nouvelle recette"
       search_placeholder: "Rechercher une recette..."
       no_recipes: "Aucune recette"
@@ -514,6 +615,7 @@ fr:
       no_results_for: "Aucune recette ne correspond à votre recherche \"%{query}\""
       create_first: "Créez votre première recette pour la retrouver ici."
       recipe_count:
+        zero: "0 recette"
         one: "1 recette"
         other: "%{count} recettes"
       sort_label: "Trier :"
@@ -557,6 +659,9 @@ fr:
         ingredients: "Ingrédients"
         food_col: "Aliment"
         quantity_col: "Quantité"
+        proteins_abbr: "prot"
+        carbs_abbr: "glu"
+        fats_abbr: "lip"
         instructions: "Instructions"
         no_instructions: "Aucune instruction renseignée"
         back_to_list: "Retour aux recettes"
@@ -589,28 +694,43 @@ fr:
         food: "Aliment *"
         food_col: "Aliment"
         quantity_col: "Quantité"
-        select_blank: "— Sélectionner —"
+        select_blank: "Sélectionner..."
         search_food: "Rechercher un aliment..."
         quantity: "Quantité (g) *"
         remove: "Retirer"
         error_food: "Sélectionnez un aliment"
         error_quantity: "Quantité invalide (min. 1 g)"
+        error_missing_food_summary: "Sélectionnez un aliment pour chaque ingrédient."
+        error_quantity_too_low_summary: "La quantité de chaque ingrédient doit être d'au moins 1 g."
 
     profiles:
       show:
         title: "Mon Profil"
         edit_link: "Modifier le profil"
-        incomplete_hint: "Votre profil est incomplet. Renseignez votre poids, taille et âge pour calculer vos besoins nutritionnels."
-        complete_cta: "Compléter le profil"
         calorie_needs_title: "Mes besoins caloriques"
         calories_to_eat_per_day: "kcal à ingérer / jour"
         tdee_label: "TDEE"
-        macro_goals_hint: "Basé sur votre objectif actif"
+        weight_loss: "Perte de poids"
+        maintenance: "Maintien"
+        muscle_gain: "Prise de muscle"
+        macro_goals_title: "Objectifs macronutriments"
         carbs_residual_hint: "calories résiduelles"
+        per_kg: "%{value} g / kg"
+        fat_percent_hint: "%{percent} % des calories"
+        macro_kcal_suffix: "%{kcal} kcal"
+        macro_low_calorie_warning: "Votre objectif calorique est trop bas pour couvrir vos besoins en protéines et lipides, les glucides sont à 0 g. Reconsidérez votre rythme ou vérifiez votre profil."
+        macro_info_title: "Comment ces objectifs sont calculés"
+        macro_info_protein: "Protéines : 2 g par kg de poids de corps, le standard pour préserver la masse musculaire quel que soit l'objectif."
+        macro_info_fat: "Lipides : 25 % des calories totales, pour s'adapter automatiquement à un déficit ou un surplus."
+        macro_info_carbs: "Glucides : le reste des calories une fois protéines et lipides couverts."
+        bmi_info_title: "Une mesure indicative"
+        bmi_info_text: "L'IMC ne distingue pas masse musculaire et masse grasse, un profil très musclé peut se retrouver classé à tort en surpoids."
         tdee_estimate_note: "Estimé avec %{steps} pas/jour · sans entraînement · S'adapte en temps réel dans le calendrier."
         formula_hint_title: "Mifflin-St Jeor + NEAT"
-        formula_hint_formula: "TDEE = MB + NEAT poste + (pas × 0,04 × poids/70)"
-        formula_hint_goals: "Perte −15 % · Maintien ×1 · Prise de masse +10 %"
+        formula_hint_formula: "TDEE = MB + NEAT poste + (pas au-delà de la moyenne du poste × 0,04 × poids/70) + NEAT entraînement"
+        formula_hint_goals: "Perte : rythme hebdo choisi · Maintien : TDEE · Prise de masse : rythme hebdo choisi"
+        rate_per_week: "%{rate} kg/sem"
+        goal_weight_estimate: "%{weeks} semaines au rythme actuel"
         personal_info: "Informations personnelles"
         physical_data: "Données physiques"
         lifestyle_section: "Mode de vie"
@@ -620,12 +740,12 @@ fr:
         weight: "Poids"
         height: "Taille"
         gender: "Genre"
-        job_activity_level: "Activité quotidienne"
-        default_daily_steps: "Pas / jour (défaut)"
+        job_activity_level: "Effort physique au travail"
+        default_daily_steps: "Pas quotidiens (moyenne)"
         water_goal: "Objectif hydratation quotidien"
         water_goal_estimated: "Recommandé : %{ml} ml"
         goal: "Objectif"
-        age_years: "%{age} ans"
+        age_unit: "ans"
         bmi: "IMC"
         goal_weight: "Poids cible"
         bmi_underweight: "Insuffisance pondérale"
@@ -635,22 +755,44 @@ fr:
       edit:
         title: "Modifier le profil"
         name: "Nom"
-        age: "Âge"
+        date_of_birth: "Date de naissance"
         weight: "Poids"
+        weight_synced_hint: "Ce poids se met à jour automatiquement à chaque nouvelle pesée enregistrée dans le suivi de poids."
         height: "Taille"
         water_goal_ml: "Objectif eau quotidien"
         goal_weight: "Poids cible"
+        goal_requires_weight: "Renseignez votre poids, votre taille et votre date de naissance ci-dessus pour définir votre objectif."
         gender: "Genre"
         gender_male: "Homme"
         gender_female: "Femme"
         gender_other: "Autre"
-        job_activity_level: "Activité quotidienne"
-        job_activity_level_hint: "Hors sport — décrit votre niveau d'activité habituel au travail et dans la vie quotidienne"
-        default_daily_steps: "Pas par jour (moyenne)"
-        default_daily_steps_hint: "Utilisé comme valeur par défaut si vous ne saisissez pas vos pas dans le calendrier"
-        water_goal_estimated_prefix: "Estimé :"
+        job_activity_level: "Effort physique au travail"
+        job_activity_level_hint: "Cette catégorie estime la dépense énergétique propre à votre activité professionnelle : posture, déplacements habituels et effort physique. Chaque option inclut une moyenne de pas typique, indiquée ci-dessous. Le champ « Pas quotidiens » ne comptabilise que l'excédent au-delà de cette moyenne, afin de ne jamais compter deux fois la même marche."
+        job_activity_steps_included: "≈ %{count} pas inclus"
+        default_daily_steps: "Pas quotidiens"
+        default_daily_steps_hint: "Nombre total de pas réel de la journée. Utilisé par défaut si vous ne saisissez rien dans le calendrier. Seul l'excédent au-delà de la moyenne de votre poste (ci-dessus) augmente votre dépense calorique."
+        water_goal_estimated_prefix: "Estimé"
         water_goal_use_estimated: "Utiliser"
         goal: "Objectif"
+        goal_locked_title: "Comment l'objectif est déterminé"
+        goal_locked_loss: "Poids cible plus bas → Perte de poids"
+        goal_locked_maintenance: "Poids cible identique → Maintien"
+        goal_locked_gain: "Poids cible plus haut → Prise de muscle"
+        goal_rate: "Rythme souhaité"
+        goal_rate_hint: "Traduit en calories à ajouter ou retirer chaque jour par rapport à votre dépense totale."
+        goal_rate_computed_hint: "Valeur de départ calculée à partir de votre profil"
+        goal_rate_unit: "kg/sem"
+        goal_rate_attention_prefix: "Attention"
+        goal_rate_warning_loss: "Au-delà d'1 kg par semaine, la perte de muscle devient plus probable en plus de la perte de graisse."
+        goal_rate_warning_gain: "Au-delà de 0,5 kg par semaine, une bonne partie du gain risque d'être du gras plutôt que du muscle."
+        goal_rate_estimate_prefix: "Estimation"
+        goal_rate_estimate_template: "%{weeks} semaines pour atteindre %{weight} kg"
+
+    onboarding:
+      edit:
+        title: "Complétez votre profil"
+        subtitle: "Ces informations nous permettent de vous offrir une expérience personnalisée à vos besoins."
+        submit: "Terminer mon profil"
 
     settings:
       show:
@@ -663,26 +805,55 @@ fr:
       preferences:
         title: "Préférences"
         description: "Personnalisez l'affichage et le comportement de l'application."
-        journal_section: "Journal quotidien"
-        navigation_section: "Navigation"
-        show_day_note: "Section notes & bien-être"
-        show_day_note_hint: "Affiche la zone de texte libre, ainsi que les indicateurs d'énergie, d'humeur et de sommeil en bas de chaque journée."
-        show_workout_section: "Section entraînement"
-        show_workout_section_hint: "Affiche le widget de séances et le bouton d'ajout rapide dans le calendrier."
-        show_cardio_section: "Section cardio"
-        show_cardio_section_hint: "Affiche le widget cardio et le bouton d'ajout rapide dans le calendrier."
-        show_water_tracking: "Suivi d'hydratation"
-        show_water_tracking_hint: "Affiche le widget d'eau dans le journal et les données d'hydratation dans les statistiques."
+        calendar_sections_title: "Sections du calendrier"
+        calendar_sections_hint: "Faites glisser pour réorganiser l'ordre d'affichage dans le journal quotidien."
+        other_preferences_title: "Autres préférences"
+        always_shown: "Toujours affiché"
+        calories: "Calories"
+        calories_hint: "Toujours affichée en tête de calendrier : calories consommées, macros et objectif du jour."
+        food: "Alimentation"
+        food_hint: "Repas et recettes ajoutés au calendrier du jour."
+        show_day_note: "Notes & bien-être"
+        show_day_note_hint: "Affiche la zone de texte libre et les indicateurs d'énergie, d'humeur et de sommeil dans le journal quotidien, ainsi que l'onglet Bien-être dans les statistiques."
+        show_workout_section: "Entraînement"
+        show_workout_section_hint: "Affiche le widget de séances et le bouton d'ajout rapide dans le journal, les programmes dans la navigation et l'onglet Entraînement dans les statistiques. Désactivé, ces pages deviennent inaccessibles."
+        show_cardio_section: "Cardio"
+        show_cardio_section_hint: "Affiche le widget cardio et le bouton d'ajout rapide dans le journal, et l'onglet Cardio dans les statistiques. Désactivé, ces pages deviennent inaccessibles."
+        show_water_tracking: "Hydratation"
+        show_water_tracking_hint: "Affiche le widget d'eau dans le journal quotidien et ajoute l'onglet Hydratation dans les statistiques. Désactivé, ces deux sections deviennent inaccessibles."
         show_tdee_breakdown: "Détail des dépenses énergétiques"
-        show_tdee_breakdown_hint: "Affiche la section BMR / NEAT / Pas / Entraînement sous les barres de macros du journal."
+        show_tdee_breakdown_hint: "Affiche le détail des dépenses caloriques estimées (métabolisme de base, activité au travail, marche, entraînement) sous les barres de macros dans le journal quotidien."
         show_weight_tracking: "Suivi de poids"
-        show_weight_tracking_hint: "Affiche la page de suivi de poids et son lien dans le menu de navigation."
+        show_weight_tracking_hint: "Donne accès à la page de suivi du poids corporel et affiche son lien dans le menu de navigation. Désactivé, la page devient inaccessible."
+        show_body_measurements: "Mesures corporelles"
+        show_body_measurements_hint: "Affiche l'onglet Mesures (tour de taille, hanches, etc.) sur la page Poids & Mesures. Désactivé, cet onglet devient inaccessible."
+        show_fasting_tracking: "Jeûne intermittent"
+        show_fasting_tracking_hint: "Affiche le widget de jeûne dans le journal et l'onglet Jeûne dans les statistiques. Désactivé, cette section devient inaccessible."
+        confirm_disable: "Désactiver « %{feature} » ? Vos données existantes seront conservées, mais cette section deviendra inaccessible."
       general:
         title: "Paramètres généraux"
         description: "Personnalisez votre expérience NutriFlow."
         language: "Langue de l'interface"
         language_hint: "La langue sera appliquée immédiatement."
         save: "Sauvegarder"
+        time_zone: "Fuseau horaire"
+        time_zone_hint: "Détermine la date du jour dans votre journal quotidien et vos statistiques."
+        time_zones:
+          europe_paris: "Paris (France)"
+          europe_london: "Londres (Royaume-Uni)"
+          europe_brussels: "Bruxelles (Belgique)"
+          europe_zurich: "Zurich (Suisse)"
+          europe_madrid: "Madrid (Espagne)"
+          europe_berlin: "Berlin (Allemagne)"
+          europe_lisbon: "Lisbonne (Portugal)"
+          america_new_york: "New York (États-Unis, Est)"
+          america_chicago: "Chicago (États-Unis, Centre)"
+          america_denver: "Denver (États-Unis, Montagnes)"
+          america_los_angeles: "Los Angeles (États-Unis, Pacifique)"
+          america_toronto: "Toronto (Canada)"
+          america_montreal: "Montréal (Canada)"
+          atlantic_canary: "Îles Canaries (Espagne)"
+          indian_reunion: "La Réunion (France)"
       security:
         title: "Sécurité du compte"
         description: "Gérez votre adresse e-mail, votre mot de passe et les accès à votre compte."
@@ -700,13 +871,18 @@ fr:
         confirm_password: "Confirmer le nouveau mot de passe"
         confirm_password_placeholder: "Confirmez votre nouveau mot de passe"
         update_password: "Mettre à jour le mot de passe"
-        forgot_password: "Mot de passe oublié ?"
-        forgot_password_hint: "Si vous avez oublié votre mot de passe, vous pouvez demander un lien de réinitialisation par email."
-        email_address: "Adresse email"
-        send_reset_link: "Envoyer le lien de réinitialisation"
+        reset_data: "Réinitialiser mes données"
+        reset_data_warning: "Cette action est irréversible. Tous vos aliments, recettes, entraînements, programmes, listes de courses et votre calendrier seront définitivement supprimés, et vous repartirez de l'onboarding. Votre compte reste actif."
+        reset_data_button: "Réinitialiser mes données"
         delete_account: "Supprimer mon compte"
         delete_account_warning: "Cette action est irréversible. Toutes vos données seront définitivement supprimées."
         delete_account_button: "Supprimer le compte"
+        pending_reconfirmation: "Changement d'e-mail en attente vers %{email}. Vérifiez votre boîte de réception pour confirmer."
+        resend_confirmation: "Renvoyer l'e-mail"
+        sign_out_other_sessions: "Déconnecter les autres appareils"
+        sign_out_other_sessions_hint: "Met fin à toutes vos sessions actives sur les autres navigateurs et appareils. Vous restez connecté ici."
+        sign_out_other_sessions_button: "Déconnecter"
+        sign_out_other_sessions_confirm: "Voulez-vous vraiment déconnecter tous vos autres appareils ? Vous devrez vous reconnecter sur chacun d'eux."
       food_groups:
         title: "Groupes d'aliments"
         description: "Organisez vos repas par moments de la journée."
@@ -733,6 +909,15 @@ fr:
         explanation: "Les labels vous permettent de catégoriser vos aliments avec des tags comme \"Protéines\", \"Glucides\", \"Lipides\", \"Bio\", etc."
         color_label: "Couleur"
         delete_confirm: "Supprimer ce label ?"
+        colors:
+          red: "Rouge"
+          orange: "Orange"
+          amber: "Ambre"
+          yellow: "Jaune"
+          green: "Vert"
+          teal: "Bleu-vert"
+          blue: "Bleu"
+          violet: "Violet"
 
     confirm:
       title: "Confirmation requise"
@@ -750,7 +935,7 @@ fr:
         badge: "Nutrition + Entraînement"
         title_line1: "Prenez le contrôle de votre"
         title_line2: "corps & de votre nutrition"
-        subtitle: "Suivez vos repas, atteignez vos objectifs nutritionnels et explorez plus de 1 100 exercices — tout en un seul endroit."
+        subtitle: "Suivez vos repas, atteignez vos objectifs nutritionnels et explorez plus de 1 100 exercices, tout en un seul endroit."
         cta_start: "Commencer gratuitement"
         cta_login: "Se connecter"
         free_label: "100% gratuit"
@@ -774,7 +959,7 @@ fr:
         recipes_title: "Recettes personnalisées"
         recipes_desc: "Composez des recettes avec leurs ingrédients et quantités. Les macros se calculent automatiquement au gramme près."
         calories_title: "Besoins caloriques"
-        calories_desc: "Calculez vos apports idéaux selon votre profil, votre niveau d'activité et votre objectif — perte de poids, maintien ou prise de masse."
+        calories_desc: "Calculez vos apports idéaux selon votre profil, votre niveau d'activité et votre objectif : perte de poids, maintien ou prise de masse."
         ratings_title: "Notes & commentaires"
         ratings_desc: "Notez vos recettes de 1 à 5 étoiles et laissez des commentaires pour retrouver vos coups de cœur."
         labels_title: "Étiquettes & groupes"
@@ -837,6 +1022,7 @@ fr:
       not_calculable_hint: "Pour calculer vos besoins caloriques journaliers, veuillez renseigner votre âge, votre taille et votre poids dans votre profil."
       complete_profile: "Compléter le profil"
 
+
     components:
       recipe_card:
         ingredient_count:
@@ -868,6 +1054,7 @@ fr:
           other: "%{count} fois"
         last_cooked_label: "Dernière fois"
         micronutrients: "Micronutriments"
+        weekly_coverage: "%{per_100g}%% AJR hebdo (100g)"
         allergens_and_traces: "Allergènes & Traces"
         allergens: "Allergènes"
         traces: "Traces possibles"
@@ -881,16 +1068,13 @@ fr:
         update_btn: "Mettre à jour"
         edit_btn: "Modifier"
         no_comment: "Aucune note rédigée."
+        not_rated_yet: "Tu n'as pas encore noté cette recette."
         delete_note: "Effacer"
       day_food_group:
         quantity_col: "Quantité"
         actions_col: "Actions"
         recipe_label: "Plat"
-        add_food: "Aliment"
-        add_recipe: "Plat"
-        item_count:
-          one: "1 élément"
-          other: "%{count} éléments"
+        customized_tooltip: "Ingrédients modifiés pour cet ajout"
         ungrouped_title: "Éléments sans groupe"
         delete_recipe_confirm: "Es-tu sûr de vouloir supprimer cette recette ?"
         delete_food_confirm: "Es-tu sûr de vouloir supprimer cet aliment ?"
@@ -916,7 +1100,8 @@ fr:
         friday: "Ven"
         saturday: "Sam"
         sunday: "Dim"
-      title: "Mes programmes"
+      title: "Programmes"
+      heading: "Mes programmes"
       subtitle: "Crée tes semaines-types et charge-les directement dans le calendrier."
       new_program: "Nouveau programme"
       active: "Actif"
@@ -925,6 +1110,24 @@ fr:
       set_active: "Définir comme actif"
       edit_program: "Modifier"
       duplicate_btn: "Dupliquer"
+      tension_balance:
+        open_button: "Répartition"
+        title: "Répartition étirement / contraction"
+        info_tooltip: |-
+          Indique, pour chaque groupe musculaire, si les exercices du programme sollicitent davantage le muscle en position étirée ou contractée. Idéalement, combinez les deux pour un travail complet du groupe musculaire.
+
+          Les exercices sans classification étirement ou contraction n'apparaissent pas dans cette répartition.
+        hint: "Sur l'ensemble du programme"
+        coverage_title: "Groupes travaillés"
+        no_exercises: "Ajoute des exercices à ton programme pour voir ici les groupes musculaires travaillés et leur répartition étirement / contraction."
+        no_classified: "Aucun exercice de ce programme n'est encore classé étirement/contraction."
+        gap:
+          stretch: "Aucun exercice à dominante étirement pour les %{body_part} cette semaine."
+          contraction: "Aucun exercice à dominante contraction pour les %{body_part} cette semaine."
+        legend:
+          stretch: "Étirement"
+          contraction: "Contraction"
+          mixed: "Mixte"
       back: "Mes programmes"
       back_to_program: "Retour au programme"
       delete_confirm: "Supprimer « %{name} » ? Cette action est irréversible."
@@ -952,6 +1155,8 @@ fr:
         description: "Crée ton premier programme pour préparer tes semaines d'entraînement."
       day:
         rest_placeholder: "Repos"
+        rest_min_abbr: "min"
+        rest_sec_abbr: "s"
         empty_hint: "Ajouter des exercices"
         add_exercise: "Ajouter un exercice..."
         no_exercise_found: "Aucun exercice trouvé"
@@ -963,18 +1168,55 @@ fr:
         copy_to_title: "Copier vers"
         copy_to_confirm: "Ce jour a déjà des exercices, ils seront remplacés. Continuer ?"
         copy_confirm_btn: "Copier"
+        copy_success: "Exercices copiés."
         exercise_count:
           zero: "vide"
           one: "1 exo"
           other: "%{count} exos"
+    workout_sets:
+      set_editor:
+        info_tooltip: |-
+          Séries : ajoutez-en autant que nécessaire, chacune avec ses propres répétitions et charge.
+
+          Types : combinez librement Échauffement, Travail, Dead set et Drop-set sur une même série.
+
+          RPE : évalue la difficulté perçue de la série, de 6 (facile) à 10 (échec total).
+
+          Charge : une valeur à 0 correspond à un exercice réalisé au poids de corps.
+        bodyweight_abbr: "PDC"
+        rpe_label: "RPE"
+        exercise_info_toggle: "Voir les détails"
+        remove_set: "Supprimer la série"
+        add_set: "+ Ajouter une série"
+        max_sets: "max 10"
+        no_sets_title: "Aucune série"
+        no_sets_description: "Ajoute ta première série pour configurer cet exercice."
+        rest_label: "Temps de repos (sec)"
+        notes_label: "Notes"
+        save_btn: "Enregistrer"
+        cancel_btn: "Annuler"
+        last_performance_title: "Dernière perf"
+        last_performance_ago: "Il y a %{time}"
+        last_performance_pr_badge: "PR"
+        set_types:
+          warmup: "Échauffement"
+          working: "Travail"
+          failure: "Dead set"
+          dropset: "Drop-set"
+        set_types_abbr:
+          warmup: "Éch"
+          failure: "Dead"
+          dropset: "Drop"
     exercises:
       page_title: "Entraînement"
       title: "Banque d'exercices"
       exercise_count:
+        zero: "0 exercice"
         one: "1 exercice"
         other: "%{count} exercices"
       search_placeholder: "Rechercher un exercice..."
       filter_body_part: "Groupe musculaire"
+      filter_tension_profile: "Tension"
       filter_equipment: "Équipement"
       all: "Tous"
       back_to_list: "Retour aux exercices"
@@ -1012,6 +1254,14 @@ fr:
         plyometrics: "Pliométrie"
         balance: "Équilibre"
         rehabilitation: "Rééducation"
+      tension_profile:
+        stretch: "Dominante étirement"
+        contraction: "Dominante contraction"
+        mixed: "Mixte"
+        none: "Non classé"
+        tooltip:
+          stretch: "Cet exercice sollicite le muscle en position étirée, sous charge. À combiner dans la semaine avec un exercice à dominante contraction pour un travail complet du groupe musculaire."
+          contraction: "Cet exercice sollicite le muscle en position raccourcie/contractée. À combiner dans la semaine avec un exercice à dominante étirement pour un travail complet du groupe musculaire."
       show:
         muscles: "Muscles"
         primary_muscle: "Muscle principal"
@@ -1155,14 +1405,16 @@ fr:
         wrists: "Poignets"
 
     weight_entries:
-      page_title: "Suivi poids"
+      page_title:
+        weight: "Suivi poids"
+        measurements: "Mesures"
+        weight_and_measurements: "Poids & Mesures"
       stats:
         current: "Poids actuel"
         delta_30d: "Sur 30 jours"
         delta_90d: "Sur 90 jours"
         goal: "Objectif"
         not_enough_data: "Pas assez de données"
-        set_goal: "Définir dans le profil"
         bmi_label: "IMC"
         bmi_category:
           underweight: "Insuffisance pondérale"
@@ -1173,6 +1425,7 @@ fr:
         to_lose: "%{kg} kg à perdre"
         to_gain: "%{kg} kg à prendre"
         goal_reached: "Objectif atteint !"
+        trend_unit: "kg/sem"
       chart:
         title: "Courbe de poids"
         not_enough_data: "Ajoutez au moins 2 mesures pour afficher la courbe"
@@ -1183,11 +1436,54 @@ fr:
         weight_label: "Poids"
         date_label: "Date"
         submit: "Enregistrer"
-        existing_entry: "Mesure existante · %{weight} kg — la valeur sera mise à jour"
+        existing_entry: "Mesure existante · %{weight} kg (la valeur sera mise à jour)"
       history:
         title: "Historique"
         empty: "Aucune mesure enregistrée"
         delete_confirm: "Supprimer cette entrée ?"
+      tabs:
+        poids: "Poids"
+        mesures: "Mesures"
+      measurements:
+        stats:
+          waist: "Tour de taille"
+          waist_info: "Reflet direct de la graisse abdominale. Risque cardio-métabolique accru au-delà de 94 cm (homme) ou 80 cm (femme), fortement accru au-delà de 102 cm / 88 cm (repères OMS)."
+          waist_hip_ratio: "Ratio taille/hanches"
+          waist_hip_ratio_info: "Indique la répartition des graisses. Risque accru au-delà de 0,90 chez l'homme et 0,85 chez la femme (seuils de l'OMS)."
+          waist_height_ratio: "Ratio taille/hauteur"
+          waist_height_ratio_info: "Repère simple : gardez ce ratio sous 0,5 (tour de taille inférieur à la moitié de votre taille). Risque considéré comme élevé au-delà de 0,6."
+          body_fat: "Masse grasse estimée"
+          body_fat_info: "Estimation par la formule US Navy. Repères indicatifs (ACE) : niveau athlète 6-13 % (homme) / 14-20 % (femme), niveau forme 14-17 % (homme) / 21-24 % (femme), niveau moyen 18-24 % (homme) / 25-31 % (femme)."
+        chart:
+          title: "Évolution des mesures"
+          not_enough_data: "Ajoutez au moins 2 mesures pour afficher la courbe"
+        form:
+          title: "Enregistrer mes mesures"
+          date_label: "Date"
+          photo_label: "Photo (optionnel)"
+          photo_choose: "Choisir un fichier"
+          photo_hint: "JPG ou PNG"
+          submit: "Enregistrer"
+        history:
+          title: "Historique"
+          empty: "Aucune mesure enregistrée"
+          delete_confirm: "Supprimer cette entrée ?"
+        fields:
+          waist_cm: "Tour de taille"
+          hips_cm: "Tour de hanches"
+          chest_cm: "Tour de poitrine"
+          biceps_cm: "Tour de bras"
+          thighs_cm: "Tour de cuisses"
+          calves_cm: "Tour de mollets"
+          neck_cm: "Tour de cou"
+        fields_short:
+          waist_cm: "Taille"
+          hips_cm: "Hanches"
+          chest_cm: "Poitrine"
+          biceps_cm: "Bras"
+          thighs_cm: "Cuisses"
+          calves_cm: "Mollets"
+          neck_cm: "Cou"
     statistics:
       page_title: "Statistiques"
       tabs:
@@ -1195,6 +1491,8 @@ fr:
         training: "Entraînement"
         cardio: "Cardio"
         bien_etre: "Bien-être"
+        hydratation: "Hydratation"
+        jeune: "Jeûne"
       periods:
         "7": "7 j"
         "30": "30 j"
@@ -1220,6 +1518,7 @@ fr:
         protein_title: "Évolution des protéines"
         protein_unit: "g"
         meal_title: "Répartition par repas"
+        micronutrient_trend_title: "Tendance micronutriment"
         goal_line: "Objectif"
         no_group: "Sans groupe"
         macro_proteins: "Protéines"
@@ -1325,6 +1624,25 @@ fr:
         days_logged:
           one: "%{count} jour enregistré"
           other: "%{count} jours enregistrés"
+      hydratation:
+        no_data_title: "Aucune donnée d'hydratation sur %{period}"
+        no_data_hint: "Ajoute ta consommation d'eau dans le calendrier pour suivre ton hydratation."
+      jeune:
+        no_data_title: "Aucun jeûne sur %{period}"
+        no_data_hint: "Démarre un jeûne depuis le calendrier pour voir tes statistiques ici."
+        kpi_streak: "Série actuelle"
+        kpi_best_streak: "Meilleure série"
+        kpi_total_hours: "Heures cumulées"
+        kpi_completion_rate: "Taux de réussite"
+        streak_days:
+          one: "%{count} jour"
+          other: "%{count} jours"
+        history_title: "Historique"
+        history_period: "Sur %{period}"
+        history_truncated: "Affichage limité aux %{shown} sessions les plus récentes (%{total} au total sur cette période)"
+        status_completed: "Terminé dans les temps"
+        status_cut_short: "Écourté"
+        status_in_progress: "En cours"
 
     cardio_sessions:
       confirm_delete: "Supprimer cette session cardio ?"
@@ -1361,6 +1679,7 @@ fr:
       widget:
         title: "Entraînement"
         session_count:
+          zero: "0 séance"
           one: "1 séance"
           other: "%{count} séances"
         empty: "Aucune séance pour aujourd'hui"
@@ -1375,17 +1694,13 @@ fr:
         weight_kg: "Poids (kg)"
         reps: "Répétitions"
         duration: "Durée"
-        rpe: "Intensité (RPE)"
         notes: "Notes"
         notes_placeholder: "Sensations, observations..."
         empty_hint: "Cherchez un exercice et cliquez Ajouter pour commencer"
         search_hint: "Tapez pour rechercher un exercice"
         last_perf_prefix: "Dernière fois"
-        rpe_light: "Léger"
-        rpe_max: "Maximal"
         no_exercises_error: "Ajoutez au moins un exercice avant d'enregistrer la séance."
         no_weight_error: "Renseignez le poids, les répétitions et la durée avant d'enregistrer."
-        max_sets: "max 10"
         submit_add: "Ajouter"
         from_program: "Charger depuis « %{name} »"
       picker:
@@ -1410,6 +1725,7 @@ fr:
         one: "1 article restant"
         other: "%{count} articles restants"
       delete_item: "Supprimer"
+      edit_quantity: "Modifier la quantité"
       clear_checked: "Effacer les cochés et mettre en stock"
       clear_checked_modal_label: "Mettre en stock"
       clear_checked_confirm: "Supprimer les articles cochés et les remettre en stock ?"
@@ -1421,10 +1737,47 @@ fr:
       copy_success: "Liste copiée dans le presse-papiers."
       copy_error: "Impossible de copier la liste."
       export_share: "Partager"
-      export_title: "Liste de courses — %{date}"
+      export_print: "Imprimer"
+      export_title: "Liste de courses du %{date}"
       empty_state:
         title: "Votre liste est vide"
         hint: "Ajoutez des articles ou générez depuis une recette."
+      history_link: "Historique"
+      archive_button: "Archiver"
+      archived: "Liste archivée."
+      archived_label: "Liste du %{date}"
+      archive_name_label: "Nom de la liste (facultatif)"
+      merged_from_archive: "Articles ajoutés à la liste actuelle."
+      replaced_from_archive: "Liste actuelle remplacée."
+      merge_into_current_label: "Ajouter à la liste actuelle"
+      replace_current_label: "Remplacer"
+      replace_current_confirm: "Remplacer la liste actuelle par le contenu de cette liste archivée ? Les articles actuels seront supprimés."
+      history_heading: "Listes archivées"
+      history_empty_state:
+        title: "Aucune liste archivée"
+        hint: "Les listes que vous archivez apparaîtront ici."
+      history_item_count:
+        zero: "0 article"
+        one: "1 article"
+        other: "%{count} articles"
+      history_preview_toggle: "Voir les articles"
+      archive_confirm: "Archiver la liste actuelle ? Une nouvelle liste vide sera créée."
+      suggestions_label: "Souvent achetés"
+      suggestions_empty_state:
+        title: "Aucune suggestion pour l'instant"
+        hint: "Ajoutez quelques repas à vos journées pour voir apparaître ici vos aliments les plus fréquents."
+      week_generation:
+        button_label: "Générer depuis les 7 derniers jours"
+        modal_title: "Ingrédients des 7 derniers jours"
+        modal_subtitle:
+          zero: "Aucun aliment manquant en stock détecté"
+          one: "1 aliment manquant en stock détecté"
+          other: "%{count} aliments manquants en stock détectés"
+        selected_count: "%{selected} / %{total} sélectionnés"
+        empty_state:
+          title: "Rien à ajouter"
+          hint: "Tous les ingrédients consommés cette semaine sont déjà en stock."
+        submit: "Ajouter à la liste"
       add_form:
         placeholder: "Rechercher ou saisir un aliment"
         quantity_placeholder: "Qté"
@@ -1443,10 +1796,21 @@ fr:
         supplements: "Compléments"
         other: "Autres"
 
+    scans:
+      navbar_tooltip: "Scanner un produit"
+      modal_title: "Scanner un produit"
+      add_to_bank: "Ajouter à ma banque d'aliments"
+      view_existing_food: "Voir l'aliment"
+      added_notice: "Ajouté à votre banque d'aliments."
+      view_food: "Voir l'aliment"
+      scan_another: "Scanner un autre"
+      close: "Fermer"
+      of_which: "dont"
+
     devise:
       shared:
         email: "Adresse e-mail"
-        email_placeholder: "ton@email.com"
+        email_placeholder: "votre@email.com"
         password: "Mot de passe"
         back_to_login: "Retour à la connexion"
         or_continue_with: "ou continuer avec"
@@ -1460,6 +1824,7 @@ fr:
         submit: "Se connecter"
         no_account: "Pas encore de compte ?"
         sign_up_link: "Créer un compte"
+        resend_confirmation: "Vous n'avez pas reçu l'email de confirmation ?"
       registrations:
         title: "Créer un compte"
         subtitle: "Commencez à suivre votre nutrition"
@@ -1468,6 +1833,11 @@ fr:
         submit: "Créer mon compte"
         already_account: "Déjà un compte ?"
         sign_in_link: "Se connecter"
+      confirmations:
+        new:
+          title: "Validez votre compte"
+          subtitle: "Un e-mail de confirmation vous a été envoyé. Vous ne l'avez pas reçu ? Renseignez votre adresse ci-dessous pour en recevoir un nouveau."
+          submit: "Renvoyer les instructions"
       passwords:
         new:
           title: "Mot de passe oublié ?"
@@ -1480,6 +1850,10 @@ fr:
           confirm_password: "Confirmer le mot de passe"
           submit: "Réinitialiser le mot de passe"
       mailer:
+        confirmation:
+          greeting: "Bienvenue %{email} !"
+          intro: "Vous pouvez confirmer votre adresse e-mail via le lien ci-dessous."
+          action: "Confirmer mon compte"
         reset_password:
           greeting: "Bonjour %{email} !"
           intro: "Quelqu'un a demandé un lien pour changer votre mot de passe. Vous pouvez le faire via le lien ci-dessous."
@@ -1489,7 +1863,13 @@ fr:
         password_changed:
           greeting: "Bonjour %{email} !"
           body: "Votre mot de passe a été modifié avec succès."
+          ignore: "Si vous n'êtes pas à l'origine de ce changement, contactez-nous immédiatement et réinitialisez votre mot de passe."
         email_changed:
           greeting: "Bonjour %{email} !"
           body_pending: "Votre adresse e-mail est en cours de modification vers %{new_email}."
           body_confirmed: "Votre adresse e-mail a été modifiée vers %{new_email}."
+          ignore: "Si vous n'êtes pas à l'origine de ce changement, contactez-nous immédiatement."
+        new_device_sign_in:
+          greeting: "Bonjour %{email} !"
+          intro: "Une connexion depuis une nouvelle adresse IP (%{ip}) vient d'être détectée sur votre compte."
+          ignore: "Si c'est bien vous, vous pouvez ignorer cet e-mail. Sinon, changez votre mot de passe dès que possible."

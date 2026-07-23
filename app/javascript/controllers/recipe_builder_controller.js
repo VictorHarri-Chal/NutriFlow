@@ -1,16 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-
-const UNIT_GRAM_MULTIPLIERS = {
-  g:  1,
-  kg: 1000,
-  mL: 1,
-  L:  1000
-}
-
-const MICRONUTRIENT_ORDER = [
-  "calcium", "iron", "magnesium", "potassium", "sodium", "zinc", "cholesterol",
-  "vitamin_c", "vitamin_d", "vitamin_b12", "vitamin_a", "vitamin_b9", "epa", "dha"
-]
+import { UNIT_GRAM_MULTIPLIERS } from "unit_conversions"
 
 export default class extends Controller {
   static targets = [
@@ -39,6 +28,9 @@ export default class extends Controller {
       this.micronutrientUnits  = labels.micronutrient_units || {}
       this.allergenLabels      = labels.allergens           || {}
     }
+    // Ordre dérivé des clés du registre Micronutrient (JSON.parse préserve
+    // l'ordre d'insertion des clés string), pas d'une liste dupliquée ici.
+    this.micronutrientOrder = Object.keys(this.micronutrientLabels)
 
     this.update()
   }
@@ -128,7 +120,7 @@ export default class extends Controller {
   }
 
   _updateMicronutrients(mn) {
-    const ordered = MICRONUTRIENT_ORDER
+    const ordered = this.micronutrientOrder
       .map(key => ({ key, value: mn[key] }))
       .filter(({ value }) => value && value > 0)
 

@@ -1,37 +1,17 @@
 <div class="flex items-center gap-2">
 
-  <%# ── Date picker pill ── %>
-  <div class="flex items-center bg-surface-raised border border-surface-border/50 rounded-xl overflow-hidden text-sm">
-    <%= link_to calendars_path(date: (selected_date - 1.day).strftime('%Y-%m-%d')),
-                class: "w-8 h-8 flex items-center justify-center text-ink-subtle hover:text-ink-primary hover:bg-surface-hover transition-colors",
-                data: { turbo: false },
-                title: t("views.calendars.previous_day") do %>
-      <i class="fas fa-chevron-left text-xs"></i>
-    <% end %>
-
-    <input type="date"
-           id="date-selector"
-           value="<%= selected_date.strftime('%Y-%m-%d') %>"
-           class="bg-transparent border-x border-surface-border/40 px-3 h-8 text-ink-primary text-sm focus:outline-none hover:bg-surface-hover focus:bg-surface-hover transition-colors cursor-pointer"
-           autocomplete="off"
-           data-lpignore="true"
-           data-1p-ignore
-           data-controller="date-selector">
-
-    <%= link_to calendars_path(date: (selected_date + 1.day).strftime('%Y-%m-%d')),
-                class: "w-8 h-8 flex items-center justify-center text-ink-subtle hover:text-ink-primary hover:bg-surface-hover transition-colors",
-                data: { turbo: false },
-                title: t("views.calendars.next_day") do %>
-      <i class="fas fa-chevron-right text-xs"></i>
-    <% end %>
-  </div>
-
-  <%# ── Secondary actions: icon-only buttons, same height as pill ── %>
+  <%# ── Action buttons: today / monthly view / collapse all / customize display ── %>
   <div class="flex items-center gap-1">
 
-    <% unless selected_date == Date.current %>
+    <% if selected_date == Date.current %>
+      <span class="w-8 h-8 flex items-center justify-center rounded-xl text-ink-primary bg-surface-raised border border-surface-border/50 opacity-35 cursor-not-allowed"
+            aria-disabled="true"
+            title="<%= t("views.calendars.today_button_disabled") %>">
+        <i class="fas fa-calendar-day text-xs"></i>
+      </span>
+    <% else %>
       <%= link_to calendars_path(date: Date.current.strftime('%Y-%m-%d')),
-                  class: "w-8 h-8 flex items-center justify-center rounded-xl text-ink-primary bg-surface-raised border border-surface-border/50 hover:bg-surface-hover transition-all",
+                  class: "w-8 h-8 flex items-center justify-center rounded-xl text-ink-primary bg-surface-raised border border-surface-border/50 hover:bg-surface-hover hover:text-brand transition-all",
                   data: { turbo: false },
                   title: t("views.calendars.today") do %>
         <i class="fas fa-calendar-day text-xs"></i>
@@ -45,6 +25,41 @@
       <i class="fas fa-calendar-alt text-xs"></i>
     </button>
 
+    <button type="button"
+            data-controller="collapse-all"
+            data-action="click->collapse-all#closeAll"
+            class="w-8 h-8 flex items-center justify-center rounded-xl text-ink-primary bg-surface-raised border border-surface-border/50 hover:bg-surface-hover hover:text-brand transition-all"
+            title="<%= t("views.calendars.collapse_all_button") %>">
+      <i class="fas fa-compress text-xs"></i>
+    </button>
+
+    <%= link_to setting_path(tab: 'preferences', anchor: 'calendar-sections'),
+                class: "w-8 h-8 flex items-center justify-center rounded-xl text-ink-primary bg-surface-raised border border-surface-border/50 hover:bg-surface-hover hover:text-brand transition-all",
+                title: t("views.calendars.customize_display_button") do %>
+      <i class="fas fa-sliders text-xs"></i>
+    <% end %>
+
+  </div>
+
+  <%# ── Date picker pill ── %>
+  <div class="flex items-center bg-surface-raised border border-surface-border/50 rounded-xl overflow-hidden text-sm">
+    <%= link_to calendars_path(date: (selected_date - 1.day).strftime('%Y-%m-%d')),
+                class: "w-8 h-8 flex items-center justify-center text-ink-subtle hover:text-ink-primary hover:bg-surface-hover transition-colors",
+                data: { turbo: false },
+                title: t("views.calendars.previous_day") do %>
+      <i class="fas fa-chevron-left text-xs"></i>
+    <% end %>
+
+    <span class="flex items-center border-x border-surface-border/40 px-3 h-8 text-ink-primary text-sm">
+      <%= selected_date.strftime('%d/%m/%Y') %>
+    </span>
+
+    <%= link_to calendars_path(date: (selected_date + 1.day).strftime('%Y-%m-%d')),
+                class: "w-8 h-8 flex items-center justify-center text-ink-subtle hover:text-ink-primary hover:bg-surface-hover transition-colors",
+                data: { turbo: false },
+                title: t("views.calendars.next_day") do %>
+      <i class="fas fa-chevron-right text-xs"></i>
+    <% end %>
   </div>
 
 </div>

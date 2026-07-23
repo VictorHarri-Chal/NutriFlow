@@ -1,4 +1,4 @@
-<div class="space-y-8">
+<div class="space-y-6">
 
   <div>
     <h2 class="text-base font-semibold text-ink-primary flex items-center gap-2">
@@ -8,19 +8,31 @@
     <p class="text-sm text-ink-subtle mt-1"><%= t("views.settings.security.description") %></p>
   </div>
 
+  <% if current_user.pending_reconfirmation? %>
+    <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-status-warning/30 bg-status-warning/10">
+      <div class="flex items-center gap-3">
+        <i class="fas fa-triangle-exclamation text-status-warning text-sm shrink-0"></i>
+        <p class="text-sm text-ink-primary">
+          <%= t("views.settings.security.pending_reconfirmation", email: current_user.unconfirmed_email) %>
+        </p>
+      </div>
+      <%= button_to t("views.settings.security.resend_confirmation"),
+                    user_confirmation_path,
+                    method: :post,
+                    params: { user: { email: current_user.email } },
+                    class: "btn-ghost text-xs shrink-0 cursor-pointer whitespace-nowrap" %>
+    </div>
+  <% end %>
+
   <%# ── Changement d'email ── %>
   <div class="border-t border-surface-border/40 pt-6">
     <h3 class="text-sm font-semibold text-ink-primary mb-1"><%= t("views.settings.security.change_email") %></h3>
     <p class="text-xs text-ink-subtle mb-4"><%= t("views.settings.security.current_email_hint", email: current_user.email) %></p>
-    <% if (email_errors = session.delete(:email_errors)).present? %>
-      <div class="mb-4 p-3 rounded-lg bg-status-danger/10 border border-status-danger/30">
-        <% email_errors.each do |field, messages| %>
-          <% messages.each do |message| %>
-            <p class="text-sm text-status-danger"><%= "#{current_user.class.human_attribute_name(field)} #{message}" %></p>
-          <% end %>
-        <% end %>
-      </div>
-    <% end %>
+    <%
+      email_errors = session.delete(:email_errors)
+      email_error_messages = email_errors.present? ? email_errors.flat_map { |field, msgs| msgs.map { |msg| "#{current_user.class.human_attribute_name(field)} #{msg}" } } : nil
+    %>
+    <%= render "shared/form_errors", messages: email_error_messages, margin_class: "mb-4" %>
     <%= form_with(model: current_user, url: registration_path(current_user), local: true, method: :patch, class: "space-y-4") do |form| %>
       <%= hidden_field_tag :change_type, 'email' %>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -46,15 +58,11 @@
   <%# ── Changement de mot de passe ── %>
   <div class="border-t border-surface-border/40 pt-6">
     <h3 class="text-sm font-semibold text-ink-primary mb-4"><%= t("views.settings.security.change_password") %></h3>
-    <% if (password_errors = session.delete(:password_errors)).present? %>
-      <div class="mb-4 p-3 rounded-lg bg-status-danger/10 border border-status-danger/30">
-        <% password_errors.each do |field, messages| %>
-          <% messages.each do |message| %>
-            <p class="text-sm text-status-danger"><%= "#{current_user.class.human_attribute_name(field)} #{message}" %></p>
-          <% end %>
-        <% end %>
-      </div>
-    <% end %>
+    <%
+      password_errors = session.delete(:password_errors)
+      password_error_messages = password_errors.present? ? password_errors.flat_map { |field, msgs| msgs.map { |msg| "#{current_user.class.human_attribute_name(field)} #{msg}" } } : nil
+    %>
+    <%= render "shared/form_errors", messages: password_error_messages, margin_class: "mb-4" %>
     <%= form_with(model: current_user, url: registration_path(current_user), local: true, method: :patch, class: "space-y-4") do |form| %>
       <%= hidden_field_tag :change_type, 'password' %>
       <div>
@@ -84,6 +92,46 @@
     <% end %>
   </div>
 
+  <%# ── Déconnecter les autres appareils ── %>
+  <div class="border-t border-surface-border/40 pt-6">
+    <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-surface-border/40 bg-surface-hover/40">
+      <div>
+        <h3 class="text-sm font-semibold text-ink-primary"><%= t("views.settings.security.sign_out_other_sessions") %></h3>
+        <p class="text-xs text-ink-subtle mt-0.5"><%= t("views.settings.security.sign_out_other_sessions_hint") %></p>
+      </div>
+      <%= button_to t("views.settings.security.sign_out_other_sessions_button"),
+                    sign_out_other_sessions_setting_path,
+                    method: :delete,
+                    class: "btn-secondary shrink-0 text-sm cursor-pointer",
+                    data: {
+                      action: "click->confirm#show",
+                      confirm_message: t("views.settings.security.sign_out_other_sessions_confirm"),
+                      url: sign_out_other_sessions_setting_path,
+                      method: "delete"
+                    } %>
+    </div>
+  </div>
+
+  <%# ── Réinitialisation des données ── %>
+  <div class="border-t border-surface-border/40 pt-6">
+    <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-status-danger/20 bg-status-danger/5">
+      <div>
+        <h3 class="text-sm font-semibold text-status-danger"><%= t("views.settings.security.reset_data") %></h3>
+        <p class="text-xs text-ink-subtle mt-0.5"><%= t("views.settings.security.reset_data_warning") %></p>
+      </div>
+      <%= button_to t("views.settings.security.reset_data_button"),
+                    reset_data_setting_path,
+                    method: :delete,
+                    class: "btn-danger shrink-0 w-36 text-center text-sm cursor-pointer",
+                    data: {
+                      action: "click->confirm#show",
+                      confirm_message: t("views.settings.security.reset_data_warning"),
+                      url: reset_data_setting_path,
+                      method: "delete"
+                    } %>
+    </div>
+  </div>
+
   <%# ── Suppression du compte ── %>
   <div class="border-t border-surface-border/40 pt-6">
     <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-status-danger/20 bg-status-danger/5">
@@ -94,7 +142,7 @@
       <%= button_to t("views.settings.security.delete_account_button"),
                     registration_path(:user),
                     method: :delete,
-                    class: "btn-danger shrink-0 text-sm cursor-pointer",
+                    class: "btn-danger shrink-0 w-36 text-center text-sm cursor-pointer",
                     data: {
                       action: "click->confirm#show",
                       confirm_message: t("views.settings.security.delete_account_warning"),

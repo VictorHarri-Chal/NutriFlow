@@ -1,13 +1,12 @@
 class WorkoutProgram < ApplicationRecord
+  SPLIT_TYPES = %w[ppl upper_lower fullbody push_pull bro_split custom].freeze
+  DAY_KEYS    = %w[monday tuesday wednesday thursday friday saturday sunday].freeze
+
   belongs_to :user
   has_many :program_days, -> { order(:day_of_week) }, dependent: :destroy, inverse_of: :workout_program
 
-  validates :name, presence: true
-  validates :split_type, presence: true, inclusion: { in: %w[ppl upper_lower fullbody push_pull bro_split custom] }
-
-  SPLIT_TYPES = %w[ppl upper_lower fullbody push_pull bro_split custom].freeze
-
-  DAY_KEYS  = %w[monday tuesday wednesday thursday friday saturday sunday].freeze
+  validates :name, presence: true, uniqueness: { scope: :user_id, case_sensitive: false }
+  validates :split_type, presence: true, inclusion: { in: SPLIT_TYPES }
 
   # Ensure only one active program per user
   before_save :deactivate_others, if: -> { is_active? && is_active_changed? }
@@ -19,6 +18,31 @@ class WorkoutProgram < ApplicationRecord
 
   def activate!
     update!(is_active: true)
+  end
+
+  # Aggregates every ProgramExercise's Exercise#tension_profile across all
+  # ProgramDays, grouped by body_part. Relies on program_days (and its nested
+  # program_exercises: :exercise) already being eager-loaded by the caller.
+  # Never queries directly, to avoid N+1 on the program show page.
+  def tension_balance
+    program_exercises = program_days.flat_map(&:program_exercises).select { |pe| pe.exercise.body_part.present? }
+
+    program_exercises.group_by { |pe| pe.exercise.body_part }.transform_values do |pes|
+      pes.group_by { |pe| pe.exercise.tension_profile }.transform_values(&:size)
+    end
+  end
+
+  # Forces a fresh eager-load of program_days (and nested program_exercises:
+  # exercise/program_exercise_sets) directly onto this record's own
+  # association cache, so #tension_balance reads it without N+1. #reset first
+  # guarantees a fresh query even if program_days was already touched earlier
+  # in the same request (e.g. after a create/destroy that changed the data).
+  def preload_tension_balance_data!
+    association(:program_days).reset
+    ActiveRecord::Associations::Preloader.new(
+      records: [self],
+      associations: { program_days: { program_exercises: [:exercise, :program_exercise_sets] } }
+    ).call
   end
 
   private

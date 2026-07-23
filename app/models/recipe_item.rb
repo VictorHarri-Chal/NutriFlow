@@ -1,33 +1,24 @@
 class RecipeItem < ApplicationRecord
-  UNITS = %w[g kg mL L].freeze
-
-  UNIT_GRAM_MULTIPLIERS = {
-    "g"  => 1.0,
-    "kg" => 1000.0,
-    "mL" => 1.0,
-    "L"  => 1000.0
-  }.freeze
+  include HasFoodQuantity
+  include ValidatesSharedOwner
 
   belongs_to :recipe
-  belongs_to :food
 
-  validates :quantity, presence: true, numericality: { greater_than: 0 }
+  validates :quantity, presence: true,
+            numericality: { greater_than: 0, less_than_or_equal_to: HasFoodQuantity::MAX_QUANTITY }
   validates :food_id, presence: true
   validates :unit, inclusion: { in: UNITS }
+  validates_shared_owner :food, owner: :recipe
+  validate :quantity_at_least_one_gram_equivalent
 
-  def grams_equivalent = quantity.to_f * UNIT_GRAM_MULTIPLIERS.fetch(unit.to_s, 1.0)
-  def gram_factor      = grams_equivalent / 100.0
-  def total_calories      = (food.calories.to_f      * gram_factor).round(1)
-  def total_proteins      = (food.proteins.to_f      * gram_factor).round(1)
-  def total_carbs         = (food.carbs.to_f         * gram_factor).round(1)
-  def total_fats          = (food.fats.to_f          * gram_factor).round(1)
-  def total_sugars        = (food.sugars.to_f        * gram_factor).round(1)
-  def total_fiber         = (food.fiber.to_f         * gram_factor).round(2)
-  def total_saturated_fat = (food.saturated_fat.to_f * gram_factor).round(2)
-  def total_salt          = (food.salt.to_f          * gram_factor).round(2)
+  private
 
-  def scaled_micronutrients
-    return {} unless food.micronutrients.present?
-    food.micronutrients.transform_values { |v| (v.to_f * gram_factor).round(3) }
+  # The `quantity` column holds a raw number in whatever `unit` is selected
+  # (g/kg/mL/L) — a plain `greater_than_or_equal_to: 1` on `quantity` itself
+  # would reject a perfectly valid "0.5 kg" (= 500 g) entry. Enforce the
+  # minimum on the gram-equivalent instead.
+  def quantity_at_least_one_gram_equivalent
+    return if quantity.blank? || errors[:quantity].any?
+    errors.add(:quantity, :greater_than_or_equal_to, count: 1) if grams_equivalent < 1
   end
 end

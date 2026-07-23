@@ -1,0 +1,43 @@
+<div class="flex items-center gap-3 py-3"<% if draggable %> data-sortable-id="<%= sortable_id %>"<% end %>>
+  <% if draggable %>
+    <i class="fas fa-grip-vertical w-4 text-center text-ink-subtle/40 text-xs cursor-grab active:cursor-grabbing" data-drag-handle></i>
+  <% end %>
+
+  <div class="flex-1 flex items-center gap-1.5">
+    <label for="<%= input_id %>" class="text-sm font-medium text-ink-primary cursor-pointer">
+      <%= t(label_key) %>
+    </label>
+    <i class="fas fa-circle-info text-xs text-ink-subtle/40 hover:text-ink-subtle cursor-default" title="<%= t(hint_key) %>"></i>
+  </div>
+
+  <label class="flex items-center cursor-pointer shrink-0">
+    <input type="hidden" name="<%= field_name %>" value="0">
+
+    <% if requires_confirmation? %>
+      <input type="checkbox"
+             id="<%= input_id %>"
+             name="<%= field_name %>"
+             value="1"
+             role="switch"
+             class="sr-only peer"
+             checked
+             data-action="click->confirm#show"
+             data-url="<%= url %>"
+             data-method="patch"
+             data-confirm-message="<%= confirm_message %>"
+             data-confirm-params="<%= confirm_params %>">
+    <% else %>
+      <input type="checkbox"
+             id="<%= input_id %>"
+             name="<%= field_name %>"
+             value="1"
+             role="switch"
+             class="sr-only peer"
+             <%= "checked" if checked %>
+             onchange="this.form.submit()">
+    <% end %>
+
+    <div class="relative w-9 h-5 rounded-full shrink-0 transition-colors bg-surface-border peer-checked:bg-brand
+                after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4"></div>
+  </label>
+</div>

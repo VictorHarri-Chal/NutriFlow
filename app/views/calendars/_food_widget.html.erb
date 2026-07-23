@@ -3,11 +3,19 @@
   total_proteins = all_day_items.sum(&:total_proteins)
   total_carbs    = all_day_items.sum(&:total_carbs)
   total_fats     = all_day_items.sum(&:total_fats)
+
+  fasting_sessions = if all_day_items.any? && current_user.show_fasting_tracking?
+    current_user.fasting_sessions.overlapping(day.date.beginning_of_day..day.date.end_of_day).to_a
+  else
+    []
+  end
 %>
 
 <div id="food_widget"
      data-controller="collapsible"
+     data-collapsible-scope="page-section"
      data-collapsible-storage-key="food-widget"
+     <%= 'data-collapsible-force-open' if local_assigns[:force_open] %>
      class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-3 mb-4">
 
   <%# Header (click to toggle) %>
@@ -25,11 +33,10 @@
       <%= button_to copy_yesterday_calendars_path,
             params: { date: day.date.to_s },
             method: :post,
-            class: "flex items-center gap-1 text-[11px] text-ink-subtle/50 hover:text-ink-muted transition-colors cursor-pointer",
+            class: "w-7 h-7 inline-flex items-center justify-center rounded-lg text-ink-subtle hover:text-brand hover:bg-surface-hover transition-colors cursor-pointer",
             form: { class: "contents" },
             title: t("views.calendars.copy_yesterday_title") do %>
-        <i class="fas fa-history text-[9px]"></i>
-        <span><%= t("views.calendars.copy_yesterday") %></span>
+        <i class="fas fa-history text-xs"></i>
       <% end %>
     </div>
   </div>
@@ -39,10 +46,10 @@
 
     <% if all_day_items.any? %>
       <% day_items_by_group.each do |group, items| %>
-        <%= render DayFoodGroupComponent.new(day_food_group: group, day_foods: items, day: day) %>
+        <%= render DayFoodGroupComponent.new(day_food_group: group, day_foods: items, day: day, fasting_sessions: fasting_sessions) %>
       <% end %>
       <% if day_items_without_group.any? %>
-        <%= render DayFoodGroupComponent.new(day_foods: day_items_without_group, day: day) %>
+        <%= render DayFoodGroupComponent.new(day_foods: day_items_without_group, day: day, fasting_sessions: fasting_sessions) %>
       <% end %>
     <% else %>
       <p class="text-sm text-ink-subtle text-center py-3"><%= t("views.calendars.food_widget.empty") %></p>

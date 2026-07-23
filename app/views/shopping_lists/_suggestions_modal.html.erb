@@ -1,0 +1,23 @@
+<%# locals: (shopping_list:, suggested_foods:) %>
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4"
+     data-controller="modal"
+     data-action="click->modal#handleBackdropClick keydown@document->modal#handleEscape">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+  <div class="relative w-full max-w-md bg-surface-raised border border-surface-border/50 rounded-2xl shadow-2xl transition-all duration-200 ease-out scale-95 opacity-0 flex flex-col max-h-[80vh] overflow-hidden"
+       data-modal-target="panel">
+
+    <div class="flex items-center justify-between px-5 py-4 border-b border-surface-border/40 flex-shrink-0">
+      <h3 class="text-sm font-semibold text-ink-primary"><%= t("views.shopping_lists.suggestions_label") %></h3>
+      <button type="button"
+              class="btn-ghost w-8 h-8 !p-0 flex items-center justify-center flex-shrink-0"
+              data-action="click->modal#close">
+        <i class="fas fa-times text-sm"></i>
+      </button>
+    </div>
+
+    <div class="px-5 py-4 overflow-y-auto min-h-0 flex-1">
+      <%= render "shopping_lists/suggestions", shopping_list: shopping_list, suggested_foods: suggested_foods %>
+    </div>
+  </div>
+</div>

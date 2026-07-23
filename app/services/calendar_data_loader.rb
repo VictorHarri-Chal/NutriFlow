@@ -16,6 +16,7 @@ class CalendarDataLoader
   def call
     load_items
     load_profile_goals
+    load_micronutrients
     build_result
   end
 
@@ -25,7 +26,7 @@ class CalendarDataLoader
 
   def load_items
     day_foods   = @day.day_foods.includes(:food, :day_food_group)
-    day_recipes = @day.day_recipes.includes(:day_food_group, recipe: { recipe_items: :food })
+    day_recipes = @day.day_recipes.includes(:day_food_group, recipe: { recipe_items: :food }, day_recipe_items: :food)
     @all_items  = day_foods + day_recipes
 
     by_group                = @all_items.group_by(&:day_food_group)
@@ -33,54 +34,43 @@ class CalendarDataLoader
     @day_items_by_group      = by_group
 
     totals = @all_items.each_with_object(
-      { calories: 0.0, proteins: 0.0, carbs: 0.0, fats: 0.0, sugars: 0.0 }
+      { calories: 0.0, proteins: 0.0, carbs: 0.0, fats: 0.0, sugars: 0.0,
+        fiber: 0.0, saturated_fat: 0.0, salt: 0.0 }
     ) do |item, acc|
-      acc[:calories] += item.total_calories
-      acc[:proteins] += item.total_proteins
-      acc[:carbs]    += item.total_carbs
-      acc[:fats]     += item.total_fats
-      acc[:sugars]   += item.total_sugars
+      acc[:calories]      += item.total_calories
+      acc[:proteins]      += item.total_proteins
+      acc[:carbs]         += item.total_carbs
+      acc[:fats]          += item.total_fats
+      acc[:sugars]        += item.total_sugars
+      acc[:fiber]         += item.total_fiber
+      acc[:saturated_fat] += item.total_saturated_fat
+      acc[:salt]          += item.total_salt
     end
 
-    @total_calories = totals[:calories].round(1)
-    @total_proteins = totals[:proteins].round(1)
-    @total_carbs    = totals[:carbs].round(1)
-    @total_fats     = totals[:fats].round(1)
-    @total_sugars   = totals[:sugars].round(1)
+    @total_calories      = totals[:calories].round(1)
+    @total_proteins      = totals[:proteins].round(1)
+    @total_carbs         = totals[:carbs].round(1)
+    @total_fats          = totals[:fats].round(1)
+    @total_sugars        = totals[:sugars].round(1)
+    @total_fiber         = totals[:fiber].round(1)
+    @total_saturated_fat = totals[:saturated_fat].round(1)
+    @total_salt          = totals[:salt].round(1)
   end
 
   # ── Profile & goals ──────────────────────────────────────────────────────────
 
   def load_profile_goals
-    @profile    = @user.profile
+    @profile     = @user.profile
     @has_foods   = @user.foods.exists?
     @has_recipes = @user.recipes.exists?
 
-    return unless @profile&.weight.present? && @profile.bmr
+    goal_delta      = @profile.daily_calorie_delta
+    @tdee_breakdown = @profile.tdee_breakdown(day: @day).merge(goal_delta: goal_delta)
+    tdee            = @tdee_breakdown[:tdee]
 
-    effective_steps  = @day.effective_steps(@profile)
-    job_neat         = Profile::JOB_NEAT_KCAL[@profile.job_activity_level.to_sym] ||
-                       Profile::JOB_NEAT_KCAL[:light_activity]
-    steps_kcal       = @profile.neat_from_steps(effective_steps)
-    workout_kcal     = @day.workout_calories_total
-    tdee             = @profile.bmr + job_neat + steps_kcal + workout_kcal
-    multiplier       = Profile::GOAL_MULTIPLIERS[@profile.goal.to_sym] || 1.0
-
-    @tdee_breakdown = {
-      bmr:          @profile.bmr,
-      job_neat:     job_neat,
-      steps_kcal:   steps_kcal,
-      steps_count:  effective_steps,
-      steps_custom: @day.steps.present?,
-      workout_kcal: workout_kcal,
-      tdee:         tdee,
-      multiplier:   multiplier,
-      goal_delta:   (tdee * multiplier - tdee).round
-    }
-
-    @daily_calorie_goal = (tdee * multiplier).round
+    @daily_calorie_goal = (tdee + goal_delta).round
     @daily_protein_goal = @profile.daily_protein_goal
-    @daily_fats_goal    = @profile.daily_fats_goal
+    @daily_fats_goal    = @profile.daily_fats_goal(day: @day)
     @daily_carbs_goal   = @profile.daily_carbs_goal(day: @day)
 
     return unless @daily_calorie_goal
@@ -89,6 +79,14 @@ class CalendarDataLoader
     @proteins_percentage = @daily_protein_goal > 0 ? (@total_proteins / @daily_protein_goal.to_f * 100).round(1) : 0
     @fats_percentage     = @daily_fats_goal    > 0 ? (@total_fats     / @daily_fats_goal.to_f    * 100).round(1) : 0
     @carbs_percentage    = @daily_carbs_goal && @daily_carbs_goal > 0 ? (@total_carbs / @daily_carbs_goal.to_f * 100).round(1) : 0
+  end
+
+  # ── Micronutrients ───────────────────────────────────────────────────────────
+
+  def load_micronutrients
+    @micronutrient_coverage = @day.micronutrient_coverage(user: @user, profile: @profile)
+    @micronutrient_week_start = @day.date.beginning_of_week
+    @micronutrient_week_end   = @day.date.end_of_week
   end
 
   # ── Result ───────────────────────────────────────────────────────────────────
@@ -104,6 +102,9 @@ class CalendarDataLoader
       total_carbs:             @total_carbs,
       total_fats:              @total_fats,
       total_sugars:            @total_sugars,
+      total_fiber:             @total_fiber,
+      total_saturated_fat:     @total_saturated_fat,
+      total_salt:              @total_salt,
       has_foods:               @has_foods,
       has_recipes:             @has_recipes,
       profile:                 @profile,
@@ -115,7 +116,10 @@ class CalendarDataLoader
       calories_percentage:     @calories_percentage,
       proteins_percentage:     @proteins_percentage,
       fats_percentage:         @fats_percentage,
-      carbs_percentage:        @carbs_percentage
+      carbs_percentage:        @carbs_percentage,
+      micronutrient_coverage:   @micronutrient_coverage,
+      micronutrient_week_start: @micronutrient_week_start,
+      micronutrient_week_end:   @micronutrient_week_end
     }
   end
 end

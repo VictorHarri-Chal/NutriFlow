@@ -2,10 +2,12 @@
   <%= json_escape(@foods.to_json(only: [:id, :name, :calories, :proteins, :carbs, :fats, :sugars, :favorite])).html_safe %>
 </script>
 
-<%= simple_form_for([day, day_food]) do |f| %>
+<%= simple_form_for(day_food.persisted? ? day_food : [day, day_food]) do |f| %>
   <div data-controller="day-food-preview"
        data-action="input->day-food-preview#update"
        class="space-y-4">
+
+    <%= render "shared/form_errors", record: day_food, margin_class: "" %>
 
     <%# ── Aliment ── %>
     <div>
@@ -53,10 +55,16 @@
         <label class="label-dark block mb-1.5"><%= t("shared.quantity") %></label>
         <div class="relative">
           <%= f.number_field :quantity,
-                min: 1, step: 1,
-                value: day_food.new_record? ? 100 : day_food.quantity.to_i,
+                min: 1, step: 0.1,
+                value: day_food.new_record? ? nil : day_food.quantity.to_f.round(1),
                 class: "input-dark text-sm pr-8",
-                data: { "day-food-preview-target": "quantity" } %>
+                data: {
+                  "day-food-preview-target": "quantity",
+                  controller: "digit-limit",
+                  action: "input->digit-limit#limit",
+                  digit_limit_max_integer_digits_value: 4,
+                  digit_limit_max_decimal_digits_value: 1
+                } %>
           <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">g</span>
         </div>
       </div>
@@ -76,7 +84,7 @@
               <span data-custom-select-target="label" class="text-ink-subtle truncate min-w-0 flex-1"></span>
               <i class="fas fa-chevron-down text-xs text-ink-subtle flex-shrink-0"></i>
             </button>
-            <div data-custom-select-target="dropdown" data-custom-select-dropdown
+            <div data-custom-select-target="dropdown"
                  class="hidden absolute z-50 w-full mt-1 bg-surface-raised border border-surface-border/60 rounded-lg shadow-2xl max-h-48 overflow-y-auto"></div>
           </div>
         </div>

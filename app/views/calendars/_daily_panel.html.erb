@@ -1,261 +1,217 @@
 <%
-  all_done = defined?(calories_percentage) && calories_percentage &&
-             calories_percentage.between?(90, 115) &&
+  all_done = calories_percentage.between?(90, 115) &&
              proteins_percentage.between?(85, 115)
-  has_breakdown = defined?(tdee_breakdown) && tdee_breakdown.present?
 %>
 
 <div id="daily_panel"
      class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-3 mb-4"
      data-controller="collapsible"
+     data-collapsible-scope="page-section"
      data-collapsible-storage-key="daily-panel">
 
-  <% if defined?(daily_calorie_goal) && daily_calorie_goal %>
-
-    <% if all_done %>
-      <div class="flex items-center gap-1.5 mb-3 text-status-success text-xs font-medium tracking-wide uppercase">
-        <i class="fas fa-check-circle"></i>
-        <%= t("views.calendars.day_complete") %>
-      </div>
-    <% end %>
-
-    <%# ── Header (trigger) ── %>
-    <div class="flex items-center gap-2 cursor-pointer select-none"
-         data-action="click->collapsible#toggle"
-         data-collapsible-target="trigger">
-      <i class="fas fa-chevron-down text-xs text-ink-subtle transition-transform duration-200"
-         data-collapsible-target="icon"></i>
-      <span class="text-xs font-medium text-ink-subtle uppercase tracking-wider flex-1">
-        <%= t("views.calendars.calories") %>
-      </span>
-      <span class="text-xs text-ink-subtle">
-        <span class="text-base font-bold <%= calories_percentage > 105 ? 'text-status-danger' : calories_percentage >= 100 ? 'text-status-success' : 'text-ink-primary' %>">
-          <%= total_calories.to_i %>
-        </span>
-        <span class="ml-0.5">/ <%= daily_calorie_goal %> kcal</span>
-      </span>
+  <% if all_done %>
+    <div class="flex items-center gap-1.5 mb-3 text-status-success text-xs font-medium tracking-wide uppercase">
+      <i class="fas fa-check-circle"></i>
+      <%= t("views.calendars.day_complete") %>
     </div>
+  <% end %>
 
-    <%# ── Collapsible content ── %>
-    <div data-collapsible-target="content" class="mt-3">
+  <%# ── Header (trigger) ── %>
+  <div class="flex items-center gap-2 cursor-pointer select-none"
+       data-action="click->collapsible#toggle"
+       data-collapsible-target="trigger">
+    <i class="fas fa-chevron-down text-xs text-ink-subtle transition-transform duration-200"
+       data-collapsible-target="icon"></i>
+    <span class="text-xs font-medium text-ink-subtle uppercase tracking-wider flex-1">
+      <%= t("views.calendars.calories") %>
+    </span>
+    <span class="text-xs text-ink-subtle">
+      <span class="text-base font-bold <%= calories_percentage > 105 ? 'text-status-danger' : calories_percentage >= 100 ? 'text-status-success' : 'text-ink-primary' %>">
+        <%= total_calories.to_i %>
+      </span>
+      <span class="ml-0.5">/ <%= daily_calorie_goal %> kcal</span>
+    </span>
+  </div>
 
-      <%# Progress bar %>
-      <div class="w-full bg-surface-hover rounded-full h-2 overflow-hidden mb-4">
-        <div class="h-2 rounded-full transition-all duration-700 ease-out <%= calories_percentage > 105 ? 'bg-status-danger' : calories_percentage >= 100 ? 'bg-status-success' : 'bg-brand' %>"
-             style="width: <%= [calories_percentage.to_f, 100].min %>%"></div>
-      </div>
+  <%# ── Collapsible content ── %>
+  <div data-collapsible-target="content" class="mt-3">
 
-      <%# Macros grid %>
-      <div class="grid grid-cols-2 gap-x-8 gap-y-3">
+    <%= render MacroDashboardComponent.new(
+          total_calories:      total_calories,
+          daily_calorie_goal:  daily_calorie_goal,
+          calories_percentage: calories_percentage,
+          total_proteins:      total_proteins,
+          daily_protein_goal:  daily_protein_goal,
+          proteins_percentage: proteins_percentage,
+          total_carbs:         total_carbs,
+          daily_carbs_goal:    daily_carbs_goal,
+          carbs_percentage:    defined?(carbs_percentage) && carbs_percentage ? carbs_percentage : 0,
+          total_fats:          total_fats,
+          daily_fats_goal:     daily_fats_goal,
+          fats_percentage:     fats_percentage,
+          total_sugars:        total_sugars,
+          total_fiber:         total_fiber,
+          total_saturated_fat: total_saturated_fat,
+          total_salt:          total_salt) %>
 
-        <%# Protéines %>
-        <div>
-          <div class="flex justify-between items-baseline mb-1">
-            <span class="text-xs font-medium text-ink-subtle uppercase tracking-wider"><%= t("views.calendars.proteins") %></span>
-            <span class="text-xs text-ink-subtle">
-              <span class="font-semibold <%= proteins_percentage >= 100 ? 'text-status-success' : 'text-ink-primary' %>"><%= total_proteins %></span>
-              <span class="ml-0.5">/ <%= daily_protein_goal.round(0) %> g</span>
-            </span>
-          </div>
-          <div class="w-full bg-surface-hover rounded-full h-1.5 overflow-hidden">
-            <div class="h-1.5 rounded-full transition-all duration-700 ease-out <%= proteins_percentage >= 100 ? 'bg-status-success' : 'bg-macro-proteins' %>"
-                 style="width: <%= [proteins_percentage.to_f, 100].min %>%"></div>
-          </div>
-        </div>
+    <%= render MicronutrientPanelComponent.new(
+          coverage:   @micronutrient_coverage,
+          week_start: @micronutrient_week_start,
+          week_end:   @micronutrient_week_end) %>
 
-        <%# Glucides (macro adaptif — budget restant après protéines + lipides) %>
-        <div>
-          <div class="flex justify-between items-baseline mb-1">
-            <span class="text-xs font-medium text-ink-subtle uppercase tracking-wider flex items-center gap-1">
-              <%= t("views.calendars.carbs") %>
-              <% if defined?(daily_carbs_goal) && daily_carbs_goal %>
-                <span class="text-[9px] text-ink-subtle/50 font-normal normal-case tracking-normal"><%= t("views.calendars.carbs_adaptive_hint") %></span>
-              <% end %>
-            </span>
-            <% if defined?(daily_carbs_goal) && daily_carbs_goal %>
-              <span class="text-xs text-ink-subtle">
-                <span class="font-semibold text-ink-primary"><%= total_carbs %></span>
-                <span class="ml-0.5">/ <%= daily_carbs_goal %> g</span>
-              </span>
-            <% else %>
-              <span class="text-xs font-semibold text-ink-primary"><%= total_carbs %> g</span>
-            <% end %>
-          </div>
-          <div class="w-full bg-surface-hover rounded-full h-1.5 overflow-hidden">
-            <% carbs_pct = defined?(carbs_percentage) && carbs_percentage ? carbs_percentage : 0 %>
-            <div class="h-1.5 rounded-full transition-all duration-700 ease-out bg-macro-carbs"
-                 style="width: <%= [carbs_pct.to_f, 100].min %>%"></div>
-          </div>
-        </div>
-
-        <%# Lipides %>
-        <div>
-          <div class="flex justify-between items-baseline mb-1">
-            <span class="text-xs font-medium text-ink-subtle uppercase tracking-wider"><%= t("views.calendars.fats") %></span>
-            <span class="text-xs text-ink-subtle">
-              <span class="font-semibold <%= fats_percentage > 105 ? 'text-status-danger' : fats_percentage >= 100 ? 'text-status-success' : 'text-ink-primary' %>"><%= total_fats %></span>
-              <span class="ml-0.5">/ <%= daily_fats_goal.round(0) %> g</span>
-            </span>
-          </div>
-          <div class="w-full bg-surface-hover rounded-full h-1.5 overflow-hidden">
-            <div class="h-1.5 rounded-full transition-all duration-700 ease-out <%= fats_percentage > 105 ? 'bg-status-danger' : fats_percentage >= 100 ? 'bg-status-success' : 'bg-macro-fats' %>"
-                 style="width: <%= [fats_percentage.to_f, 100].min %>%"></div>
-          </div>
-        </div>
-
-        <%# Sucres %>
-        <div>
-          <div class="flex justify-between items-baseline mb-1">
-            <span class="text-xs font-medium text-ink-subtle uppercase tracking-wider flex items-center gap-1">
-              <%= t("views.calendars.sugars") %>
-              <span class="text-ink-subtle/50 font-normal normal-case tracking-normal"><%= t("views.calendars.sugars_of_carbs") %></span>
-            </span>
-            <span class="text-xs font-semibold text-ink-primary"><%= total_sugars %> g</span>
-          </div>
-          <div class="w-full bg-surface-hover rounded-full h-1.5 overflow-hidden">
-            <% sugars_pct = defined?(daily_carbs_goal) && daily_carbs_goal && daily_carbs_goal > 0 ? [total_sugars.to_f / daily_carbs_goal * 100, 100].min : 0 %>
-            <div class="h-1.5 rounded-full transition-all duration-700 ease-out bg-macro-sugars/60"
-                 style="width: <%= sugars_pct %>%"></div>
-          </div>
-        </div>
-
-      </div><%# /macros grid %>
-
-      <%# ── Breakdown dépenses ── %>
-      <% if has_breakdown && current_user.show_tdee_breakdown? %>
-        <div class="mt-4 pt-4 border-t border-surface-border/30">
-          <p class="text-[10px] font-semibold uppercase tracking-wider text-ink-subtle/60 mb-3">
+    <%# ── Breakdown dépenses ── %>
+    <% if current_user.show_tdee_breakdown? %>
+      <div class="mt-4 pt-4 border-t border-surface-border/30">
+        <div class="flex items-center gap-1.5 mb-3">
+          <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider">
             <%= t("views.calendars.breakdown.title") %>
           </p>
-
-          <div class="space-y-2 text-xs">
-
-            <%# BMR %>
-            <div class="flex items-center justify-between">
-              <span class="text-ink-subtle flex items-center gap-1.5">
-                <i class="fas fa-heart-pulse text-[9px] text-ink-subtle/50 w-3 text-center"></i>
-                <%= t("views.calendars.breakdown.bmr") %>
-              </span>
-              <span class="font-medium text-ink-primary tabular-nums">
-                <%= number_with_delimiter(tdee_breakdown[:bmr]) %> kcal
-              </span>
+          <div class="relative group inline-flex items-center">
+            <i class="fas fa-circle-info text-xs text-ink-subtle/40 hover:text-ink-subtle cursor-default transition-colors"></i>
+            <div class="absolute left-0 top-4 z-10 w-64 hidden group-hover:block
+                        bg-surface-raised border border-surface-border/60 rounded-xl shadow-lg p-3 normal-case tracking-normal font-normal">
+              <p class="text-[11px] font-semibold text-ink-primary mb-1.5"><%= t("views.calendars.breakdown.info_title") %></p>
+              <div class="space-y-1.5 text-[10px] text-ink-subtle leading-relaxed">
+                <p><%= t("views.calendars.breakdown.info_bmr") %></p>
+                <p><%= t("views.calendars.breakdown.info_job") %></p>
+                <p><%= t("views.calendars.breakdown.info_steps") %></p>
+                <p><%= t("views.calendars.breakdown.info_workout") %></p>
+                <p class="pt-1.5 border-t border-surface-border/40"><%= t("views.calendars.breakdown.info_disclaimer") %></p>
+              </div>
             </div>
+          </div>
+        </div>
 
-            <%# Job NEAT %>
-            <div class="flex items-center justify-between">
-              <span class="text-ink-subtle flex items-center gap-1.5">
-                <i class="fas fa-briefcase text-[9px] text-ink-subtle/50 w-3 text-center"></i>
-                <%= t("views.calendars.breakdown.job_neat") %>
-              </span>
-              <span class="font-medium text-ink-primary tabular-nums">
-                +<%= number_with_delimiter(tdee_breakdown[:job_neat]) %> kcal
-              </span>
-            </div>
+        <div class="space-y-2.5">
 
-            <%# Steps — always-visible input %>
-            <div class="flex items-center justify-between">
-              <span class="text-ink-subtle flex items-center gap-1.5">
-                <i class="fas fa-shoe-prints text-[9px] text-ink-subtle/50 w-3 text-center"></i>
+          <%# BMR %>
+          <div class="flex items-center justify-between">
+            <span class="text-ink-muted text-xs flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-surface-hover/60 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-heart-pulse text-[9px] text-ink-subtle"></i>
+              </span>
+              <%= t("views.calendars.breakdown.bmr") %>
+            </span>
+            <span class="font-semibold text-sm text-ink-primary tabular-nums">
+              <%= number_with_delimiter(tdee_breakdown[:bmr]) %> kcal
+            </span>
+          </div>
+
+          <%# Job NEAT %>
+          <div class="flex items-center justify-between">
+            <span class="text-ink-muted text-xs flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-surface-hover/60 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-briefcase text-[9px] text-ink-subtle"></i>
+              </span>
+              <%= t("views.calendars.breakdown.job_neat") %>
+            </span>
+            <span class="font-semibold text-sm text-ink-primary tabular-nums">
+              +<%= number_with_delimiter(tdee_breakdown[:job_neat]) %> kcal
+            </span>
+          </div>
+
+          <%# Steps — manual estimate, always-visible input %>
+          <div class="flex items-center justify-between">
+            <span class="text-ink-muted text-xs flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-surface-hover/60 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-shoe-prints text-[9px] text-ink-subtle"></i>
+              </span>
+              <span>
                 <%= t("views.calendars.breakdown.steps") %>
+                <span class="block text-[10px] text-ink-subtle/50 italic" title="<%= t("views.calendars.breakdown.steps_manual_hint_title") %>">
+                  <%= t("views.calendars.breakdown.steps_manual_hint") %>
+                </span>
               </span>
-              <div class="flex items-center gap-2">
-                <%= form_with url: update_steps_day_path(day), method: :patch,
-                              data: { controller: "auto-save", turbo_stream: true } do %>
-                  <div class="flex items-center gap-1">
-                    <input type="number"
-                           name="steps"
-                           value="<%= tdee_breakdown[:steps_custom] ? tdee_breakdown[:steps_count] : nil %>"
-                           min="0" max="99999" step="1"
-                           placeholder="<%= tdee_breakdown[:steps_count] %>"
-                           class="w-20 bg-surface-base border border-surface-border rounded-lg px-2 py-1 text-xs text-ink-primary focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand"
-                           data-action="change->auto-save#save blur->auto-save#save">
-                    <span class="text-ink-subtle text-[10px]"><%= t("views.calendars.breakdown.steps_unit") %></span>
-                  </div>
-                <% end %>
-                <span class="font-medium text-ink-primary tabular-nums">
-                  +<%= number_with_delimiter(tdee_breakdown[:steps_kcal]) %> kcal
-                </span>
-              </div>
-            </div>
-
-            <%# Workout %>
-            <div class="flex items-center justify-between">
-              <span class="text-ink-subtle flex items-center gap-1.5">
-                <i class="fas fa-dumbbell text-[9px] text-ink-subtle/50 w-3 text-center"></i>
-                <%= t("views.calendars.breakdown.workout") %>
-              </span>
-              <% if tdee_breakdown[:workout_kcal] > 0 %>
-                <span class="font-medium text-status-success/80 tabular-nums">
-                  +<%= number_with_delimiter(tdee_breakdown[:workout_kcal]) %> kcal
-                </span>
-              <% else %>
-                <span class="text-ink-subtle/50 text-[11px]"><%= t("views.calendars.breakdown.no_workout") %></span>
-              <% end %>
-            </div>
-
-            <%# Séparateur + total + objectif ajusté %>
-            <div class="pt-2 mt-1 border-t border-surface-border/20 space-y-2">
-
-              <div class="flex items-center justify-between">
-                <span class="text-ink-subtle/70"><%= t("views.calendars.breakdown.total_tdee") %></span>
-                <span class="font-semibold text-ink-primary tabular-nums">
-                  <%= number_with_delimiter(tdee_breakdown[:tdee]) %> kcal
-                </span>
-              </div>
-
-              <% goal_key = profile&.goal.to_s.presence || "maintain" %>
-              <div class="flex items-center justify-between">
-                <div>
-                  <span class="text-ink-subtle/70 block"><%= t("views.calendars.breakdown.goal_label.#{goal_key}") %></span>
-                  <span class="text-[10px] text-ink-subtle/40"><%= t("views.calendars.breakdown.goal_intake_hint") %></span>
+            </span>
+            <div class="flex items-center gap-1.5">
+              <%= form_with url: update_steps_day_path(day), method: :patch,
+                            data: { controller: "auto-save", turbo_stream: true } do %>
+                <div class="flex items-center gap-1">
+                  <input type="number"
+                         name="steps"
+                         value="<%= tdee_breakdown[:steps_custom] ? tdee_breakdown[:steps_count] : nil %>"
+                         min="0" max="99999" step="1"
+                         placeholder="<%= tdee_breakdown[:steps_count] %>"
+                         class="w-20 bg-surface-base border border-surface-border rounded-lg px-2 py-1 text-xs text-ink-primary focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand"
+                         data-controller="digit-limit"
+                         data-digit-limit-max-integer-digits-value="5"
+                         data-action="change->auto-save#save blur->auto-save#save input->digit-limit#limit">
+                  <span class="text-ink-subtle text-[10px]"><%= t("views.calendars.breakdown.steps_unit") %></span>
                 </div>
-                <span class="font-bold text-brand tabular-nums">
-                  <%= number_with_delimiter(daily_calorie_goal) %> kcal
-                </span>
-              </div>
+              <% end %>
+              <% if tdee_breakdown[:steps_custom] %>
+                <%= button_to update_steps_day_path(day),
+                      params: { steps: "" }, method: :patch,
+                      form: { data: { turbo_stream: true } },
+                      class: "w-6 h-6 inline-flex items-center justify-center rounded-md text-ink-subtle/50 hover:text-brand hover:bg-surface-hover transition-colors",
+                      title: t("views.calendars.breakdown.reset_steps") do %>
+                  <i class="fas fa-rotate-left text-[10px]"></i>
+                <% end %>
+              <% end %>
+              <span class="font-semibold text-sm text-ink-primary tabular-nums">
+                +<%= number_with_delimiter(tdee_breakdown[:steps_kcal]) %> kcal
+              </span>
+            </div>
+          </div>
 
+          <%# Workout %>
+          <div class="flex items-center justify-between">
+            <span class="text-ink-muted text-xs flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-surface-hover/60 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-dumbbell text-[9px] text-ink-subtle"></i>
+              </span>
+              <%= t("views.calendars.breakdown.workout") %>
+            </span>
+            <% if tdee_breakdown[:workout_kcal] > 0 %>
+              <span class="font-semibold text-sm text-ink-primary tabular-nums">
+                +<%= number_with_delimiter(tdee_breakdown[:workout_kcal]) %> kcal
+              </span>
+            <% else %>
+              <span class="text-ink-subtle/50 text-xs"><%= t("views.calendars.breakdown.no_workout") %></span>
+            <% end %>
+          </div>
+
+          <%# Séparateur + total → objectif, lien explicite ── %>
+          <div class="pt-3 mt-1 border-t border-surface-border/20 space-y-1.5">
+
+            <div class="flex items-center justify-between">
+              <span class="text-ink-muted text-xs"><%= t("views.calendars.breakdown.total_tdee") %></span>
+              <span class="font-semibold text-sm text-ink-primary tabular-nums">
+                <%= number_with_delimiter(tdee_breakdown[:tdee]) %> kcal
+              </span>
             </div>
 
-          </div><%# /space-y %>
-        </div><%# /breakdown %>
-      <% end %>
+            <% goal_key    = profile&.goal.to_s.presence || "maintain" %>
+            <% goal_pct    = tdee_breakdown[:tdee].zero? ? 0 : ((tdee_breakdown[:goal_delta] / tdee_breakdown[:tdee].to_f) * 100).round %>
 
-    </div><%# /content %>
+            <% if goal_pct != 0 %>
+              <div class="flex items-center justify-end gap-1.5 text-[11px]">
+                <i class="fas <%= goal_pct.negative? ? "fa-arrow-down" : "fa-arrow-up" %> text-[9px] text-brand/70"></i>
+                <span class="text-brand/80 font-medium tabular-nums">
+                  <%= goal_pct.positive? ? "+" : "" %><%= number_with_delimiter(tdee_breakdown[:goal_delta]) %> kcal
+                </span>
+                <span class="text-ink-subtle/50">(<%= goal_pct.positive? ? "+" : "" %><%= goal_pct %>%)</span>
+              </div>
+            <% end %>
 
-  <% else %>
+            <div class="flex items-center justify-between pt-1">
+              <span class="flex items-center gap-2">
+                <span>
+                  <span class="text-ink-primary text-xs font-semibold block"><%= t("views.calendars.breakdown.goal_intake_hint") %></span>
+                  <span class="text-[10px] text-ink-subtle/60"><%= t("views.calendars.breakdown.goal_label.#{goal_key}") %></span>
+                </span>
+              </span>
+              <span class="font-bold text-brand text-base tabular-nums">
+                <%= number_with_delimiter(daily_calorie_goal) %> kcal
+              </span>
+            </div>
 
-    <%# No profile / no goal set — show raw totals %>
-    <div class="flex items-center justify-between gap-6">
-      <div class="grid grid-cols-2 sm:grid-cols-5 gap-6 flex-1">
-        <div>
-          <div class="text-lg font-bold text-brand"><%= total_calories %></div>
-          <div class="text-xs text-ink-subtle uppercase tracking-wider mt-0.5">kcal</div>
-        </div>
-        <div>
-          <div class="text-lg font-bold text-ink-primary"><%= total_proteins %></div>
-          <div class="text-xs text-ink-subtle uppercase tracking-wider mt-0.5"><%= t("views.calendars.proteins") %></div>
-        </div>
-        <div>
-          <div class="text-lg font-bold text-ink-primary"><%= total_carbs %></div>
-          <div class="text-xs text-ink-subtle uppercase tracking-wider mt-0.5"><%= t("views.calendars.carbs") %></div>
-        </div>
-        <div>
-          <div class="text-lg font-bold text-ink-primary"><%= total_fats %></div>
-          <div class="text-xs text-ink-subtle uppercase tracking-wider mt-0.5"><%= t("views.calendars.fats") %></div>
-        </div>
-        <div>
-          <div class="text-lg font-bold text-ink-primary"><%= total_sugars %></div>
-          <div class="text-xs text-ink-subtle uppercase tracking-wider mt-0.5"><%= t("views.calendars.sugars") %></div>
-        </div>
-      </div>
-      <%= link_to edit_profile_path,
-            class: "inline-flex items-center gap-2 flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium bg-brand/10 border border-brand/25 text-brand hover:bg-brand/15 hover:border-brand/40 transition-colors" do %>
-        <i class="fas fa-circle-user text-xs"></i>
-        <%= t("views.calendars.complete_profile_hint") %>
-        <i class="fas fa-arrow-right text-xs opacity-60"></i>
-      <% end %>
-    </div>
+          </div>
 
-  <% end %>
+        </div><%# /space-y %>
+      </div><%# /breakdown %>
+    <% end %>
+
+  </div><%# /content %>
 
 </div>

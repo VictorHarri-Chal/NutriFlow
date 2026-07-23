@@ -1,0 +1,8 @@
+en:
+  activerecord:
+    models:
+      day_food_group: "Meal group"
+    attributes:
+      day_food_group:
+        name: "Name"
+        user: "User"

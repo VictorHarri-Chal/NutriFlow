@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["modal", "message", "confirmButton", "cancelButton"]
+  static targets = ["modal", "message", "confirmButton", "cancelButton", "inputWrapper", "inputLabel", "inputField"]
   static values = {
     message: String,
     url: String,
@@ -41,6 +41,18 @@ export default class extends Controller {
     this.confirmButtonTarget.dataset.params = JSON.stringify(extraParams)
     this.confirmButtonTarget.textContent = confirmLabel
 
+    // Optional name input (e.g. archiving a list) — opt-in per trigger via
+    // data-confirm-input-name, hidden/reset otherwise so it never leaks into
+    // unrelated confirmations sharing this same controller instance.
+    this._inputParamName = link.dataset.confirmInputName || null
+    if (this._inputParamName && this.hasInputWrapperTarget) {
+      this.inputLabelTarget.textContent = link.dataset.confirmInputLabel || ""
+      this.inputFieldTarget.value = ""
+      this.inputWrapperTarget.classList.remove("hidden")
+    } else if (this.hasInputWrapperTarget) {
+      this.inputWrapperTarget.classList.add("hidden")
+    }
+
     this.modalTarget.classList.remove("hidden")
     document.body.classList.add("overflow-hidden")
 
@@ -50,6 +62,7 @@ export default class extends Controller {
         modalContent.classList.remove("scale-95", "opacity-0")
         modalContent.classList.add("scale-100", "opacity-100")
       }
+      if (this._inputParamName && this.hasInputFieldTarget) this.inputFieldTarget.focus()
     })
 
     document.removeEventListener('keydown', this.handleEscape)
@@ -86,6 +99,10 @@ export default class extends Controller {
     const url = button.dataset.url
     const method = button.dataset.method
     const params = button.dataset.params ? JSON.parse(button.dataset.params) : {}
+
+    if (this._inputParamName && this.hasInputFieldTarget) {
+      params[this._inputParamName] = this.inputFieldTarget.value.trim()
+    }
 
     this.hide()
     this.submitForm(url, method, params)
@@ -159,6 +176,15 @@ export default class extends Controller {
             <p class="text-sm text-ink-subtle mt-1 leading-relaxed" data-confirm-target="message">
               ${this.defaultMessageValue}
             </p>
+          </div>
+
+          <div class="mb-4 hidden" data-confirm-target="inputWrapper">
+            <label class="label-dark text-xs mb-1 block" data-confirm-target="inputLabel"></label>
+            <input type="text"
+                   class="input-dark w-full text-sm"
+                   maxlength="80"
+                   data-confirm-target="inputField"
+                   data-action="keydown.enter->confirm#confirm">
           </div>
 
           <div class="flex items-center justify-end gap-2 pt-3 border-t border-surface-border/40">

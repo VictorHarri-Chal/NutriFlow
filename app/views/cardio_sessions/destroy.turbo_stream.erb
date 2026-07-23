@@ -1,8 +1,11 @@
-<%= turbo_stream.replace "item_form" do %>
-  <%= turbo_frame_tag "item_form" %>
+<%= turbo_stream.replace "cardio_item_form" do %>
+  <%= turbo_frame_tag "cardio_item_form" %>
 <% end %>
 <%= turbo_stream.replace "cardio_widget" do %>
   <%= render "calendars/cardio_widget", day: @day %>
+<% end %>
+<%= turbo_stream.replace "water_widget" do %>
+  <%= render "calendars/water_widget", day: @day, profile: @profile %>
 <% end %>
 <%= turbo_stream.replace "daily_panel" do %>
   <%= render "calendars/daily_panel",
@@ -11,6 +14,9 @@
              total_carbs:         @total_carbs,
              total_fats:          @total_fats,
              total_sugars:        @total_sugars,
+             total_fiber:         @total_fiber,
+             total_saturated_fat: @total_saturated_fat,
+             total_salt:          @total_salt,
              profile:             @profile,
              daily_calorie_goal:  @daily_calorie_goal,
              daily_protein_goal:  @daily_protein_goal,

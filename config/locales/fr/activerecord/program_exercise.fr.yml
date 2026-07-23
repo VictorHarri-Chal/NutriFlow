@@ -1,0 +1,19 @@
+fr:
+  activerecord:
+    models:
+      program_exercise: "Exercice de programme"
+      program_exercises: "Exercices de programme"
+    attributes:
+      program_exercise:
+        rest_seconds: "Temps de repos"
+        notes: "Notes"
+      program_exercise/program_exercise_sets:
+        reps_target: "Répétitions"
+        weight_target: "Charge"
+        rpe: "RPE"
+        set_types: "Types de série"
+    errors:
+      models:
+        program_exercise:
+          no_sets: "Ajoutez au moins une série avant d'enregistrer."
+          too_many_sets: "Vous ne pouvez pas ajouter plus de 10 séries par exercice."

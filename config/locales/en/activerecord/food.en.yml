@@ -1,0 +1,25 @@
+en:
+  activerecord:
+    models:
+      food: "Food"
+      foods: "Foods"
+    attributes:
+      food:
+        name: "Name"
+        brand: "Brand"
+        fats: "Fats"
+        carbs: "Carbs"
+        sugars: "Sugars"
+        proteins: "Proteins"
+        calories: "Calories"
+        micronutrients: "Micronutrients"
+    errors:
+      models:
+        food:
+          attributes:
+            name:
+              taken: "is already used for one of your foods"
+            micronutrients:
+              unknown_key: " : unknown micronutrient (%{key})"
+              invalid_value: " : invalid value for %{key} (must be a positive number)"
+              value_out_of_range: " : value too high for %{key}"

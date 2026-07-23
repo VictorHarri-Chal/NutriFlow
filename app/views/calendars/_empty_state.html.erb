@@ -8,7 +8,7 @@
     <% if @has_foods %>
       <%= link_to new_day_day_food_path(day),
             class: "btn-primary",
-            data: { turbo_frame: "item_form" } do %>
+            data: { turbo_frame: "food_item_form" } do %>
         <i class="fas fa-plus"></i>
         <%= t("views.calendars.add_food") %>
       <% end %>
@@ -21,7 +21,7 @@
     <% if @has_recipes %>
       <%= link_to new_day_day_recipe_path(day),
             class: "btn-secondary",
-            data: { turbo_frame: "item_form" } do %>
+            data: { turbo_frame: "food_item_form" } do %>
         <i class="fas fa-plus"></i>
         <%= t("views.calendars.add_recipe") %>
       <% end %>

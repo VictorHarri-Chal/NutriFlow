@@ -1,0 +1,92 @@
+<%# ── Informations personnelles ── %>
+<div>
+  <h2 class="text-sm font-semibold text-ink-subtle uppercase tracking-wide mb-4 flex items-center gap-2">
+    <i class="fas fa-user text-brand text-xs"></i>
+    <%= t("views.profiles.show.personal_info") %>
+  </h2>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <%= f.input :name,
+        label: t("views.profiles.edit.name"),
+        input_html: { class: "input-dark", autocomplete: "off", maxlength: 30 },
+        label_html: { class: "label-dark" } %>
+    <div>
+      <%= f.label :date_of_birth, t("views.profiles.edit.date_of_birth"), class: "label-dark block mb-1.5" %>
+      <%= f.date_field :date_of_birth, max: Date.current, class: "input-dark",
+            data: { action: "input->goal-rate-estimator#update",
+                    goal_rate_estimator_target: "ageInput" } %>
+    </div>
+  </div>
+</div>
+
+<%# ── Données physiques ── %>
+<div class="border-t border-surface-border/40 pt-6">
+  <h2 class="text-sm font-semibold text-ink-subtle uppercase tracking-wide mb-4 flex items-center gap-2">
+    <i class="fas fa-ruler text-brand text-xs"></i>
+    <%= t("views.profiles.show.physical_data") %>
+  </h2>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div>
+      <div class="flex items-center gap-1.5 mb-1.5">
+        <%= f.label :weight, t("views.profiles.edit.weight"), class: "label-dark !mb-0" %>
+        <% if current_user.show_weight_tracking? %>
+          <div class="relative group inline-flex items-center">
+            <i class="fas fa-circle-info text-xs text-ink-subtle/40 hover:text-ink-subtle cursor-default transition-colors"></i>
+            <div class="absolute left-0 top-4 z-10 w-64 hidden group-hover:block
+                        bg-surface-raised border border-surface-border/60 rounded-xl shadow-lg p-3 normal-case font-normal">
+              <p class="text-[11px] text-ink-subtle leading-relaxed"><%= t("views.profiles.edit.weight_synced_hint") %></p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div class="relative">
+        <%= f.number_field :weight, min: 20, max: 400, step: 0.1, class: "input-dark pr-10",
+            data: { controller: "digit-limit",
+                    action: "input->water-goal-estimator#update input->goal-rate-estimator#update input->digit-limit#limit",
+                    water_goal_estimator_target: "weightInput",
+                    goal_rate_estimator_target: "weightInput",
+                    digit_limit_max_integer_digits_value: 3,
+                    digit_limit_max_decimal_digits_value: 1 } %>
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">kg</span>
+      </div>
+    </div>
+    <div>
+      <%= f.label :height, t("views.profiles.edit.height"), class: "label-dark block mb-1.5" %>
+      <div class="relative">
+        <%= f.number_field :height, min: 50, max: 250, step: 0.1, class: "input-dark pr-10",
+          data: { controller: "digit-limit",
+                  action: "input->goal-rate-estimator#update input->digit-limit#limit",
+                  goal_rate_estimator_target: "heightInput",
+                  digit_limit_max_integer_digits_value: 3,
+                  digit_limit_max_decimal_digits_value: 1 } %>
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">cm</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# ── Genre ── %>
+<div class="border-t border-surface-border/40 pt-6">
+  <h2 class="text-sm font-semibold text-ink-subtle uppercase tracking-wide mb-4 flex items-center gap-2">
+    <i class="fas fa-venus-mars text-brand text-xs"></i>
+    <%= t("views.profiles.edit.gender") %>
+  </h2>
+  <div class="grid grid-cols-3 gap-3">
+    <% [
+      { value: "male",   icon: "fa-mars",        label: t("views.profiles.edit.gender_male") },
+      { value: "female", icon: "fa-venus",       label: t("views.profiles.edit.gender_female") },
+      { value: "other",  icon: "fa-genderless",  label: t("views.profiles.edit.gender_other") }
+    ].each do |opt| %>
+      <label class="cursor-pointer">
+        <%= f.radio_button :gender, opt[:value], class: "sr-only peer",
+            data: { action: "change->water-goal-estimator#update" } %>
+        <span class="flex flex-col items-center gap-2 p-4 rounded-xl border text-center transition-colors
+                     bg-surface-hover border-surface-border/50 text-ink-muted
+                     hover:border-brand/30 hover:text-ink-primary
+                     peer-checked:bg-brand/10 peer-checked:border-brand peer-checked:text-brand">
+          <i class="fas <%= opt[:icon] %> text-lg"></i>
+          <span class="text-xs font-semibold"><%= opt[:label] %></span>
+        </span>
+      </label>
+    <% end %>
+  </div>
+</div>

@@ -1,5 +1,8 @@
 class FoodLabelsController < ApplicationController
-  before_action :set_food_label, only: [:destroy]
+  include SettingsDataLoadable
+  include ActionView::RecordIdentifier
+
+  before_action :set_food_label, only: [:edit, :update, :destroy]
 
   def create
     @food_label = current_user.food_labels.build(food_label_params)
@@ -7,12 +10,32 @@ class FoodLabelsController < ApplicationController
     if @food_label.save
       redirect_to setting_path(tab: 'food_labels')
     else
-      @food_labels    = current_user.food_labels.includes(:foods)
-      @day_food_groups = current_user.day_food_groups.includes(:day_foods)
-      @day_food_group  = DayFoodGroup.new
-      @minimum_password_length = User.password_length.min
-      @active_tab = 'food_labels'
+      load_settings_data(active_tab: 'food_labels')
       render 'settings/show', status: :unprocessable_entity
+    end
+  end
+
+  def edit; end
+
+  def update
+    if @food_label.update(food_label_params)
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            dom_id(@food_label), partial: "food_labels/food_label", locals: { food_label: @food_label }
+          )
+        end
+        format.html { redirect_to setting_path(tab: 'food_labels') }
+      end
+    else
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            dom_id(@food_label), partial: "food_labels/form", locals: { food_label: @food_label }
+          ), status: :unprocessable_entity
+        end
+        format.html { render :edit, status: :unprocessable_entity }
+      end
     end
   end
 

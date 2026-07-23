@@ -11,7 +11,11 @@ export default class extends Controller {
   ]
 
   static VALID_LENGTHS = [8, 12, 13]
-  static values = { url: String }
+  static values = {
+    url: String,
+    autoOpen: Boolean,
+    redirectOnExisting: { type: Boolean, default: true }
+  }
 
   connect() {
     this._stream    = null
@@ -19,6 +23,7 @@ export default class extends Controller {
     this._animFrame = null
     this._scanning  = false
     this._lastCode  = null
+    if (this.autoOpenValue) this.openCamera()
   }
 
   disconnect() {
@@ -208,7 +213,7 @@ export default class extends Controller {
         return
       }
 
-      if (data.existing_food) {
+      if (data.existing_food && this.redirectOnExistingValue) {
         const foodId = data.existing_food.id
         document.addEventListener("turbo:load", () => {
           const frame = document.getElementById("food_show_panel")
@@ -223,7 +228,7 @@ export default class extends Controller {
       if (this.hasUrlInputTarget)       this.urlInputTarget.value = ""
       if (this.hasUrlSubmitBtnTarget)   this.urlSubmitBtnTarget.disabled = true
       document.dispatchEvent(new CustomEvent("barcode-scanner:product", {
-        detail: { product: data.product },
+        detail: { product: data.product, existingFood: data.existing_food || null },
         bubbles: true
       }))
       this.closeCamera()

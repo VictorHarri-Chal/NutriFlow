@@ -1,8 +1,11 @@
 class FoodsController < ApplicationController
-  before_action :set_food, only: [:show, :edit, :update, :destroy, :duplicate, :toggle_favorite, :toggle_pantry]
+  before_action :set_food, only: [:show, :edit, :update, :destroy, :force_destroy, :duplicate, :toggle_favorite, :toggle_pantry]
 
   def index
     @food_labels = current_user.food_labels.order(:name)
+    params[:q] ||= {}
+    params[:q] = params[:q].to_unsafe_h if params[:q].is_a?(ActionController::Parameters)
+    params[:q][:s] = "name asc" if params[:q][:s].blank?
     @q = current_user.foods.includes(:food_labels).ransack(params[:q])
     @foods = @q.result
 
@@ -42,9 +45,16 @@ class FoodsController < ApplicationController
 
     if params[:sort_usages].present?
       dir = params[:sort_usages] == "asc" ? "ASC" : "DESC"
-      @foods = @foods.reorder(Arel.sql("(SELECT COUNT(*) FROM day_foods WHERE day_foods.food_id = foods.id) #{dir}"))
-    elsif params.dig(:q, :s).blank?
-      @foods = @foods.order(created_at: :desc)
+      # Doit rester cohérent avec bulk_usage_counts : la même somme journal +
+      # recettes + recettes personnalisées, sinon le tri ne correspondrait plus
+      # au badge "Utilisations" affiché à côté.
+      @foods = @foods.reorder(Arel.sql(<<~SQL.squish + " #{dir}"))
+        (
+          (SELECT COUNT(*) FROM day_foods WHERE day_foods.food_id = foods.id) +
+          (SELECT COUNT(DISTINCT recipe_id) FROM recipe_items WHERE recipe_items.food_id = foods.id) +
+          (SELECT COUNT(DISTINCT day_recipe_id) FROM day_recipe_items WHERE day_recipe_items.food_id = foods.id)
+        )
+      SQL
     end
 
     if params[:full_result] == "true"
@@ -54,7 +64,8 @@ class FoodsController < ApplicationController
     end
 
     food_ids = @foods.pluck(:id)
-    @usage_counts = food_ids.any? ? DayFood.where(food_id: food_ids).group(:food_id).count : {}
+    @usage_counts = bulk_usage_counts(food_ids)
+    @foods_in_use = Set.new(@usage_counts.reject { |_, count| count.zero? }.keys)
     @missing_count = current_user.foods.where(in_pantry: false).count
   end
 
@@ -91,8 +102,44 @@ class FoodsController < ApplicationController
   end
 
   def destroy
-    @food.destroy
-    redirect_to foods_path, notice: t("controllers.foods.destroyed")
+    usage = food_usage(@food)
+
+    if usage.values.all?(&:zero?)
+      @food.destroy
+      redirect_to foods_path, notice: t("controllers.foods.destroyed")
+    else
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update(
+            "food_delete_blocked_modal_root",
+            partial: "foods/delete_blocked_modal",
+            locals: { food: @food, usage: usage }
+          )
+        end
+        format.html { redirect_to foods_path, alert: t("controllers.foods.delete_blocked") }
+      end
+    end
+  end
+
+  # Supprime l'aliment en cascade avec tout ce qui en dépend (recettes, recettes
+  # personnalisées, entrées de journal) — pour l'utilisateur qui préfère perdre
+  # cet historique plutôt que ne jamais pouvoir supprimer l'aliment.
+  def force_destroy
+    ActiveRecord::Base.transaction do
+      recipe_ids = @food.recipe_items.distinct.pluck(:recipe_id)
+      day_recipe_ids = (@food.day_recipe_items.distinct.pluck(:day_recipe_id) +
+                         DayRecipe.where(recipe_id: recipe_ids).pluck(:id)).uniq
+
+      # @food is already scoped to current_user (set_food), but the cascade below
+      # walks to other tables — scope each destroy explicitly rather than trusting
+      # that every RecipeItem/DayRecipeItem row satisfies food_belongs_to_user.
+      DayRecipe.joins(:day).where(days: { user_id: current_user.id }, id: day_recipe_ids).destroy_all
+      current_user.recipes.where(id: recipe_ids).destroy_all
+      @food.day_foods.destroy_all
+      @food.destroy!
+    end
+
+    redirect_to foods_path, notice: t("controllers.foods.force_destroyed")
   end
 
   def bulk_pantry
@@ -119,9 +166,7 @@ class FoodsController < ApplicationController
       return
     end
 
-    list = current_user.shopping_lists.order(created_at: :asc).first_or_create!(
-      name: t("views.shopping_lists.default_name")
-    )
+    list = current_user.active_shopping_list
     missing.each do |food|
       list.add_or_merge_item(
         food:     food,
@@ -134,7 +179,7 @@ class FoodsController < ApplicationController
 
   def toggle_favorite
     @food.update!(favorite: !@food.favorite)
-    @usage_counts = DayFood.where(food_id: @food.id).group(:food_id).count
+    @usage_counts = bulk_usage_counts([@food.id])
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to foods_path }
@@ -143,7 +188,7 @@ class FoodsController < ApplicationController
 
   def toggle_pantry
     @food.update!(in_pantry: !@food.in_pantry)
-    @usage_counts = DayFood.where(food_id: @food.id).group(:food_id).count
+    @usage_counts = bulk_usage_counts([@food.id])
     @missing_count = current_user.foods.where(in_pantry: false).count
     @filtering_in_stock = params[:filter_in_stock] == "true"
     @filtering_out_of_stock = params[:filter_out_of_stock] == "true"
@@ -170,21 +215,11 @@ class FoodsController < ApplicationController
   end
 
   def barcode_import
-    code = params[:code].to_s.gsub(/\D/, "")
-    return render json: { error: t("controllers.foods.barcode_not_found") }, status: :not_found unless [8, 12, 13].include?(code.length)
-
-    if (existing = current_user.foods.find_by(off_id: code))
-      return render json: { existing_food: { id: existing.id } }
-    end
-
-    product = Rails.cache.fetch("off_barcode:#{code}", expires_in: 24.hours) do
-      OpenFoodFactsService.by_barcode(code)
-    end
-
-    if product
-      render json: { product: product.merge(source: "off") }
-    else
+    result = BarcodeLookupService.call(code: params[:code], user: current_user)
+    if result[:error]
       render json: { error: t("controllers.foods.barcode_not_found") }, status: :not_found
+    else
+      render json: result
     end
   end
 
@@ -217,6 +252,31 @@ class FoodsController < ApplicationController
     @food = current_user.foods.find(params[:id])
   end
 
+  def food_usage(food)
+    {
+      day_foods: food.day_foods.count,
+      recipes: food.recipe_items.distinct.count(:recipe_id),
+      day_recipe_items: food.day_recipe_items.distinct.count(:day_recipe_id)
+    }
+  end
+
+  # Utilisations totales par aliment (parmi food_ids) : entrées de journal +
+  # recettes + recettes personnalisées — c'est le badge "Utilisations" affiché
+  # dans la liste, et sa non-nullité décide aussi si le bouton supprimer doit
+  # sauter la première pop-up de confirmation classique pour aller directement
+  # à la pop-up "Impossible de supprimer".
+  def bulk_usage_counts(food_ids)
+    return {} if food_ids.empty?
+
+    day_food_counts   = DayFood.where(food_id: food_ids).group(:food_id).count
+    recipe_counts     = RecipeItem.where(food_id: food_ids).distinct.group(:food_id).count(:recipe_id)
+    day_recipe_counts = DayRecipeItem.where(food_id: food_ids).distinct.group(:food_id).count(:day_recipe_id)
+
+    food_ids.index_with do |id|
+      day_food_counts.fetch(id, 0) + recipe_counts.fetch(id, 0) + day_recipe_counts.fetch(id, 0)
+    end
+  end
+
   def food_params
     params.require(:food).permit(
       :name, :brand, :fats, :carbs, :sugars, :proteins, :calories, :category,
@@ -240,11 +300,12 @@ class FoodsController < ApplicationController
       end
       # micronutrients arrives as a JSON string from the hidden field
       if p[:micronutrients].is_a?(String)
-        begin
-          p[:micronutrients] = JSON.parse(p[:micronutrients]).transform_keys(&:to_s).presence || {}
+        parsed = begin
+          JSON.parse(p[:micronutrients])
         rescue JSON::ParserError
-          p[:micronutrients] = {}
+          nil
         end
+        p[:micronutrients] = parsed.is_a?(Hash) ? parsed.transform_keys(&:to_s).presence || {} : {}
       end
     end
   end

@@ -25,7 +25,7 @@
       </p>
       <div class="grid grid-cols-3 gap-1">
         <% program.program_days.reject { |d| d.id == day.id }.each do |target| %>
-          <% copy_url = copy_to_workout_program_program_day_path(program, day) %>
+          <% copy_url = copy_to_program_day_path(day) %>
           <% if target.program_exercises.any? %>
             <button type="button"
                     class="text-center py-1 text-[10px] rounded-lg border border-surface-border/40 text-ink-muted hover:bg-surface-hover hover:text-ink-primary hover:border-surface-border/60 transition-colors cursor-pointer"
@@ -52,21 +52,23 @@
     </div>
 
     <%# Inline editable session name %>
-    <%= form_with url: workout_program_program_day_path(program, day),
+    <%= form_with url: program_day_path(day),
           method: :patch,
           scope: :program_day,
           class: "w-full" do |f| %>
-      <%= f.text_field :name,
+      <%= f.text_area :name,
             value: day.name,
             placeholder: t("views.workout_programs.day.rest_placeholder"),
-            class: "w-full text-center text-sm font-bold bg-transparent border border-transparent rounded-lg px-1 py-1 text-ink-primary placeholder:text-ink-subtle/30 hover:border-surface-border/60 focus:border-brand/50 focus:outline-none focus:bg-surface-hover transition-colors cursor-text",
+            maxlength: 80,
+            rows: 2,
+            class: "w-full text-center text-sm font-bold bg-transparent border border-transparent rounded-lg px-1 py-1 text-ink-primary placeholder:text-ink-subtle/30 hover:border-surface-border/60 focus:border-brand/50 focus:outline-none focus:bg-surface-hover transition-colors cursor-text resize-none leading-tight",
             data: { action: "blur->auto-submit#submit keydown.enter->auto-submit#submit",
                     controller: "auto-submit" } %>
     <% end %>
   </div>
 
   <%# ── Duration + Notes metadata ── %>
-  <%= form_with url: workout_program_program_day_path(program, day),
+  <%= form_with url: program_day_path(day),
         method: :patch,
         html: { novalidate: true },
         class: "px-2 pt-2 pb-1 border-b border-surface-border/20 space-y-1" do %>
@@ -77,7 +79,8 @@
               min: 0, step: 1,
               placeholder: t("views.workout_programs.day.duration_placeholder"),
               class: "w-full pr-6 text-[10px] bg-transparent border border-transparent rounded px-1 py-0.5 text-ink-muted placeholder:text-ink-subtle/30 hover:border-surface-border/50 focus:border-brand/40 focus:outline-none focus:bg-surface-hover transition-colors cursor-text",
-              data: { action: "blur->auto-submit#submit", controller: "auto-submit" } %>
+              data: { action: "blur->auto-submit#submit input->digit-limit#limit", controller: "auto-submit digit-limit",
+                      digit_limit_max_integer_digits_value: 4 } %>
         <span class="absolute right-1 top-1/2 -translate-y-1/2 text-[9px] text-ink-subtle/40 pointer-events-none">min</span>
       </div>
     </div>
@@ -101,7 +104,7 @@
          data-program-builder-search-path-value="<%= search_exercises_path %>"
          data-program-builder-favorites-path-value="<%= favorites_exercises_path(format: :json) %>"
          data-program-builder-favorites-label-value="<%= t("views.exercises.source_favorites") %>"
-         data-program-builder-create-path-value="<%= workout_program_program_day_program_exercises_path(program, day) %>"
+         data-program-builder-new-path-value="<%= new_program_day_program_exercise_path(day) %>"
          data-program-builder-no-results-value="<%= t("views.workout_programs.day.no_exercise_found") %>"
          class="relative">
       <div class="relative">
