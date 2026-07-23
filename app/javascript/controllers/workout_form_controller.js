@@ -206,7 +206,7 @@ export default class extends Controller {
 
   // ── Duration estimate ─────────────────────────────────────────────
   // The duration field stays fully user-controlled. We only compute an
-  // estimate (reps × 3s + rest per set, floored at 10 min) and surface it in
+  // estimate (reps × 3s + rest per set, floored at 1 min) and surface it in
   // a call-out with a "use" button — shown only when it differs from the
   // current input value, mirroring the profile's water-goal estimator.
 
