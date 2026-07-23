@@ -164,10 +164,10 @@
                   </div>
 
                   <div class="pl-6 mt-1.5" data-set-types-wrapper>
-                    <% has_non_working = (ws.set_types - ["working"]).any? %>
+                    <% dominant_set_type = RpeSetType::DISPLAY_PRIORITY.find { |t| ws.set_types.include?(t) } %>
                     <button type="button" data-action="click->workout-form#toggleSetTypes"
                             class="flex items-center gap-1.5 text-[10px] text-ink-subtle hover:text-ink-primary transition-colors cursor-pointer">
-                      <span data-set-type-dot class="<%= "hidden" unless has_non_working %> w-1.5 h-1.5 rounded-full bg-brand shrink-0"></span>
+                      <span data-set-type-dot class="<%= dominant_set_type ? set_type_dot_class(dominant_set_type) : "hidden" %> w-1.5 h-1.5 rounded-full shrink-0"></span>
                       <span><%= t("views.workout_sessions.form.set_type_toggle") %></span>
                       <i class="fas fa-chevron-down text-[8px] transition-transform"></i>
                     </button>

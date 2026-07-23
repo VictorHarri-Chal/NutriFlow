@@ -15,6 +15,11 @@ const SET_TYPE_PILL_CLASSES = {
   dropset: `${SET_TYPE_PILL_BASE_CLASSES} peer-checked/dropset:bg-status-info/20 peer-checked/dropset:text-status-info peer-checked/dropset:border-status-info/50`
 }
 
+// Set-type indicator dot colour, by dominant non-working type — mirrors
+// SetTypesHelper#set_type_dot_class (never brand, which is the "working" colour).
+const SET_TYPE_DOT_COLORS = { failure: "bg-status-danger", dropset: "bg-status-info", warmup: "bg-status-success" }
+const SET_TYPE_DOT_PRIORITY = ["failure", "dropset", "warmup"] // mirrors RpeSetType::DISPLAY_PRIORITY
+
 // Manages the workout session form:
 // - receives "exercise-selected" from exercise-combobox, builds exercise groups
 // - handles add/remove set per exercise
@@ -388,7 +393,7 @@ export default class extends Controller {
       <div class="pl-6 mt-1.5" data-set-types-wrapper>
         <button type="button" data-action="click->workout-form#toggleSetTypes"
                 class="flex items-center gap-1.5 text-[10px] text-ink-subtle hover:text-ink-primary transition-colors cursor-pointer">
-          <span data-set-type-dot class="hidden w-1.5 h-1.5 rounded-full bg-brand shrink-0"></span>
+          <span data-set-type-dot class="hidden w-1.5 h-1.5 rounded-full shrink-0"></span>
           <span>${this.labelSetTypeToggleValue}</span>
           <i class="fas fa-chevron-down text-[8px] transition-transform"></i>
         </button>
@@ -436,9 +441,17 @@ export default class extends Controller {
     if (!wrapper) return
     const dot = wrapper.querySelector("[data-set-type-dot]")
     if (!dot) return
-    const hasNonWorking = [...wrapper.querySelectorAll("input[type=checkbox]:checked")]
-      .some(c => c.value !== "working")
-    dot.classList.toggle("hidden", !hasNonWorking)
+    // Colour the indicator by the dominant non-working type (mirrors
+    // SetTypesHelper#set_type_dot_class), never brand — brand means "working".
+    const checked  = [...wrapper.querySelectorAll("input[type=checkbox]:checked")].map(c => c.value)
+    const dominant = SET_TYPE_DOT_PRIORITY.find(t => checked.includes(t))
+    dot.classList.remove(...Object.values(SET_TYPE_DOT_COLORS))
+    if (dominant) {
+      dot.classList.add(SET_TYPE_DOT_COLORS[dominant])
+      dot.classList.remove("hidden")
+    } else {
+      dot.classList.add("hidden")
+    }
   }
 
   _renumberSets(container) {
