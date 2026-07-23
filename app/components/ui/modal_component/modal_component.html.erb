@@ -1,0 +1,23 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4"
+     data-controller="modal"
+     data-action="click->modal#handleBackdropClick keydown@document->modal#handleEscape">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+  <div class="relative w-full <%= max_width %> bg-surface-raised border border-surface-border/50 rounded-panel shadow-modal transition-all duration-200 ease-out scale-95 opacity-0 flex flex-col <%= max_height %> overflow-hidden"
+       data-modal-target="panel">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-surface-border/40 flex-shrink-0">
+      <h3 class="text-sm font-semibold text-ink-primary"><%= title %></h3>
+      <button type="button"
+              class="btn-ghost w-8 h-8 !p-0 flex items-center justify-center flex-shrink-0"
+              data-action="click->modal#close">
+        <%= helpers.ui_icon(:close, css: "text-sm") %>
+      </button>
+    </div>
+
+    <div class="px-5 py-4 overflow-y-auto min-h-0 flex-1"><%= body %></div>
+
+    <% if footer? %>
+      <div data-modal-footer class="border-t border-surface-border/40 px-5 py-4 flex-shrink-0"><%= footer %></div>
+    <% end %>
+  </div>
+</div>
