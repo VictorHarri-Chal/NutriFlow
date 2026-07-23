@@ -5,7 +5,8 @@ module Ui
     end
 
     def call
-      tag.div(content, class: ["bg-surface-raised border border-surface-border/40 rounded-panel", @padding].join(" "), **@options)
+      extra_class = @options.delete(:class)
+      tag.div(content, class: ["bg-surface-raised border border-surface-border/40 rounded-panel", @padding, extra_class].compact.join(" "), **@options)
     end
   end
 end

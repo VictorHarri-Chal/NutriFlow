@@ -18,7 +18,8 @@ module Ui
     end
 
     def call
-      tag.span(safe_join([(@icon ? helpers.ui_icon(@icon) : nil), @label].compact), class: css_classes, **@options)
+      extra_class = @options.delete(:class)
+      tag.span(safe_join([(@icon ? helpers.ui_icon(@icon) : nil), @label].compact), class: [css_classes, extra_class].compact.join(" "), **@options)
     end
 
     private

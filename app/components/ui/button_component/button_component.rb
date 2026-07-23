@@ -9,11 +9,18 @@ module Ui
     end
 
     def call
+      extra_class = @options.delete(:class)
+      extra_data = @options.delete(:data) || {}
+      extra_aria = @options.delete(:aria) || {}
+      merged_class = [css_classes, extra_class].compact.join(" ")
+      merged_data = link_data.merge(extra_data)
+      merged_aria = aria_hash.merge(extra_aria)
+
       inner = safe_join([icon_tag, label_tag].compact)
       if @href
-        link_to(@href, class: css_classes, aria: aria_hash, data: link_data, **@options) { inner }
+        link_to(@href, class: merged_class, aria: merged_aria, data: merged_data, **@options) { inner }
       else
-        tag.button(inner, type: @type, class: css_classes, aria: aria_hash, **@options)
+        tag.button(inner, type: @type, class: merged_class, aria: merged_aria, **@options)
       end
     end
 
