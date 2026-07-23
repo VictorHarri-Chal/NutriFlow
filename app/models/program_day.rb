@@ -1,4 +1,6 @@
 class ProgramDay < ApplicationRecord
+  include DurationEstimatable
+
   belongs_to :workout_program
   has_many :program_exercises, -> { order(:position) }, dependent: :destroy, inverse_of: :program_day
 
@@ -39,5 +41,11 @@ class ProgramDay < ApplicationRecord
       end
       new_pe.save!
     end
+  end
+
+  def duration_estimate_pairs
+    ProgramExerciseSet.joins(:program_exercise)
+                       .where(program_exercises: { program_day_id: id })
+                       .pluck(:reps_target, "program_exercises.rest_seconds")
   end
 end

@@ -1,0 +1,26 @@
+<%# day: ProgramDay %>
+<% estimate = day.program_exercises.any? ? day.estimated_duration_minutes : 0 %>
+<div class="flex items-center gap-1.5" id="program_day_duration_<%= day.id %>"
+     data-controller="duration-estimate"
+     data-duration-estimate-estimate-value="<%= estimate %>">
+  <i class="fas fa-clock text-[9px] text-ink-subtle/70 shrink-0 w-3 text-center"
+     title="<%= t('views.workout_programs.day.duration_tooltip') %>"></i>
+  <div class="relative flex-1">
+    <%= number_field_tag "program_day[duration_minutes]", day.duration_minutes,
+          min: 0, step: 1,
+          placeholder: t("views.workout_programs.day.duration_placeholder"),
+          class: "w-full pr-6 text-[10px] bg-transparent border border-transparent rounded px-1 py-0.5 text-ink-muted placeholder:text-ink-subtle/50 hover:border-surface-border/50 focus:border-brand/40 focus:outline-none focus:bg-surface-hover transition-colors cursor-text",
+          data: { action: "blur->auto-submit#submit input->digit-limit#limit input->duration-estimate#sync",
+                  controller: "auto-submit digit-limit",
+                  duration_estimate_target: "input",
+                  digit_limit_max_integer_digits_value: 4 } %>
+    <span class="absolute right-1 top-1/2 -translate-y-1/2 text-[9px] text-ink-subtle/40 pointer-events-none">min</span>
+  </div>
+  <button type="button"
+          data-duration-estimate-target="icon"
+          data-action="click->duration-estimate#apply"
+          title="<%= t('views.workout_programs.day.duration_estimate_hint', minutes: estimate) %>"
+          class="hidden shrink-0 text-brand/50 hover:text-brand transition-colors text-[10px] cursor-pointer">
+    <i class="fas fa-wand-magic-sparkles"></i>
+  </button>
+</div>

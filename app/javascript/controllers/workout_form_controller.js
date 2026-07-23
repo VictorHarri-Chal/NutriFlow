@@ -1,5 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
+const SECONDS_PER_REP = 3 // mirrors DurationEstimatable::SECONDS_PER_REP (app/models/concerns/duration_estimatable.rb)
+const MINIMUM_MINUTES = 1 // mirrors DurationEstimatable::MINIMUM_MINUTES (app/models/concerns/duration_estimatable.rb)
+
 // Mirrors SetTypesHelper#set_type_pill_classes (size: :md) — Tailwind classes must
 // appear as literal strings for the JIT scanner to pick them up, so this is duplicated
 // here rather than fetched from the server (same tradeoff as the rest of this file's
@@ -12,20 +15,30 @@ const SET_TYPE_PILL_CLASSES = {
   dropset: `${SET_TYPE_PILL_BASE_CLASSES} peer-checked/dropset:bg-status-info/20 peer-checked/dropset:text-status-info peer-checked/dropset:border-status-info/50`
 }
 
+// Set-type indicator dot colour, by dominant non-working type — mirrors
+// SetTypesHelper#set_type_dot_class (never brand, which is the "working" colour).
+const SET_TYPE_DOT_COLORS = { failure: "bg-status-danger", dropset: "bg-status-info", warmup: "bg-status-success" }
+const SET_TYPE_DOT_PRIORITY = ["failure", "dropset", "warmup"] // mirrors RpeSetType::DISPLAY_PRIORITY
+
 // Manages the workout session form:
 // - receives "exercise-selected" from exercise-combobox, builds exercise groups
 // - handles add/remove set per exercise
 // - fetches "last performance" for context when an exercise is added
 export default class extends Controller {
-  static targets = ["exercisesList", "emptyHint", "noExerciseError", "noWeightError"]
+  static targets = ["exercisesList", "emptyHint", "noExerciseError", "noWeightError", "durationInput", "durationHint", "durationEstimate"]
   static values = {
     lastPerfPath:       String,
     exerciseSearchPath: String,
     labelWeight:        { type: String, default: "Poids (kg)" },
     labelReps:          { type: String, default: "Reps" },
     labelRpe:           { type: String, default: "RPE" },
+    rpeOptions:         { type: Array, default: [] },
     labelAddSet:        { type: String, default: "Série" },
-    labelLastPerf:      { type: String, default: "Dernière fois" },
+    labelRestPlaceholder:  { type: String, default: "Repos entre séries" },
+    labelNotesPlaceholder: { type: String, default: "Notes de l'exercice" },
+    labelSetTypeToggle:    { type: String, default: "Type de série" },
+    labelLastPerf:      { type: String, default: "Dernière perf" },
+    labelBodyweight:    { type: String, default: "PDC" },
     labelMaxSets:       { type: String, default: "max 10" },
     noExerciseError:    { type: String, default: "Ajoutez au moins un exercice." },
     sessionId:          { type: Number, default: 0 },
@@ -51,6 +64,7 @@ export default class extends Controller {
         if (exerciseId) this._fetchLastPerformance(exerciseId, group)
       })
     }
+    this.recalculateDuration()
   }
 
   // ── Form submit validation ────────────────────────────────────────
@@ -115,6 +129,7 @@ export default class extends Controller {
       if (container) this._renumberSets(container)
       this._syncEmptyHint()
       this._recomputeGroupPrBadges(existing)
+      this.recalculateDuration()
       return
     }
 
@@ -122,6 +137,7 @@ export default class extends Controller {
     this.exercisesListTarget.appendChild(group)
     this._syncEmptyHint()
     this._fetchLastPerformance(id, group)
+    this.recalculateDuration()
   }
 
   // ── Set management ────────────────────────────────────────────────
@@ -131,8 +147,19 @@ export default class extends Controller {
     const container = group.querySelector(".sets-container")
     const visible   = container.querySelectorAll(".set-row:not(.hidden)")
     if (visible.length >= 10) return
-    container.appendChild(this._buildSetRow(group.dataset.exerciseId))
+    // Carry reps + weight from the previous set (not RPE, not set types) so
+    // similar sets are quicker to log.
+    const last = visible[visible.length - 1]
+    const opts = {}
+    if (last) {
+      const repsInput   = last.querySelector("input[name*='[reps]']")
+      const weightInput = last.querySelector("input[name*='[weight_kg]']")
+      if (repsInput && repsInput.value !== "")   opts.reps     = repsInput.value
+      if (weightInput && weightInput.value !== "") opts.weightKg = weightInput.value
+    }
+    container.appendChild(this._buildSetRow(group.dataset.exerciseId, opts))
     this._renumberSets(container)
+    this.recalculateDuration()
   }
 
   removeSet(event) {
@@ -150,6 +177,7 @@ export default class extends Controller {
     }
     if (container) this._renumberSets(container)
     if (group) this._recomputeGroupPrBadges(group)
+    this.recalculateDuration()
   }
 
   removeExercise(event) {
@@ -162,6 +190,7 @@ export default class extends Controller {
       group.remove()
     }
     this._syncEmptyHint()
+    this.recalculateDuration()
   }
 
   // ── PR detection ─────────────────────────────────────────────────
@@ -194,6 +223,52 @@ export default class extends Controller {
     })
   }
 
+  // ── Duration estimate ─────────────────────────────────────────────
+  // The duration field stays fully user-controlled. We only compute an
+  // estimate (reps × 3s + rest per set, floored at 1 min) and surface it in
+  // a call-out with a "use" button — shown only when it differs from the
+  // current input value, mirroring the profile's water-goal estimator.
+
+  recalculateDuration() {
+    if (!this.hasDurationInputTarget || !this.hasExercisesListTarget) return
+
+    const groups = this.exercisesListTarget.querySelectorAll(".exercise-group:not(.hidden)")
+    if (groups.length === 0) {
+      this._durationEstimate = null
+      if (this.hasDurationHintTarget) this.durationHintTarget.classList.add("hidden")
+      return
+    }
+
+    let totalSeconds = 0
+    groups.forEach(group => {
+      const repsInputs = group.querySelectorAll(".set-row:not(.hidden) input[name*='[reps]']")
+      repsInputs.forEach(input => {
+        totalSeconds += (parseInt(input.value, 10) || 0) * SECONDS_PER_REP
+      })
+      const restInput = group.querySelector("input[name*='[rest_seconds]']")
+      if (restInput) totalSeconds += (parseInt(restInput.value, 10) || 0) * repsInputs.length
+    })
+    this._durationEstimate = Math.max(MINIMUM_MINUTES, Math.round(totalSeconds / 60))
+    this._syncDurationHint()
+  }
+
+  useDuration() {
+    if (this._durationEstimate == null) return
+    this.durationInputTarget.value = this._durationEstimate
+    if (this.hasDurationHintTarget) this.durationHintTarget.classList.add("hidden")
+  }
+
+  _syncDurationHint() {
+    if (!this.hasDurationHintTarget) return
+    const current = parseInt(this.durationInputTarget.value, 10) || 0
+    if (this._durationEstimate == null || this._durationEstimate === current) {
+      this.durationHintTarget.classList.add("hidden")
+    } else {
+      if (this.hasDurationEstimateTarget) this.durationEstimateTarget.textContent = `${this._durationEstimate} min`
+      this.durationHintTarget.classList.remove("hidden")
+    }
+  }
+
   // ── Private ───────────────────────────────────────────────────────
 
   _buildExerciseGroup(exerciseId, exerciseName) {
@@ -216,15 +291,10 @@ export default class extends Controller {
           <i class="fas fa-times"></i>
         </button>
       </div>
-      <div class="last-perf hidden rounded-lg bg-surface-hover border border-surface-border/30 px-3 py-1.5 flex items-center gap-2">
-        <i class="fas fa-history text-[10px] text-ink-subtle shrink-0"></i>
-        <span class="last-perf-text text-xs text-ink-subtle flex-1"></span>
-        <span class="last-perf-delta hidden text-[10px] font-semibold shrink-0"></span>
-      </div>
-      <div class="grid grid-cols-[16px_1fr_1fr_1fr_28px_20px] gap-2 text-xs text-ink-subtle">
+      <div class="grid grid-cols-[16px_1fr_1fr_1fr_28px_20px] gap-2 text-[9px] font-medium uppercase tracking-wider text-ink-subtle/60">
         <span>#</span>
-        <span>${this.labelWeightValue}</span>
         <span>${this.labelRepsValue}</span>
+        <span>${this.labelWeightValue}</span>
         <span>${this.labelRpeValue}</span>
         <span></span>
         <span></span>
@@ -240,31 +310,37 @@ export default class extends Controller {
       </div>
       <div class="space-y-1 border-t border-surface-border/20 pt-2 mt-1">
         <div class="flex items-center gap-1.5">
-          <i class="fas fa-hourglass-half text-[9px] text-ink-subtle/40 shrink-0 w-3 text-center"></i>
+          <i class="fas fa-hourglass-half text-[9px] text-ink-subtle/70 shrink-0 w-3 text-center"></i>
           <div class="relative flex-1">
             <input type="number"
                    name="workout_session[workout_sets_attributes][${firstSetIdx}][rest_seconds]"
                    min="0" step="5"
+                   placeholder="${this.labelRestPlaceholderValue}"
                    data-controller="digit-limit"
-                   data-action="input->digit-limit#limit"
+                   data-action="input->digit-limit#limit input->workout-form#recalculateDuration"
                    data-digit-limit-max-integer-digits-value="4"
-                   class="w-full pr-7 text-[11px] bg-transparent border border-transparent rounded px-1 py-0.5 text-ink-muted placeholder:text-ink-subtle/30 hover:border-surface-border/50 focus:border-brand/40 focus:outline-none focus:bg-surface-hover transition-colors cursor-text">
+                   class="w-full pr-7 text-[11px] bg-transparent border border-transparent rounded px-1 py-0.5 text-ink-muted placeholder:text-ink-subtle/50 hover:border-surface-border/50 focus:border-brand/40 focus:outline-none focus:bg-surface-hover transition-colors cursor-text">
             <span class="absolute right-1.5 top-1/2 -translate-y-1/2 text-[9px] text-ink-subtle/30 pointer-events-none">sec</span>
           </div>
         </div>
         <div class="flex items-start gap-1.5">
-          <i class="fas fa-comment-alt text-[9px] text-ink-subtle/40 shrink-0 w-3 text-center mt-1.5"></i>
+          <i class="fas fa-comment-alt text-[9px] text-ink-subtle/70 shrink-0 w-3 text-center mt-1.5"></i>
           <textarea name="workout_session[workout_sets_attributes][${firstSetIdx}][notes]"
                     rows="1"
+                    placeholder="${this.labelNotesPlaceholderValue}"
                     style="resize: none; overflow-y: hidden;"
-                    class="w-full text-[11px] bg-transparent border border-transparent rounded px-1 py-0.5 text-ink-muted placeholder:text-ink-subtle/30 hover:border-surface-border/50 focus:border-brand/40 focus:outline-none focus:bg-surface-hover transition-all cursor-text min-h-[20px] focus:min-h-[48px]"></textarea>
+                    class="w-full text-[11px] bg-transparent border border-transparent rounded px-1 py-0.5 text-ink-muted placeholder:text-ink-subtle/50 hover:border-surface-border/50 focus:border-brand/40 focus:outline-none focus:bg-surface-hover transition-all cursor-text min-h-[20px] focus:min-h-[48px]"></textarea>
         </div>
+      </div>
+      <div class="last-perf hidden rounded-lg bg-surface-hover border border-surface-border/30 px-3 py-1.5 flex items-center gap-2">
+        <span class="last-perf-text text-xs text-ink-muted flex-1"></span>
+        <span class="last-perf-delta hidden text-[10px] font-semibold shrink-0"></span>
       </div>
     `
     div.querySelector(".exercise-name-label").textContent = exerciseName
 
     const container = div.querySelector(".sets-container")
-    for (let i = 0; i < 3; i++) container.appendChild(this._buildSetRow(exerciseId))
+    container.appendChild(this._buildSetRow(exerciseId))
     this._renumberSets(container)
     return div
   }
@@ -279,25 +355,31 @@ export default class extends Controller {
       <input type="hidden" name="workout_session[workout_sets_attributes][${idx}][position]" value="0" data-position-input="true">
       <div class="grid grid-cols-[16px_1fr_1fr_1fr_28px_20px] gap-2 items-center">
         <span class="text-xs text-ink-subtle set-number"></span>
+        <input type="number" name="workout_session[workout_sets_attributes][${idx}][reps]"
+               value="${opts.reps != null ? opts.reps : ''}" min="1" step="1"
+               data-controller="digit-limit"
+               data-action="input->digit-limit#limit input->workout-form#recalculateDuration"
+               data-digit-limit-max-integer-digits-value="4"
+               class="input-dark text-sm py-1.5 cursor-text">
         <input type="number" name="workout_session[workout_sets_attributes][${idx}][weight_kg]"
                data-controller="digit-limit"
                data-action="input->workout-form#checkPr input->digit-limit#limit"
                data-digit-limit-max-integer-digits-value="4"
                data-digit-limit-max-decimal-digits-value="1"
-               placeholder="0" min="0" step="0.5" value="${opts.weightKg != null ? opts.weightKg : ''}"
+               min="0" step="0.5" value="${opts.weightKg != null ? opts.weightKg : ''}"
                class="input-dark text-sm py-1.5 cursor-text">
-        <input type="number" name="workout_session[workout_sets_attributes][${idx}][reps]"
-               value="${opts.reps != null ? opts.reps : 10}" min="0" step="1"
-               data-controller="digit-limit"
-               data-action="input->digit-limit#limit"
-               data-digit-limit-max-integer-digits-value="4"
-               class="input-dark text-sm py-1.5 cursor-text">
-        <input type="number" name="workout_session[workout_sets_attributes][${idx}][rpe]"
-               placeholder="—" min="6" max="10" step="1"
-               data-controller="digit-limit"
-               data-action="input->digit-limit#limit"
-               data-digit-limit-max-integer-digits-value="2"
-               class="input-dark text-sm py-1.5 cursor-text text-center">
+        <div data-controller="custom-select" class="relative min-w-0">
+          <select name="workout_session[workout_sets_attributes][${idx}][rpe]" class="sr-only" data-custom-select-target="select">
+            <option value="">—</option>
+            ${this.rpeOptionsValue.map(([label, value]) => `<option value="${value}">${label}</option>`).join("")}
+          </select>
+          <button type="button" data-action="click->custom-select#toggle"
+                  class="input-dark text-sm py-1.5 px-1 cursor-pointer w-full flex items-center justify-center">
+            <span data-custom-select-target="label" class="text-ink-subtle truncate min-w-0"></span>
+          </button>
+          <div data-custom-select-target="dropdown"
+               class="hidden absolute z-50 w-56 right-0 mt-1 bg-surface-raised border border-surface-border/60 rounded-lg shadow-2xl max-h-52 overflow-y-auto"></div>
+        </div>
         <span data-pr-badge
               class="hidden flex items-center justify-center text-[9px] font-bold text-brand bg-brand/10 border border-brand/30 rounded px-1.5 py-0.5 leading-none whitespace-nowrap">
           PR
@@ -308,8 +390,16 @@ export default class extends Controller {
         </button>
       </div>
 
-      <div class="flex flex-wrap gap-2 pl-6 mt-1.5">
-        ${this._buildSetTypePills(idx)}
+      <div class="pl-6 mt-1.5" data-set-types-wrapper>
+        <button type="button" data-action="click->workout-form#toggleSetTypes"
+                class="flex items-center gap-1.5 text-[10px] text-ink-subtle hover:text-ink-primary transition-colors cursor-pointer">
+          <span data-set-type-dot class="hidden w-1.5 h-1.5 rounded-full shrink-0"></span>
+          <span>${this.labelSetTypeToggleValue}</span>
+          <i class="fas fa-chevron-down text-[8px] transition-transform"></i>
+        </button>
+        <div data-set-types class="hidden flex flex-wrap gap-2 mt-1.5">
+          ${this._buildSetTypePills(idx)}
+        </div>
       </div>
     `
     return div
@@ -327,11 +417,41 @@ export default class extends Controller {
       const checked    = key === "working" ? "checked" : ""
       return `
         <input type="checkbox" name="workout_session[workout_sets_attributes][${idx}][set_types][]" value="${key}" ${checked}
-               id="${checkboxId}" class="hidden peer/${key}">
+               id="${checkboxId}" class="hidden peer/${key}"
+               data-action="change->workout-form#syncSetTypeIndicator">
         <label for="${checkboxId}" class="${SET_TYPE_PILL_CLASSES[key]}">${label}</label>
       `
     }).join("")
     return `${pills}<input type="hidden" name="workout_session[workout_sets_attributes][${idx}][set_types][]" value="">`
+  }
+
+  // ── Set-type disclosure ───────────────────────────────────────────
+
+  toggleSetTypes(event) {
+    const wrapper = event.currentTarget.closest("[data-set-types-wrapper]")
+    if (!wrapper) return
+    const pills   = wrapper.querySelector("[data-set-types]")
+    const chevron = event.currentTarget.querySelector(".fa-chevron-down")
+    const nowHidden = pills.classList.toggle("hidden")
+    if (chevron) chevron.classList.toggle("rotate-180", !nowHidden)
+  }
+
+  syncSetTypeIndicator(event) {
+    const wrapper = event.currentTarget.closest("[data-set-types-wrapper]")
+    if (!wrapper) return
+    const dot = wrapper.querySelector("[data-set-type-dot]")
+    if (!dot) return
+    // Colour the indicator by the dominant non-working type (mirrors
+    // SetTypesHelper#set_type_dot_class), never brand — brand means "working".
+    const checked  = [...wrapper.querySelectorAll("input[type=checkbox]:checked")].map(c => c.value)
+    const dominant = SET_TYPE_DOT_PRIORITY.find(t => checked.includes(t))
+    dot.classList.remove(...Object.values(SET_TYPE_DOT_COLORS))
+    if (dominant) {
+      dot.classList.add(SET_TYPE_DOT_COLORS[dominant])
+      dot.classList.remove("hidden")
+    } else {
+      dot.classList.add("hidden")
+    }
   }
 
   _renumberSets(container) {
@@ -403,14 +523,14 @@ export default class extends Controller {
       if (!data.sets?.length) return
 
       const parts = data.sets.map(s => {
-        const w = (s.weight_kg && s.weight_kg > 0) ? `${s.weight_kg}kg` : "PDC"
-        return `${w} × ${s.reps}`
-      }).join("  ·  ")
+        const w = (s.weight_kg && s.weight_kg > 0) ? `${s.weight_kg} kg` : this.labelBodyweightValue
+        return `${s.reps} × ${w}`
+      }).join(" · ")
 
       const lastPerf = group.querySelector(".last-perf")
       const text     = group.querySelector(".last-perf-text")
       if (lastPerf && text) {
-        text.textContent = `${this.labelLastPerfValue} (${data.date}) : ${parts}`
+        text.textContent = `${this.labelLastPerfValue} · ${data.date} · ${parts}`
         lastPerf.classList.remove("hidden")
       }
 

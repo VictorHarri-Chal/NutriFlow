@@ -19,5 +19,10 @@
   <%= render "workout_programs/tension_balance_panel", program: @program %>
 <% end %>
 
+<%# Keep the day's estimated duration in sync with the new exercise %>
+<%= turbo_stream.replace "program_day_duration_#{@day.id}" do %>
+  <%= render "workout_programs/day_duration_field", day: @day %>
+<% end %>
+
 <%# The exercise was just persisted with its sets — close the modal %>
 <%= turbo_stream.update "program_exercise_modal_root" %>

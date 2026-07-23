@@ -27,6 +27,12 @@ export default class extends Controller {
   }
 
   handleBackdropClick(event) {
+    // Ignore les clics dont la cible a été retirée du DOM pendant le traitement
+    // (ex. une option de custom-select reconstruite par innerHTML) : ce n'est
+    // pas un clic sur le fond, et panelTarget.contains() renverrait un faux
+    // négatif sur un nœud détaché, fermant la modale à tort.
+    if (!document.contains(event.target)) return
+
     // Le backdrop est un enfant de this.element (pas this.element lui-même),
     // donc on ferme dès que le clic n'a pas eu lieu à l'intérieur du panneau —
     // couvre le backdrop et tout espace vide autour, jamais le contenu.
