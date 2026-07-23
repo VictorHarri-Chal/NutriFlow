@@ -12,6 +12,7 @@
             workout_form_label_notes_placeholder_value: t("views.workout_sessions.form.set_notes_placeholder"),
             workout_form_label_set_type_toggle_value:   t("views.workout_sessions.form.set_type_toggle"),
             workout_form_label_last_perf_value:      t("views.workout_sets.set_editor.last_performance_title"),
+            workout_form_label_bodyweight_value:     t("views.workout_sets.set_editor.bodyweight_abbr"),
             workout_form_no_exercise_error_value:    t("views.workout_sessions.form.no_exercises_error"),
             workout_form_label_max_sets_value:       t("views.workout_sets.set_editor.max_sets"),
             workout_form_session_id_value:           workout_session.persisted? ? workout_session.id : 0,
@@ -224,7 +225,7 @@
 
             <div class="last-perf hidden rounded-lg bg-surface-hover border border-surface-border/30 px-3 py-1.5 flex items-center gap-2">
               <i class="fas fa-history text-[10px] text-ink-subtle shrink-0"></i>
-              <span class="last-perf-text text-xs text-ink-subtle flex-1"></span>
+              <span class="last-perf-text text-xs text-ink-muted flex-1"></span>
               <span class="last-perf-delta hidden text-[10px] font-semibold shrink-0"></span>
             </div>
 

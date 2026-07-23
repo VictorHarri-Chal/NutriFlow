@@ -33,6 +33,7 @@ export default class extends Controller {
     labelNotesPlaceholder: { type: String, default: "Notes de l'exercice" },
     labelSetTypeToggle:    { type: String, default: "Type de série" },
     labelLastPerf:      { type: String, default: "Dernière perf" },
+    labelBodyweight:    { type: String, default: "PDC" },
     labelMaxSets:       { type: String, default: "max 10" },
     noExerciseError:    { type: String, default: "Ajoutez au moins un exercice." },
     sessionId:          { type: Number, default: 0 },
@@ -328,7 +329,7 @@ export default class extends Controller {
       </div>
       <div class="last-perf hidden rounded-lg bg-surface-hover border border-surface-border/30 px-3 py-1.5 flex items-center gap-2">
         <i class="fas fa-history text-[10px] text-ink-subtle shrink-0"></i>
-        <span class="last-perf-text text-xs text-ink-subtle flex-1"></span>
+        <span class="last-perf-text text-xs text-ink-muted flex-1"></span>
         <span class="last-perf-delta hidden text-[10px] font-semibold shrink-0"></span>
       </div>
     `
@@ -510,8 +511,8 @@ export default class extends Controller {
       if (!data.sets?.length) return
 
       const parts = data.sets.map(s => {
-        const w = (s.weight_kg && s.weight_kg > 0) ? `${s.weight_kg}kg` : "PDC"
-        return `${w} × ${s.reps}`
+        const w = (s.weight_kg && s.weight_kg > 0) ? `${s.weight_kg} kg` : this.labelBodyweightValue
+        return `${s.reps} × ${w}`
       }).join("  ·  ")
 
       const lastPerf = group.querySelector(".last-perf")
