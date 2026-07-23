@@ -234,6 +234,13 @@
 
     </div>
 
+    <%# ── Section : méta-séance ── %>
+    <div class="flex items-center gap-3 mb-4">
+      <div class="h-px flex-1 bg-surface-border/40"></div>
+      <span class="text-[10px] font-semibold uppercase tracking-wider text-ink-subtle/60"><%= t("views.workout_sessions.form.section_session") %></span>
+      <div class="h-px flex-1 bg-surface-border/40"></div>
+    </div>
+
     <%# ── Duration ── %>
     <div class="mb-4">
       <%= f.label :duration_minutes, class: "label-dark mb-1 flex items-center gap-1.5" do %>
