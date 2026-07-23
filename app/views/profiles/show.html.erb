@@ -149,11 +149,6 @@
                 <%= number_with_delimiter(@profile.water_goal_ml || 2000) %>
                 <span class="text-xs text-ink-subtle ml-0.5">ml</span>
               </span>
-              <% if (estimated = @profile.computed_water_goal_ml) && estimated != (@profile.water_goal_ml || 2000) %>
-                <div class="text-[10px] text-ink-subtle/50">
-                  <i class="fas fa-droplet text-status-info/50 mr-0.5"></i><%= t("views.profiles.show.water_goal_estimated", ml: number_with_delimiter(estimated)) %>
-                </div>
-              <% end %>
             </div>
           </div>
         </div>

@@ -743,7 +743,6 @@ en:
         job_activity_level: "Physical effort at work"
         default_daily_steps: "Daily steps (average)"
         water_goal: "Daily hydration goal"
-        water_goal_estimated: "Recommended: %{ml} ml"
         goal: "Goal"
         age_unit: "years"
         bmi: "BMI"

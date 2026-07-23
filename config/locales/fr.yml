@@ -743,7 +743,6 @@ fr:
         job_activity_level: "Effort physique au travail"
         default_daily_steps: "Pas quotidiens (moyenne)"
         water_goal: "Objectif hydratation quotidien"
-        water_goal_estimated: "Recommandé : %{ml} ml"
         goal: "Objectif"
         age_unit: "ans"
         bmi: "IMC"
