@@ -18,14 +18,11 @@ class ExportsController < ApplicationController
 
     # One generation at a time per user: a running export can't be piled on
     # (each is a heavy multi-second job). Re-show the in-flight one instead of
-    # enqueuing another — this also absorbs rapid double-submits / spam.
-    if (running = current_user.data_exports.in_progress.recent.first)
-      respond_to do |format|
-        format.turbo_stream { render_status_stream(running) }
-        format.html { redirect_to setting_path(tab: "export") }
-      end
-      return
-    end
+    # enqueuing another — this absorbs rapid double-submits / spam. The DB
+    # partial-unique index is the airtight backstop for concurrent requests that
+    # both pass this check (see the rescue below).
+    running = current_user.data_exports.in_progress.recent.first
+    return respond_with_export(running) if running
 
     export = current_user.data_exports.create!(
       status: "pending",
@@ -37,10 +34,10 @@ class ExportsController < ApplicationController
     prune_old_exports
     DataExportJob.perform_later(export)
 
-    respond_to do |format|
-      format.turbo_stream { render_status_stream(export) }
-      format.html { redirect_to setting_path(tab: "export") }
-    end
+    respond_with_export(export)
+  rescue ActiveRecord::RecordNotUnique
+    # Lost a race: a concurrent request already created the in-flight export.
+    respond_with_export(current_user.data_exports.in_progress.recent.first)
   end
 
   # Polled by export_poller_controller. JSON drives the client; the turbo_stream
@@ -71,6 +68,15 @@ class ExportsController < ApplicationController
   end
 
   private
+
+  # Renders the export's current status region (turbo_stream) or falls back to
+  # the tab (html). Tolerates a nil export (e.g. the racing one already finished).
+  def respond_with_export(export)
+    respond_to do |format|
+      format.turbo_stream { render_status_stream(export) }
+      format.html { redirect_to setting_path(tab: "export") }
+    end
+  end
 
   def render_status_stream(export)
     render turbo_stream: turbo_stream.replace(

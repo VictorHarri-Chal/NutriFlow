@@ -56,6 +56,13 @@ Rack::Attack.throttle("registrations/ip", limit: 5, period: 1.day) do |req|
   req.real_ip if req.path == "/users" && req.post?
 end
 
+# --- Data export ---
+# Generous for real use (one export runs at a time anyway) but caps a client
+# hammering the endpoint. Complements the per-user in-flight DB constraint.
+Rack::Attack.throttle("exports/ip", limit: 10, period: 1.minute) do |req|
+  req.real_ip if req.path == "/exports" && req.post?
+end
+
 # --- Response ---
 
 Rack::Attack.throttled_responder = lambda do |_req|
