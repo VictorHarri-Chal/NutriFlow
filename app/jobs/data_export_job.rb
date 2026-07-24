@@ -1,6 +1,10 @@
 class DataExportJob < ApplicationJob
   queue_as :default
 
+  # If the DataExport was pruned before the job ran, there's nothing to build —
+  # drop the job quietly instead of logging a failed execution.
+  discard_on ActiveJob::DeserializationError
+
   # Builds the .xlsx off the request cycle so a heavy export (thousands of rows)
   # never ties up a web thread. Re-filters the stored category keys through the
   # registry so a category the user has since disabled can't slip back in.

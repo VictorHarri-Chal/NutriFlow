@@ -9,7 +9,8 @@ class DataExport < ApplicationRecord
 
   validates :status, inclusion: { in: STATUSES }
 
-  scope :recent, -> { order(created_at: :desc) }
+  scope :recent,   -> { order(created_at: :desc) }
+  scope :finished, -> { where(status: %w[completed failed]) }
 
   def period
     Exports::Period.new(kind: period_kind, date_from: date_from, date_to: date_to)

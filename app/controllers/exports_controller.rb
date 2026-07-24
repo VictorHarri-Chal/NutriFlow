@@ -76,8 +76,10 @@ class ExportsController < ApplicationController
     }
   end
 
+  # Prune only finished exports beyond the retention limit — never an in-flight
+  # one, so a queued/processing job can't have its record deleted mid-build.
   def prune_old_exports
-    current_user.data_exports.recent.offset(DataExport::RETENTION_PER_USER).destroy_all
+    current_user.data_exports.finished.recent.offset(DataExport::RETENTION_PER_USER).destroy_all
   end
 
   def build_period
