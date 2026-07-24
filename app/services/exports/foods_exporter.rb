@@ -15,7 +15,7 @@ module Exports
 
       rows = @user.foods.includes(:food_labels).order(:name).map do |food|
         [
-          food.name, food.brand, food.category, food.calories, food.proteins,
+          food.name, food.brand, category_label(food.category), food.calories, food.proteins,
           food.carbs, food.fats, food.sugars, food.fiber, food.saturated_fat, food.salt,
           food.food_labels.map(&:name).join(", "),
           food.allergens.join(", "),
@@ -25,6 +25,17 @@ module Exports
       end
 
       [Exports::Sheet.simple(name: "Aliments", headers: headers, rows: rows)]
+    end
+
+    private
+
+    # Reuse the app's existing French category labels rather than dumping the raw
+    # English enum key ("proteins", "vegetables"…). Guard the blank case so we
+    # never build a trailing-dot i18n key.
+    def category_label(category)
+      return nil if category.blank?
+
+      I18n.t("views.shopping_lists.categories.#{category}")
     end
   end
 end

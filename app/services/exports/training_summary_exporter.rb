@@ -12,16 +12,19 @@ module Exports
     def sheets
       sets = scoped_sets
 
+      # Vertical "Indicateur / Valeur" layout: keeps this block narrow so it
+      # aligns cleanly under the PR/1RM tables in the same sheet instead of a
+      # wide single row whose columns dwarf everything below it.
       summary_table = {
         title: nil,
-        headers: ["Nb séances musculation", "Volume total musculation (kg)", "Nb séances cardio", "Distance cardio totale (km)", "Calories cardio totales"],
-        rows: [[
-          scoped_sessions.size,
-          sets.sum { |s| s.weight_kg.to_f * s.reps.to_i }.round,
-          scoped_cardio_blocks.map(&:cardio_session_id).uniq.size,
-          total_cardio_distance,
-          scoped_cardio_blocks.sum { |b| b.calories_burned.to_i }
-        ]]
+        headers: ["Indicateur", "Valeur"],
+        rows: [
+          ["Nb séances musculation", scoped_sessions.size],
+          ["Volume total musculation (kg)", sets.sum { |s| s.weight_kg.to_f * s.reps.to_i }.round],
+          ["Nb séances cardio", scoped_cardio_blocks.map(&:cardio_session_id).uniq.size],
+          ["Distance cardio totale (km)", total_cardio_distance],
+          ["Calories cardio totales", scoped_cardio_blocks.sum { |b| b.calories_burned.to_i }]
+        ]
       }
 
       prs_table = {

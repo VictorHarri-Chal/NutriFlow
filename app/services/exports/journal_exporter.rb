@@ -20,6 +20,8 @@ module Exports
 
     def scoped_days
       scope = @user.days.includes(
+        :workout_sessions,
+        { cardio_sessions: :cardio_blocks },
         day_foods: [:food, :day_food_group],
         day_recipes: [{ recipe: { recipe_items: :food } }, { day_recipe_items: :food }, :day_food_group]
       ).order(:date)
@@ -27,15 +29,43 @@ module Exports
       range ? scope.where(date: range) : scope
     end
 
+    def profile
+      # Loaded once (never re-queried per day) since daily_calorie_target reads it
+      # for every row.
+      return @profile if defined?(@profile)
+
+      @profile = @user.profile
+    end
+
     def days_sheet
-      headers = ["Date", "Note", "Énergie", "Humeur", "Sommeil", "Pas", "Eau (ml)", "Calories totales", "Protéines (g)", "Glucides (g)", "Lipides (g)"]
+      headers = [
+        "Date", "Note", "Énergie (/5)", "Humeur (/5)", "Sommeil (/5)", "Pas", "Eau (ml)",
+        "Calories ingérées", "Calories brûlées", "Calories nettes", "Objectif calorique",
+        "Protéines (g)", "Glucides (g)", "Lipides (g)", "Sucres (g)", "Fibres (g)", "AG saturés (g)", "Sel (g)"
+      ]
       rows = days.map do |day|
+        ingested = day.total_calories
+        burned   = day.workout_calories_total
+        secondary = day_secondary_totals(day)
         [
           day.date, day.note, day.energy_level, day.mood, day.sleep_quality, day.steps, day.water_ml,
-          day.total_calories, day.total_proteins, day.total_carbs, day.total_fats
+          ingested, burned, (ingested - burned).round(1), profile&.daily_calorie_target(day: day),
+          day.total_proteins, day.total_carbs, day.total_fats, day.total_sugars,
+          secondary[:fiber], secondary[:saturated_fat], secondary[:salt]
         ]
       end
       Exports::Sheet.simple(name: "Journal - Jours", headers: headers, rows: rows)
+    end
+
+    # Day exposes total_sugars but not fiber/saturated_fat/salt, so aggregate them
+    # from the day's entries (both DayFood and DayRecipe expose the same total_*).
+    def day_secondary_totals(day)
+      entries = day.day_foods + day.day_recipes
+      {
+        fiber:         entries.sum { |e| e.total_fiber.to_f }.round(1),
+        saturated_fat: entries.sum { |e| e.total_saturated_fat.to_f }.round(1),
+        salt:          entries.sum { |e| e.total_salt.to_f }.round(1)
+      }
     end
 
     def entries_sheet

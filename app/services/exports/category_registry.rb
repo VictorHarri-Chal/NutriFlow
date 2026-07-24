@@ -12,6 +12,7 @@ module Exports
       { key: "journal",            section: :journal_nutrition, exporter: JournalExporter,            dated: true,  guard: nil },
       { key: "foods",              section: :journal_nutrition, exporter: FoodsExporter,              dated: false, guard: nil },
       { key: "recipes",            section: :journal_nutrition, exporter: RecipesExporter,            dated: false, guard: nil },
+      { key: "micronutrients",     section: :journal_nutrition, exporter: MicronutrientsExporter,     dated: true,  guard: nil },
       { key: "strength_training",  section: :training,          exporter: StrengthTrainingExporter,   dated: true,  guard: ->(user) { user.show_workout_section? } },
       { key: "cardio",             section: :training,          exporter: CardioExporter,             dated: true,  guard: ->(user) { user.show_cardio_section? } },
       { key: "workout_programs",   section: :training,          exporter: WorkoutProgramsExporter,    dated: false, guard: nil },

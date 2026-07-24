@@ -1,44 +1,46 @@
 module Exports
-  # Not date-scoped, catalog-style like Foods. Produces two sheets: recipe
-  # totals, and their ingredient breakdown.
+  # Not date-scoped, catalog-style like Foods. One flat, human-readable sheet:
+  # a row per recipe with its ingredients listed inline (name + quantity + unit),
+  # its totals, its rating, and its preparation instructions — no separate
+  # ingredients tab to cross-reference.
   class RecipesExporter
     def initialize(user:, period: nil)
       @user = user
     end
 
     def sheets
-      [recipes_sheet, ingredients_sheet]
+      headers = [
+        "Nom", "Ingrédients", "Poids total (g)", "Calories", "Protéines (g)", "Glucides (g)",
+        "Lipides (g)", "Sucres (g)", "Fibres (g)", "AG saturés (g)", "Sel (g)",
+        "Note moyenne", "Nb avis", "Instructions"
+      ]
+      rows = recipes.map do |r|
+        ratings = r.recipe_ratings
+        [
+          r.name, ingredients_text(r), r.total_weight, r.total_calories, r.total_proteins,
+          r.total_carbs, r.total_fats, r.total_sugars, r.total_fiber, r.total_saturated_fat, r.total_salt,
+          ratings.any? ? (ratings.sum(&:rating).to_f / ratings.size).round(1) : nil,
+          ratings.size, r.instructions
+        ]
+      end
+      [Exports::Sheet.simple(name: "Recettes", headers: headers, rows: rows)]
     end
 
     private
 
     def recipes
-      @recipes ||= @user.recipes.includes(recipe_items: :food, recipe_ratings: []).to_a
+      @recipes ||= @user.recipes.includes(recipe_items: :food, recipe_ratings: []).order(:name).to_a
     end
 
-    def recipes_sheet
-      headers = [
-        "Nom", "Poids total (g)", "Calories", "Protéines (g)", "Glucides (g)", "Lipides (g)",
-        "Sucres (g)", "Fibres (g)", "AG saturés (g)", "Sel (g)", "Note moyenne", "Nb avis"
-      ]
-      rows = recipes.map do |r|
-        ratings = r.recipe_ratings
-        [
-          r.name, r.total_weight, r.total_calories, r.total_proteins, r.total_carbs, r.total_fats,
-          r.total_sugars, r.total_fiber, r.total_saturated_fat, r.total_salt,
-          ratings.any? ? (ratings.sum(&:rating).to_f / ratings.size).round(1) : nil,
-          ratings.size
-        ]
-      end
-      Exports::Sheet.simple(name: "Recettes", headers: headers, rows: rows)
+    # "Blanc de poulet (200 g), Riz basmati cuit (250 g), Brocoli (150 g)…"
+    def ingredients_text(recipe)
+      recipe.recipe_items.map { |item| "#{item.food.name} (#{quantity_label(item)})" }.join(", ")
     end
 
-    def ingredients_sheet
-      headers = ["Recette", "Aliment", "Quantité", "Unité"]
-      rows = recipes.flat_map do |r|
-        r.recipe_items.map { |item| [r.name, item.food.name, item.quantity, item.unit] }
-      end
-      Exports::Sheet.simple(name: "Recettes - Ingrédients", headers: headers, rows: rows)
+    def quantity_label(item)
+      qty = item.quantity
+      qty = qty.to_i if qty == qty.to_i
+      "#{qty} #{item.unit}".strip
     end
   end
 end

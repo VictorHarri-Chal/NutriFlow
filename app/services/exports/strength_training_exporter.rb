@@ -34,9 +34,14 @@ module Exports
     def sets_sheet
       headers = ["Date", "Exercice", "N° série", "Reps", "Poids (kg)", "RPE", "Type de série", "PR"]
       rows = sessions.flat_map do |session|
-        session.workout_sets.map.with_index(1) do |set, index|
+        # N° série repart à 1 pour chaque exercice de la séance (pas un compteur
+        # global sur toute la séance), pour rester cohérent avec l'onglet
+        # "Programmes - Séries cibles" et refléter la lecture naturelle.
+        set_number = Hash.new(0)
+        session.workout_sets.map do |set|
+          set_number[set.exercise_id] += 1
           [
-            session.day.date, exercise_name(set.exercise), index, set.reps, set.weight_kg,
+            session.day.date, exercise_name(set.exercise), set_number[set.exercise_id], set.reps, set.weight_kg,
             set.effective_rpe, set.set_types.join(", "), set.is_pr ? "Oui" : "Non"
           ]
         end
