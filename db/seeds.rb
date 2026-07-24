@@ -1,669 +1,639 @@
 # db/seeds.rb — NutriFlow comprehensive demo seed
-# Run with: bin/rails db:seed
+#
+# Builds a fully populated demo account spanning ~2 years so every duration
+# filter, statistic and export category has data to show. Idempotent: reuses
+# User#reset_all_data! to wipe the demo user's data before rebuilding.
+#
+#   bin/rails db:seed                       # default demo email (local only)
+#   SEED_EMAIL=me@example.com bin/rails db:seed
+#   FORCE_SEED=1 bin/rails db:seed          # required to run in production
+#
+# Derived values are never written directly: Profile#goal follows goal_weight
+# vs weight, Profile#weight follows the latest WeightEntry, cardio/workout
+# calories are recomputed on save. We only feed raw inputs.
 
-puts "Seeding NutriFlow…"
+require "date"
+
+# Destructive: wipes the target account before rebuilding. Local by default;
+# allowed in production only with an explicit opt-in (e.g. for a demo account).
+if Rails.env.production? && ENV["FORCE_SEED"].blank?
+  abort("⛔  Seed de démo bloqué en production. Relancez avec FORCE_SEED=1 si c'est volontaire (ex: compte de démo).")
+end
+
+Bullet.enable = false if defined?(Bullet)
+
+RNG   = Random.new(20_260_723)
+TODAY = Date.current
+START = (TODAY - 2.years)
+
+pick    = ->(arr)      { arr[RNG.rand(arr.size)] }
+sample  = ->(arr, n)   { arr.shuffle(random: RNG).first(n) }
+chance  = ->(p)        { RNG.rand < p }
+between = ->(lo, hi)   { lo + RNG.rand * (hi - lo) }
+intbtw  = ->(lo, hi)   { RNG.rand(lo..hi) }
+round25 = ->(x)        { (x / 2.5).round * 2.5 }
+
+puts "🌱  Seeding NutriFlow demo account (#{START} → #{TODAY})…"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # USER + PROFILE
 # ─────────────────────────────────────────────────────────────────────────────
-user = User.find_or_create_by!(email: ENV.fetch("SEED_EMAIL", "victorharrichal@yahoo.com")) do |u|
-  u.password              = "password123"
-  u.password_confirmation = "password123"
+email = ENV.fetch("SEED_EMAIL", "victorharrichal@yahoo.com")
+user  = User.find_or_initialize_by(email: email)
+if user.new_record?
+  user.password = user.password_confirmation = "password123"
+  user.skip_confirmation!               # sets confirmed_at, no mailer
+  user.skip_confirmation_notification!  # avoids Devise mapping error in seed context
+  user.save!
 end
-
-profile = user.profile || user.build_profile
-profile.update!(
-  name:                "Victor",
-  weight:              80,
-  height:              178,
-  age:                 26,
-  gender:              :male,
-  goal:                :muscle_gain,
-  job_activity_level:  :light_activity,
-  water_goal_ml:       2500,
-  goal_weight:         85,
-  default_daily_steps: 8_000
+user.update_columns(
+  confirmed_at: user.confirmed_at || Time.current,
+  locale:       "fr",
+  time_zone:    "Europe/Paris"
 )
 
-# Enable sections if the columns exist
-user.update!(show_workout_section: true) if user.respond_to?(:show_workout_section=)
-user.update!(show_cardio_section:  true) if user.respond_to?(:show_cardio_section=)
+puts "  ↺ Resetting existing data for #{email}…"
+user.reset_all_data!
+user.reload
 
-# ─────────────────────────────────────────────────────────────────────────────
-# CLEAR PREVIOUS DATA
-# ─────────────────────────────────────────────────────────────────────────────
-user.days.destroy_all
-user.workout_programs.destroy_all
-user.exercise_favorites.destroy_all
-user.recipes.destroy_all
-user.foods.destroy_all
-user.day_food_groups.destroy_all
-user.food_labels.destroy_all
-user.weight_entries.destroy_all
+user.update!(
+  show_day_note:          true,
+  show_workout_section:   true,
+  show_cardio_section:    true,
+  show_water_tracking:    true,
+  show_tdee_breakdown:    true,
+  show_weight_tracking:   true,
+  show_body_measurements: true,
+  show_fasting_tracking:  true
+)
+user.update_column(:fasting_disclaimer_acknowledged_at, Time.current)
+
+# goal_weight (90) > weight (78) ⇒ goal auto-derives to muscle_gain.
+# Latest WeightEntry later overwrites Profile#weight to the final trend value.
+user.profile.update!(
+  name:                  "Victor",
+  date_of_birth:         Date.new(1997, 4, 12),
+  height:                178,
+  gender:                :male,
+  weight:                78,
+  goal_weight:           90,
+  goal_rate_kg_per_week: 0.15,
+  job_activity_level:    :light_activity,
+  water_goal_ml:         2500,
+  default_daily_steps:   8_000
+)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # FOOD LABELS
 # ─────────────────────────────────────────────────────────────────────────────
-lbl_proteine  = FoodLabel.create!(name: "Protéine",  user: user, color: "green")
-lbl_glucide   = FoodLabel.create!(name: "Glucide",   user: user, color: "amber")
-lbl_lipide    = FoodLabel.create!(name: "Lipide",    user: user, color: "orange")
-lbl_condiment = FoodLabel.create!(name: "Condiment", user: user, color: "blue")
-lbl_fibre     = FoodLabel.create!(name: "Fibre",     user: user, color: "teal")
+labels = {
+  proteine:   FoodLabel.create!(user:, name: "Protéine",   color: "green"),
+  glucide:    FoodLabel.create!(user:, name: "Glucide",    color: "amber"),
+  lipide:     FoodLabel.create!(user:, name: "Lipide",     color: "orange"),
+  legume:     FoodLabel.create!(user:, name: "Légume",     color: "teal"),
+  fruit:      FoodLabel.create!(user:, name: "Fruit",      color: "red"),
+  laitier:    FoodLabel.create!(user:, name: "Laitier",    color: "blue"),
+  condiment:  FoodLabel.create!(user:, name: "Condiment",  color: "violet"),
+  complement: FoodLabel.create!(user:, name: "Complément", color: "yellow")
+}
 
 # ─────────────────────────────────────────────────────────────────────────────
 # MEAL GROUPS
 # ─────────────────────────────────────────────────────────────────────────────
-grp_matin     = DayFoodGroup.create!(name: "Petit-Déjeuner", user: user)
-grp_dejeuner  = DayFoodGroup.create!(name: "Déjeuner",       user: user)
-grp_collation = DayFoodGroup.create!(name: "Collation",      user: user)
-grp_diner     = DayFoodGroup.create!(name: "Dîner",          user: user)
-
-grp = { matin: grp_matin, dejeuner: grp_dejeuner, collation: grp_collation, diner: grp_diner }
+groups = {
+  petit_dej:  DayFoodGroup.create!(user:, name: "Petit-déjeuner"),
+  dejeuner:   DayFoodGroup.create!(user:, name: "Déjeuner"),
+  diner:      DayFoodGroup.create!(user:, name: "Dîner"),
+  collation:  DayFoodGroup.create!(user:, name: "Collation"),
+  post_train: DayFoodGroup.create!(user:, name: "Post-entraînement")
+}
 
 # ─────────────────────────────────────────────────────────────────────────────
-# FOODS  (valeurs / 100g : kcal, prot, lip, glu, suc, category, labels)
+# FOOD BANK (macros per 100 g)
 # ─────────────────────────────────────────────────────────────────────────────
-foods_data = [
-  ["Skyr nature",              57,   8.8,  0.2,  4.0,  4.0, "dairy",      [lbl_proteine]],
-  ["Oeuf entier",             155,  13.0, 11.0,  0.7,  0.7, "proteins",   [lbl_proteine]],
-  ["Blanc d'oeuf",             52,  11.0,  0.2,  0.7,  0.7, "proteins",   [lbl_proteine]],
-  ["Poulet (blanc)",          110,  23.0,  2.5,  0.0,  0.0, "proteins",   [lbl_proteine]],
-  ["Viande hachée 5%",        130,  20.0,  5.0,  0.0,  0.0, "proteins",   [lbl_proteine]],
-  ["Thon en boite (eau)",     113,  26.0,  1.0,  0.0,  0.0, "proteins",   [lbl_proteine]],
-  ["Saumon fumé",             172,  25.0,  7.5,  0.0,  0.0, "proteins",   [lbl_proteine]],
-  ["Sardines en boite",       185,  22.0, 11.0,  0.0,  0.0, "proteins",   [lbl_proteine]],
-  ["Cottage cheese",           98,  11.0,  4.5,  3.0,  3.0, "dairy",      [lbl_proteine]],
-  ["Feta",                    283,  15.0, 23.0,  0.0,  0.0, "dairy",      [lbl_proteine]],
-  ["Fromage blanc 0%",         45,   8.0,  0.1,  3.5,  3.5, "dairy",      [lbl_proteine]],
-  ["Petits suisses",           87,   9.0,  4.5,  5.0,  4.5, "dairy",      [lbl_proteine]],
-  ["Graine de chia",          486,  17.0, 31.0, 42.0,  0.5, "other",      [lbl_proteine, lbl_lipide, lbl_fibre]],
-  ["Lentilles cuites",        116,   9.0,  0.4, 20.0,  1.5, "proteins",   [lbl_proteine, lbl_fibre]],
-  ["Pois chiches cuits",      164,   8.9,  2.6, 27.0,  4.8, "proteins",   [lbl_proteine, lbl_fibre]],
-  ["Beurre de cacahuète",     597,  25.0, 50.0, 20.0,  9.0, "other",      [lbl_proteine, lbl_lipide]],
-  ["Avoine (flocons)",        370,  13.0,  7.0, 60.0,  1.0, "grains",     [lbl_glucide, lbl_fibre]],
-  ["Riz complet (cru)",       350,   7.5,  2.5, 72.0,  0.5, "grains",     [lbl_glucide]],
-  ["Pâte complète (crue)",    350,  13.0,  2.5, 68.0,  3.0, "grains",     [lbl_glucide, lbl_fibre]],
-  ["Riz basmati (cru)",       358,   7.0,  0.8, 80.0,  0.3, "grains",     [lbl_glucide]],
-  ["Patate douce",             86,   1.6,  0.1, 20.0,  4.0, "vegetables", [lbl_glucide]],
-  ["Pain de seigle",          259,   9.0,  3.5, 48.0,  3.0, "grains",     [lbl_glucide, lbl_fibre]],
-  ["Quinoa (cuit)",           120,   4.4,  1.9, 22.0,  1.0, "grains",     [lbl_glucide, lbl_proteine]],
-  ["Banane",                   89,   1.1,  0.3, 23.0, 12.0, "fruits",     [lbl_glucide]],
-  ["Pomme",                    52,   0.3,  0.2, 13.0, 10.0, "fruits",     [lbl_glucide]],
-  ["Poire",                    55,   0.4,  0.2, 13.0, 10.0, "fruits",     [lbl_glucide]],
-  ["Myrtilles surgelées",      57,   0.7,  0.3, 14.0, 10.0, "fruits",     [lbl_glucide]],
-  ["Fruits rouges surgelés",   45,   1.0,  0.3, 11.0,  8.0, "fruits",     [lbl_glucide]],
-  ["Fraises",                  33,   0.7,  0.3,  8.0,  5.5, "fruits",     [lbl_glucide]],
-  ["Tomate",                   18,   0.9,  0.2,  3.5,  3.0, "vegetables", [lbl_glucide]],
-  ["Concombre",                15,   0.6,  0.1,  3.6,  2.0, "vegetables", [lbl_glucide]],
-  ["Brocoli surgelé",          35,   3.0,  0.4,  6.0,  2.0, "vegetables", [lbl_glucide, lbl_fibre]],
-  ["Épinards surgelés",        23,   2.9,  0.4,  3.8,  0.4, "vegetables", [lbl_glucide, lbl_fibre]],
-  ["Courgette",                17,   1.2,  0.3,  3.0,  2.5, "vegetables", [lbl_glucide]],
-  ["Poivron rouge",            31,   1.0,  0.3,  7.0,  5.0, "vegetables", [lbl_glucide]],
-  ["Champignons de paris",     22,   3.1,  0.3,  3.0,  2.0, "vegetables", [lbl_glucide, lbl_fibre]],
-  ["Oignon",                   40,   1.1,  0.1,  9.0,  5.0, "vegetables", [lbl_glucide]],
-  ["Avocat",                  160,   2.0, 15.0,  9.0,  0.5, "vegetables", [lbl_lipide]],
-  ["Maïs en conserve",         76,   2.8,  1.2, 16.0,  5.0, "vegetables", [lbl_glucide]],
-  ["Carottes",                 41,   0.9,  0.2,  9.6,  5.0, "vegetables", [lbl_glucide, lbl_fibre]],
-  ["Amandes",                 579,  21.0, 50.0, 22.0,  4.0, "other",      [lbl_lipide]],
-  ["Noix",                    654,  15.0, 65.0,  7.0,  2.0, "other",      [lbl_lipide]],
-  ["Noix de cajou",           553,  18.0, 44.0, 33.0,  6.0, "other",      [lbl_lipide]],
-  ["Chocolat noir 85%",       566,  12.5, 47.0, 29.0, 10.0, "other",      [lbl_lipide]],
-  ["Huile d'olive",           900,   0.0,100.0,  0.0,  0.0, "condiments", [lbl_lipide]],
-  ["Miel",                    304,   0.3,  0.0, 82.0, 82.0, "condiments", [lbl_condiment]],
-  ["Sauce soja",               60,   6.0,  0.0,  8.0,  3.0, "condiments", [lbl_condiment]],
-  ["Vinaigre balsamique",      88,   0.5,  0.0, 17.0, 14.0, "condiments", [lbl_condiment]],
-  ["Cornichons",               22,   1.2,  0.2,  3.5,  1.0, "condiments", [lbl_condiment]],
-  ["Moutarde",                 66,   4.4,  3.3,  5.0,  1.5, "condiments", [lbl_condiment]],
-  ["Ail",                     149,   6.4,  0.5, 33.0,  1.0, "condiments", [lbl_condiment]],
-  ["Paprika",                 282,  14.0, 13.0, 54.0, 10.0, "condiments", [lbl_condiment]],
-  ["Cumin",                   375,  18.0, 22.0, 44.0,  2.0, "condiments", [lbl_condiment]],
-  ["Curcuma",                 354,   8.0, 10.0, 65.0,  3.0, "condiments", [lbl_condiment]],
-  ["Cannelle",                247,   4.0,  1.5, 55.0,  2.0, "condiments", [lbl_condiment]],
-  ["Herbes de Provence",      265,  10.0,  6.0, 42.0,  5.0, "condiments", [lbl_condiment]],
-  ["Persil frais",             36,   3.0,  0.8,  6.0,  1.0, "condiments", [lbl_condiment]],
+# [key, name, category, cal, prot, carb, sugar, fat, extra]
+food_defs = [
+  [:poulet,        "Blanc de poulet",         "proteins",    120, 23.0, 0.0,  0.0,   2.6,  { label: :proteine, micros: { "potassium" => 250, "zinc" => 1.0 } }],
+  [:boeuf,         "Steak haché 5%",          "proteins",    137, 21.0, 0.0,  0.0,   5.0,  { label: :proteine, micros: { "iron" => 2.6, "zinc" => 4.8, "vitamin_b12" => 2.5 } }],
+  [:saumon,        "Saumon frais",            "proteins",    208, 20.0, 0.0,  0.0,  13.0,  { label: :proteine, micros: { "epa" => 0.7, "dha" => 1.1, "vitamin_d" => 11 } }],
+  [:thon,          "Thon au naturel",         "proteins",    116, 26.0, 0.0,  0.0,   1.0,  { label: :proteine, brand: "Petit Navire", source: "off", off_id: "3107872001618", nutriscore: "b", nova: 3 }],
+  [:oeuf,          "Œuf entier",              "proteins",    143, 12.6, 0.7,  0.7,   9.9,  { label: :proteine, micros: { "vitamin_b12" => 1.1, "vitamin_a" => 160, "vitamin_d" => 2 } }],
+  [:tofu,          "Tofu nature",             "proteins",    144, 15.0, 2.0,  0.5,   8.0,  { label: :proteine, source: "ciqual" }],
+  [:jambon,        "Jambon blanc",            "proteins",    110, 18.0, 1.0,  1.0,   3.5,  { label: :proteine, brand: "Herta", source: "off", nutriscore: "c", nova: 4 }],
+  [:crevette,      "Crevettes cuites",        "proteins",     99, 24.0, 0.2,  0.0,   0.3,  { label: :proteine }],
+  [:whey,          "Whey protéine vanille",   "supplements", 380, 78.0, 8.0,  4.0,   6.0,  { label: :complement, brand: "MyProtein", source: "off", favorite: true }],
+  [:skyr,          "Skyr nature",             "dairy",        63, 11.0, 4.0,  4.0,   0.2,  { label: :laitier, brand: "Danone", nutriscore: "a", micros: { "calcium" => 150 } }],
+  [:fromage_blanc, "Fromage blanc 3%",        "dairy",        75,  8.0, 4.5,  4.5,   3.0,  { label: :laitier, micros: { "calcium" => 110 } }],
+  [:mozza,         "Mozzarella",              "dairy",       280, 18.0, 1.0,  1.0,  22.0,  { label: :laitier }],
+  [:parmesan,      "Parmesan",                "dairy",       402, 33.0, 0.0,  0.0,  29.0,  { label: :laitier, micros: { "calcium" => 1180 } }],
+  [:lait,          "Lait demi-écrémé",        "dairy",        46,  3.3, 4.8,  4.8,   1.5,  { label: :laitier }],
+  [:riz,           "Riz basmati cuit",        "grains",      130,  2.7, 28.0, 0.1,   0.3,  { label: :glucide }],
+  [:pates,         "Pâtes complètes cuites",  "grains",      124,  5.0, 25.0, 1.0,   1.1,  { label: :glucide, micros: { "magnesium" => 43 } }],
+  [:patate,        "Patate douce",            "vegetables",   86,  1.6, 20.0, 4.2,   0.1,  { label: :glucide, micros: { "vitamin_a" => 709 } }],
+  [:pdt,           "Pomme de terre",          "vegetables",   77,  2.0, 17.0, 0.8,   0.1,  { label: :glucide }],
+  [:pain,          "Pain complet",            "grains",      247,  9.0, 41.0, 3.0,   3.4,  { label: :glucide, micros: { "magnesium" => 76 } }],
+  [:flocons,       "Flocons d'avoine",        "grains",      389, 13.0, 60.0, 1.0,   7.0,  { label: :glucide, micros: { "magnesium" => 138, "iron" => 4.7 }, favorite: true }],
+  [:quinoa,        "Quinoa cuit",             "grains",      120,  4.4, 21.0, 0.9,   1.9,  { label: :glucide }],
+  [:semoule,       "Semoule cuite",           "grains",      112,  3.8, 23.0, 0.3,   0.2,  { label: :glucide }],
+  [:brocoli,       "Brocoli",                 "vegetables",   34,  2.8, 7.0,  1.7,   0.4,  { label: :legume, micros: { "vitamin_c" => 89, "vitamin_b9" => 63 } }],
+  [:epinard,       "Épinards",                "vegetables",   23,  2.9, 3.6,  0.4,   0.4,  { label: :legume, micros: { "iron" => 2.7, "vitamin_a" => 469 } }],
+  [:courgette,     "Courgette",               "vegetables",   17,  1.2, 3.1,  2.5,   0.3,  { label: :legume }],
+  [:tomate,        "Tomate",                  "vegetables",   18,  0.9, 3.9,  2.6,   0.2,  { label: :legume, micros: { "vitamin_c" => 14, "potassium" => 237 } }],
+  [:carotte,       "Carotte",                 "vegetables",   41,  0.9, 10.0, 4.7,   0.2,  { label: :legume, micros: { "vitamin_a" => 835 } }],
+  [:salade,        "Salade verte",            "vegetables",   15,  1.4, 2.9,  0.8,   0.2,  { label: :legume }],
+  [:poivron,       "Poivron rouge",           "vegetables",   31,  1.0, 6.0,  4.2,   0.3,  { label: :legume, micros: { "vitamin_c" => 128 } }],
+  [:haricot,       "Haricots verts",          "vegetables",   31,  1.8, 7.0,  3.3,   0.1,  { label: :legume }],
+  [:lentilles,     "Lentilles cuites",        "vegetables",  116,  9.0, 20.0, 1.8,   0.4,  { label: :proteine, micros: { "iron" => 3.3, "vitamin_b9" => 181 } }],
+  [:pois_chiche,   "Pois chiches",            "vegetables",  164,  8.9, 27.0, 4.8,   2.6,  { label: :proteine }],
+  [:banane,        "Banane",                  "fruits",       89,  1.1, 23.0, 12.0,  0.3,  { label: :fruit, micros: { "potassium" => 358 }, favorite: true }],
+  [:pomme,         "Pomme",                   "fruits",       52,  0.3, 14.0, 10.0,  0.2,  { label: :fruit }],
+  [:myrtille,      "Myrtilles",               "fruits",       57,  0.7, 14.0, 10.0,  0.3,  { label: :fruit, micros: { "vitamin_c" => 10 } }],
+  [:fraise,        "Fraises",                 "fruits",       33,  0.7, 8.0,  4.9,   0.3,  { label: :fruit, micros: { "vitamin_c" => 59 } }],
+  [:orange,        "Orange",                  "fruits",       47,  0.9, 12.0, 9.0,   0.1,  { label: :fruit, micros: { "vitamin_c" => 53 } }],
+  [:avocat,        "Avocat",                  "fruits",      160,  2.0, 9.0,  0.7,  15.0,  { label: :lipide, micros: { "potassium" => 485 } }],
+  [:amande,        "Amandes",                 "other",       579, 21.0, 22.0, 4.4,  50.0,  { label: :lipide, micros: { "magnesium" => 270, "calcium" => 269 } }],
+  [:noix,          "Noix",                    "other",       654, 15.0, 14.0, 2.6,  65.0,  { label: :lipide, micros: { "magnesium" => 158 } }],
+  [:beurre_cac,    "Beurre de cacahuète",     "other",       588, 25.0, 20.0, 9.0,  50.0,  { label: :lipide, brand: "Whole Earth", source: "off", nova: 3, favorite: true }],
+  [:huile,         "Huile d'olive",           "condiments",  900,  0.0, 0.0,  0.0, 100.0,  { label: :lipide }],
+  [:miel,          "Miel",                    "condiments",  304,  0.3, 82.0, 82.0,  0.0,  { label: :condiment }],
+  [:chocolat,      "Chocolat noir 70%",       "other",       546,  7.8, 46.0, 24.0, 42.0,  { label: :lipide }],
+  [:sauce_soja,    "Sauce soja",              "condiments",   53,  8.1, 4.9,  0.4,   0.6,  { label: :condiment, micros: { "sodium" => 5637 } }],
+  [:cafe,          "Café noir",               "beverages",     2,  0.1, 0.0,  0.0,   0.0,  { in_pantry: false }],
+  [:coca,          "Coca-Cola",               "beverages",    42,  0.0, 10.6, 10.6,  0.0,  { brand: "Coca-Cola", source: "off", off_id: "5449000000996", nutriscore: "e", nova: 4, in_pantry: false }],
+  [:chips,         "Chips nature",            "other",       536,  6.6, 50.0, 0.6,  34.0,  { brand: "Lay's", source: "off", nutriscore: "d", nova: 4, in_pantry: false }],
+  [:cookie,        "Cookie pépites chocolat", "other",       480,  5.5, 64.0, 35.0, 22.0,  { brand: "BN", source: "off", nutriscore: "e", nova: 4, in_pantry: false }]
 ]
 
-food_map = {}
-foods_data.each do |name, kcal, prot, lip, glu, suc, category, labels|
-  fo = Food.create!(name: name, calories: kcal, proteins: prot,
-                    fats: lip, carbs: glu, sugars: suc, category: category, user: user)
-  fo.food_labels << labels
-  food_map[name] = fo
+foods = {}
+food_defs.each do |key, name, cat, cal, prot, carb, sugar, fat, extra|
+  extra ||= {}
+  food = user.foods.create!(
+    name:             name,
+    category:         cat,
+    calories:         cal,
+    proteins:         prot,
+    carbs:            carb,
+    sugars:           sugar,
+    fats:             fat,
+    brand:            extra[:brand],
+    source:           extra.fetch(:source, "manual"),
+    off_id:           extra[:off_id],
+    nutriscore_grade: extra[:nutriscore],
+    nova_group:       extra[:nova],
+    favorite:         extra.fetch(:favorite, false),
+    in_pantry:        extra.fetch(:in_pantry, true),
+    micronutrients:   extra.fetch(:micros, {})
+  )
+  food.food_labels << labels[extra[:label]] if extra[:label]
+  foods[key] = food
 end
-f = food_map
-puts "  ✓ #{user.foods.count} aliments"
+all_foods = foods.values
+puts "  ✓ #{all_foods.size} foods"
 
 # ─────────────────────────────────────────────────────────────────────────────
-# RECIPES
+# RECIPES (balanced, unbalanced, high-protein, treats…)
 # ─────────────────────────────────────────────────────────────────────────────
-def build_recipe(user, name, ingredients)
-  r = Recipe.new(name: name, user: user)
-  ingredients.each { |food, qty| r.recipe_items.build(food: food, quantity: qty) }
-  r.save!
-  r
+def recipe!(user, name, instructions, favorite, items)
+  user.recipes.create!(
+    name: name, instructions: instructions, favorite: favorite,
+    recipe_items_attributes: items.map { |food, qty| { food_id: food.id, quantity: qty, unit: "g" } }
+  )
 end
 
-r_overnight_oats = build_recipe(user, "Overnight Oats Myrtilles", [
-  [f["Avoine (flocons)"],     80],
-  [f["Skyr nature"],         150],
-  [f["Myrtilles surgelées"], 100],
-  [f["Graine de chia"],       15],
-  [f["Miel"],                 15],
-  [f["Cannelle"],              2],
-])
+recipes = []
+recipes << recipe!(user, "Poulet riz brocoli", "Cuire le riz, poêler le poulet, vapeur pour le brocoli.", true,
+  [[foods[:poulet], 200], [foods[:riz], 250], [foods[:brocoli], 150], [foods[:huile], 10]])
+recipes << recipe!(user, "Bowl saumon quinoa", "Assembler saumon, quinoa, avocat et épinards.", true,
+  [[foods[:saumon], 150], [foods[:quinoa], 200], [foods[:avocat], 80], [foods[:epinard], 60]])
+recipes << recipe!(user, "Omelette légumes", "Battre les œufs, ajouter poivron et tomate, cuire à feu doux.", false,
+  [[foods[:oeuf], 180], [foods[:poivron], 80], [foods[:tomate], 80], [foods[:huile], 8]])
+recipes << recipe!(user, "Porridge protéiné", "Cuire les flocons dans le lait, ajouter whey, banane et beurre de cacahuète.", true,
+  [[foods[:flocons], 80], [foods[:lait], 250], [foods[:whey], 30], [foods[:banane], 100], [foods[:beurre_cac], 20]])
+recipes << recipe!(user, "Dahl de lentilles", "Mijoter les lentilles et pois chiches avec tomate et carotte.", false,
+  [[foods[:lentilles], 200], [foods[:pois_chiche], 100], [foods[:tomate], 120], [foods[:carotte], 80]])
+recipes << recipe!(user, "Pâtes bolognaise", "Faire revenir le bœuf, ajouter la sauce tomate, servir sur les pâtes.", false,
+  [[foods[:pates], 250], [foods[:boeuf], 150], [foods[:tomate], 150], [foods[:parmesan], 20]])
+recipes << recipe!(user, "Salade de thon", "Mélanger thon, salade, tomate, huile d'olive.", false,
+  [[foods[:thon], 120], [foods[:salade], 100], [foods[:tomate], 100], [foods[:huile], 10]])
+recipes << recipe!(user, "Wrap poulet avocat", "Garnir le pain de poulet, avocat, salade.", false,
+  [[foods[:pain], 100], [foods[:poulet], 120], [foods[:avocat], 60], [foods[:salade], 40]])
+recipes << recipe!(user, "Tofu sauté sésame", "Poêler le tofu avec sauce soja, courgette et poivron.", false,
+  [[foods[:tofu], 200], [foods[:courgette], 120], [foods[:poivron], 100], [foods[:sauce_soja], 20], [foods[:riz], 200]])
+recipes << recipe!(user, "Skyr fruits rouges", "Mélanger skyr, myrtilles, fraises et miel.", true,
+  [[foods[:skyr], 200], [foods[:myrtille], 60], [foods[:fraise], 60], [foods[:miel], 15]])
+recipes << recipe!(user, "Steak patate douce", "Rôtir la patate douce, poêler le steak, haricots vapeur.", false,
+  [[foods[:boeuf], 180], [foods[:patate], 250], [foods[:haricot], 120]])
+recipes << recipe!(user, "Crevettes semoule", "Sauter les crevettes, servir sur semoule et courgette.", false,
+  [[foods[:crevette], 150], [foods[:semoule], 200], [foods[:courgette], 120]])
+recipes << recipe!(user, "Energy balls", "Mixer flocons, beurre de cacahuète, miel et chocolat, former des boules.", false,
+  [[foods[:flocons], 100], [foods[:beurre_cac], 60], [foods[:miel], 40], [foods[:chocolat], 40]])
+recipes << recipe!(user, "Mug cake chocolat", "Mélanger, cuire 1 min au micro-ondes. Pas très équilibré, mais bon.", false,
+  [[foods[:chocolat], 50], [foods[:oeuf], 60], [foods[:flocons], 40], [foods[:miel], 30]])
+recipes << recipe!(user, "Pizza maison", "Base tomate, mozzarella, jambon.", false,
+  [[foods[:pain], 200], [foods[:mozza], 100], [foods[:tomate], 120], [foods[:jambon], 80]])
+recipes << recipe!(user, "Shake post-training", "Whey, banane, lait, beurre de cacahuète au blender.", true,
+  [[foods[:whey], 40], [foods[:banane], 120], [foods[:lait], 300], [foods[:beurre_cac], 15]])
+recipes << recipe!(user, "Buddha bowl", "Quinoa, pois chiches, avocat, carotte, épinards.", true,
+  [[foods[:quinoa], 180], [foods[:pois_chiche], 120], [foods[:avocat], 70], [foods[:carotte], 80], [foods[:epinard], 50]])
+recipes << recipe!(user, "Œufs brouillés avoine", "Œufs brouillés + porridge salé pour le petit-déj costaud.", false,
+  [[foods[:oeuf], 150], [foods[:flocons], 60], [foods[:lait], 150]])
 
-r_smoothie = build_recipe(user, "Smoothie Protéiné Fruits Rouges", [
-  [f["Skyr nature"],              200],
-  [f["Fruits rouges surgelés"],   120],
-  [f["Banane"],                    80],
-  [f["Avoine (flocons)"],          30],
-  [f["Miel"],                      10],
-])
-
-r_omelette = build_recipe(user, "Omelette Épinards Champignons", [
-  [f["Oeuf entier"],           200],
-  [f["Blanc d'oeuf"],          100],
-  [f["Épinards surgelés"],     100],
-  [f["Champignons de paris"],   80],
-  [f["Huile d'olive"],          10],
-])
-
-r_bol_poulet = build_recipe(user, "Bol Poulet Riz Brocoli", [
-  [f["Poulet (blanc)"],      200],
-  [f["Riz complet (cru)"],    80],
-  [f["Brocoli surgelé"],     150],
-  [f["Sauce soja"],           20],
-  [f["Huile d'olive"],        10],
-])
-
-r_quinoa_bowl = build_recipe(user, "Bowl Quinoa Poulet Poivron", [
-  [f["Quinoa (cuit)"],     180],
-  [f["Poulet (blanc)"],    160],
-  [f["Poivron rouge"],     100],
-  [f["Épinards surgelés"],  80],
-  [f["Sauce soja"],         15],
-  [f["Huile d'olive"],      10],
-])
-
-r_bolognaise = build_recipe(user, "Pâtes Bolognaise Maison", [
-  [f["Pâte complète (crue)"],  120],
-  [f["Viande hachée 5%"],      150],
-  [f["Tomate"],                200],
-  [f["Oignon"],                 80],
-  [f["Ail"],                     8],
-  [f["Huile d'olive"],          10],
-  [f["Herbes de Provence"],      3],
-])
-
-r_curry_lentilles = build_recipe(user, "Curry de Lentilles", [
-  [f["Lentilles cuites"],  200],
-  [f["Tomate"],            150],
-  [f["Oignon"],             80],
-  [f["Curcuma"],             5],
-  [f["Cumin"],               5],
-  [f["Ail"],                 5],
-  [f["Huile d'olive"],      15],
-])
-
-r_salade_grecque = build_recipe(user, "Salade Grecque", [
-  [f["Concombre"],          200],
-  [f["Tomate"],             150],
-  [f["Feta"],                80],
-  [f["Avocat"],              80],
-  [f["Vinaigre balsamique"], 20],
-  [f["Huile d'olive"],       10],
-])
-
-r_salade_thon = build_recipe(user, "Salade Thon Maïs", [
-  [f["Thon en boite (eau)"], 150],
-  [f["Concombre"],           100],
-  [f["Maïs en conserve"],     80],
-  [f["Cornichons"],           40],
-  [f["Moutarde"],             15],
-  [f["Sauce soja"],           10],
-])
-
-r_patate_saumon = build_recipe(user, "Patate Douce & Saumon Fumé", [
-  [f["Patate douce"],      250],
-  [f["Saumon fumé"],       100],
-  [f["Fromage blanc 0%"],   80],
-  [f["Poivron rouge"],      80],
-  [f["Huile d'olive"],       8],
-])
-
-r_poulet_patate = build_recipe(user, "Poulet Grillé Patate Douce", [
-  [f["Poulet (blanc)"],    220],
-  [f["Patate douce"],      300],
-  [f["Courgette"],         150],
-  [f["Huile d'olive"],      12],
-  [f["Herbes de Provence"],  3],
-])
-
-r_riz_sardines = build_recipe(user, "Riz Basmati Sardines Poivron", [
-  [f["Riz basmati (cru)"],   90],
-  [f["Sardines en boite"],  130],
-  [f["Poivron rouge"],      120],
-  [f["Oignon"],              60],
-  [f["Sauce soja"],          15],
-])
-
-puts "  ✓ #{user.recipes.count} recettes"
-
-# ─────────────────────────────────────────────────────────────────────────────
-# RECIPE RATINGS
-# ─────────────────────────────────────────────────────────────────────────────
-[
-  [r_overnight_oats,  5],
-  [r_smoothie,        4],
-  [r_bol_poulet,      5],
-  [r_quinoa_bowl,     4],
-  [r_bolognaise,      5],
-  [r_curry_lentilles, 4],
-  [r_salade_grecque,  3],
-  [r_salade_thon,     4],
-  [r_patate_saumon,   5],
-  [r_poulet_patate,   5],
-  [r_riz_sardines,    3],
-].each do |recipe, rating|
-  RecipeRating.find_or_create_by!(user: user, recipe: recipe) { |rr| rr.rating = rating }
+# Ratings on a subset of recipes
+rating_comments = [
+  "Excellent, à refaire !", "Parfait après l'entraînement.", "Un peu trop copieux à mon goût.",
+  "Simple et efficace.", "Manque un peu de goût, à assaisonner davantage.", "Mon repas préféré de la semaine."
+]
+sample.call(recipes, 10).each do |recipe|
+  RecipeRating.create!(user:, recipe:, rating: intbtw.call(3, 5), comment: (chance.call(0.6) ? pick.call(rating_comments) : nil))
 end
-puts "  ✓ #{RecipeRating.where(user: user).count} notes de recettes"
+puts "  ✓ #{recipes.size} recipes (+ ratings)"
 
 # ─────────────────────────────────────────────────────────────────────────────
-# EXERCISE FAVORITES
+# EXERCISES — custom + favorites (globals reused via accessible scope)
 # ─────────────────────────────────────────────────────────────────────────────
-%w[0025 0027 0024 0091 0023 0056 0294 0472 0088 0739 0015 0047].each do |eid|
-  ex = Exercise.find_by(exercise_id: eid)
-  ExerciseFavorite.find_or_create_by!(user: user, exercise: ex) if ex
+# Precondition: workout/program seeding reuses the shared global Exercise catalog.
+# Fail early and clearly rather than mid-transaction if it hasn't been imported.
+abort("⛔  Aucun exercice global en base. Importez le catalogue d'exercices avant de lancer le seed.") if Exercise.global.none?
+
+def ex_pool(part)
+  Exercise.global.where(body_part: part).where.not(name_fr: [nil, ""]).limit(40).to_a
 end
-puts "  ✓ #{user.exercise_favorites.count} exercices favoris"
+
+pools = {
+  chest:     ex_pool("chest"),
+  back:      ex_pool("back"),
+  legs:      ex_pool("upper legs"),
+  shoulders: ex_pool("shoulders"),
+  arms:      ex_pool("upper arms"),
+  core:      ex_pool("waist")
+}
+pools.transform_values! { |a| a.presence || Exercise.global.limit(10).to_a }
+
+custom_defs = [
+  ["Gainage lesté maison",     "waist",      "body weight", "abs"],
+  ["Tirage élastique porte",   "back",       "band",        "lats"],
+  ["Fentes bulgares haltères", "upper legs", "dumbbell",    "quads"]
+]
+custom_exercises = custom_defs.map.with_index do |(name, part, equip, target), i|
+  Exercise.create!(
+    exercise_id:    "custom-#{user.id}-#{i + 1}",
+    custom_user_id: user.id,
+    name:           name,
+    name_fr:        name,
+    body_part:      part,
+    equipment:      equip,
+    target_muscle:  target
+  )
+end
+
+favorite_exercises = (sample.call(pools.values.flatten.uniq, 8) + custom_exercises).uniq
+favorite_exercises.each { |ex| ExerciseFavorite.create!(user:, exercise: ex) }
+puts "  ✓ #{custom_exercises.size} custom exercises, #{favorite_exercises.size} favorites"
 
 # ─────────────────────────────────────────────────────────────────────────────
-# WORKOUT PROGRAMS
+# WORKOUT PROGRAMS (update the 7 auto-created program_days)
 # ─────────────────────────────────────────────────────────────────────────────
-def seed_program_day(day, name_str, duration, exercises)
-  day.update!(name: name_str, duration_minutes: duration)
-  exercises.each do |(eid, sets, reps, weight, rest)|
-    ex = Exercise.find_by(exercise_id: eid)
-    next unless ex
+def build_program_day!(program, wday, name, exercises, rng, round25)
+  day = program.program_days.find_by!(day_of_week: wday)
+  day.update!(name: name, notes: (rng.rand < 0.4 ? "Focus technique et tempo contrôlé." : nil))
+  exercises.compact.uniq.each do |ex|
+    sets_n = rng.rand(3..4)
+    base   = round25.call(20 + rng.rand * 40)
+    sets_attrs = Array.new(sets_n) do |i|
+      types = ["working"]
+      types = ["warmup"]  if i.zero? && rng.rand < 0.5
+      types = ["failure"] if i == sets_n - 1 && rng.rand < 0.25
+      {
+        reps_target:   types == ["warmup"] ? 12 : rng.rand(6..12),
+        weight_target: ex.equipment == "body weight" ? nil : base,
+        rpe:           types == ["warmup"] ? nil : rng.rand(7..9),
+        set_types:     types
+      }
+    end
+    # position on ProgramExercise/ProgramExerciseSet is assigned by before_create
     day.program_exercises.create!(
-      exercise: ex, sets: sets, reps_target: reps,
-      weight_target: weight, rest_seconds: rest
+      exercise:     ex,
+      rest_seconds: [60, 90, 120, 180].sample(random: rng),
+      notes:        (rng.rand < 0.25 ? "Garder 1 à 2 reps en réserve." : nil),
+      program_exercise_sets_attributes: sets_attrs
     )
   end
 end
 
-ppl = WorkoutProgram.create!(user: user, name: "PPL — Push Pull Legs", split_type: "ppl", is_active: true)
-pd  = ppl.program_days.index_by(&:day_of_week)
+ppl = user.workout_programs.create!(name: "Push Pull Legs", split_type: "ppl", is_active: true)
+build_program_day!(ppl, 0, "Push", sample.call(pools[:chest], 2) + sample.call(pools[:shoulders], 1) + sample.call(pools[:arms], 1), RNG, round25)
+build_program_day!(ppl, 1, "Pull", sample.call(pools[:back], 3) + sample.call(pools[:arms], 1), RNG, round25)
+build_program_day!(ppl, 2, "Legs", sample.call(pools[:legs], 3) + sample.call(pools[:core], 1), RNG, round25)
+build_program_day!(ppl, 4, "Push", sample.call(pools[:chest], 2) + sample.call(pools[:shoulders], 1), RNG, round25)
+build_program_day!(ppl, 5, "Pull", sample.call(pools[:back], 2) + sample.call(pools[:arms], 1), RNG, round25)
 
-seed_program_day(pd[0], "Push A", 60, [
-  ["0025", 4,  8,  87.5, 120], ["0047", 3, 10, 72.5,  90],
-  ["0086", 3, 10,  57.5,  90], ["0178", 3, 15, 13.5,  60],
-  ["0056", 3, 12,  37.5,  75],
-])
-seed_program_day(pd[1], "Pull A", 65, [
-  ["0027", 4,  8,  77.5, 120], ["0673", 3, 12, 70.0,  90],
-  ["0015", 3, 12,   nil,  90], ["0023", 3, 12, 27.5,  60],
-  ["0095", 3, 15,  80.0,  60],
-])
-seed_program_day(pd[2], "Legs", 70, [
-  ["0024", 4,  6, 107.5, 150], ["0739", 3, 12, 135.0,  90],
-  ["0054", 3, 10,  52.5,  75], ["0088", 4, 15,  47.5,  60],
-  ["0001", 3, 20,   nil,  45],
-])
-pd[3].update!(name: nil)
-seed_program_day(pd[4], "Push B", 60, [
-  ["0025", 4,  6,  90.0, 150], ["0047", 3,  8, 75.0, 120],
-  ["0086", 4, 12,  55.0,  90], ["0178", 4, 15, 14.0,  60],
-  ["0056", 3, 15,  35.0,  60],
-])
-seed_program_day(pd[5], "Pull B", 65, [
-  ["0027", 4,  6,  80.0, 150], ["0673", 4, 10, 72.5,  90],
-  ["0015", 3, 12,   nil,  90], ["0023", 4, 10, 27.5,  60],
-  ["0095", 3, 15,  82.5,  45],
-])
-pd[6].update!(name: nil)
+ul = user.workout_programs.create!(name: "Upper / Lower", split_type: "upper_lower", is_active: false)
+build_program_day!(ul, 0, "Upper", sample.call(pools[:chest], 1) + sample.call(pools[:back], 1) + sample.call(pools[:shoulders], 1) + sample.call(pools[:arms], 1), RNG, round25)
+build_program_day!(ul, 2, "Lower", sample.call(pools[:legs], 3) + sample.call(pools[:core], 1), RNG, round25)
+build_program_day!(ul, 4, "Upper", sample.call(pools[:chest], 1) + sample.call(pools[:back], 2), RNG, round25)
+build_program_day!(ul, 5, "Lower", sample.call(pools[:legs], 2) + sample.call(pools[:core], 1), RNG, round25)
 
-ul  = WorkoutProgram.create!(user: user, name: "Upper / Lower 4j", split_type: "upper_lower", is_active: false)
-ud  = ul.program_days.index_by(&:day_of_week)
-seed_program_day(ud[0], "Upper A", 65, [
-  ["0025", 4,  5,  90.0, 180], ["0027", 4,  5,  80.0, 180],
-  ["0091", 3,  8,  60.0, 120], ["0673", 3, 10,  70.0,  90],
-  ["0023", 3, 12,  27.5,  60], ["0056", 3, 12,  40.0,  60],
-])
-seed_program_day(ud[1], "Lower A", 70, [
-  ["0024", 4,  5, 110.0, 180], ["0739", 3, 10, 135.0, 120],
-  ["1010", 3,  8,  72.5, 120], ["0054", 3, 12,  52.5,  90],
-  ["0605", 4, 20,  55.0,  60],
-])
-ud[2].update!(name: nil)
-seed_program_day(ud[3], "Upper B", 65, [
-  ["0025", 4,  8,  82.5, 120], ["0027", 4,  8,  75.0, 120],
-  ["0091", 3, 10,  55.0,  90], ["0673", 4, 12,  65.0,  90],
-  ["0023", 3, 15,  22.5,  60], ["0056", 3, 15,  35.0,  60],
-])
-seed_program_day(ud[4], "Lower B", 70, [
-  ["0024", 4,  8, 102.5, 150], ["0739", 4, 12, 127.5,  90],
-  ["1010", 3, 10,  67.5,  90], ["0054", 3, 10,  50.0,  75],
-  ["0605", 3, 25,  52.5,  60],
-])
-ud[5].update!(name: nil)
-ud[6].update!(name: nil)
-
-puts "  ✓ 2 programmes créés"
+fb = user.workout_programs.create!(name: "Full Body débutant", split_type: "fullbody", is_active: false)
+build_program_day!(fb, 0, "Full Body A", [pools[:legs].first, pools[:chest].first, pools[:back].first, pools[:core].first], RNG, round25)
+build_program_day!(fb, 3, "Full Body B", [pools[:legs].last, pools[:shoulders].first, pools[:back].last, pools[:arms].first], RNG, round25)
+puts "  ✓ 3 workout programs"
 
 # ─────────────────────────────────────────────────────────────────────────────
-# CALENDAR HELPERS
+# CALENDAR — ~2 years of days (food, workouts, cardio, wellbeing, hydration)
 # ─────────────────────────────────────────────────────────────────────────────
+day_notes = [
+  "Bonne journée, plein d'énergie.", "Fatigué, nuit courte.", "Grosse séance, très satisfait.",
+  "Repas au restaurant ce midi.", "Journée off, récupération.", "Objectif protéines atteint.",
+  "Un peu de stress au travail.", "Cheat meal assumé ce soir.", "Motivation au top."
+]
+workout_notes = ["Bonne progression sur les charges.", "Séance intense.", "Un peu fatigué mais séance bouclée.", "Nouveau record !", nil, nil]
+cardio_notes  = ["Cardio tranquille.", "Séance HIIT.", "Récupération active.", nil, nil]
+machines      = CardioBlock::MACHINES
 
-def seed_session(day, duration:, rpe:, sets_data:)
-  session = day.workout_sessions.build(duration_minutes: duration, rpe: rpe)
-  sets_data.each_with_index do |(exercise, reps, weight), i|
-    next unless exercise
-    session.workout_sets.build(exercise: exercise, reps: reps, weight_kg: weight, position: i)
+# Per-exercise progressive working weight across the 2 years
+working_weight = Hash.new { |h, k| h[k] = 20 + RNG.rand(0..8) * 2.5 }
+
+# weekday (Ruby wday: 0=Sun..6=Sat) → strength focus
+strength_focus = { 1 => :push, 2 => :pull, 4 => :legs, 5 => :upper }
+cardio_wdays   = [3, 6]
+
+def strength_exercises(focus, pools, sample)
+  case focus
+  when :push  then sample.call(pools[:chest], 2) + sample.call(pools[:shoulders], 1) + sample.call(pools[:arms], 1)
+  when :pull  then sample.call(pools[:back], 3) + sample.call(pools[:arms], 1)
+  when :legs  then sample.call(pools[:legs], 3) + sample.call(pools[:core], 1)
+  else             sample.call(pools[:chest], 1) + sample.call(pools[:back], 1) + sample.call(pools[:shoulders], 1) + sample.call(pools[:legs], 1)
+  end.compact.uniq
+end
+
+def cardio_block_attrs(machine, rng, between)
+  attrs = { machine: machine, duration_minutes: rng.rand(20..45) }
+  case machine
+  when "treadmill"   then attrs.merge!(speed_kmh: between.call(8, 12).round(1), incline_percent: rng.rand(0..6))
+  when "outdoor_run" then attrs.merge!(speed_kmh: between.call(9, 13).round(1), distance_km: between.call(4, 9).round(2))
+  when "swimming"    then attrs.merge!(distance_km: between.call(0.8, 2.0).round(2))
+  when "jump_rope"   then attrs.merge!(duration_minutes: rng.rand(10..20))
+  else                    attrs.merge!(resistance_level: rng.rand(5..15))
   end
-  session.save!
+  attrs
 end
 
-def seed_cardio(day, machine:, duration:, **opts)
-  cs = CardioSession.new(day: day)
-  cs.cardio_blocks.build(machine: machine, duration_minutes: duration, **opts)
-  cs.save!
-end
-
-# Meal rotation helpers — 4 breakfasts, 5 lunches, 4 snacks, 5 dinners
-BFAST = [
-  ->(d, f, r, g) {
-    DayRecipe.create!(day: d, recipe: r[:overnight_oats], use_recipe_quantity: true, day_food_group: g[:matin])
-  },
-  ->(d, f, r, g) {
-    DayRecipe.create!(day: d, recipe: r[:smoothie], use_recipe_quantity: true, day_food_group: g[:matin])
-    DayFood.create!(day: d,  food: f["Oeuf entier"], quantity: 200, day_food_group: g[:matin])
-  },
-  ->(d, f, r, g) {
-    DayRecipe.create!(day: d, recipe: r[:omelette], use_recipe_quantity: true, day_food_group: g[:matin])
-    DayFood.create!(day: d,  food: f["Avoine (flocons)"], quantity: 60, day_food_group: g[:matin])
-  },
-  ->(d, f, r, g) {
-    DayFood.create!(day: d, food: f["Avoine (flocons)"],    quantity: 80,  day_food_group: g[:matin])
-    DayFood.create!(day: d, food: f["Skyr nature"],         quantity: 200, day_food_group: g[:matin])
-    DayFood.create!(day: d, food: f["Myrtilles surgelées"], quantity: 100, day_food_group: g[:matin])
-    DayFood.create!(day: d, food: f["Banane"],              quantity: 100, day_food_group: g[:matin])
-  },
+# Realistic meals for a lean-bulk profile: protein at every meal, calorie
+# surplus (~2600 kcal/day avg). Each entry is [food, grams]; portions scaled in log_meal.
+breakfasts = [
+  [[foods[:flocons], 90], [foods[:lait], 250], [foods[:whey], 30], [foods[:banane], 110], [foods[:beurre_cac], 20]],
+  [[foods[:oeuf], 180], [foods[:pain], 90], [foods[:avocat], 60], [foods[:orange], 150]],
+  [[foods[:skyr], 250], [foods[:flocons], 70], [foods[:myrtille], 70], [foods[:miel], 15], [foods[:amande], 25]],
+  [[foods[:fromage_blanc], 250], [foods[:banane], 110], [foods[:flocons], 60], [foods[:beurre_cac], 20]]
 ]
-
-LUNCH = [
-  ->(d, f, r, g) { DayRecipe.create!(day: d, recipe: r[:bol_poulet],     use_recipe_quantity: true, day_food_group: g[:dejeuner]) },
-  ->(d, f, r, g) { DayRecipe.create!(day: d, recipe: r[:quinoa_bowl],    use_recipe_quantity: true, day_food_group: g[:dejeuner]) },
-  ->(d, f, r, g) { DayRecipe.create!(day: d, recipe: r[:salade_thon],    use_recipe_quantity: true, day_food_group: g[:dejeuner])
-                   DayFood.create!(day: d,   food: f["Pain de seigle"],   quantity: 80, day_food_group: g[:dejeuner]) },
-  ->(d, f, r, g) { DayRecipe.create!(day: d, recipe: r[:patate_saumon],  use_recipe_quantity: true, day_food_group: g[:dejeuner]) },
-  ->(d, f, r, g) { DayRecipe.create!(day: d, recipe: r[:poulet_patate],  use_recipe_quantity: true, day_food_group: g[:dejeuner]) },
+lunches = [
+  [[foods[:poulet], 220], [foods[:riz], 300], [foods[:brocoli], 150], [foods[:huile], 12]],
+  [[foods[:boeuf], 200], [foods[:patate], 300], [foods[:haricot], 130], [foods[:huile], 8]],
+  [[foods[:saumon], 180], [foods[:quinoa], 220], [foods[:epinard], 70], [foods[:avocat], 60]],
+  [[foods[:poulet], 200], [foods[:pates], 250], [foods[:tomate], 120], [foods[:parmesan], 25], [foods[:huile], 8]]
 ]
-
-SNACK = [
-  ->(d, f, r, g) { DayFood.create!(day: d, food: f["Amandes"],          quantity: 40,  day_food_group: g[:collation])
-                   DayFood.create!(day: d, food: f["Fromage blanc 0%"], quantity: 200, day_food_group: g[:collation]) },
-  ->(d, f, r, g) { DayFood.create!(day: d, food: f["Noix de cajou"],    quantity: 35,  day_food_group: g[:collation])
-                   DayFood.create!(day: d, food: f["Cottage cheese"],   quantity: 200, day_food_group: g[:collation]) },
-  ->(d, f, r, g) { DayFood.create!(day: d, food: f["Skyr nature"],      quantity: 250, day_food_group: g[:collation])
-                   DayFood.create!(day: d, food: f["Myrtilles surgelées"], quantity: 80, day_food_group: g[:collation]) },
-  ->(d, f, r, g) { DayFood.create!(day: d, food: f["Beurre de cacahuète"], quantity: 30, day_food_group: g[:collation])
-                   DayFood.create!(day: d, food: f["Pomme"],             quantity: 180, day_food_group: g[:collation]) },
+dinners = [
+  [[foods[:boeuf], 200], [foods[:pdt], 280], [foods[:courgette], 130], [foods[:huile], 10]],
+  [[foods[:tofu], 220], [foods[:riz], 240], [foods[:poivron], 110], [foods[:sauce_soja], 20], [foods[:huile], 8]],
+  [[foods[:crevette], 180], [foods[:semoule], 240], [foods[:courgette], 120], [foods[:huile], 8]],
+  [[foods[:thon], 160], [foods[:pdt], 260], [foods[:salade], 80], [foods[:avocat], 60]],
+  [[foods[:saumon], 180], [foods[:riz], 240], [foods[:haricot], 130]]
 ]
-
-DINNER = [
-  ->(d, f, r, g) { DayRecipe.create!(day: d, recipe: r[:bolognaise],      use_recipe_quantity: true, day_food_group: g[:diner])
-                   DayFood.create!(day: d,   food: f["Chocolat noir 85%"], quantity: 30, day_food_group: g[:diner]) },
-  ->(d, f, r, g) { DayRecipe.create!(day: d, recipe: r[:curry_lentilles], use_recipe_quantity: true, day_food_group: g[:diner])
-                   DayFood.create!(day: d,   food: f["Patate douce"],      quantity: 200, day_food_group: g[:diner]) },
-  ->(d, f, r, g) { DayRecipe.create!(day: d, recipe: r[:salade_grecque],  use_recipe_quantity: true, day_food_group: g[:diner])
-                   DayFood.create!(day: d,   food: f["Lentilles cuites"],  quantity: 150, day_food_group: g[:diner]) },
-  ->(d, f, r, g) { DayRecipe.create!(day: d, recipe: r[:riz_sardines],    use_recipe_quantity: true, day_food_group: g[:diner])
-                   DayFood.create!(day: d,   food: f["Chocolat noir 85%"], quantity: 40, day_food_group: g[:diner]) },
-  ->(d, f, r, g) { DayRecipe.create!(day: d, recipe: r[:quinoa_bowl],     use_recipe_quantity: true, day_food_group: g[:diner]) },
+snacks = [
+  [[foods[:amande], 30], [foods[:pomme], 150]],
+  [[foods[:fromage_blanc], 200], [foods[:miel], 15]],
+  [[foods[:banane], 120], [foods[:beurre_cac], 25]],
+  [[foods[:skyr], 200], [foods[:fraise], 90]],
+  [[foods[:noix], 25], [foods[:orange], 150]]
 ]
-
-def log_meals(idx, day, food_map, recipe_map, grp)
-  BFAST[idx % 4].call(day, food_map, recipe_map, grp)
-  LUNCH[idx % 5].call(day, food_map, recipe_map, grp)
-  SNACK[idx % 4].call(day, food_map, recipe_map, grp)
-  DINNER[idx % 5].call(day, food_map, recipe_map, grp)
-end
-
-# ─────────────────────────────────────────────────────────────────────────────
-# EXERCISE OBJECTS
-# ─────────────────────────────────────────────────────────────────────────────
-ex     = ->(eid) { Exercise.find_by(exercise_id: eid) }
-bench      = ex.("0025")   # barbell bench press
-incline    = ex.("0047")   # incline bench press
-ohp        = ex.("0086")   # overhead press (behind head)
-ohp_seated = ex.("0091")   # seated overhead press
-lat_raise  = ex.("0178")   # cable lateral raise
-triceps    = ex.("0056")   # lying triceps extension
-row        = ex.("0027")   # barbell bent-over row
-pulldown   = ex.("0673")   # lat pulldown reverse grip
-pullup_ex  = ex.("0015")   # parallel close-grip pull-up
-curl       = ex.("0023")   # alternate biceps curl
-shrug      = ex.("0095")   # barbell shrug
-squat      = ex.("0024")   # front squat
-leg_press  = ex.("0739")   # leg press 45°
-lunge      = ex.("0054")   # barbell lunge
-calf       = ex.("0088")   # seated calf raise
-situp      = ex.("0001")   # 3/4 sit-up
-
-recipe_map = {
-  overnight_oats: r_overnight_oats,
-  smoothie:       r_smoothie,
-  omelette:       r_omelette,
-  bol_poulet:     r_bol_poulet,
-  quinoa_bowl:    r_quinoa_bowl,
-  bolognaise:     r_bolognaise,
-  curry_lentilles: r_curry_lentilles,
-  salade_grecque: r_salade_grecque,
-  salade_thon:    r_salade_thon,
-  patate_saumon:  r_patate_saumon,
-  poulet_patate:  r_poulet_patate,
-  riz_sardines:   r_riz_sardines,
-}
-
-# ─────────────────────────────────────────────────────────────────────────────
-# PROGRESSIVE OVERLOAD TABLE  — 14 weeks (w0 = Jan 13, w13 = Apr 14)
-# Columns: bench, incline, ohp, row, pulldown, curl, squat, leg_press, lunge, calf
-# ─────────────────────────────────────────────────────────────────────────────
-PROG = [
-  [72.5, 57.5, 42.5, 60.0, 55.0, 20.0,  85.0, 110.0, 40.0, 37.5],  # w0  Jan 13
-  [75.0, 60.0, 45.0, 62.5, 57.5, 20.0,  87.5, 112.5, 42.5, 37.5],  # w1  Jan 20
-  [75.0, 60.0, 45.0, 62.5, 57.5, 22.5,  90.0, 115.0, 42.5, 40.0],  # w2  Jan 27
-  [77.5, 62.5, 47.5, 65.0, 60.0, 22.5,  90.0, 117.5, 45.0, 40.0],  # w3  Feb 3
-  [77.5, 62.5, 47.5, 65.0, 60.0, 22.5,  92.5, 120.0, 45.0, 40.0],  # w4  Feb 10
-  [80.0, 65.0, 50.0, 67.5, 62.5, 22.5,  92.5, 122.5, 47.5, 42.5],  # w5  Feb 17
-  [80.0, 65.0, 50.0, 67.5, 62.5, 25.0,  95.0, 125.0, 47.5, 42.5],  # w6  Feb 24
-  [82.5, 67.5, 50.0, 70.0, 65.0, 25.0,  97.5, 127.5, 47.5, 42.5],  # w7  Mar 3
-  [82.5, 67.5, 52.5, 70.0, 65.0, 25.0, 100.0, 127.5, 50.0, 45.0],  # w8  Mar 10
-  [85.0, 70.0, 52.5, 72.5, 67.5, 27.5, 100.0, 130.0, 50.0, 45.0],  # w9  Mar 17
-  [85.0, 70.0, 55.0, 72.5, 67.5, 27.5, 102.5, 132.5, 50.0, 45.0],  # w10 Mar 24
-  [87.5, 72.5, 55.0, 75.0, 70.0, 27.5, 105.0, 132.5, 52.5, 47.5],  # w11 Mar 31
-  [87.5, 72.5, 57.5, 75.0, 70.0, 27.5, 107.5, 135.0, 52.5, 47.5],  # w12 Apr 7
-  [87.5, 72.5, 57.5, 77.5, 70.0, 27.5, 107.5, 135.0, 52.5, 47.5],  # w13 Apr 14
+cheat_extras = [
+  [[foods[:coca], 330], [foods[:chips], 60]],
+  [[foods[:cookie], 60], [foods[:chocolat], 40]],
+  [[foods[:coca], 330], [foods[:cookie], 50]]
 ]
-
-# Cardio schedule per week: [thursday_config, sunday_config or nil]
-# thursday_config / sunday_config: [machine, duration, opts_hash]
-CARDIO_SCHEDULE = [
-  [["bike",        25, { resistance_level: 7  }], nil],  # w0
-  [["bike",        27, { resistance_level: 8  }], nil],  # w1
-  [["bike",        28, { resistance_level: 8  }], ["outdoor_run", 30, { speed_kmh: 9.0 }]],  # w2
-  [["treadmill",   30, { speed_kmh: 9.0,  incline_percent: 1 }], nil],  # w3
-  [["treadmill",   30, { speed_kmh: 9.0,  incline_percent: 1 }], nil],  # w4
-  [["treadmill",   32, { speed_kmh: 9.0,  incline_percent: 2 }], ["rower", 25, { resistance_level: 6 }]],  # w5
-  [["treadmill",   35, { speed_kmh: 9.5,  incline_percent: 2 }], nil],  # w6
-  [["treadmill",   35, { speed_kmh: 9.5,  incline_percent: 2 }], nil],  # w7
-  [["rower",       30, { resistance_level: 7  }], ["outdoor_run", 35, { speed_kmh: 9.5 }]],  # w8
-  [["rower",       35, { resistance_level: 7  }], nil],  # w9
-  [["rower",       35, { resistance_level: 8  }], nil],  # w10
-  [["elliptical",  30, { resistance_level: 9  }], ["outdoor_run", 40, { speed_kmh: 10.0 }]],  # w11
-  [["bike",        30, { resistance_level: 10 }], nil],  # w12
-  [["bike",        30, { resistance_level: 10 }], nil],  # w13
+dinner_recipe_names = [
+  "Poulet riz brocoli", "Bowl saumon quinoa", "Dahl de lentilles", "Pâtes bolognaise",
+  "Steak patate douce", "Crevettes semoule", "Tofu sauté sésame", "Buddha bowl",
+  "Pizza maison", "Wrap poulet avocat"
 ]
+dinner_recipes = recipes.select { |r| dinner_recipe_names.include?(r.name) }
 
-# Wellbeing data cycling arrays
-ENERGY    = [3, 4, 5, 4, 3, 4, 5, 4, 4, 3, 5, 4, 4, 3, 4, 5, 3, 4]
-MOOD      = [4, 4, 5, 3, 4, 5, 4, 3, 4, 5, 4, 4, 3, 5, 4, 4, 5, 3]
-SLEEP_Q   = [4, 3, 5, 4, 4, 3, 5, 4, 3, 4, 5, 4, 4, 5, 3, 4, 4, 5]
-WATER_ML  = [2600, 2800, 3000, 2400, 2700, 2900, 2500, 3200, 2800, 2600, 3000, 2400, 2700, 3100]
-STEPS     = [8_200, 9_400, 11_500, 6_800, 9_100, 7_500, 13_000, 8_800, 10_200, 7_200, 9_600, 5_800, 8_500, 12_000]
+food_day_count = 0
+workout_count  = 0
+cardio_count   = 0
 
-WEEK_START = Date.new(2026, 1, 13)  # Monday week 0
+ActiveRecord::Base.transaction do
+  (START..TODAY).each do |date|
+    puts "    … #{date.strftime('%Y-%m')}" if date.day == 1
+    next if chance.call(0.07) # ~7% gap days: a meticulous logger, few holes
 
-# ─────────────────────────────────────────────────────────────────────────────
-# GENERATE 14 WEEKS OF CALENDAR DATA
-# ─────────────────────────────────────────────────────────────────────────────
-day_counter = 0
+    day = user.days.create!(
+      date:          date,
+      water_ml:      intbtw.call(2000, 3400),
+      steps:         intbtw.call(6000, 14_000),
+      mood:          (chance.call(0.9) ? intbtw.call(3, 5) : nil),
+      energy_level:  (chance.call(0.9) ? intbtw.call(3, 5) : nil),
+      sleep_quality: (chance.call(0.9) ? intbtw.call(3, 5) : nil),
+      note:          (chance.call(0.18) ? pick.call(day_notes) : nil)
+    )
 
-14.times do |w|
-  p      = PROG[w]
-  wstart = WEEK_START + w * 7
+    # ── Meals (protein-rich surplus, ±8% portion jitter) ──
+    food_day_count += 1
+    # Center portions slightly above the template (~+12%) so the daily average
+    # lands above the app's muscle-gain target (~2481 kcal) — a real surplus.
+    log_meal = ->(group, items) do
+      items.each { |food, grams| day.day_foods.create!(food:, day_food_group: group, quantity: (grams * between.call(1.05, 1.19)).round) }
+    end
 
-  bench_w, incline_w, ohp_w, row_w, pulldown_w, curl_w, squat_w, leg_press_w, lunge_w, calf_w = p
+    log_meal.call(groups[:petit_dej], pick.call(breakfasts))
+    log_meal.call(groups[:dejeuner],  pick.call(lunches))
 
-  # Pull-up reps increase over time (6 → 13)
-  pullup_reps = 6 + (w * 0.5).floor
+    # Dinner: a logged recipe ~40% of days (keeps recipe-logging covered), else a plated meal
+    if chance.call(0.40)
+      recipe = pick.call(dinner_recipes)
+      if chance.call(0.08)
+        day.day_recipes.create!(
+          recipe:, day_food_group: groups[:diner], customized: true,
+          day_recipe_items_attributes: pick.call(dinners).map { |f, g| { food_id: f.id, quantity: g, unit: "g" } }
+        )
+      elsif chance.call(0.5)
+        day.day_recipes.create!(recipe:, day_food_group: groups[:diner], use_recipe_quantity: true)
+      else
+        day.day_recipes.create!(recipe:, day_food_group: groups[:diner], quantity: intbtw.call(500, 650))
+      end
+    else
+      log_meal.call(groups[:diner], pick.call(dinners))
+    end
 
-  # ── Monday — Push A ──────────────────────────────────────────────────────
-  d_mon = Day.create!(user: user, date: wstart,
-    energy_level: ENERGY[(w * 2) % 18], mood: MOOD[(w * 3) % 18],
-    sleep_quality: SLEEP_Q[(w * 2 + 1) % 18],
-    water_ml: WATER_ML[w % 14], steps: STEPS[w % 14])
+    log_meal.call(groups[:collation], pick.call(snacks)) if chance.call(0.85)
+    log_meal.call(groups[:collation], pick.call(cheat_extras)) if chance.call(0.08) # occasional treat
 
-  seed_session(d_mon, duration: 60 + (w % 3), rpe: 7 + (w % 3 == 0 ? 1 : 0), sets_data: [
-    [bench, 8, bench_w], [bench, 8, bench_w], [bench, 7, bench_w - 2.5], [bench, 6, bench_w - 2.5],
-    [incline, 10, incline_w], [incline, 10, incline_w], [incline,  9, incline_w - 2.5],
-    [ohp, 10, ohp_w], [ohp, 10, ohp_w], [ohp, 9, ohp_w - 2.5],
-    [lat_raise, 15, 12.5], [lat_raise, 15, 12.5], [lat_raise, 14, 12.5],
-    [triceps, 12, 35.0 + (w / 4) * 2.5], [triceps, 12, 35.0 + (w / 4) * 2.5], [triceps, 11, 32.5 + (w / 4) * 2.5],
-  ])
-  log_meals(w * 7 + 0, d_mon, food_map, recipe_map, grp)
+    # ── Strength session ──
+    focus = strength_focus[date.wday]
+    if focus && !chance.call(0.10)
+      exercises  = strength_exercises(focus, pools, sample)
+      position   = 0
+      sets_attrs = []
+      exercises.each do |ex|
+        # Slow progressive overload with occasional PR
+        pr = false
+        if chance.call(0.04)
+          working_weight[ex.id] += 2.5
+          pr = true
+        end
+        base   = ex.equipment == "body weight" ? nil : round25.call(working_weight[ex.id])
+        sets_n = intbtw.call(3, 4)
+        sets_n.times do |i|
+          types = ["working"]
+          types = ["warmup"]  if i.zero? && chance.call(0.4)
+          types = ["failure"] if i == sets_n - 1 && chance.call(0.15)
+          types = ["dropset"] if i == sets_n - 1 && types == ["working"] && chance.call(0.1)
+          sets_attrs << {
+            exercise_id:  ex.id,
+            position:     position,
+            reps:         (types == ["warmup"] ? 12 : intbtw.call(5, 12)),
+            weight_kg:    base,
+            rpe:          (types == ["warmup"] ? nil : intbtw.call(7, 9)),
+            rest_seconds: pick.call([60, 90, 120, 180]),
+            is_pr:        (pr && i == sets_n - 1),
+            set_types:    types
+          }
+          position += 1
+        end
+      end
+      day.workout_sessions.create!(
+        duration_minutes:        intbtw.call(45, 80),
+        notes:                   pick.call(workout_notes),
+        workout_sets_attributes: sets_attrs
+      )
+      workout_count += 1
+      # Post-workout shake logged into the dedicated meal slot
+      day.day_foods.create!(food: foods[:whey], day_food_group: groups[:post_train], quantity: intbtw.call(35, 45)) if chance.call(0.8)
+    end
 
-  # ── Tuesday — Pull A ──────────────────────────────────────────────────────
-  d_tue = Day.create!(user: user, date: wstart + 1,
-    energy_level: ENERGY[(w * 2 + 1) % 18], mood: MOOD[(w * 2) % 18],
-    sleep_quality: SLEEP_Q[(w * 3) % 18],
-    water_ml: WATER_ML[(w + 1) % 14], steps: STEPS[(w + 2) % 14])
-
-  seed_session(d_tue, duration: 65, rpe: 7, sets_data: [
-    [row, 8, row_w], [row, 8, row_w], [row, 7, row_w - 2.5], [row, 7, row_w - 2.5],
-    [pulldown, 12, pulldown_w], [pulldown, 12, pulldown_w], [pulldown, 10, pulldown_w - 2.5],
-    [pullup_ex, pullup_reps, nil], [pullup_ex, pullup_reps - 1, nil], [pullup_ex, [pullup_reps - 2, 4].max, nil],
-    [curl, 12, curl_w], [curl, 12, curl_w], [curl, 11, curl_w - 2.5],
-    [shrug, 12, 80.0], [shrug, 12, 80.0], [shrug, 12, 82.5],
-  ])
-  log_meals(w * 7 + 1, d_tue, food_map, recipe_map, grp)
-
-  # ── Wednesday — Legs ──────────────────────────────────────────────────────
-  d_wed = Day.create!(user: user, date: wstart + 2,
-    energy_level: ENERGY[(w + 3) % 18], mood: MOOD[(w * 2 + 1) % 18],
-    sleep_quality: SLEEP_Q[(w + 5) % 18],
-    water_ml: WATER_ML[(w + 3) % 14], steps: STEPS[(w + 4) % 14])
-
-  seed_session(d_wed, duration: 70 + (w % 5), rpe: 8 + (w % 4 == 0 ? 1 : 0), sets_data: [
-    [squat, 6, squat_w], [squat, 6, squat_w], [squat, 5, squat_w + 2.5], [squat, 5, squat_w],
-    [leg_press, 12, leg_press_w], [leg_press, 12, leg_press_w], [leg_press, 11, leg_press_w + 2.5],
-    [lunge, 10, lunge_w], [lunge, 10, lunge_w], [lunge, 9, lunge_w],
-    [calf, 15, calf_w], [calf, 15, calf_w], [calf, 15, calf_w + 2.5], [calf, 14, calf_w + 2.5],
-    [situp, 20, nil], [situp, 20, nil], [situp, 18, nil],
-  ])
-  log_meals(w * 7 + 2, d_wed, food_map, recipe_map, grp)
-
-  # ── Thursday — Rest + Cardio ──────────────────────────────────────────────
-  thu_note = w.even? ? nil : "Journée calme, focus récupération."
-  d_thu = Day.create!(user: user, date: wstart + 3,
-    energy_level: ENERGY[(w + 6) % 18], mood: MOOD[(w + 7) % 18],
-    sleep_quality: SLEEP_Q[(w * 2 + 3) % 18],
-    water_ml: WATER_ML[(w + 5) % 14], steps: STEPS[(w + 6) % 14],
-    note: thu_note)
-
-  thu_cardio = CARDIO_SCHEDULE[w][0]
-  seed_cardio(d_thu, machine: thu_cardio[0], duration: thu_cardio[1], **thu_cardio[2].transform_keys(&:to_sym))
-  log_meals(w * 7 + 3, d_thu, food_map, recipe_map, grp)
-
-  # ── Friday — Push B ───────────────────────────────────────────────────────
-  d_fri = Day.create!(user: user, date: wstart + 4,
-    energy_level: ENERGY[(w + 9) % 18], mood: MOOD[(w * 3 + 1) % 18],
-    sleep_quality: SLEEP_Q[(w + 8) % 18],
-    water_ml: WATER_ML[(w + 7) % 14], steps: STEPS[(w + 8) % 14])
-
-  seed_session(d_fri, duration: 58, rpe: 8, sets_data: [
-    [bench, 6, bench_w + 2.5], [bench, 6, bench_w + 2.5], [bench, 5, bench_w + 2.5], [bench, 5, bench_w],
-    [incline, 8, incline_w + 2.5], [incline, 8, incline_w + 2.5], [incline, 7, incline_w],
-    [ohp, 12, ohp_w], [ohp, 12, ohp_w], [ohp, 11, ohp_w], [ohp, 10, ohp_w - 2.5],
-    [lat_raise, 15, 13.0], [lat_raise, 15, 13.0], [lat_raise, 14, 13.0], [lat_raise, 14, 12.5],
-    [triceps, 15, 30.0 + (w / 4) * 2.5], [triceps, 15, 30.0 + (w / 4) * 2.5], [triceps, 14, 30.0 + (w / 4) * 2.5],
-  ])
-  log_meals(w * 7 + 4, d_fri, food_map, recipe_map, grp)
-
-  # ── Saturday — Pull B ─────────────────────────────────────────────────────
-  d_sat = Day.create!(user: user, date: wstart + 5,
-    energy_level: ENERGY[(w + 11) % 18], mood: MOOD[(w + 12) % 18],
-    sleep_quality: SLEEP_Q[(w * 3 + 2) % 18],
-    water_ml: WATER_ML[(w + 9) % 14], steps: STEPS[(w + 10) % 14])
-
-  seed_session(d_sat, duration: 68, rpe: 8, sets_data: [
-    [row, 6, row_w + 2.5], [row, 6, row_w + 2.5], [row, 5, row_w + 2.5], [row, 5, row_w],
-    [pulldown, 10, pulldown_w + 2.5], [pulldown, 10, pulldown_w + 2.5], [pulldown, 10, pulldown_w], [pulldown, 9, pulldown_w],
-    [pullup_ex, pullup_reps, nil], [pullup_ex, pullup_reps, nil], [pullup_ex, pullup_reps - 1, nil],
-    [curl, 10, curl_w], [curl, 10, curl_w], [curl, 10, curl_w], [curl, 9, curl_w - 2.5],
-    [shrug, 15, 82.5], [shrug, 15, 82.5], [shrug, 14, 82.5],
-  ])
-  log_meals(w * 7 + 5, d_sat, food_map, recipe_map, grp)
-
-  # ── Sunday — Rest (+ cardio some weeks) ───────────────────────────────────
-  sun_cardio_config = CARDIO_SCHEDULE[w][1]
-  sun_note = sun_cardio_config.nil? ? "Repos complet, alimentation propre." : nil
-  d_sun = Day.create!(user: user, date: wstart + 6,
-    energy_level: ENERGY[(w + 14) % 18], mood: MOOD[(w + 15) % 18],
-    sleep_quality: SLEEP_Q[(w + 16) % 18],
-    water_ml: WATER_ML[(w + 11) % 14], steps: STEPS[(w + 12) % 14],
-    note: sun_note)
-
-  if sun_cardio_config
-    seed_cardio(d_sun, machine: sun_cardio_config[0], duration: sun_cardio_config[1], **sun_cardio_config[2].transform_keys(&:to_sym))
+    # ── Cardio session ──
+    if cardio_wdays.include?(date.wday) && !chance.call(0.15)
+      blocks_n = chance.call(0.2) ? 2 : 1
+      blocks = Array.new(blocks_n) { |i| cardio_block_attrs(pick.call(machines), RNG, between).merge(position: i) }
+      day.cardio_sessions.create!(notes: pick.call(cardio_notes), cardio_blocks_attributes: blocks)
+      cardio_count += 1
+    end
   end
-  log_meals(w * 7 + 6, d_sun, food_map, recipe_map, grp)
+end
+puts "  ✓ #{food_day_count} logged days, #{workout_count} strength sessions, #{cardio_count} cardio sessions"
 
-  day_counter += 7
+# ─────────────────────────────────────────────────────────────────────────────
+# WEIGHT ENTRIES (trend 78 → ~86; latest overwrites Profile#weight)
+# ─────────────────────────────────────────────────────────────────────────────
+weight_count = 0
+span = (TODAY - START).to_f
+d = START
+while d <= TODAY
+  progress = (d - START).to_f / span
+  w = 78 + progress * 8 + between.call(-0.6, 0.6)
+  user.weight_entries.create!(date: d, weight_kg: w.round(1))
+  weight_count += 1
+  d += intbtw.call(2, 4)
+end
+puts "  ✓ #{weight_count} weight entries"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# BODY MEASUREMENTS (every ~5 days, dense like weight; a few with diagrams)
+# ─────────────────────────────────────────────────────────────────────────────
+image_files = Dir[Rails.root.join("db/seeds/images/*.png")]
+measurements = []
+m = START
+while m <= TODAY
+  progress = (m - START).to_f / span
+  # Lean-bulk coherence: circumferences grow with weight (78→86 kg); waist rises
+  # only slightly (a little fat comes with the muscle), keeping body-fat plausible.
+  measurements << user.body_measurements.create!(
+    date:      m,
+    waist_cm:  (81 + progress * 2.0 + between.call(-0.4, 0.4)).round(1),
+    hips_cm:   (96 + progress * 2.0 + between.call(-0.4, 0.4)).round(1),
+    chest_cm:  (99 + progress * 6.0 + between.call(-0.4, 0.4)).round(1),
+    biceps_cm: (35 + progress * 3.5 + between.call(-0.3, 0.3)).round(1),
+    thighs_cm: (56 + progress * 4.0 + between.call(-0.4, 0.4)).round(1),
+    calves_cm: (37 + progress * 1.5 + between.call(-0.3, 0.3)).round(1),
+    neck_cm:   (37 + progress * 1.0 + between.call(-0.2, 0.2)).round(1)
+  )
+  m += intbtw.call(4, 6)
 end
 
-# Recompute PRs through the same chronological path the real app uses,
-# instead of a hand-rolled tracker — keeps seed data consistent with prod.
-PrRecalculator.recompute_all_for(user)
-
-puts "  ✓ #{user.days.count} jours (#{user.days.minimum(:date)} → #{user.days.maximum(:date)})"
-puts "  ✓ #{WorkoutSession.joins(:day).where(days: { user: user }).count} séances d'entraînement"
-puts "  ✓ #{CardioSession.joins(:day).where(days: { user: user }).count} sessions cardio"
-puts "  ✓ #{WorkoutSet.joins(workout_session: :day).where(days: { user: user }, is_pr: true).count} PRs"
+# Attach placeholder diagrams to a spread of measurements (offsets counted from
+# the newest), including recent ones so two photos show on the first history page.
+if image_files.any?
+  [1, 5, 30, 70, 115].each_with_index do |offset, i|
+    next if offset >= measurements.size
+    path = image_files[i % image_files.size]
+    measurements[-1 - offset].image.attach(io: File.open(path), filename: File.basename(path), content_type: "image/png")
+  end
+end
+puts "  ✓ #{measurements.size} body measurements"
 
 # ─────────────────────────────────────────────────────────────────────────────
-# WEIGHT TRACKING  — pesée hebdomadaire sur 14 semaines
-# Progression muscle_gain : +0.3 kg/semaine ± variance réaliste
+# FASTING SESSIONS (history + one active)
 # ─────────────────────────────────────────────────────────────────────────────
-noise_seq = [-0.3, 0.1, -0.2, 0.2, -0.1, 0.3, 0.0, -0.4, 0.2, 0.1, -0.3, 0.2, 0.0, 0.3]
+protocol_hours = { "sixteen_eight" => 16, "eighteen_six" => 18, "omad" => 23, "circadian_12_12" => 12 }
+fasting_count = 0
+last_end = nil
+fd = TODAY - 150
+while fd < TODAY
+  if chance.call(0.45)
+    proto = pick.call(protocol_hours.keys)
+    start = Time.zone.local(fd.year, fd.month, fd.day, 20, 0)
+    if last_end.nil? || start > last_end # never overlap a previous fast
+      last_end = start + (protocol_hours[proto] + between.call(-1.0, 2.0)).hours
+      user.fasting_sessions.create!(protocol: proto, started_at: start, ended_at: last_end)
+      fasting_count += 1
+    end
+  end
+  fd += 1
+end
+# One currently active session
+user.fasting_sessions.create!(protocol: "sixteen_eight", started_at: Time.zone.now - 5.hours)
+fasting_count += 1
+puts "  ✓ #{fasting_count} fasting sessions (1 active)"
 
-15.times do |i|
-  weigh_date = WEEK_START + i * 7
-  next if weigh_date > Date.today
-  weight = (77.6 + i * 0.30 + noise_seq[i % 14]).round(1)
-  WeightEntry.create!(user: user, date: weigh_date, weight_kg: weight)
+# ─────────────────────────────────────────────────────────────────────────────
+# SHOPPING LISTS (active + archived, mixed checked / food-linked / free-text)
+# ─────────────────────────────────────────────────────────────────────────────
+def add_list_items!(list, all_foods, rng)
+  all_foods.sample(6, random: rng).each do |food|
+    list.shopping_list_items.create!(
+      food: food, name: food.name, quantity: "#{[100, 200, 250, 500, 1000].sample(random: rng)} g",
+      category: food.category, checked: rng.rand < 0.4
+    )
+  end
+  [["Sopalin", "condiments"], ["Sacs congélation", nil], ["Épices curry", "condiments"]].each do |name, cat|
+    next unless rng.rand < 0.6
+    list.shopping_list_items.create!(name: name, quantity: "1", category: cat, checked: rng.rand < 0.3)
+  end
 end
 
-puts "  ✓ #{user.weight_entries.count} pesées (#{user.weight_entries.minimum(:date)} → #{user.weight_entries.maximum(:date)})"
+active1 = user.shopping_lists.create!(name: "Courses de la semaine")
+add_list_items!(active1, all_foods, RNG)
+active2 = user.shopping_lists.create!(name: "Batch cooking dimanche")
+add_list_items!(active2, all_foods, RNG)
 
-# ─────────────────────────────────────────────────────────────────────────────
-# SUMMARY
-# ─────────────────────────────────────────────────────────────────────────────
-puts ""
-puts "  ✓ #{user.foods.count} aliments • #{user.recipes.count} recettes • #{user.exercise_favorites.count} favoris"
-puts "  ✓ #{DayFood.joins(:day).where(days: { user: user }).count} DayFoods logged"
-puts "  ✓ #{DayRecipe.joins(:day).where(days: { user: user }).count} DayRecipes logged"
-puts ""
-puts "NutriFlow seed terminé ✓"
+3.times do |i|
+  archived = user.shopping_lists.create!(name: "Courses semaine -#{i + 1}", archived_at: (TODAY - (i + 1) * 7).to_time)
+  add_list_items!(archived, all_foods, RNG)
+end
+puts "  ✓ 2 active + 3 archived shopping lists"
+
+Bullet.enable = true if defined?(Bullet)
+
+puts <<~SUMMARY
+
+  ✅ Seed terminé pour #{email}
+     Days:              #{user.days.count}
+     Foods:             #{user.foods.count}
+     Recipes:           #{user.recipes.count}
+     Workout programs:  #{user.workout_programs.count}
+     Weight entries:    #{user.weight_entries.count}
+     Body measurements: #{user.body_measurements.count}
+     Fasting sessions:  #{user.fasting_sessions.count}
+     Shopping lists:    #{user.shopping_lists.count}
+     Login: #{email} / password123
+SUMMARY

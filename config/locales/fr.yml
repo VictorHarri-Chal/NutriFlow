@@ -1407,6 +1407,7 @@ fr:
         title: "Courbe de poids"
         not_enough_data: "Ajoutez au moins 2 mesures pour afficher la courbe"
         period_label: "%{days}j"
+        period_label_year: "1 an"
         projection_hint: "Projection 14j basée sur la tendance récente"
       form:
         title: "Enregistrer mon poids"

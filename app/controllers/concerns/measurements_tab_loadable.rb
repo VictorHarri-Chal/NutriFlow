@@ -1,7 +1,7 @@
 module MeasurementsTabLoadable
   extend ActiveSupport::Concern
 
-  VALID_PERIODS = [30, 90].freeze
+  VALID_PERIODS = [30, 90, 365].freeze
 
   private
 

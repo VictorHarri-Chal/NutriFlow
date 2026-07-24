@@ -67,10 +67,10 @@
       <%= t("views.weight_entries.measurements.chart.title") %>
     </h2>
     <div class="flex items-center gap-1.5">
-      <% [30, 90].each do |p| %>
+      <% MeasurementsTabLoadable::VALID_PERIODS.each do |p| %>
         <%= link_to weight_entries_path(tab: "mesures", measurement: @measurement_type, period: p),
               class: "px-3 py-1 rounded-full text-xs font-medium border transition-colors #{@period == p ? 'bg-brand/20 text-brand border-brand/50' : 'text-ink-subtle border-surface-border/50 hover:border-brand/30 hover:text-ink-muted'}" do %>
-          <%= t("views.weight_entries.chart.period_label", days: p) %>
+          <%= p >= 365 ? t("views.weight_entries.chart.period_label_year") : t("views.weight_entries.chart.period_label", days: p) %>
         <% end %>
       <% end %>
     </div>

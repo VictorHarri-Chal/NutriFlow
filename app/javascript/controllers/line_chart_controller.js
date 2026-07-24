@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { formatChartNumber } from "chart_formatters"
 
 export default class extends Controller {
   static values = {
@@ -64,7 +65,7 @@ export default class extends Controller {
             bodyColor: "#A1A1AA",
             padding: 10,
             callbacks: {
-              label: ctx => ` ${ctx.parsed.y}${unit ? " " + unit : ""}`
+              label: ctx => ` ${formatChartNumber(ctx.parsed.y)}${unit ? " " + unit : ""}`
             }
           }
         },
@@ -78,7 +79,7 @@ export default class extends Controller {
             grid:   { color: gridColor },
             ticks:  {
               color: tickColor,
-              callback: val => `${val}${unit ? " " + unit : ""}`
+              callback: val => `${formatChartNumber(val)}${unit ? " " + unit : ""}`
             },
             border:      { color: gridColor },
             beginAtZero: true

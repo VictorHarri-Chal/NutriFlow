@@ -121,9 +121,20 @@ class StatisticsController < ApplicationController
     goals = current_user.profile&.weekly_micronutrient_goals || {}
     @micronutrient_daily_goal = goals[selected_key] ? (goals[selected_key] / 7.0).round(2) : 0
 
-    @micronutrient_labels = range.map { |d| l(d, format: :short) }
-    @micronutrient_data = range.map do |d|
-      days_by_date[d] ? days_by_date[d].aggregated_micronutrients[selected_key.to_s].to_f : 0
+    # Daily for ≤ 30 days, weekly average otherwise — mirrors the calories/protein
+    # charts on the same tab so a 1-year view isn't a 365-point line.
+    daily_value = ->(d) { days_by_date[d] ? days_by_date[d].aggregated_micronutrients[selected_key.to_s].to_f : 0 }
+
+    if @period <= 30
+      @micronutrient_labels = range.map { |d| l(d, format: :short) }
+      @micronutrient_data   = range.map { |d| daily_value.call(d) }
+    else
+      weeks = range.group_by(&:beginning_of_week).sort
+      @micronutrient_labels = weeks.map { |w, _| l(w, format: :short) }
+      @micronutrient_data   = weeks.map do |_, wds|
+        vals = wds.filter_map { |d| daily_value.call(d) if days_by_date[d] }
+        vals.any? ? (vals.sum / vals.size.to_f).round(2) : 0
+      end
     end
   end
 
@@ -205,10 +216,25 @@ class StatisticsController < ApplicationController
   # all_sets already covers the full period for every exercise — filter in memory
   # instead of re-querying (previously a separate WorkoutSet query per exercise switch).
   def build_exercise_progress(all_sets, exercise)
-    sets    = all_sets.select { |ws| ws.exercise_id == exercise.id }
-    by_date = sets.group_by { |s| s.workout_session.day.date }
-    @progress_labels = by_date.keys.map { |d| l(d, format: :short) }
-    @progress_data   = by_date.values.map { |s| s.map(&:weight_kg).compact.max&.to_f || 0 }
+    sets        = all_sets.select { |ws| ws.exercise_id == exercise.id }
+    max_by_date = sets.group_by { |s| s.workout_session.day.date }
+                      .transform_values { |ss| ss.map(&:weight_kg).compact.map(&:to_f).max || 0 }
+
+    # Per training-date for ≤ 30 days, then best lift per week (per month at 1 year)
+    # so a heavily-trained lift over a long window stays readable.
+    if @period <= 30
+      dates = max_by_date.keys.sort
+      @progress_labels = dates.map { |d| l(d, format: :short) }
+      @progress_data   = dates.map { |d| max_by_date[d] }
+    elsif @period == 365
+      buckets = max_by_date.group_by { |d, _| d.beginning_of_month }.sort
+      @progress_labels = buckets.map { |m, _| l(m, format: :month_year) }
+      @progress_data   = buckets.map { |_, pairs| pairs.map(&:last).max }
+    else
+      buckets = max_by_date.group_by { |d, _| d.beginning_of_week }.sort
+      @progress_labels = buckets.map { |w, _| l(w, format: :short) }
+      @progress_data   = buckets.map { |_, pairs| pairs.map(&:last).max }
+    end
   end
 
   def build_training_streak(range)
@@ -429,13 +455,6 @@ class StatisticsController < ApplicationController
       @wb_mood_data   = groups.map { |_, gd| avg_vals(gd.filter_map { |d| wb_by_date[d]&.mood }) }
       @wb_sleep_data  = groups.map { |_, gd| avg_vals(gd.filter_map { |d| wb_by_date[d]&.sleep_quality }) }
     end
-
-    # Weight trend
-    @weight_entries = current_user.weight_entries.where(date: @from..Date.today).order(:date)
-    if @weight_entries.any?
-      @weight_labels = @weight_entries.map { |we| l(we.date, format: :short) }
-      @weight_data   = @weight_entries.map { |we| we.weight_kg.to_f }
-    end
   end
 
   # ── Hydratation ──────────────────────────────────────────────────────────────
@@ -514,15 +533,19 @@ class StatisticsController < ApplicationController
 
   # ── Helpers ──────────────────────────────────────────────────────────────────
 
+  # Memoized per day: called up to three times per logged day (averages + the
+  # calories and protein charts), and each call sums the day's items eight times.
   def day_macros(day)
-    foods   = day.day_foods
-    recipes = day.day_recipes
-    {
-      calories: (foods.sum { |f| f.total_calories.to_f } + recipes.sum { |r| r.total_calories.to_f }).round,
-      proteins: (foods.sum { |f| f.total_proteins.to_f } + recipes.sum { |r| r.total_proteins.to_f }).round(1),
-      carbs:    (foods.sum { |f| f.total_carbs.to_f }    + recipes.sum { |r| r.total_carbs.to_f }).round(1),
-      fats:     (foods.sum { |f| f.total_fats.to_f }     + recipes.sum { |r| r.total_fats.to_f }).round(1)
-    }
+    (@day_macros_cache ||= {})[day.id] ||= begin
+      foods   = day.day_foods
+      recipes = day.day_recipes
+      {
+        calories: (foods.sum { |f| f.total_calories.to_f } + recipes.sum { |r| r.total_calories.to_f }).round,
+        proteins: (foods.sum { |f| f.total_proteins.to_f } + recipes.sum { |r| r.total_proteins.to_f }).round(1),
+        carbs:    (foods.sum { |f| f.total_carbs.to_f }    + recipes.sum { |r| r.total_carbs.to_f }).round(1),
+        fats:     (foods.sum { |f| f.total_fats.to_f }     + recipes.sum { |r| r.total_fats.to_f }).round(1)
+      }
+    end
   end
 
   def calc_current_streak(sorted_dates)

@@ -1407,6 +1407,7 @@ en:
         title: "Weight curve"
         not_enough_data: "Add at least 2 measurements to display the chart"
         period_label: "%{days}d"
+        period_label_year: "1 yr"
         projection_hint: "14-day projection based on recent trend"
       form:
         title: "Log my weight"
