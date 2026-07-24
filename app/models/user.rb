@@ -42,6 +42,7 @@ class User < ApplicationRecord
   has_many :favorited_exercises,  through: :exercise_favorites, source: :exercise
   has_many :workout_programs,     dependent: :destroy
   has_many :exercises,            foreign_key: :custom_user_id, dependent: :destroy
+  has_many :data_exports,         dependent: :destroy
   has_one  :profile,              dependent: :destroy
 
   after_create :create_profile
@@ -86,6 +87,7 @@ class User < ApplicationRecord
       exercise_favorites.destroy_all
       workout_programs.destroy_all
       exercises.destroy_all
+      data_exports.destroy_all
       profile.destroy
       create_profile!
     end

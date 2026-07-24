@@ -9,7 +9,7 @@
     <p class="text-sm text-ink-subtle mt-1"><%= t("views.settings.export.description") %></p>
   </div>
 
-  <%= form_with url: exports_path, method: :post, data: { turbo: false, controller: "export-form" } do %>
+  <%= form_with url: exports_path, method: :post, data: { controller: "export-form" } do %>
     <div class="border-t border-surface-border/40 pt-6 space-y-6">
 
       <div>
@@ -93,6 +93,8 @@
           <%= t("views.settings.export.submit") %>
         </button>
       </div>
+
+      <%= render "settings/export_status", export: nil %>
 
     </div>
   <% end %>

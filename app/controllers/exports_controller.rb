@@ -1,4 +1,7 @@
 class ExportsController < ApplicationController
+  # Kicks off an async .xlsx generation (Solid Queue) and renders the "en cours"
+  # state; the browser then polls #show until the file is ready. Heavy exports
+  # (thousands of rows, several seconds) no longer tie up a web thread.
   def create
     categories = allowed_categories
     period     = build_period
@@ -13,16 +16,69 @@ class ExportsController < ApplicationController
       return
     end
 
-    sheets = categories.flat_map { |c| c[:exporter].new(user: current_user, period: period).sheets }
-    xlsx   = Exports::ExcelBuilder.new(sheets).build
+    export = current_user.data_exports.create!(
+      status: "pending",
+      categories: categories.map { |c| c[:key] },
+      period_kind: period.kind,
+      date_from: period.date_from,
+      date_to: period.date_to
+    )
+    prune_old_exports
+    DataExportJob.perform_later(export)
 
-    send_data xlsx,
-              filename: "nutriflow-export-#{Date.today.iso8601}.xlsx",
+    respond_to do |format|
+      format.turbo_stream { render_status_stream(export) }
+      format.html { redirect_to setting_path(tab: "export") }
+    end
+  end
+
+  # Polled by export_poller_controller. JSON drives the client; the turbo_stream
+  # variant re-renders the status region in place.
+  def show
+    export = current_user.data_exports.find(params[:id])
+
+    respond_to do |format|
+      format.json { render json: status_payload(export) }
+      format.turbo_stream { render_status_stream(export) }
+    end
+  end
+
+  def download
+    export = current_user.data_exports.find(params[:id])
+
+    unless export.completed? && export.file.attached?
+      redirect_to setting_path(tab: "export"), alert: t("controllers.exports.not_ready")
+      return
+    end
+
+    # Stream through the app (authenticated, scoped to current_user) rather than
+    # exposing the file's public R2/CDN URL — this is the user's private data.
+    send_data export.file.download,
+              filename: export.file.filename.to_s,
               type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
               disposition: "attachment"
   end
 
   private
+
+  def render_status_stream(export)
+    render turbo_stream: turbo_stream.replace(
+      "export_status", partial: "settings/export_status", locals: { export: export }
+    )
+  end
+
+  def status_payload(export)
+    {
+      status: export.status,
+      ready: export.completed?,
+      failed: export.failed?,
+      download_url: export.completed? ? download_export_path(export) : nil
+    }
+  end
+
+  def prune_old_exports
+    current_user.data_exports.recent.offset(DataExport::RETENTION_PER_USER).destroy_all
+  end
 
   def build_period
     Exports::Period.new(

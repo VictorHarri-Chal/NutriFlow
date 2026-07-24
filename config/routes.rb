@@ -41,7 +41,9 @@ Rails.application.routes.draw do
     delete :sign_out_other_sessions
     delete :reset_data
   end
-  resources :exports, only: [:create]
+  resources :exports, only: [:create, :show] do
+    member { get :download }
+  end
   resources :day_food_groups, only: [:create, :edit, :update, :destroy]
   resources :food_labels, only: [:create, :edit, :update, :destroy]
 

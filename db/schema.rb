@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_21_141016) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_24_123208) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -98,6 +98,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_21_141016) do
     t.jsonb "micronutrients", default: {}
     t.index ["alim_code"], name: "index_ciqual_foods_on_alim_code", unique: true
     t.index ["name"], name: "index_ciqual_foods_on_name"
+  end
+
+  create_table "data_exports", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "status", default: "pending", null: false
+    t.string "categories", default: [], null: false, array: true
+    t.string "period_kind", default: "all", null: false
+    t.date "date_from"
+    t.date "date_to"
+    t.text "error_message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_data_exports_on_user_id"
   end
 
   create_table "day_food_groups", force: :cascade do |t|
@@ -592,6 +605,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_21_141016) do
   add_foreign_key "body_measurements", "users"
   add_foreign_key "cardio_blocks", "cardio_sessions"
   add_foreign_key "cardio_sessions", "days"
+  add_foreign_key "data_exports", "users"
   add_foreign_key "day_food_groups", "users"
   add_foreign_key "day_foods", "day_food_groups"
   add_foreign_key "day_foods", "days"

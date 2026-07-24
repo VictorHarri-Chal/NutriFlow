@@ -31,6 +31,7 @@ fr:
     exports:
       no_category_selected: "Sélectionnez au moins une catégorie à exporter."
       invalid_period: "La période personnalisée n'est pas valide (vérifiez les deux dates)."
+      not_ready: "Cet export n'est pas encore prêt."
     foods:
       created: "Aliment créé avec succès."
       updated: "Aliment mis à jour avec succès."
@@ -934,6 +935,11 @@ fr:
         date_from: "Du"
         date_to: "Au"
         submit: "Générer l'export"
+        status:
+          processing: "Génération de votre export en cours…"
+          ready: "Votre export est prêt."
+          download: "Télécharger"
+          failed: "La génération de l'export a échoué. Réessayez."
         sections:
           profile: "Profil"
           journal_nutrition: "Journal & nutrition"

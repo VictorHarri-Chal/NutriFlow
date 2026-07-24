@@ -1,0 +1,34 @@
+<%# locals: (export:) — nil = idle. Always keeps id="export_status" so the
+    controller's turbo_stream.replace can target it during polling. %>
+<div id="export_status">
+  <% if export.nil? %>
+    <%# idle — nothing to show %>
+  <% elsif export.completed? %>
+    <div data-controller="export-download"
+         data-export-download-url-value="<%= download_export_path(export) %>"
+         class="flex items-center justify-between gap-3 rounded-xl border border-status-success/40 bg-status-success/10 px-4 py-3">
+      <span class="flex items-center gap-2 text-sm text-ink-primary">
+        <i class="fas fa-circle-check text-status-success"></i>
+        <%= t("views.settings.export.status.ready") %>
+      </span>
+      <%= link_to download_export_path(export),
+            class: "btn-secondary text-sm gap-2",
+            data: { export_download_target: "link" } do %>
+        <i class="fas fa-file-arrow-down text-xs"></i>
+        <%= t("views.settings.export.status.download") %>
+      <% end %>
+    </div>
+  <% elsif export.failed? %>
+    <div class="flex items-center gap-2 rounded-xl border border-status-danger/40 bg-status-danger/10 px-4 py-3 text-sm text-status-danger">
+      <i class="fas fa-circle-exclamation"></i>
+      <%= t("views.settings.export.status.failed") %>
+    </div>
+  <% else %>
+    <div data-controller="export-poller"
+         data-export-poller-url-value="<%= export_path(export) %>"
+         class="flex items-center gap-2 rounded-xl border border-surface-border/40 bg-surface-base px-4 py-3 text-sm text-ink-muted">
+      <i class="fas fa-circle-notch fa-spin text-brand"></i>
+      <%= t("views.settings.export.status.processing") %>
+    </div>
+  <% end %>
+</div>
