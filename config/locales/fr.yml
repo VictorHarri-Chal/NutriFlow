@@ -926,7 +926,7 @@ fr:
           violet: "Violet"
       export:
         title: "Export de données"
-        description: "Téléchargez vos données NutriFlow dans un fichier Excel."
+        description: "Téléchargez une copie de vos données NutriFlow."
         period_label: "Période"
         periods:
           all: "Tout l'historique"

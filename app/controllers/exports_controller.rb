@@ -16,6 +16,17 @@ class ExportsController < ApplicationController
       return
     end
 
+    # One generation at a time per user: a running export can't be piled on
+    # (each is a heavy multi-second job). Re-show the in-flight one instead of
+    # enqueuing another — this also absorbs rapid double-submits / spam.
+    if (running = current_user.data_exports.in_progress.recent.first)
+      respond_to do |format|
+        format.turbo_stream { render_status_stream(running) }
+        format.html { redirect_to setting_path(tab: "export") }
+      end
+      return
+    end
+
     export = current_user.data_exports.create!(
       status: "pending",
       categories: categories.map { |c| c[:key] },
