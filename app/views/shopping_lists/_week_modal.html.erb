@@ -1,32 +1,21 @@
 <%# locals: (candidates:) %>
-<div class="fixed inset-0 z-50 flex items-center justify-center p-4"
-     data-controller="modal week-shopping-selection"
-     data-week-shopping-selection-selected-template-value="<%= t('views.shopping_lists.week_generation.selected_count', selected: '__SELECTED__', total: '__TOTAL__') %>"
-     data-action="click->modal#handleBackdropClick keydown@document->modal#handleEscape">
-  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-
-  <div class="relative w-full max-w-md bg-surface-raised border border-surface-border/50 rounded-2xl shadow-2xl transition-all duration-200 ease-out scale-95 opacity-0 flex flex-col max-h-[80vh] overflow-hidden"
-       data-modal-target="panel">
-
-    <div class="flex items-center justify-between px-5 py-4 border-b border-surface-border/40 flex-shrink-0">
-      <div>
-        <h3 class="text-sm font-semibold text-ink-primary"><%= t("views.shopping_lists.week_generation.modal_title") %></h3>
-        <p class="text-xs text-ink-subtle mt-0.5">
-          <%= t("views.shopping_lists.week_generation.modal_subtitle", count: candidates.size) %>
-        </p>
-      </div>
-      <button type="button"
-              class="btn-ghost w-8 h-8 !p-0 flex items-center justify-center flex-shrink-0"
-              data-action="click->modal#close">
-        <i class="fas fa-times text-sm"></i>
-      </button>
-    </div>
-
-    <%= form_with url: generate_from_week_shopping_lists_path,
-          method: :post,
-          data: { turbo_stream: true },
-          class: "flex flex-col min-h-0 flex-1" do %>
-
+<%= form_with url: generate_from_week_shopping_lists_path,
+      method: :post,
+      data: { turbo_stream: true },
+      class: "contents" do %>
+  <%= render Ui::ModalComponent.new(
+        title: t("views.shopping_lists.week_generation.modal_title"),
+        subtitle: t("views.shopping_lists.week_generation.modal_subtitle", count: candidates.size),
+        max_width: :md,
+        max_height: :sm,
+        body_padding: "",
+        body_layout: :flex,
+        data: {
+          controller: "week-shopping-selection",
+          week_shopping_selection_selected_template_value: t('views.shopping_lists.week_generation.selected_count', selected: '__SELECTED__', total: '__TOTAL__')
+        }
+      ) do |m| %>
+    <% m.with_body do %>
       <% if candidates.empty? %>
         <div class="px-5 py-4">
           <div class="py-10 flex flex-col items-center justify-center text-center px-4 border-2 border-dashed border-surface-border/40 rounded-xl">
@@ -62,8 +51,10 @@
           <div class="pointer-events-none absolute bottom-0 inset-x-0 h-5 bg-gradient-to-t from-surface-raised to-transparent"></div>
         </div>
       <% end %>
+    <% end %>
 
-      <div class="flex items-center justify-between gap-3 px-5 py-4 border-t border-surface-border/40 flex-shrink-0">
+    <% m.with_footer do %>
+      <div class="flex items-center justify-between gap-3">
         <span class="text-xs text-ink-muted" data-week-shopping-selection-target="counter"></span>
         <button type="submit"
                 class="btn-primary text-sm <%= 'hidden' if candidates.empty? %>"
@@ -73,5 +64,5 @@
         </button>
       </div>
     <% end %>
-  </div>
-</div>
+  <% end %>
+<% end %>

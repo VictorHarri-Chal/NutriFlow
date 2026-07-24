@@ -23,7 +23,7 @@
       </button>
     </div>
 
-    <div class="<%= [body_padding, "overflow-y-auto min-h-0 flex-1"].reject(&:blank?).join(" ") %>"><%= body %></div>
+    <div class="<%= [body_padding, body_layout].reject(&:blank?).join(" ") %>"><%= body %></div>
 
     <% if footer? %>
       <div data-modal-footer class="border-t border-surface-border/40 px-5 py-4 flex-shrink-0"><%= footer %></div>
