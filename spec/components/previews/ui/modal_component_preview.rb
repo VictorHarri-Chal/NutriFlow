@@ -17,5 +17,11 @@ module Ui
         m.with_footer { "Annuler / Confirmer" }
       end
     end
+
+    def with_icon
+      render Ui::ModalComponent.new(title: "Avertissement", icon: "fa-triangle-exclamation") do |m|
+        m.with_body { "Un point de vigilance avant de continuer." }
+      end
+    end
   end
 end
