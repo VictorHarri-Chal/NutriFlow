@@ -179,7 +179,9 @@ en:
       collapse_all_button: "Collapse all"
       customize_display_button: "Customize display"
       today_button_disabled: "You're already on today"
-      day_complete: "Day complete: all goals reached!"
+      day_complete:
+        title: "Daily goals reached"
+        subtitle: "Calories, protein and fat within target."
       calories: "Calories"
       proteins: "Proteins"
       fats: "Fats"

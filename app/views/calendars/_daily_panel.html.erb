@@ -1,20 +1,35 @@
 <%
-  all_done = calories_percentage.between?(90, 115) &&
-             proteins_percentage.between?(85, 115)
+  all_done = profile&.daily_goals_met?(
+    calories_percentage: calories_percentage,
+    proteins_percentage: proteins_percentage,
+    fats_percentage:     fats_percentage
+  )
 %>
 
-<div id="daily_panel"
-     class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-3 mb-4"
-     data-controller="collapsible"
-     data-collapsible-scope="page-section"
-     data-collapsible-storage-key="daily-panel">
+<div id="daily_panel">
 
   <% if all_done %>
-    <div class="flex items-center gap-1.5 mb-3 text-status-success text-xs font-medium tracking-wide uppercase">
-      <i class="fas fa-check-circle"></i>
-      <%= t("views.calendars.day_complete") %>
+    <%# ── Bannière objectifs atteints ── %>
+    <div class="flex items-center gap-3 rounded-2xl px-5 py-4 mb-4
+                bg-status-success/10 border border-status-success/30">
+      <span class="w-10 h-10 rounded-full bg-status-success/15 flex items-center justify-center flex-shrink-0">
+        <i class="fas fa-circle-check text-status-success text-lg"></i>
+      </span>
+      <div class="min-w-0">
+        <p class="text-sm font-semibold text-status-success">
+          <%= t("views.calendars.day_complete.title") %>
+        </p>
+        <p class="text-xs text-ink-muted">
+          <%= t("views.calendars.day_complete.subtitle") %>
+        </p>
+      </div>
     </div>
   <% end %>
+
+  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-3 mb-4"
+       data-controller="collapsible"
+       data-collapsible-scope="page-section"
+       data-collapsible-storage-key="daily-panel">
 
   <%# ── Header (trigger) ── %>
   <div class="flex items-center gap-2 cursor-pointer select-none"
@@ -26,7 +41,7 @@
       <%= t("views.calendars.calories") %>
     </span>
     <span class="text-xs text-ink-subtle">
-      <span class="text-base font-bold <%= calories_percentage > 105 ? 'text-status-danger' : calories_percentage >= 100 ? 'text-status-success' : 'text-ink-primary' %>">
+      <span class="text-base font-bold <%= ring_status_text_class(profile&.ring_status(:calories, calories_percentage)) %>">
         <%= total_calories.to_i %>
       </span>
       <span class="ml-0.5">/ <%= daily_calorie_goal %> kcal</span>
@@ -37,6 +52,7 @@
   <div data-collapsible-target="content" class="mt-3">
 
     <%= render MacroDashboardComponent.new(
+          profile:             profile,
           total_calories:      total_calories,
           daily_calorie_goal:  daily_calorie_goal,
           calories_percentage: calories_percentage,
@@ -213,5 +229,7 @@
     <% end %>
 
   </div><%# /content %>
+
+  </div><%# /calories card %>
 
 </div>

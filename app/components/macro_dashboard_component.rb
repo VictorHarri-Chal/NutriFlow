@@ -7,21 +7,30 @@
 #
 # Palette volontairement restreinte : les 4 anneaux avec objectif (calories,
 # protéines, glucides, lipides) partagent tous le même code couleur sémantique
-# (objectif atteint → vert, dépassé → rouge sauf protéines, sinon → ambre de
-# marque) plutôt qu'une couleur distincte par macro — cohérence visuelle avant
-# tout. Les 4 anneaux informatifs (fibres/sucres/ac. saturés/sel) partagent eux
-# aussi une seule couleur neutre.
+# à 3 états (feu tricolore) — vert/orange/rouge via les tokens status-* —
+# plutôt qu'une couleur distincte par macro. La sémantique (adaptée à l'objectif
+# de l'utilisateur) est portée par Profile#ring_status, seule source de vérité,
+# cohérente avec Profile#daily_goals_met?. Ce composant ne fait que traduire le
+# statut en classe de couleur. Les 4 anneaux informatifs (fibres/sucres/ac.
+# saturés/sel) partagent eux une seule couleur neutre.
 class MacroDashboardComponent < ApplicationComponent
   NEUTRAL_DETAIL_COLOR = "stroke-ink-subtle"
+
+  RING_STATUS_STROKE = {
+    success: "stroke-status-success",
+    warning: "stroke-status-warning",
+    danger:  "stroke-status-danger"
+  }.freeze
 
   # Les *_percentage (calories/proteins/carbs/fats) ne sont jamais nil tant que ce
   # composant n'est instancié que lorsque daily_calorie_goal est présent (même garde
   # que _daily_panel.html.erb) — CalendarDataLoader ne les calcule que dans ce cas.
-  def initialize(total_calories:, daily_calorie_goal:, calories_percentage:,
+  def initialize(profile:, total_calories:, daily_calorie_goal:, calories_percentage:,
                  total_proteins:, daily_protein_goal:, proteins_percentage:,
                  total_carbs:, daily_carbs_goal:, carbs_percentage:,
                  total_fats:, daily_fats_goal:, fats_percentage:,
                  total_sugars:, total_fiber:, total_saturated_fat:, total_salt:)
+    @profile             = profile
     @total_calories      = total_calories
     @daily_calorie_goal  = daily_calorie_goal
     @calories_percentage = calories_percentage
@@ -42,36 +51,31 @@ class MacroDashboardComponent < ApplicationComponent
 
   private
 
-  attr_reader :total_calories, :daily_calorie_goal, :calories_percentage,
+  attr_reader :profile,
+              :total_calories, :daily_calorie_goal, :calories_percentage,
               :total_proteins, :daily_protein_goal, :proteins_percentage,
               :total_carbs, :daily_carbs_goal, :carbs_percentage,
               :total_fats, :daily_fats_goal, :fats_percentage,
               :total_sugars, :total_fiber, :total_saturated_fat, :total_salt
 
-  # Seuil partagé calories/glucides/lipides : >105% = danger, >=100% = succès,
-  # sinon ambre de marque (en cours / insuffisant, mais toujours visible).
-  # (Protéines a sa propre règle à 2 paliers seulement — un dépassement de protéines
-  # n'est jamais signalé comme négatif — donc pas unifiée ici, cf. proteins_color_class.)
-  def bascule_color_class(percentage, base: "stroke-brand")
-    return "stroke-status-danger"  if percentage > 105
-    return "stroke-status-success" if percentage >= 100
-
-    base
+  def stroke_for(kind, percentage)
+    status = profile ? profile.ring_status(kind, percentage) : :warning
+    RING_STATUS_STROKE.fetch(status)
   end
 
   def calories_color_class
-    bascule_color_class(calories_percentage)
+    stroke_for(:calories, calories_percentage)
   end
 
   def proteins_color_class
-    proteins_percentage >= 100 ? "stroke-status-success" : "stroke-brand"
+    stroke_for(:proteins, proteins_percentage)
   end
 
   def carbs_color_class
-    bascule_color_class(carbs_percentage)
+    stroke_for(:carbs, carbs_percentage)
   end
 
   def fats_color_class
-    bascule_color_class(fats_percentage)
+    stroke_for(:fats, fats_percentage)
   end
 end

@@ -53,6 +53,41 @@ class Profile < ApplicationRecord
   # calorie intake, precisely so it doesn't drop during a deficit.
   FAT_PERCENT_OF_CALORIES = 0.25
 
+  # Day-completion thresholds — see #daily_goals_met?. Calories use a band that
+  # is asymmetric by goal (strict on the side that defeats the goal: overshooting
+  # in a deficit, undershooting in a surplus). Protein and fat are one-sided:
+  # protein has no upper bound (a surplus is harmless), fat is only checked
+  # against a health floor (essential fatty acids / hormones). Carbs are the
+  # balancing remainder (see #daily_carbs_goal), so checking them would just
+  # double-count calories.
+  CALORIE_GOAL_BANDS_PCT = {
+    "weight_loss" => 85..105,
+    "muscle_gain" => 95..115,
+    "maintenance" => 90..110
+  }.freeze
+  # Protein is a one-sided floor: a surplus is never negative (guidance ties the
+  # need to bodyweight, not a cap), so it only ever colours :success or :warning.
+  PROTEIN_GOAL_FLOOR_PCT = 90
+
+  # Dashboard ring colours (see #ring_status). Undershooting a target never
+  # colours worse than :warning (the day may not be over — you can still eat);
+  # only an irreversible overshoot turns :danger.
+  #
+  # Only CALORIES are goal-directional: the "bad" side flips between a deficit
+  # and a surplus, so the band comes from CALORIE_GOAL_BANDS_PCT. The macro
+  # gram targets already shift with the goal (they are derived from the
+  # goal-adjusted calorie target — see #daily_fats_goal / #daily_carbs_goal),
+  # so their percentage tolerances are intentionally goal-independent.
+  #
+  # Fat and carbs are set-points (a target you want to land on, both directions
+  # matter — over-fat crowds out carbs / adds calories), hence a band with an
+  # upper :danger. Protein is the only pure floor.
+  RING_CALORIE_OVER_MARGIN_PCT = 10   # amber buffer above the goal band before :danger
+  RING_FAT_SUCCESS_PCT         = 80..120
+  RING_FAT_OVER_DANGER_PCT     = 140  # fat clearly excessive above this
+  RING_CARBS_SUCCESS_PCT       = 90..110
+  RING_CARBS_OVER_DANGER_PCT   = 130  # carbs distribution clearly off above this
+
   # Extra water per day based on physical job activity (hors séances sportives)
   # Sources: IoM DRI + TrainingPeaks sweat rate data
   WATER_ACTIVITY_OFFSET_ML = {
@@ -302,6 +337,38 @@ class Profile < ApplicationRecord
     [(remaining / 4.0).round, 0].max
   end
 
+  # Whether the day's intake hits its goals. Defined as "the calories, protein
+  # and fat rings are all green" (see #ring_status) so the banner can never
+  # contradict the dashboard. Carbs are deliberately excluded — they are the
+  # balancing remainder (see #daily_carbs_goal), so checking them would just
+  # double-count calories.
+  def daily_goals_met?(calories_percentage:, proteins_percentage:, fats_percentage:)
+    ring_status(:calories, calories_percentage) == :success &&
+      ring_status(:proteins, proteins_percentage) == :success &&
+      ring_status(:fats, fats_percentage) == :success
+  end
+
+  # Colour status (:success | :warning | :danger) for a dashboard ring, given
+  # the already-computed intake percentage. Calories use the goal-aware band;
+  # fat and carbs are set-point bands (over-target matters); protein is a
+  # one-sided floor (a surplus is never negative). Undershooting is at worst
+  # :warning; only an irreversible overshoot is :danger.
+  def ring_status(kind, percentage)
+    return :warning if percentage.nil?
+
+    case kind
+    when :calories
+      band = CALORIE_GOAL_BANDS_PCT.fetch(goal.to_s, CALORIE_GOAL_BANDS_PCT.fetch("maintenance"))
+      band_ring_status(percentage, band, over_danger: band.end + RING_CALORIE_OVER_MARGIN_PCT)
+    when :fats
+      band_ring_status(percentage, RING_FAT_SUCCESS_PCT, over_danger: RING_FAT_OVER_DANGER_PCT)
+    when :carbs
+      band_ring_status(percentage, RING_CARBS_SUCCESS_PCT, over_danger: RING_CARBS_OVER_DANGER_PCT)
+    when :proteins
+      floor_ring_status(percentage, PROTEIN_GOAL_FLOOR_PCT)
+    end
+  end
+
   # True when protein + fat targets alone already exceed the calorie goal
   # (a very low calorie target relative to bodyweight) — without this,
   # carbs silently floors at 0 with no indication of why.
@@ -344,6 +411,21 @@ class Profile < ApplicationRecord
   end
 
   private
+
+  # Inside the band → :success; below it → :warning (still in progress);
+  # above it but within the margin → :warning; beyond → :danger.
+  def band_ring_status(percentage, band, over_danger:)
+    return :success if band.cover?(percentage)
+    return :warning if percentage < band.begin
+
+    percentage > over_danger ? :danger : :warning
+  end
+
+  # One-sided floor: at/above target → :success; below → :warning (never :danger,
+  # and no upper bound — a surplus is never coloured negatively).
+  def floor_ring_status(percentage, floor)
+    percentage >= floor ? :success : :warning
+  end
 
   def calorie_goal_for(day)
     day ? daily_calorie_target(day: day) : calories_needed_for_goal

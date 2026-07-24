@@ -179,7 +179,9 @@ fr:
       collapse_all_button: "Tout replier"
       customize_display_button: "Personnaliser l'affichage"
       today_button_disabled: "Vous êtes déjà sur aujourd'hui"
-      day_complete: "Journée complète : tous les objectifs atteints !"
+      day_complete:
+        title: "Objectifs du jour atteints"
+        subtitle: "Calories, protéines et lipides dans la cible."
       calories: "Calories"
       proteins: "Protéines"
       fats: "Lipides"

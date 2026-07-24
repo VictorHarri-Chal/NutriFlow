@@ -7,6 +7,19 @@ module ApplicationHelper
     number_with_precision(value, precision: 1, strip_insignificant_zeros: true)
   end
 
+  # Traduit un statut d'anneau (Profile#ring_status) en classe de couleur de
+  # texte, pour homogénéiser le code couleur des macros/calories hors des anneaux
+  # (ex. le total calorique du header). Retombe sur une couleur neutre si nil.
+  RING_STATUS_TEXT_CLASS = {
+    success: "text-status-success",
+    warning: "text-status-warning",
+    danger:  "text-status-danger"
+  }.freeze
+
+  def ring_status_text_class(status)
+    RING_STATUS_TEXT_CLASS.fetch(status, "text-ink-primary")
+  end
+
   def nested_dom_id(*args)
     args.map { |arg| arg.respond_to?(:to_key) ? dom_id(arg) : arg }.join("_")
   end
