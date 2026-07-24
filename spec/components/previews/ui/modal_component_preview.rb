@@ -23,5 +23,12 @@ module Ui
         m.with_body { "Un point de vigilance avant de continuer." }
       end
     end
+
+    def with_subtitle_and_accessory
+      render Ui::ModalComponent.new(title: "Développé couché", subtitle: "3 exercices sélectionnés") do |m|
+        m.with_title_accessory { '<i class="fas fa-circle-info text-xs text-ink-subtle/40" title="Renseignez vos séries."></i>'.html_safe }
+        m.with_body { "Corps de la fenêtre." }
+      end
+    end
   end
 end

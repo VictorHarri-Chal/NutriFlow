@@ -4,13 +4,18 @@
   <div class="relative w-full <%= max_width %> bg-surface-raised border border-surface-border/50 rounded-panel shadow-modal transition-all duration-200 ease-out scale-95 opacity-0 flex flex-col <%= max_height %> overflow-hidden"
        data-modal-target="panel">
     <div class="flex items-center justify-between px-5 py-4 border-b border-surface-border/40 flex-shrink-0">
-      <% if icon %>
-        <h3 class="text-sm font-semibold text-ink-primary flex items-center gap-2">
-          <i class="fas <%= icon %> text-brand text-sm"></i><%= title %>
-        </h3>
-      <% else %>
-        <h3 class="text-sm font-semibold text-ink-primary"><%= title %></h3>
-      <% end %>
+      <div class="min-w-0 flex items-center gap-2">
+        <% if icon %>
+          <i class="fas <%= icon %> text-brand text-sm"></i>
+        <% end %>
+        <div class="min-w-0">
+          <h3 class="text-sm font-semibold text-ink-primary break-words"><%= title %></h3>
+          <% if subtitle %>
+            <p class="text-xs text-ink-subtle mt-0.5"><%= subtitle %></p>
+          <% end %>
+        </div>
+        <% if title_accessory? %><%= title_accessory %><% end %>
+      </div>
       <button type="button"
               class="btn-ghost w-8 h-8 !p-0 flex items-center justify-center flex-shrink-0"
               data-action="click->modal#close">

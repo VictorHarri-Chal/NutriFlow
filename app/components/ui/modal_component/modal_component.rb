@@ -2,12 +2,14 @@ module Ui
   class ModalComponent < ApplicationComponent
     renders_one :body
     renders_one :footer
+    renders_one :title_accessory
 
     MAX_WIDTH  = { sm: "max-w-sm", md: "max-w-md", lg: "max-w-lg", xl: "max-w-xl" }.freeze
     MAX_HEIGHT = { sm: "max-h-[80vh]", md: "max-h-[85vh]", lg: "max-h-[90vh]" }.freeze
 
-    def initialize(title:, icon: nil, max_width: :md, max_height: :sm, body_padding: "px-5 py-4", data: {})
+    def initialize(title:, subtitle: nil, icon: nil, max_width: :md, max_height: :sm, body_padding: "px-5 py-4", data: {})
       @title = title
+      @subtitle = subtitle
       @icon = icon
       @max_width = MAX_WIDTH.fetch(max_width)
       @max_height = MAX_HEIGHT.fetch(max_height)
@@ -15,7 +17,7 @@ module Ui
       @data = data
     end
 
-    attr_reader :title, :icon, :max_width, :max_height, :body_padding
+    attr_reader :title, :subtitle, :icon, :max_width, :max_height, :body_padding
 
     # Merges the caller's data hash onto the root overlay while guaranteeing the
     # modal's own Stimulus wiring: the `modal` controller and its backdrop/escape
