@@ -36,7 +36,7 @@ module Exports
       rows = sessions.flat_map do |session|
         # N° série repart à 1 pour chaque exercice de la séance (pas un compteur
         # global sur toute la séance), pour rester cohérent avec l'onglet
-        # "Programmes - Séries cibles" et refléter la lecture naturelle.
+        # "Programmes - Séances" et refléter la lecture naturelle.
         set_number = Hash.new(0)
         session.workout_sets.map do |set|
           set_number[set.exercise_id] += 1

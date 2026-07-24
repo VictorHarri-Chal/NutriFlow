@@ -27,7 +27,11 @@ module Exports
       @sheets.each do |sheet|
         workbook.add_worksheet(name: unique_name(sheet[:name], used_names)) do |ws|
           sheet[:tables].each_with_index do |table, index|
-            headers, rows = prune_empty_columns(table[:headers], table[:rows])
+            headers, rows = if table[:prune] == false
+              [table[:headers], table[:rows]]
+            else
+              prune_empty_columns(table[:headers], table[:rows])
+            end
 
             ws.add_row [table[:title]], style: title_style if table[:title].present?
             ws.add_row headers, style: header_style

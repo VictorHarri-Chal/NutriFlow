@@ -17,6 +17,9 @@ module Exports
       # wide single row whose columns dwarf everything below it.
       summary_table = {
         title: nil,
+        # A key/value summary: never prune its Valeur column, even when every KPI
+        # is 0 (empty account), or it would collapse to a lone label column.
+        prune: false,
         headers: ["Indicateur", "Valeur"],
         rows: [
           ["Nb séances musculation", scoped_sessions.size],

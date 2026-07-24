@@ -39,7 +39,9 @@ module Exports
 
     def quantity_label(item)
       qty = item.quantity
-      qty = qty.to_i if qty == qty.to_i
+      # quantity is a BigDecimal — coerce to Integer/Float before interpolation,
+      # otherwise a non-whole value renders in scientific notation ("0.2505e3").
+      qty = qty == qty.to_i ? qty.to_i : qty.to_f
       "#{qty} #{item.unit}".strip
     end
   end
