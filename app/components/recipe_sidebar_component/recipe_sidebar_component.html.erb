@@ -71,9 +71,7 @@
           </p>
           <div class="flex flex-wrap gap-1.5">
             <% allergens.each do |a| %>
-              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-status-warning/10 text-status-warning border border-status-warning/30">
-                <%= helpers.translate_allergen(a) %>
-              </span>
+              <%= render Ui::BadgeComponent.new(helpers.translate_allergen(a), variant: :warning, size: :sm) %>
             <% end %>
           </div>
         </div>
@@ -86,9 +84,7 @@
           </p>
           <div class="flex flex-wrap gap-1.5">
             <% traces.each do |t_item| %>
-              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-surface-hover text-ink-muted border border-surface-border/50">
-                <%= helpers.translate_allergen(t_item) %>
-              </span>
+              <%= render Ui::BadgeComponent.new(helpers.translate_allergen(t_item), variant: :neutral, size: :sm) %>
             <% end %>
           </div>
         </div>

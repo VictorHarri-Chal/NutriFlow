@@ -8,20 +8,17 @@
         <div class="flex items-center flex-wrap gap-2 mt-1.5">
           <% case @food.source
              when :off %>
-            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-brand/10 text-brand border border-brand/30">
-              <i class="fas fa-barcode text-[9px]"></i>
-              <%= t("views.foods.show.source.off") %>
-            </span>
+            <%= render Ui::BadgeComponent.new(
+                  safe_join([tag.i(class: "fas fa-barcode text-[9px]"), t("views.foods.show.source.off")]),
+                  variant: :brand, size: :sm) %>
           <% when :ciqual %>
-            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-status-success/10 text-status-success border border-status-success/30">
-              <i class="fas fa-database text-[9px]"></i>
-              <%= t("views.foods.show.source.ciqual") %>
-            </span>
+            <%= render Ui::BadgeComponent.new(
+                  safe_join([tag.i(class: "fas fa-database text-[9px]"), t("views.foods.show.source.ciqual")]),
+                  variant: :success, size: :sm) %>
           <% else %>
-            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-surface-hover text-ink-subtle border border-surface-border/50">
-              <i class="fas fa-pencil text-[9px]"></i>
-              <%= t("views.foods.show.source.manual") %>
-            </span>
+            <%= render Ui::BadgeComponent.new(
+                  safe_join([tag.i(class: "fas fa-pencil text-[9px]"), t("views.foods.show.source.manual")]),
+                  variant: :neutral, size: :sm) %>
           <% end %>
         </div>
       </div>
