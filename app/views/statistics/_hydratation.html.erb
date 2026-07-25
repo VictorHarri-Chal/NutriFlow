@@ -12,7 +12,7 @@
   <% end %>
 <% else %>
 
-  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-5">
+  <%= render Ui::PanelComponent.new(padding: "px-5 py-5") do %>
     <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-3">
       <%= t("views.statistics.bien_etre.kpi_hydration") %>
     </p>
@@ -27,8 +27,8 @@
         <% end %>
       </div>
       <% if @water_goal_ml.to_i > 0 %>
-        <div class="progress-track h-1.5 mb-1.5">
-          <div class="h-full rounded-full bg-status-info" style="width: <%= @hydration_pct || 0 %>%"></div>
+        <div class="mb-1.5">
+          <%= render Ui::ProgressBarComponent.new(percent: @hydration_pct || 0, color: "bg-status-info", height: "h-1.5") %>
         </div>
         <p class="text-xs text-ink-subtle mb-4">
           <%= t("views.statistics.bien_etre.hydration_goal", goal: number_with_delimiter(@water_goal_ml)) %>
@@ -133,6 +133,6 @@
         </div>
       <% end %>
 
-  </div>
+  <% end %>
 
 <% end %>

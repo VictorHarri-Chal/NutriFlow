@@ -1,7 +1,7 @@
 <%# ── KPI cards ── %>
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
 
-  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+  <%= render Ui::PanelComponent.new(padding: "px-5 py-4") do %>
     <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1 flex items-center gap-1">
       <%= t("views.weight_entries.measurements.stats.waist") %>
       <i class="fas fa-circle-info normal-case text-ink-subtle/60 hover:text-ink-primary transition-colors cursor-default"
@@ -14,9 +14,9 @@
     <% else %>
       <p class="text-2xl font-bold text-ink-subtle">—</p>
     <% end %>
-  </div>
+  <% end %>
 
-  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+  <%= render Ui::PanelComponent.new(padding: "px-5 py-4") do %>
     <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1 flex items-center gap-1">
       <%= t("views.weight_entries.measurements.stats.waist_hip_ratio") %>
       <i class="fas fa-circle-info normal-case text-ink-subtle/60 hover:text-ink-primary transition-colors cursor-default"
@@ -27,9 +27,9 @@
     <% else %>
       <p class="text-2xl font-bold text-ink-subtle">—</p>
     <% end %>
-  </div>
+  <% end %>
 
-  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+  <%= render Ui::PanelComponent.new(padding: "px-5 py-4") do %>
     <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1 flex items-center gap-1">
       <%= t("views.weight_entries.measurements.stats.waist_height_ratio") %>
       <i class="fas fa-circle-info normal-case text-ink-subtle/60 hover:text-ink-primary transition-colors cursor-default"
@@ -40,9 +40,9 @@
     <% else %>
       <p class="text-2xl font-bold text-ink-subtle">—</p>
     <% end %>
-  </div>
+  <% end %>
 
-  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+  <%= render Ui::PanelComponent.new(padding: "px-5 py-4") do %>
     <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1 flex items-center gap-1">
       <%= t("views.weight_entries.measurements.stats.body_fat") %>
       <i class="fas fa-circle-info normal-case text-ink-subtle/60 hover:text-ink-primary transition-colors cursor-default"
@@ -55,12 +55,12 @@
     <% else %>
       <p class="text-2xl font-bold text-ink-subtle">—</p>
     <% end %>
-  </div>
+  <% end %>
 
 </div>
 
 <%# ── Graphique ── %>
-<div class="bg-surface-raised border border-surface-border/40 rounded-2xl p-6">
+<%= render Ui::PanelComponent.new do %>
   <div class="flex items-center justify-between mb-4">
     <h2 class="text-sm font-semibold text-ink-primary flex items-center gap-2">
       <i class="fas fa-ruler text-brand text-sm"></i>
@@ -93,18 +93,18 @@
       </canvas>
     </div>
   <% else %>
-    <div class="flex flex-col items-center justify-center h-48 border border-dashed border-surface-border/50 rounded-xl">
-      <i class="fas fa-ruler text-2xl text-ink-subtle mb-2"></i>
-      <p class="text-sm text-ink-subtle"><%= t("views.weight_entries.measurements.chart.not_enough_data") %></p>
-    </div>
+    <%= render Ui::ChartPlaceholderComponent.new(
+          icon: "fa-ruler",
+          text: t("views.weight_entries.measurements.chart.not_enough_data"),
+          height: "h-48") %>
   <% end %>
-</div>
+<% end %>
 
 <%# ── Saisie + historique ── %>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
 
   <%# Formulaire de saisie %>
-  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl p-6">
+  <%= render Ui::PanelComponent.new do %>
     <h2 class="text-sm font-semibold text-ink-primary mb-4">
       <%= t("views.weight_entries.measurements.form.title") %>
     </h2>
@@ -173,11 +173,10 @@
 
       <%= f.submit t("views.weight_entries.measurements.form.submit"), class: "btn-primary w-full cursor-pointer" %>
     <% end %>
-  </div>
+  <% end %>
 
   <%# Historique %>
-  <div class="md:col-span-2 bg-surface-raised border border-surface-border/40 rounded-2xl p-6 flex flex-col"
-       data-controller="measurement-photo">
+  <%= render Ui::PanelComponent.new(class: "md:col-span-2 flex flex-col", data: { controller: "measurement-photo" }) do %>
     <h2 class="text-sm font-semibold text-ink-primary mb-4"><%= t("views.weight_entries.measurements.history.title") %></h2>
 
     <template data-measurement-photo-target="template">
@@ -261,11 +260,11 @@
         </div>
       <% end %>
     <% else %>
-      <div class="flex-1 min-h-0 flex flex-col items-center justify-center border border-dashed border-surface-border/50 rounded-xl">
-        <i class="fas fa-ruler text-2xl text-ink-subtle mb-2"></i>
-        <p class="text-sm text-ink-subtle"><%= t("views.weight_entries.measurements.history.empty") %></p>
-      </div>
+      <%= render Ui::ChartPlaceholderComponent.new(
+            icon: "fa-ruler",
+            text: t("views.weight_entries.measurements.history.empty"),
+            height: "flex-1 min-h-0") %>
     <% end %>
-  </div>
+  <% end %>
 
 </div>

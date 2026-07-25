@@ -2,7 +2,7 @@
 <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
 
   <%# Poids actuel %>
-  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+  <%= render Ui::PanelComponent.new(padding: "px-5 py-4") do %>
     <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1">
       <%= t("views.weight_entries.stats.current") %>
     </p>
@@ -26,10 +26,10 @@
     <% else %>
       <p class="text-2xl font-bold text-ink-subtle">—</p>
     <% end %>
-  </div>
+  <% end %>
 
   <%# IMC %>
-  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+  <%= render Ui::PanelComponent.new(padding: "px-5 py-4") do %>
     <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1">
       <%= t("views.weight_entries.stats.bmi_label") %>
     </p>
@@ -52,10 +52,10 @@
     <% else %>
       <p class="text-2xl font-bold text-ink-subtle">—</p>
     <% end %>
-  </div>
+  <% end %>
 
   <%# Delta 30j %>
-  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+  <%= render Ui::PanelComponent.new(padding: "px-5 py-4") do %>
     <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1">
       <%= t("views.weight_entries.stats.delta_30d") %>
     </p>
@@ -73,10 +73,10 @@
       <p class="text-2xl font-bold text-ink-subtle">—</p>
       <p class="text-xs text-ink-subtle mt-1"><%= t("views.weight_entries.stats.not_enough_data") %></p>
     <% end %>
-  </div>
+  <% end %>
 
   <%# Delta 90j %>
-  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+  <%= render Ui::PanelComponent.new(padding: "px-5 py-4") do %>
     <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1">
       <%= t("views.weight_entries.stats.delta_90d") %>
     </p>
@@ -94,10 +94,10 @@
       <p class="text-2xl font-bold text-ink-subtle">—</p>
       <p class="text-xs text-ink-subtle mt-1"><%= t("views.weight_entries.stats.not_enough_data") %></p>
     <% end %>
-  </div>
+  <% end %>
 
   <%# Objectif %>
-  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl px-5 py-4">
+  <%= render Ui::PanelComponent.new(padding: "px-5 py-4") do %>
     <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1">
       <%= t("views.weight_entries.stats.goal") %>
     </p>
@@ -116,12 +116,12 @@
         <% end %>
       </p>
     <% end %>
-  </div>
+  <% end %>
 
 </div>
 
 <%# ── Graphique ── %>
-<div class="bg-surface-raised border border-surface-border/40 rounded-2xl p-6">
+<%= render Ui::PanelComponent.new do %>
   <div class="flex items-center justify-between mb-4">
     <h2 class="text-sm font-semibold text-ink-primary flex items-center gap-2">
       <i class="fas fa-chart-line text-brand text-sm"></i>
@@ -154,18 +154,18 @@
       </p>
     <% end %>
   <% else %>
-    <div class="flex flex-col items-center justify-center h-48 border border-dashed border-surface-border/50 rounded-xl">
-      <i class="fas fa-chart-line text-2xl text-ink-subtle mb-2"></i>
-      <p class="text-sm text-ink-subtle"><%= t("views.weight_entries.chart.not_enough_data") %></p>
-    </div>
+    <%= render Ui::ChartPlaceholderComponent.new(
+          icon: "fa-chart-line",
+          text: t("views.weight_entries.chart.not_enough_data"),
+          height: "h-48") %>
   <% end %>
-</div>
+<% end %>
 
 <%# ── Saisie + historique ── %>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
 
   <%# Formulaire de saisie %>
-  <div class="bg-surface-raised border border-surface-border/40 rounded-2xl p-6">
+  <%= render Ui::PanelComponent.new do %>
     <h2 class="text-sm font-semibold text-ink-primary mb-4">
       <%= t("views.weight_entries.form.title") %>
     </h2>
@@ -218,10 +218,10 @@
 
       <%= f.submit t("views.weight_entries.form.submit"), class: "btn-primary w-full cursor-pointer" %>
     <% end %>
-  </div>
+  <% end %>
 
   <%# Historique %>
-  <div class="md:col-span-2 bg-surface-raised border border-surface-border/40 rounded-2xl p-6 flex flex-col">
+  <%= render Ui::PanelComponent.new(class: "md:col-span-2 flex flex-col") do %>
     <h2 class="text-sm font-semibold text-ink-primary mb-4">
       <%= t("views.weight_entries.history.title") %>
     </h2>
@@ -270,11 +270,11 @@
         </div>
       <% end %>
     <% else %>
-      <div class="flex-1 min-h-0 flex flex-col items-center justify-center border border-dashed border-surface-border/50 rounded-xl">
-        <i class="fas fa-weight-scale text-2xl text-ink-subtle mb-2"></i>
-        <p class="text-sm text-ink-subtle"><%= t("views.weight_entries.history.empty") %></p>
-      </div>
+      <%= render Ui::ChartPlaceholderComponent.new(
+            icon: "fa-weight-scale",
+            text: t("views.weight_entries.history.empty"),
+            height: "flex-1 min-h-0") %>
     <% end %>
-  </div>
+  <% end %>
 
 </div>
