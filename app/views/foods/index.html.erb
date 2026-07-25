@@ -91,14 +91,14 @@
       <%# En stock %>
       <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, in_stock: "true", label_id: params[:label_id], category: params[:category], source: params[:source].presence),
             class: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors #{@filtering_in_stock ? 'bg-status-success/10 text-status-success border-status-success/30' : 'bg-surface-hover text-ink-muted border-surface-border hover:border-status-success/30 hover:text-status-success'}" do %>
-        <i class="fas fa-check text-xs"></i>
+        <i class="fas fa-house text-xs"></i>
         <%= t("views.foods.in_stock_filter") %>
       <% end %>
 
       <%# À racheter %>
       <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, out_of_stock: "true", label_id: params[:label_id], category: params[:category], source: params[:source].presence),
             class: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors #{@filtering_out_of_stock ? 'bg-status-danger/10 text-status-danger border-status-danger/30' : 'bg-surface-hover text-ink-muted border-surface-border hover:border-status-danger/30 hover:text-status-danger'}" do %>
-        <i class="fas fa-circle-xmark text-xs"></i>
+        <i class="fas fa-bag-shopping text-xs"></i>
         <%= t("views.foods.out_of_stock_filter") %>
       <% end %>
 
@@ -277,7 +277,7 @@
         <% end %>
       <% end %>
     <% elsif @filtering_in_stock && params[:query].blank? && params[:label_id].blank? %>
-      <%= render Ui::EmptyStateComponent.new(icon: "fa-boxes-stacked", title: t("views.foods.no_in_stock.title"), hint: t("views.foods.no_in_stock.description"), size: :lg) do |c| %>
+      <%= render Ui::EmptyStateComponent.new(icon: "fa-house", title: t("views.foods.no_in_stock.title"), hint: t("views.foods.no_in_stock.description"), size: :lg, icon_color: "text-status-success") do |c| %>
         <% c.with_cta do %>
           <%= link_to foods_path, class: "btn-secondary" do %>
             <i class="fas fa-list"></i>
@@ -286,7 +286,7 @@
         <% end %>
       <% end %>
     <% elsif @filtering_out_of_stock && params[:query].blank? && params[:label_id].blank? %>
-      <%= render Ui::EmptyStateComponent.new(icon: "fa-circle-check", title: t("views.foods.no_out_of_stock.title"), hint: t("views.foods.no_out_of_stock.description"), size: :lg) do |c| %>
+      <%= render Ui::EmptyStateComponent.new(icon: "fa-bag-shopping", title: t("views.foods.no_out_of_stock.title"), hint: t("views.foods.no_out_of_stock.description"), size: :lg, icon_color: "text-status-danger") do |c| %>
         <% c.with_cta do %>
           <%= link_to foods_path, class: "btn-secondary" do %>
             <i class="fas fa-list"></i>

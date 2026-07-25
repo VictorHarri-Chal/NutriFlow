@@ -106,7 +106,7 @@
             title: food.in_pantry? ? t("views.foods.pantry_in_stock") : t("views.foods.pantry_out_of_stock"),
             form: { class: "contents" },
             class: "inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors #{food.in_pantry? ? 'text-status-success hover:text-status-success/70 hover:bg-status-success/10' : 'text-ink-subtle/40 hover:text-status-success hover:bg-status-success/10'}" do %>
-        <i class="fas <%= food.in_pantry? ? 'fa-circle-check' : 'fa-circle-xmark' %> text-sm"></i>
+        <i class="fas <%= food.in_pantry? ? 'fa-house' : 'fa-bag-shopping' %> text-sm"></i>
       <% end %>
 
     </div>
