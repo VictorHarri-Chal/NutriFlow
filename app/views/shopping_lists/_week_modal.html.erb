@@ -53,16 +53,18 @@
       <% end %>
     <% end %>
 
-    <% m.with_footer do %>
-      <div class="flex items-center justify-between gap-3">
-        <span class="text-xs text-ink-muted" data-week-shopping-selection-target="counter"></span>
-        <button type="submit"
-                class="btn-primary text-sm <%= 'hidden' if candidates.empty? %>"
-                data-week-shopping-selection-target="submitButton">
-          <i class="fas fa-plus text-xs"></i>
-          <%= t("views.shopping_lists.week_generation.submit") %>
-        </button>
-      </div>
+    <% if candidates.any? %>
+      <% m.with_footer do %>
+        <div class="flex items-center justify-between gap-3">
+          <span class="text-xs text-ink-muted" data-week-shopping-selection-target="counter"></span>
+          <button type="submit"
+                  class="btn-primary text-sm"
+                  data-week-shopping-selection-target="submitButton">
+            <i class="fas fa-plus text-xs"></i>
+            <%= t("views.shopping_lists.week_generation.submit") %>
+          </button>
+        </div>
+      <% end %>
     <% end %>
   <% end %>
 <% end %>
