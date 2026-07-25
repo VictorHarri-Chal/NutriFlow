@@ -228,32 +228,29 @@
 
     <!-- ── Grille d'exercices ── -->
     <% if @exercises.empty? %>
-    <div class="text-center py-16 border-2 border-dashed border-surface-border/50 rounded-xl bg-surface-base">
-      <div class="w-14 h-14 mx-auto mb-3 bg-surface-raised rounded-full flex items-center justify-center border border-surface-border/40">
-        <i class="fas fa-dumbbell text-brand text-xl"></i>
-      </div>
       <% if params[:source] == "custom" %>
-        <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.exercises.custom.empty.title") %></h3>
-        <p class="text-ink-muted"><%= t("views.exercises.custom.empty.description") %></p>
+        <%= render Ui::EmptyStateComponent.new(icon: "fa-dumbbell", title: t("views.exercises.custom.empty.title"), hint: t("views.exercises.custom.empty.description"), size: :lg) %>
       <% elsif params[:source] == "favorites" %>
-        <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.exercises.favorites_empty.title") %></h3>
-        <p class="text-ink-muted mb-4"><%= t("views.exercises.favorites_empty.description") %></p>
-        <%= link_to exercises_path, class: "btn-secondary" do %>
-          <i class="fas fa-list"></i>
-          <%= t("views.exercises.favorites_empty.see_all") %>
+        <%= render Ui::EmptyStateComponent.new(icon: "fa-dumbbell", title: t("views.exercises.favorites_empty.title"), hint: t("views.exercises.favorites_empty.description"), size: :lg) do |c| %>
+          <% c.with_cta do %>
+            <%= link_to exercises_path, class: "btn-secondary" do %>
+              <i class="fas fa-list"></i>
+              <%= t("views.exercises.favorites_empty.see_all") %>
+            <% end %>
+          <% end %>
         <% end %>
       <% elsif has_filters %>
-        <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.exercises.no_results.title") %></h3>
-        <p class="text-ink-muted mb-4"><%= t("views.exercises.no_results.description") %></p>
-        <%= link_to exercises_path, class: "btn-secondary" do %>
-          <i class="fas fa-times"></i>
-          <%= t("views.exercises.no_results.clear") %>
+        <%= render Ui::EmptyStateComponent.new(icon: "fa-dumbbell", title: t("views.exercises.no_results.title"), hint: t("views.exercises.no_results.description"), size: :lg) do |c| %>
+          <% c.with_cta do %>
+            <%= link_to exercises_path, class: "btn-secondary" do %>
+              <i class="fas fa-times"></i>
+              <%= t("views.exercises.no_results.clear") %>
+            <% end %>
+          <% end %>
         <% end %>
       <% else %>
-        <h3 class="text-lg font-semibold text-ink-primary mb-2"><%= t("views.exercises.empty_state.title") %></h3>
-        <p class="text-ink-muted"><%= t("views.exercises.empty_state.description") %></p>
+        <%= render Ui::EmptyStateComponent.new(icon: "fa-dumbbell", title: t("views.exercises.empty_state.title"), hint: t("views.exercises.empty_state.description"), size: :lg) %>
       <% end %>
-    </div>
 
   <% else %>
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">

@@ -267,62 +267,53 @@
 
   <!-- Tableau des aliments ou empty state -->
   <% if @foods.empty? %>
-    <div class="text-center py-12 border-2 border-dashed border-surface-border/50 rounded-xl bg-surface-base">
-      <div class="w-14 h-14 mx-auto mb-3 bg-surface-raised rounded-full flex items-center justify-center border border-surface-border/40">
-        <% if @filtering_favorites && params[:query].blank? && params[:label_id].blank? %>
-          <i class="fas fa-star text-amber-400 text-xl"></i>
-        <% elsif @filtering_in_stock && params[:query].blank? && params[:label_id].blank? %>
-          <i class="fas fa-boxes-stacked text-status-success text-xl"></i>
-        <% elsif @filtering_out_of_stock && params[:query].blank? && params[:label_id].blank? %>
-          <i class="fas fa-circle-check text-status-success text-xl"></i>
-        <% else %>
-          <i class="fas fa-utensils text-brand text-xl"></i>
-        <% end %>
-      </div>
-      <% if @filtering_favorites && params[:query].blank? && params[:label_id].blank? %>
-        <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.foods.no_favorites.title") %></h3>
-        <p class="text-ink-muted mb-4"><%= t("views.foods.no_favorites.description") %></p>
-        <%= link_to foods_path, class: "btn-secondary" do %>
-          <i class="fas fa-list"></i>
-          <%= t("views.foods.no_favorites.see_all") %>
-        <% end %>
-      <% elsif @filtering_in_stock && params[:query].blank? && params[:label_id].blank? %>
-        <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.foods.no_in_stock.title") %></h3>
-        <p class="text-ink-muted mb-4"><%= t("views.foods.no_in_stock.description") %></p>
-        <%= link_to foods_path, class: "btn-secondary" do %>
-          <i class="fas fa-list"></i>
-          <%= t("views.foods.no_in_stock.see_all") %>
-        <% end %>
-      <% elsif @filtering_out_of_stock && params[:query].blank? && params[:label_id].blank? %>
-        <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.foods.no_out_of_stock.title") %></h3>
-        <p class="text-ink-muted mb-4"><%= t("views.foods.no_out_of_stock.description") %></p>
-        <%= link_to foods_path, class: "btn-secondary" do %>
-          <i class="fas fa-list"></i>
-          <%= t("views.foods.no_out_of_stock.see_all") %>
-        <% end %>
-      <% elsif params[:query].present? || params[:q]&.except(:s)&.values&.any?(&:present?) || params[:label_id].present? || @filtering_favorites || @filtering_in_stock || @filtering_out_of_stock %>
-        <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.foods.no_results.title") %></h3>
-        <% search_term = params[:query].presence || params.dig(:q, :name_cont).presence %>
-        <p class="text-ink-muted mb-4">
-          <% if search_term %>
-            <%= t("views.foods.no_results.description", query: search_term) %>
-          <% else %>
-            <%= t("views.foods.no_results.no_match") %>
+    <% if @filtering_favorites && params[:query].blank? && params[:label_id].blank? %>
+      <%= render Ui::EmptyStateComponent.new(icon: "fa-star", title: t("views.foods.no_favorites.title"), hint: t("views.foods.no_favorites.description"), size: :lg) do |c| %>
+        <% c.with_cta do %>
+          <%= link_to foods_path, class: "btn-secondary" do %>
+            <i class="fas fa-list"></i>
+            <%= t("views.foods.no_favorites.see_all") %>
           <% end %>
-        </p>
-        <%= link_to foods_path, class: "btn-secondary" do %>
-          <i class="fas fa-times"></i>
-          <%= t("views.foods.no_results.clear") %>
-        <% end %>
-      <% else %>
-        <h3 class="text-lg font-semibold text-ink-primary mb-1"><%= t("views.foods.empty_state.title") %></h3>
-        <p class="text-ink-muted mb-4"><%= t("views.foods.empty_state.description") %></p>
-        <%= link_to new_food_path, class: "btn-primary", data: { turbo_frame: "_top" } do %>
-          <i class="fas fa-plus"></i>
-          <%= t("views.foods.empty_state.cta") %>
         <% end %>
       <% end %>
-    </div>
+    <% elsif @filtering_in_stock && params[:query].blank? && params[:label_id].blank? %>
+      <%= render Ui::EmptyStateComponent.new(icon: "fa-boxes-stacked", title: t("views.foods.no_in_stock.title"), hint: t("views.foods.no_in_stock.description"), size: :lg) do |c| %>
+        <% c.with_cta do %>
+          <%= link_to foods_path, class: "btn-secondary" do %>
+            <i class="fas fa-list"></i>
+            <%= t("views.foods.no_in_stock.see_all") %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% elsif @filtering_out_of_stock && params[:query].blank? && params[:label_id].blank? %>
+      <%= render Ui::EmptyStateComponent.new(icon: "fa-circle-check", title: t("views.foods.no_out_of_stock.title"), hint: t("views.foods.no_out_of_stock.description"), size: :lg) do |c| %>
+        <% c.with_cta do %>
+          <%= link_to foods_path, class: "btn-secondary" do %>
+            <i class="fas fa-list"></i>
+            <%= t("views.foods.no_out_of_stock.see_all") %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% elsif params[:query].present? || params[:q]&.except(:s)&.values&.any?(&:present?) || params[:label_id].present? || @filtering_favorites || @filtering_in_stock || @filtering_out_of_stock %>
+      <% search_term = params[:query].presence || params.dig(:q, :name_cont).presence %>
+      <%= render Ui::EmptyStateComponent.new(icon: "fa-utensils", title: t("views.foods.no_results.title"), hint: (search_term ? t("views.foods.no_results.description", query: search_term) : t("views.foods.no_results.no_match")), size: :lg) do |c| %>
+        <% c.with_cta do %>
+          <%= link_to foods_path, class: "btn-secondary" do %>
+            <i class="fas fa-times"></i>
+            <%= t("views.foods.no_results.clear") %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <%= render Ui::EmptyStateComponent.new(icon: "fa-utensils", title: t("views.foods.empty_state.title"), hint: t("views.foods.empty_state.description"), size: :lg) do |c| %>
+        <% c.with_cta do %>
+          <%= link_to new_food_path, class: "btn-primary", data: { turbo_frame: "_top" } do %>
+            <i class="fas fa-plus"></i>
+            <%= t("views.foods.empty_state.cta") %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
   <% else %>
     <div class="bg-surface-base rounded-lg border border-surface-border/40">
       <div class="overflow-x-auto rounded-lg">

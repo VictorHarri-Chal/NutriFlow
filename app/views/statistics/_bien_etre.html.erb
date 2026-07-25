@@ -2,10 +2,15 @@
 <% has_wellbeing_data = @avg_energy || @avg_mood || @avg_sleep %>
 
 <% if !has_wellbeing_data && !@avg_steps %>
-  <%= render "statistics/empty_state",
+  <%= render Ui::EmptyStateComponent.new(
         icon:  "fa-heart-pulse",
         title: t("views.statistics.bien_etre.no_data_title", period: period_label),
-        hint:  t("views.statistics.bien_etre.no_data_hint") %>
+        hint:  t("views.statistics.bien_etre.no_data_hint"),
+        size:  :lg) do |c| %>
+    <% c.with_cta do %>
+      <%= link_to t("views.statistics.go_to_calendar"), root_path, class: "btn-secondary text-xs px-4 py-2" %>
+    <% end %>
+  <% end %>
 
 <% else %>
 

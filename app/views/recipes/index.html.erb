@@ -109,46 +109,43 @@
         </div>
       <% end %>
     <% else %>
-      <div class="text-center py-12 border-2 border-dashed border-surface-border/50 rounded-xl bg-surface-base">
-        <div class="w-14 h-14 mx-auto mb-3 bg-surface-raised rounded-full flex items-center justify-center border border-surface-border/40">
-          <% if @source == "favorites" %>
-            <i class="fas fa-star text-amber-400/60 text-xl"></i>
-          <% elsif params[:query].present? %>
-            <i class="fas fa-search text-ink-subtle text-xl"></i>
-          <% else %>
-            <i class="fas fa-bowl-food text-brand text-xl"></i>
-          <% end %>
-        </div>
-        <h3 class="text-lg font-semibold text-ink-primary mb-1">
-          <% if params[:query].present? %>
-            <%= t("views.recipes.no_results") %>
-          <% elsif @source == "favorites" %>
-            <%= t("views.recipes.no_favorites") %>
-          <% else %>
-            <%= t("views.recipes.no_recipes") %>
-          <% end %>
-        </h3>
-        <p class="text-ink-muted mb-4">
-          <% if params[:query].present? %>
-            <%= t("views.recipes.no_results_for", query: params[:query]) %>
-          <% elsif @source == "favorites" %>
-            <%= t("views.recipes.no_favorites_hint") %>
-          <% else %>
-            <%= t("views.recipes.create_first") %>
-          <% end %>
-        </p>
+      <%
+        if @source == "favorites"
+          empty_icon = "fa-star"
+        elsif params[:query].present?
+          empty_icon = "fa-search"
+        else
+          empty_icon = "fa-bowl-food"
+        end
+
+        if params[:query].present?
+          empty_title = t("views.recipes.no_results")
+          empty_hint  = t("views.recipes.no_results_for", query: params[:query])
+        elsif @source == "favorites"
+          empty_title = t("views.recipes.no_favorites")
+          empty_hint  = t("views.recipes.no_favorites_hint")
+        else
+          empty_title = t("views.recipes.no_recipes")
+          empty_hint  = t("views.recipes.create_first")
+        end
+      %>
+      <%= render Ui::EmptyStateComponent.new(icon: empty_icon, title: empty_title, hint: empty_hint, size: :lg) do |c| %>
         <% if @source == "favorites" %>
-          <%= link_to recipes_path, class: "btn-secondary" do %>
-            <i class="fas fa-list"></i>
-            <%= t("views.recipes.no_favorites_see_all") %>
+          <% c.with_cta do %>
+            <%= link_to recipes_path, class: "btn-secondary" do %>
+              <i class="fas fa-list"></i>
+              <%= t("views.recipes.no_favorites_see_all") %>
+            <% end %>
           <% end %>
         <% elsif !params[:query].present? %>
-          <%= link_to new_recipe_path, class: "btn-primary", data: { turbo_frame: "_top" } do %>
-            <i class="fas fa-plus"></i>
-            <%= t("views.recipes.new_recipe") %>
+          <% c.with_cta do %>
+            <%= link_to new_recipe_path, class: "btn-primary", data: { turbo_frame: "_top" } do %>
+              <i class="fas fa-plus"></i>
+              <%= t("views.recipes.new_recipe") %>
+            <% end %>
           <% end %>
         <% end %>
-      </div>
+      <% end %>
     <% end %>
   <% end %> <%# /turbo_frame_tag recipes_results %>
 </div>

@@ -1,10 +1,15 @@
 <% period_label = t("views.statistics.period_labels.#{@period}") %>
 
 <% if @session_count == 0 %>
-  <%= render "statistics/empty_state",
+  <%= render Ui::EmptyStateComponent.new(
         icon:  "fa-dumbbell",
         title: t("views.statistics.training.no_data_title", period: period_label),
-        hint:  t("views.statistics.training.no_data_hint") %>
+        hint:  t("views.statistics.training.no_data_hint"),
+        size:  :lg) do |c| %>
+    <% c.with_cta do %>
+      <%= link_to t("views.statistics.go_to_calendar"), root_path, class: "btn-secondary text-xs px-4 py-2" %>
+    <% end %>
+  <% end %>
 
 <% else %>
 
