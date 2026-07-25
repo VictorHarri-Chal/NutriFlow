@@ -124,14 +124,14 @@
     <% end %>
 
     <% m.with_footer do %>
-      <div class="flex justify-end gap-2">
-        <button type="button" class="btn-secondary" data-action="click->modal#close">
+      <div class="flex items-center gap-3">
+        <button type="button" class="btn-secondary text-sm flex-1" data-action="click->modal#close">
           <%= t("views.workout_sets.set_editor.cancel_btn") %>
         </button>
         <button type="submit"
                 data-nested-form-target="submitButton"
                 <%= "disabled" if pe.program_exercise_sets.empty? %>
-                class="btn-primary disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-brand disabled:shadow-none">
+                class="btn-primary text-sm flex-1 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-brand disabled:shadow-none">
           <%= t("views.workout_sets.set_editor.save_btn") %>
         </button>
       </div>

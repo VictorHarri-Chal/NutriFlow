@@ -95,15 +95,15 @@
       </div>
     </div>
 
-    <div class="flex items-center justify-end gap-2 px-5 py-4 border-t border-surface-border/40 flex-shrink-0">
-      <button type="button" class="btn-secondary" data-action="click->day-recipe-customize#cancel">
+    <div class="flex items-center gap-3 px-5 py-4 border-t border-surface-border/40 flex-shrink-0">
+      <button type="button" class="btn-secondary text-sm flex-1" data-action="click->day-recipe-customize#cancel">
         <%= t("shared.cancel") %>
       </button>
       <button type="button"
               data-day-recipe-customize-target="confirmButton"
               disabled
               data-action="click->ingredient-rows#guardConfirm click->day-recipe-customize#confirm"
-              class="btn-primary disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-brand disabled:shadow-none">
+              class="btn-primary text-sm flex-1 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-brand disabled:shadow-none">
         <%= t("views.day_recipes.form.customize_confirm") %>
       </button>
     </div>

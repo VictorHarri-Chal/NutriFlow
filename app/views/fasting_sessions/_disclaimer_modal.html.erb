@@ -18,15 +18,15 @@
   <% end %>
 
   <% m.with_footer do %>
-    <div class="flex items-center gap-2">
-      <button type="button" class="btn-secondary flex-1" data-action="click->modal#close">
+    <div class="flex items-center gap-3">
+      <button type="button" class="btn-secondary text-sm flex-1" data-action="click->modal#close">
         <%= t("views.fasting_sessions.disclaimer.cancel") %>
       </button>
       <%= button_to fasting_sessions_path,
             params: { protocol: protocol, acknowledge_disclaimer: "1" },
             method: :post,
             form: { class: "contents" },
-            class: "btn-primary flex-1" do %>
+            class: "btn-primary text-sm flex-1" do %>
         <%= t("views.fasting_sessions.disclaimer.acknowledge") %>
       <% end %>
     </div>

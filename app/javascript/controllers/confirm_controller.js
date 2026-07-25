@@ -187,15 +187,15 @@ export default class extends Controller {
                    data-action="keydown.enter->confirm#confirm">
           </div>
 
-          <div class="flex items-center justify-end gap-2 pt-3 border-t border-surface-border/40">
+          <div class="flex items-center gap-3 pt-3 border-t border-surface-border/40">
             <button type="button"
-                    class="btn-ghost text-sm"
+                    class="btn-secondary text-sm flex-1"
                     data-action="click->confirm#hide"
                     data-confirm-target="cancelButton">
               ${this.cancelLabelValue}
             </button>
             <button type="button"
-                    class="btn-danger text-sm"
+                    class="btn-danger text-sm flex-1"
                     data-action="click->confirm#confirm"
                     data-confirm-target="confirmButton">
               ${this.confirmLabelValue}
