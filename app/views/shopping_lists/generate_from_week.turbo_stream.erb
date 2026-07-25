@@ -5,7 +5,7 @@
 <%= turbo_stream.prepend "flash_messages" do %>
   <div class="pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl bg-status-success/15 border border-status-success/40 shadow-lg text-sm text-status-success max-w-sm"
        data-controller="auto-dismiss">
-    <i class="fas fa-check-circle text-base shrink-0"></i>
+    <i class="fas fa-circle-check text-base shrink-0"></i>
     <span><%= t("views.shopping_lists.items_added", count: @added_count) %></span>
   </div>
 <% end %>

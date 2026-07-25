@@ -17,7 +17,7 @@
                   variant: :success, size: :sm) %>
           <% else %>
             <%= render Ui::BadgeComponent.new(
-                  safe_join([tag.i(class: "fas fa-pencil text-[9px]"), t("views.foods.show.source.manual")]),
+                  safe_join([tag.i(class: "fas fa-pen text-[9px]"), t("views.foods.show.source.manual")]),
                   variant: :neutral, size: :sm) %>
           <% end %>
         </div>
@@ -31,7 +31,7 @@
         <button type="button"
                 class="w-8 h-8 flex items-center justify-center rounded-lg text-ink-subtle hover:text-ink-primary hover:bg-surface-hover transition-colors"
                 data-action="click->food-detail-panel#close">
-          <i class="fas fa-xmark text-sm"></i>
+          <i class="fas fa-times text-sm"></i>
         </button>
       </div>
     </div>

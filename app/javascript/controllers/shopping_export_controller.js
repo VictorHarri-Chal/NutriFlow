@@ -111,7 +111,7 @@ export default class extends Controller {
     const colorClass = isSuccess
       ? "bg-status-success/15 border-status-success/40 text-status-success"
       : "bg-status-danger/15 border-status-danger/40 text-status-danger"
-    const icon = isSuccess ? "fa-check-circle" : "fa-circle-exclamation"
+    const icon = isSuccess ? "fa-circle-check" : "fa-circle-exclamation"
 
     const el = document.createElement("div")
     el.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl ${colorClass} border shadow-lg text-sm max-w-sm`

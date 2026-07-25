@@ -10,7 +10,7 @@ export default class extends Controller {
   update() {
     const file = this.inputTarget.files[0]
 
-    this.iconTarget.classList.toggle("fa-xmark", !file)
+    this.iconTarget.classList.toggle("fa-times", !file)
     this.iconTarget.classList.toggle("text-ink-subtle", !file)
     this.iconTarget.classList.toggle("fa-check", !!file)
     this.iconTarget.classList.toggle("text-status-success", !!file)
