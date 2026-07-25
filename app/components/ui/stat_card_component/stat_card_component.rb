@@ -1,22 +1,16 @@
 module Ui
   class StatCardComponent < ApplicationComponent
+    # Optional third line under the value (e.g. a goal-comparison with a
+    # conditional colour). Omit it for a plain label + value card.
+    renders_one :sub
+
     def initialize(label:, value:, unit: nil, value_color: "text-ink-primary")
-      @label = label; @value = value; @unit = unit; @value_color = value_color
+      @label = label
+      @value = value
+      @unit = unit
+      @value_color = value_color
     end
 
-    def call
-      render(Ui::PanelComponent.new(padding: "px-5 py-5")) do
-        safe_join([
-          tag.p(@label, class: "text-xs font-medium text-ink-subtle uppercase tracking-wider mb-2"),
-          tag.p(safe_join([@value, unit_tag].compact), class: "text-2xl font-bold #{@value_color}")
-        ])
-      end
-    end
-
-    private
-
-    def unit_tag
-      @unit ? tag.span(" #{@unit}", class: "text-xs font-normal text-ink-subtle") : nil
-    end
+    attr_reader :label, :value, :unit, :value_color
   end
 end

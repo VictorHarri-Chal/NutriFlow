@@ -1,0 +1,7 @@
+<%= render Ui::PanelComponent.new(padding: "px-5 py-5") do %>
+  <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-2"><%= label %></p>
+  <p class="text-2xl font-bold <%= value_color %>">
+    <%= value %><% if unit %><span class="text-xs font-normal text-ink-subtle ml-0.5"><%= unit %></span><% end %>
+  </p>
+  <% if sub? %><%= sub %><% end %>
+<% end %>
