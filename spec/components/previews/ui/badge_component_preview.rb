@@ -1,8 +1,9 @@
 module Ui
   class BadgeComponentPreview < ViewComponent::Preview
     # @param variant select { choices: [brand, success, warning, danger, info, neutral] }
-    def status(variant: :success)
-      render Ui::BadgeComponent.new("Statut", variant: variant.to_sym)
+    # @param size select { choices: [md, sm] }
+    def status(variant: :success, size: :md)
+      render Ui::BadgeComponent.new("Statut", variant: variant.to_sym, size: size.to_sym)
     end
 
     # @param active toggle
