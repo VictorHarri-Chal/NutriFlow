@@ -452,7 +452,6 @@ Reusable UI components live in `app/components/ui/` (namespace `Ui::`). **Always
 | `Ui::ModalComponent` | modal dialogs (wraps the `modal` Stimulus controller) | `title:`, `subtitle:`, `icon:`, `max_width:` (sm/md/lg/xl), `max_height:` (sm/md/lg), `body_padding:`, `body_layout:` (block/flex), `data:` (extra controllers/actions merged onto root); slots `body`, `footer`, `title_accessory` |
 | `Ui::CustomSelectComponent` | custom dropdown select (wraps `custom-select`) | `name:`, `choices:`, `selected:` |
 | `Ui::CollapsibleWidgetComponent` | collapsible calendar-style widget (wraps `collapsible`) | `title:`, `storage_key:`, `force_open:`; slots `content_body`, `header_action` |
-| `Ui::FieldComponent` | label + input + hint + inline errors | `name:`, `label:`, `type:`, `value:`, `hint:`, `errors:` |
 | `Ui::IconCircleComponent` | icon inside a circle (avatar-like) | `icon:`, `size:`, `bg:`, `color:` |
 | `Ui::ProgressBarComponent` | progress bar (wraps `.progress-track`) | `percent:`, `color:`, `height:` |
 
@@ -462,6 +461,7 @@ Reusable UI components live in `app/components/ui/` (namespace `Ui::`). **Always
 - **Favorite accent** → `text-star` / `bg-star` / `border-star` token, never raw `amber-400`.
 - **Design tokens** (added in this refactor) → `rounded-control` (inputs/buttons), `rounded-card` (cards), `rounded-panel` (panels/modals); `shadow-card`, `shadow-modal`; `star` color. Never `rounded-lg/xl/2xl` on a library component.
 - **Chart colours in JS** → import from `app/javascript/chart_palette.js` (single source), never hardcode hex.
+- **Form fields** → use **simple_form** (`f.input`, the app's field abstraction: label + input + hint + error + required, all automatic) or a plain form-builder field + `.input-dark` / `.label-dark`. There is deliberately **no** dedicated field ViewComponent (simple_form already fills that role; a name-based component would regress it).
 
 **Intentionally NOT componentized — do not try to force these into a `Ui::` component:**
 - **Filter / sort pills** (`foods/index`, `recipes/index`) — specialized filter links (query-param hrefs + per-filter semantic active colours).
