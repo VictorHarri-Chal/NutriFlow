@@ -18,15 +18,15 @@
   <% end %>
 
   <% m.with_footer do %>
-    <div class="flex items-center justify-between gap-2">
+    <div class="flex items-center gap-2">
       <%= delete_link_with_confirm(
             force_destroy_food_path(food),
             confirm: t("views.foods.delete_blocked.force_delete_confirm", name: food.name),
-            class: "btn-danger text-sm",
+            class: "btn-danger text-sm flex-1",
             text: t("views.foods.delete_blocked.force_delete"),
             title: t("views.foods.delete_blocked.force_delete")
           ) %>
-      <button type="button" class="btn-primary" data-action="click->modal#close">
+      <button type="button" class="btn-primary text-sm flex-1" data-action="click->modal#close">
         <%= t("views.foods.delete_blocked.confirm") %>
       </button>
     </div>
