@@ -9,7 +9,7 @@
         id: "recipe_show_fav_btn_#{@recipe.id}",
         data: { turbo_method: :patch },
         aria: { label: @recipe.favorite? ? t("views.recipes.favorites.remove") : t("views.recipes.favorites.add") },
-        class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border transition-colors focus:outline-none #{ @recipe.favorite? ? 'text-ink-subtle border-surface-border/40 bg-surface-raised hover:text-ink-primary hover:border-surface-border' : 'text-amber-400 border-amber-400/40 bg-amber-400/10 hover:bg-amber-400/15' }" do %>
+        class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border transition-colors focus:outline-none #{ @recipe.favorite? ? 'text-ink-subtle border-surface-border/40 bg-surface-raised hover:text-ink-primary hover:border-surface-border' : 'text-star border-star/40 bg-star/10 hover:bg-star/15' }" do %>
     <i class="<%= @recipe.favorite? ? 'fas' : 'far' %> fa-star text-xs"></i>
     <%= @recipe.favorite? ? t("views.recipes.favorites.remove") : t("views.recipes.favorites.add") %>
   <% end %>

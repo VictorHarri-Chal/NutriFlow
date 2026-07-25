@@ -83,7 +83,7 @@
 
       <%# Favoris %>
       <%= link_to foods_path(query: params[:query], q: params[:q]&.to_unsafe_h, sort_usages: params[:sort_usages].presence, favorites: "true", label_id: params[:label_id], category: params[:category], source: params[:source].presence),
-            class: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors #{@filtering_favorites ? 'bg-amber-400/15 text-amber-400 border-amber-400/40' : 'bg-surface-hover text-ink-muted border-surface-border hover:border-amber-400/30 hover:text-amber-400'}" do %>
+            class: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors #{@filtering_favorites ? 'bg-star/15 text-star border-star/40' : 'bg-surface-hover text-ink-muted border-surface-border hover:border-star/30 hover:text-star'}" do %>
         <i class="fas fa-star text-xs"></i>
         <%= t("views.foods.favorites_filter") %>
       <% end %>

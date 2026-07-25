@@ -16,7 +16,7 @@
               <%= t("views.components.recipe_card.ingredient_count", count: recipe.recipe_items.size) %>
               <% if user_rating > 0 %>
                 <span class="text-ink-subtle/40">·</span>
-                <i class="fas fa-star text-amber-400/60 text-[10px]"></i>
+                <i class="fas fa-star text-star/60 text-[10px]"></i>
                 <span><%= user_rating %>/5</span>
               <% end %>
             </div>
