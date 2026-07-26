@@ -32,7 +32,7 @@ export default class extends Controller {
       pointRadius: 2,
       pointHoverRadius: 5,
       pointBackgroundColor: color,
-      pointBorderColor: "#18181B",
+      pointBorderColor: PALETTE.surface.base,
       pointBorderWidth: 1,
       borderWidth: 1.5,
       spanGaps: false,

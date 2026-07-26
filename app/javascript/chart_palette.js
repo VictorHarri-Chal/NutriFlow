@@ -3,7 +3,7 @@
 export const PALETTE = {
   brand:   '#EAB308',
   ink:     { primary: '#F4F4F5', muted: '#A1A1AA', subtle: '#71717A' },
-  surface: { raised: '#27272A', border: 'rgba(82,82,91,0.4)' },
+  surface: { base: '#18181B', raised: '#27272A', border: 'rgba(82,82,91,0.4)' },
   macro:   { calories: '#60A5FA', proteins: '#34D399', carbs: '#FBBF24', fats: '#F87171', sugars: '#C084FC' },
   status:  { success: '#22C55E', warning: '#F59E0B', danger: '#EF4444', info: '#3B82F6' },
 }
