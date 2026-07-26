@@ -20,7 +20,7 @@ module Ui
       if @href
         link_to(@href, class: merged_class, aria: merged_aria, data: merged_data, **@options) { inner }
       else
-        tag.button(inner, type: @type, class: merged_class, aria: merged_aria, **@options)
+        tag.button(inner, type: @type, class: merged_class, aria: merged_aria, data: merged_data, **@options)
       end
     end
 
