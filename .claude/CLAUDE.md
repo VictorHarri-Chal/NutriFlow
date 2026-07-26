@@ -447,8 +447,9 @@ Reusable UI components live in `app/components/ui/` (namespace `Ui::`). **Always
 | `Ui::ButtonComponent` | buttons, icon-buttons, CTAs (renders `<button>` or `<a>`) | `label:`, `variant:` (primary/secondary/danger/ghost), `size:` (sm/md/lg), `icon:` (ui_icon key), `href:`, `method:`, `aria_label:` |
 | `Ui::BadgeComponent` | non-interactive status labels + simple pills | `label`, `variant:` (brand/success/warning/danger/info/neutral), `style:` (badge/pill), `size:` (sm/md), `active:`, `icon:` |
 | `Ui::EmptyStateComponent` | empty / zero-data states (dashed box, circle icon, title, hint, CTA) | `icon:` (raw glyph), `title:`, `hint:`, `size:` (lg/md/sm), `icon_color:` (default `text-brand`; pass a status color for semantic states), `cta` slot |
-| `Ui::PanelComponent` | `bg-surface-raised rounded-panel` container (the stat-panel look, distinct from `.card`) | `padding:` |
-| `Ui::StatCardComponent` | KPI block (label + big value + unit) | `label:`, `value:`, `unit:`, `value_color:` |
+| `Ui::ChartPlaceholderComponent` | "not enough data" box for a chart slot (dashed, bare icon, 1-2 muted lines; distinct from EmptyState) | `icon:` (raw glyph), `text:`, `subtext:`, `height:` (e.g. `"h-40"`, `"py-10"`, `"flex-1 min-h-0"`) |
+| `Ui::PanelComponent` | `bg-surface-raised rounded-panel` container (the stat-panel look, distinct from `.card`) | `padding:`, `class:` (appended) |
+| `Ui::StatCardComponent` | KPI block (label + big value + unit + optional 3rd line) | `label:`, `value:`, `unit:`, `value_color:`; `sub` slot (3rd line) |
 | `Ui::ModalComponent` | modal dialogs (wraps the `modal` Stimulus controller) | `title:`, `subtitle:`, `icon:`, `max_width:` (sm/md/lg/xl), `max_height:` (sm/md/lg), `body_padding:`, `body_layout:` (block/flex), `data:` (extra controllers/actions merged onto root); slots `body`, `footer`, `title_accessory` |
 | `Ui::CustomSelectComponent` | custom dropdown select (wraps `custom-select`) | `name:`, `choices:`, `selected:` |
 | `Ui::CollapsibleWidgetComponent` | collapsible calendar-style widget (wraps `collapsible`) | `title:`, `storage_key:`, `force_open:`; slots `content_body`, `header_action` |
@@ -468,8 +469,9 @@ Reusable UI components live in `app/components/ui/` (namespace `Ui::`). **Always
 - **Nested-form empty placeholders** (`data-nested-form-target="emptyState"`) — JS-toggled form-item placeholders, not page empty states.
 - **Confirmation dialogs** — generated in JS by `confirm_controller.js` (future `ConfirmModal` candidate).
 - **Bottom-sheets** (`calendars/index` FAB, `workout_programs/_tension_balance_panel`) — future `BottomSheetComponent` candidate.
-- **Chart placeholders** (statistics: bare icon + one text line + fixed height, no circle) — a distinct pattern from `EmptyStateComponent`; future `ChartPlaceholderComponent`.
 - **Landing page** (`home/index.html.erb`) — deliberate public-marketing exception, outside the app design system.
+
+**Chart colours (Chart.js controllers):** import `{ PALETTE } from "chart_palette"` (pinned in `importmap.rb`) and reference `PALETTE.brand` / `PALETTE.macro.*` / `PALETTE.ink.*` / `PALETTE.surface.*` / `PALETTE.status.*`. It mirrors the design tokens — the single source for chart colours. Custom-alpha fills (e.g. `rgba(234,179,8,0.08)`) that aren't a token stay inline. (ERB `data-*-color-value` hex passed to charts are not yet centralized — a Ruby-side palette would be needed.)
 
 ---
 
