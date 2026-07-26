@@ -1,8 +1,8 @@
 module ExercisesHelper
   DIFFICULTY_CLASSES = {
-    "beginner"     => "bg-green-500/15 text-green-400 border border-green-500/25",
-    "intermediate" => "bg-amber-500/15 text-amber-400 border border-amber-500/25",
-    "advanced"     => "bg-red-500/15 text-red-400 border border-red-500/25",
+    "beginner"     => "bg-status-success/15 text-status-success border border-status-success/25",
+    "intermediate" => "bg-status-warning/15 text-status-warning border border-status-warning/25",
+    "advanced"     => "bg-status-danger/15 text-status-danger border border-status-danger/25",
   }.freeze
 
   def difficulty_badge_classes(difficulty)

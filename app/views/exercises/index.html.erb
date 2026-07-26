@@ -199,9 +199,9 @@
             <i class="fas fa-check text-xs text-brand <%= params[:difficulty].blank? ? '' : 'invisible' %>"></i>
           <% end %>
           <% [
-            { value: "beginner",     icon: "fa-seedling", color: "text-green-400" },
-            { value: "intermediate", icon: "fa-fire",     color: "text-orange-400" },
-            { value: "advanced",     icon: "fa-bolt",     color: "text-red-400" }
+            { value: "beginner",     icon: "fa-seedling", color: "text-status-success" },
+            { value: "intermediate", icon: "fa-fire",     color: "text-status-warning" },
+            { value: "advanced",     icon: "fa-bolt",     color: "text-status-danger" }
           ].each do |d| %>
             <%= link_to exercises_path(query: params[:query], body_part: params[:body_part], equipment: params[:equipment], tension_profile: params[:tension_profile], difficulty: d[:value], source: params[:source]),
                 class: "flex items-center justify-between px-3 py-2 text-sm transition-colors #{params[:difficulty] == d[:value] ? 'text-brand font-medium bg-brand/8' : 'text-ink-muted hover:bg-surface-hover hover:text-ink-primary'}" do %>
@@ -218,7 +218,7 @@
       <%# Effacer tous les filtres — icône dans la même DA que les dropdowns %>
       <% if has_filters %>
         <%= link_to exercises_path(source: params[:source], query: params[:query]),
-            class: "#{chip_base} border-red-500/30 text-red-400/70 bg-surface-raised hover:text-red-400 hover:border-red-500/50 hover:bg-red-500/5",
+            class: "#{chip_base} border-status-danger/30 text-status-danger/70 bg-surface-raised hover:text-status-danger hover:border-status-danger/50 hover:bg-status-danger/5",
             title: t("views.exercises.no_results.clear") do %>
           <i class="fas fa-filter-circle-xmark text-xs"></i>
         <% end %>

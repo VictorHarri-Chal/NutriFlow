@@ -9,21 +9,21 @@
     </p>
     <% if total_macro_kcal > 0 %>
       <div class="flex h-2 rounded-full overflow-hidden gap-0.5 mb-3">
-        <div class="bg-emerald-500 rounded-l-full" style="flex: <%= protein_pct %>"></div>
-        <div class="bg-sky-400" style="flex: <%= carbs_pct %>"></div>
-        <div class="bg-amber-400 rounded-r-full" style="flex: <%= fat_pct %>"></div>
+        <div class="bg-macro-proteins rounded-l-full" style="flex: <%= protein_pct %>"></div>
+        <div class="bg-macro-carbs" style="flex: <%= carbs_pct %>"></div>
+        <div class="bg-macro-fats rounded-r-full" style="flex: <%= fat_pct %>"></div>
       </div>
       <div class="flex items-center gap-3 text-xs">
         <span class="flex items-center gap-1.5 text-ink-muted">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+          <span class="w-2 h-2 rounded-full bg-macro-proteins shrink-0"></span>
           <%= t("views.components.recipe_sidebar.protein") %> <span class="font-semibold text-ink-primary tabular-nums"><%= protein_pct %>%</span>
         </span>
         <span class="flex items-center gap-1.5 text-ink-muted">
-          <span class="w-2 h-2 rounded-full bg-sky-400 shrink-0"></span>
+          <span class="w-2 h-2 rounded-full bg-macro-carbs shrink-0"></span>
           <%= t("views.components.recipe_sidebar.carbs") %> <span class="font-semibold text-ink-primary tabular-nums"><%= carbs_pct %>%</span>
         </span>
         <span class="flex items-center gap-1.5 text-ink-muted">
-          <span class="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span>
+          <span class="w-2 h-2 rounded-full bg-macro-fats shrink-0"></span>
           <%= t("views.components.recipe_sidebar.fat") %> <span class="font-semibold text-ink-primary tabular-nums"><%= fat_pct %>%</span>
         </span>
       </div>
