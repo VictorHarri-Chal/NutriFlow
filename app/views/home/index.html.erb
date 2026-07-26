@@ -4,14 +4,16 @@
 <header class="fixed top-0 inset-x-0 z-50 bg-surface-base/80 backdrop-blur-md border-b border-surface-border/40">
   <div class="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
     <a href="<%= root_path %>" class="flex items-center gap-2.5">
-      <%= image_tag "logo.png", class: "h-16 w-16", alt: "NutriFlow" %>
+      <%= image_tag "logo.png", class: "h-10 w-10", alt: "NutriFlow" %>
       <span class="text-xl font-bold text-ink-primary">NutriFlow</span>
     </a>
 
-    <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-ink-muted">
-      <a href="#features"     class="hover:text-ink-primary transition-colors"><%= t("views.home.nav.features") %></a>
+    <nav class="hidden lg:flex items-center gap-6 xl:gap-8 text-sm font-medium text-ink-muted">
+      <a href="#nutrition"    class="hover:text-ink-primary transition-colors"><%= t("views.home.nav.nutrition") %></a>
       <a href="#training"     class="hover:text-ink-primary transition-colors"><%= t("views.home.nav.training") %></a>
+      <a href="#suivi"        class="hover:text-ink-primary transition-colors"><%= t("views.home.nav.suivi") %></a>
       <a href="#how-it-works" class="hover:text-ink-primary transition-colors"><%= t("views.home.nav.how_it_works") %></a>
+      <a href="#faq"          class="hover:text-ink-primary transition-colors"><%= t("views.home.nav.faq") %></a>
     </nav>
 
     <div class="flex items-center gap-2">
@@ -25,187 +27,49 @@
 
 
 <%# ============================================================ %>
-<%# HERO %>
+<%# HERO (centré) %>
 <%# ============================================================ %>
-<section class="relative min-h-screen bg-gradient-to-br from-zinc-950 via-surface-base to-zinc-900 flex items-center overflow-hidden pt-16">
+<section class="relative bg-surface-base overflow-hidden pt-16">
 
   <div class="absolute inset-0 pointer-events-none overflow-hidden">
-    <div class="absolute -top-32 -right-32 w-[600px] h-[600px] bg-brand/8 rounded-full blur-3xl"></div>
-    <div class="absolute top-1/2 left-1/3 w-[400px] h-[400px] bg-brand/4 rounded-full blur-3xl"></div>
+    <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-brand/8 rounded-full blur-3xl"></div>
+    <div class="absolute top-1/3 -right-32 w-[400px] h-[400px] bg-brand/5 rounded-full blur-3xl"></div>
     <div class="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-brand/5 rounded-full blur-3xl"></div>
   </div>
 
-  <div class="relative max-w-7xl mx-auto px-6 lg:px-8 py-20 grid lg:grid-cols-2 gap-16 items-center w-full">
-
-    <div>
-      <%# Badge %>
-      <div class="inline-flex items-center gap-2 bg-brand/10 border border-brand/25 text-brand text-xs font-semibold px-3.5 py-1.5 rounded-full mb-6">
-        <i class="fas fa-dumbbell text-[10px]"></i>
-        <%= t("views.home.hero.badge") %>
-      </div>
-
-      <h1 class="text-5xl lg:text-6xl font-bold text-white leading-[1.1] tracking-tight mb-6">
-        <%= t("views.home.hero.title_line1") %>
-        <span class="block bg-gradient-to-r from-brand to-amber-300 bg-clip-text text-transparent">
-          <%= t("views.home.hero.title_line2") %>
-        </span>
-      </h1>
-
-      <p class="text-lg text-slate-300 leading-relaxed mb-8 max-w-lg">
-        <%= t("views.home.hero.subtitle") %>
-      </p>
-
-      <div class="flex flex-col sm:flex-row gap-3 mb-8">
-        <%= link_to new_user_registration_path,
-              class: "inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-hover text-zinc-900 font-semibold px-6 py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-brand/30 hover:-translate-y-px" do %>
-          <%= t("views.home.hero.cta_start") %>
-          <i class="fas fa-arrow-right text-sm"></i>
-        <% end %>
-        <%= link_to new_user_session_path,
-              class: "inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 border border-white/20 text-white font-semibold px-6 py-3.5 rounded-xl transition-all duration-200" do %>
-          <%= t("views.home.hero.cta_login") %>
-        <% end %>
-      </div>
-
-      <%# Trust signals %>
-      <div class="flex flex-wrap items-center gap-5 text-sm text-slate-400">
-        <span class="flex items-center gap-1.5">
-          <i class="fas fa-check-circle text-brand text-xs"></i>
-          <%= t("views.home.hero.free_label") %>
-        </span>
-        <span class="flex items-center gap-1.5">
-          <i class="fas fa-check-circle text-brand text-xs"></i>
-          <%= t("views.home.hero.no_card") %>
-        </span>
-        <span class="flex items-center gap-1.5">
-          <i class="fas fa-check-circle text-brand text-xs"></i>
-          <%= t("views.home.hero.exercises_count") %>
-        </span>
-      </div>
+  <div class="relative max-w-4xl mx-auto px-6 lg:px-8 py-24 lg:py-32 text-center">
+    <div class="inline-flex items-center gap-2 bg-brand/10 border border-brand/25 text-brand text-xs font-semibold px-3.5 py-1.5 rounded-full mb-7">
+      <i class="fas fa-bolt text-[10px]"></i>
+      <%= t("views.home.hero.badge") %>
     </div>
 
-    <%# Dual app mockup %>
-    <div class="hidden lg:flex flex-col gap-4">
+    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-ink-primary leading-[1.08] tracking-tight text-balance mb-6">
+      <%= t("views.home.hero.title_line1") %>
+      <span class="bg-gradient-to-r from-brand to-brand-hover bg-clip-text text-transparent"><%= t("views.home.hero.title_line2") %></span>
+    </h1>
 
-      <%# Mockup 1 — Nutrition %>
-      <div class="relative">
-        <div class="absolute -inset-3 bg-brand/8 blur-2xl rounded-3xl"></div>
-        <div class="relative bg-surface-raised border border-surface-border/60 rounded-2xl overflow-hidden shadow-2xl">
-          <div class="bg-surface-base px-3 py-2 flex items-center gap-2 border-b border-surface-border/60">
-            <div class="flex gap-1.5">
-              <div class="w-2.5 h-2.5 rounded-full bg-red-500/60"></div>
-              <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/60"></div>
-              <div class="w-2.5 h-2.5 rounded-full bg-green-500/60"></div>
-            </div>
-            <div class="ml-2 flex-1 bg-surface-hover/50 rounded h-4 flex items-center px-2">
-              <span class="text-[10px] text-ink-subtle">nutriflow.app/calendars</span>
-            </div>
-          </div>
-          <div class="flex h-[210px]">
-            <div class="w-12 bg-surface-base border-r border-surface-border/40 flex flex-col items-center py-4 gap-3">
-              <div class="w-7 h-7 rounded-lg bg-brand flex items-center justify-center">
-                <i class="fas fa-calendar-alt text-zinc-900 text-[10px]"></i>
-              </div>
-              <div class="w-7 h-7 rounded-lg bg-surface-hover flex items-center justify-center">
-                <i class="fas fa-utensils text-ink-subtle text-[10px]"></i>
-              </div>
-              <div class="w-7 h-7 rounded-lg bg-surface-hover flex items-center justify-center">
-                <i class="fas fa-dumbbell text-ink-subtle text-[10px]"></i>
-              </div>
-            </div>
-            <div class="flex-1 p-3.5 space-y-2.5 overflow-hidden">
-              <div class="flex items-center justify-between">
-                <span class="text-ink-primary text-xs font-semibold">Mardi 25 mars 2025</span>
-                <span class="text-[10px] bg-macro-proteins/20 text-macro-proteins px-2 py-0.5 rounded-full font-medium">1 540 kcal restantes</span>
-              </div>
-              <div class="bg-surface-hover/30 rounded-lg p-2.5 space-y-2">
-                <div>
-                  <div class="flex justify-between text-[10px] mb-1">
-                    <span class="text-ink-muted font-medium">Calories</span>
-                    <span class="text-ink-subtle">660 / 2 200 kcal</span>
-                  </div>
-                  <div class="h-1 bg-surface-hover rounded-full">
-                    <div class="h-full w-[30%] bg-gradient-to-r from-macro-calories to-blue-300 rounded-full"></div>
-                  </div>
-                </div>
-                <div>
-                  <div class="flex justify-between text-[10px] mb-1">
-                    <span class="text-ink-muted font-medium">Protéines</span>
-                    <span class="text-ink-subtle">48 / 160 g</span>
-                  </div>
-                  <div class="h-1 bg-surface-hover rounded-full">
-                    <div class="h-full w-[30%] bg-gradient-to-r from-macro-proteins to-emerald-300 rounded-full"></div>
-                  </div>
-                </div>
-                <div>
-                  <div class="flex justify-between text-[10px] mb-1">
-                    <span class="text-ink-muted font-medium">Glucides</span>
-                    <span class="text-ink-subtle">82 / 275 g</span>
-                  </div>
-                  <div class="h-1 bg-surface-hover rounded-full">
-                    <div class="h-full w-[30%] bg-gradient-to-r from-macro-carbs to-amber-300 rounded-full"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="grid grid-cols-2 gap-1.5">
-                <div class="bg-surface-hover/30 rounded-lg p-2.5">
-                  <p class="text-[10px] font-semibold text-ink-muted mb-1.5 flex items-center gap-1"><i class="fas fa-sun text-brand text-[8px]"></i> Petit-déjeuner <span class="ml-auto font-normal text-ink-subtle">428 kcal</span></p>
-                  <div class="space-y-1">
-                    <div class="flex justify-between"><span class="text-[10px] text-ink-muted">Flocons d'avoine</span><span class="text-[10px] text-ink-subtle">80g</span></div>
-                    <div class="flex justify-between"><span class="text-[10px] text-ink-muted">Yaourt grec</span><span class="text-[10px] text-ink-subtle">150g</span></div>
-                  </div>
-                </div>
-                <div class="bg-surface-hover/30 rounded-lg p-2.5">
-                  <p class="text-[10px] font-semibold text-ink-muted mb-1.5 flex items-center gap-1"><i class="fas fa-cloud-sun text-macro-calories text-[8px]"></i> Déjeuner <span class="ml-auto font-normal text-ink-subtle">232 kcal</span></p>
-                  <div class="flex justify-between"><span class="text-[10px] text-ink-muted">Poulet rôti</span><span class="text-[10px] text-ink-subtle">350g</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <p class="text-lg text-ink-muted leading-relaxed mb-9 max-w-2xl mx-auto">
+      <%= t("views.home.hero.subtitle") %>
+    </p>
 
-      <%# Mockup 2 — Exercices %>
-      <div class="relative ml-8">
-        <div class="absolute -inset-3 bg-brand/6 blur-2xl rounded-3xl"></div>
-        <div class="relative bg-surface-raised border border-surface-border/60 rounded-2xl overflow-hidden shadow-2xl">
-          <div class="bg-surface-base px-3 py-2 flex items-center gap-2 border-b border-surface-border/60">
-            <div class="flex gap-1.5">
-              <div class="w-2.5 h-2.5 rounded-full bg-red-500/60"></div>
-              <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/60"></div>
-              <div class="w-2.5 h-2.5 rounded-full bg-green-500/60"></div>
-            </div>
-            <div class="ml-2 flex-1 bg-surface-hover/50 rounded h-4 flex items-center px-2">
-              <span class="text-[10px] text-ink-subtle">nutriflow.app/exercises</span>
-            </div>
-          </div>
-          <div class="p-3">
-            <div class="flex items-center justify-between mb-2.5">
-              <span class="text-xs font-bold text-ink-primary">Banque d'exercices</span>
-              <span class="text-[10px] text-ink-subtle">1 131 exercices</span>
-            </div>
-            <div class="grid grid-cols-4 gap-1.5">
-              <% [
-                { label: "Pull Up",         diff: "Intermédiaire", color: "bg-amber-500/15 text-amber-400" },
-                { label: "Bench Press",     diff: "Avancé",        color: "bg-red-500/15 text-red-400" },
-                { label: "Squat",           diff: "Débutant",      color: "bg-green-500/15 text-green-400" },
-                { label: "Deadlift",        diff: "Avancé",        color: "bg-red-500/15 text-red-400" },
-              ].each do |ex| %>
-                <div class="bg-surface-base border border-surface-border/40 rounded-lg overflow-hidden">
-                  <div class="aspect-square bg-surface-hover/50 flex items-center justify-center">
-                    <i class="fas fa-dumbbell text-ink-subtle/30 text-lg"></i>
-                  </div>
-                  <div class="p-1.5">
-                    <span class="text-[9px] block font-medium text-ink-primary leading-tight mb-1"><%= ex[:label] %></span>
-                    <span class="text-[8px] px-1 py-0.5 rounded <%= ex[:color] %> font-medium"><%= ex[:diff] %></span>
-                  </div>
-                </div>
-              <% end %>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+      <%= link_to new_user_registration_path, class: "btn-primary px-6 py-3.5 text-base" do %>
+        <%= t("views.home.hero.cta_start") %>
+        <i class="fas fa-arrow-right text-sm"></i>
+      <% end %>
+      <%= link_to t("views.home.hero.cta_login"), new_user_session_path,
+            class: "btn-secondary px-6 py-3.5 text-base" %>
+    </div>
 
+    <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-ink-muted">
+      <span class="flex items-center gap-1.5">
+        <i class="fas fa-check-circle text-brand text-xs"></i>
+        <%= t("views.home.hero.trust_free") %>
+      </span>
+      <span class="flex items-center gap-1.5">
+        <i class="fas fa-check-circle text-brand text-xs"></i>
+        <%= t("views.home.hero.trust_no_card") %>
+      </span>
     </div>
   </div>
 </section>
@@ -222,8 +86,8 @@
         <p class="text-sm text-ink-muted"><%= t("views.home.stats.exercises") %></p>
       </div>
       <div>
-        <p class="text-3xl font-bold text-ink-primary mb-1">5</p>
-        <p class="text-sm text-ink-muted"><%= t("views.home.stats.macros") %></p>
+        <p class="text-3xl font-bold text-ink-primary mb-1">20<span class="text-xl">+</span></p>
+        <p class="text-sm text-ink-muted"><%= t("views.home.stats.nutrients") %></p>
       </div>
       <div>
         <p class="text-3xl font-bold text-ink-primary mb-1">∞</p>
@@ -239,185 +103,130 @@
 
 
 <%# ============================================================ %>
-<%# FEATURES — NUTRITION %>
+<%# NUTRITION (carrousel : calendrier · recettes · aliments) %>
 <%# ============================================================ %>
-<section id="features" class="py-24 bg-surface-base">
-  <div class="max-w-7xl mx-auto px-6 lg:px-8">
-
-    <div class="text-center mb-14">
-      <p class="text-sm font-semibold text-brand uppercase tracking-widest mb-3"><%= t("views.home.features.section_label") %></p>
-      <h2 class="text-4xl font-bold text-ink-primary tracking-tight"><%= t("views.home.features.section_title") %></h2>
-      <p class="mt-4 text-lg text-ink-muted max-w-xl mx-auto"><%= t("views.home.features.section_subtitle") %></p>
+<section id="nutrition" class="py-24 bg-surface-base scroll-mt-16">
+  <div class="max-w-6xl mx-auto px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <p class="text-xs font-semibold text-brand uppercase tracking-widest mb-3"><%= t("views.home.features.nutrition_eyebrow") %></p>
+      <h2 class="text-3xl lg:text-4xl font-bold text-ink-primary tracking-tight mb-4"><%= t("views.home.features.nutrition_title") %></h2>
+      <p class="text-lg text-ink-muted leading-relaxed"><%= t("views.home.features.nutrition_desc") %></p>
+      <ul class="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-6">
+        <% %w[nutrition_point1 nutrition_point2 nutrition_point3 nutrition_point4].each do |pt| %>
+          <li class="inline-flex items-center gap-2 text-sm text-ink-primary">
+            <i class="fas fa-check text-brand text-xs"></i><%= t("views.home.features.#{pt}") %>
+          </li>
+        <% end %>
+      </ul>
     </div>
 
-    <%# Nutrition features %>
-    <div class="mb-4">
-      <p class="text-xs font-semibold text-ink-subtle uppercase tracking-widest mb-5 flex items-center gap-2">
-        <i class="fas fa-apple-alt text-macro-proteins"></i>
-        <%= t("views.home.features.nutrition_group") %>
-      </p>
-    </div>
-
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mb-16">
-
-      <div class="group bg-surface-raised hover:bg-surface-hover border border-surface-border/40 hover:border-brand/30 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
-        <div class="w-11 h-11 bg-brand-muted group-hover:bg-brand/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
-          <i class="fas fa-calendar-alt text-brand"></i>
-        </div>
-        <h3 class="text-base font-semibold text-ink-primary mb-2"><%= t("views.home.features.calendar_title") %></h3>
-        <p class="text-sm text-ink-muted leading-relaxed"><%= t("views.home.features.calendar_desc") %></p>
+    <%= render layout: "home/carousel", locals: { url: "nutriflow.app/calendars", count: 4 } do %>
+      <div class="w-full flex-none aspect-[2/1]" data-carousel-target="slide">
+        <%= image_tag "landing/calendar.png", loading: "lazy", draggable: false,
+              class: "w-full h-full object-cover object-top", alt: t("views.home.features.alt_calendar") %>
       </div>
-
-      <div class="group bg-surface-raised hover:bg-surface-hover border border-surface-border/40 hover:border-macro-proteins/30 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
-        <div class="w-11 h-11 bg-macro-proteins/10 group-hover:bg-macro-proteins/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
-          <i class="fas fa-apple-alt text-macro-proteins"></i>
-        </div>
-        <h3 class="text-base font-semibold text-ink-primary mb-2"><%= t("views.home.features.foods_title") %></h3>
-        <p class="text-sm text-ink-muted leading-relaxed"><%= t("views.home.features.foods_desc") %></p>
+      <div class="w-full flex-none aspect-[2/1]" data-carousel-target="slide">
+        <%= image_tag "landing/recipe_index.png", loading: "lazy", draggable: false,
+              class: "w-full h-full object-cover object-top", alt: t("views.home.features.alt_recipe_index") %>
       </div>
-
-      <div class="group bg-surface-raised hover:bg-surface-hover border border-surface-border/40 hover:border-brand/30 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
-        <div class="w-11 h-11 bg-brand-muted group-hover:bg-brand/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
-          <i class="fas fa-book-open text-brand"></i>
-        </div>
-        <h3 class="text-base font-semibold text-ink-primary mb-2"><%= t("views.home.features.recipes_title") %></h3>
-        <p class="text-sm text-ink-muted leading-relaxed"><%= t("views.home.features.recipes_desc") %></p>
+      <div class="w-full flex-none aspect-[2/1]" data-carousel-target="slide">
+        <%= image_tag "landing/recipe_show.png", loading: "lazy", draggable: false,
+              class: "w-full h-full object-cover object-top", alt: t("views.home.features.alt_recipe_show") %>
       </div>
-
-      <div class="group bg-surface-raised hover:bg-surface-hover border border-surface-border/40 hover:border-macro-sugars/30 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
-        <div class="w-11 h-11 bg-macro-sugars/10 group-hover:bg-macro-sugars/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
-          <i class="fas fa-fire-flame-simple text-macro-sugars"></i>
-        </div>
-        <h3 class="text-base font-semibold text-ink-primary mb-2"><%= t("views.home.features.calories_title") %></h3>
-        <p class="text-sm text-ink-muted leading-relaxed"><%= t("views.home.features.calories_desc") %></p>
+      <div class="w-full flex-none aspect-[2/1]" data-carousel-target="slide">
+        <%= image_tag "landing/food_index.png", loading: "lazy", draggable: false,
+              class: "w-full h-full object-cover object-top", alt: t("views.home.features.alt_food_index") %>
       </div>
-
-      <div class="group bg-surface-raised hover:bg-surface-hover border border-surface-border/40 hover:border-macro-fats/30 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
-        <div class="w-11 h-11 bg-macro-fats/10 group-hover:bg-macro-fats/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
-          <i class="fas fa-star text-macro-fats"></i>
-        </div>
-        <h3 class="text-base font-semibold text-ink-primary mb-2"><%= t("views.home.features.ratings_title") %></h3>
-        <p class="text-sm text-ink-muted leading-relaxed"><%= t("views.home.features.ratings_desc") %></p>
-      </div>
-
-      <div class="group bg-surface-raised hover:bg-surface-hover border border-surface-border/40 hover:border-macro-calories/30 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1">
-        <div class="w-11 h-11 bg-macro-calories/10 group-hover:bg-macro-calories/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
-          <i class="fas fa-tags text-macro-calories"></i>
-        </div>
-        <h3 class="text-base font-semibold text-ink-primary mb-2"><%= t("views.home.features.labels_title") %></h3>
-        <p class="text-sm text-ink-muted leading-relaxed"><%= t("views.home.features.labels_desc") %></p>
-      </div>
-
-    </div>
-
+    <% end %>
   </div>
 </section>
 
 
 <%# ============================================================ %>
-<%# FEATURES — ENTRAÎNEMENT %>
+<%# ENTRAÎNEMENT (carrousel : GIFs live · exercice · programmes) %>
 <%# ============================================================ %>
-<section id="training" class="py-24 bg-surface-raised">
-  <div class="max-w-7xl mx-auto px-6 lg:px-8">
-
-    <div class="mb-4">
-      <p class="text-xs font-semibold text-ink-subtle uppercase tracking-widest mb-2 flex items-center gap-2">
-        <i class="fas fa-dumbbell text-brand"></i>
-        <%= t("views.home.features.training_group") %>
-      </p>
+<section id="training" class="py-24 bg-surface-raised scroll-mt-16">
+  <div class="max-w-6xl mx-auto px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <p class="text-xs font-semibold text-brand uppercase tracking-widest mb-3"><%= t("views.home.features.training_eyebrow") %></p>
+      <h2 class="text-3xl lg:text-4xl font-bold text-ink-primary tracking-tight mb-4"><%= t("views.home.features.training_title") %></h2>
+      <p class="text-lg text-ink-muted leading-relaxed"><%= t("views.home.features.training_desc") %></p>
+      <ul class="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-6">
+        <% %w[training_point1 training_point2 training_point3 training_point4].each do |pt| %>
+          <li class="inline-flex items-center gap-2 text-sm text-ink-primary">
+            <i class="fas fa-check text-brand text-xs"></i><%= t("views.home.features.#{pt}") %>
+          </li>
+        <% end %>
+      </ul>
     </div>
 
-    <div class="grid lg:grid-cols-2 gap-10 items-center">
-
-      <%# Left: feature cards %>
-      <div class="space-y-4">
-        <div class="group bg-surface-base hover:bg-surface-hover border border-surface-border/40 hover:border-brand/30 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5 flex gap-5">
-          <div class="w-11 h-11 bg-brand-muted group-hover:bg-brand/20 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors">
-            <i class="fas fa-dumbbell text-brand"></i>
-          </div>
-          <div>
-            <h3 class="text-base font-semibold text-ink-primary mb-1"><%= t("views.home.features.exercise_bank_title") %></h3>
-            <p class="text-sm text-ink-muted leading-relaxed"><%= t("views.home.features.exercise_bank_desc") %></p>
-          </div>
-        </div>
-
-        <div class="group bg-surface-base hover:bg-surface-hover border border-surface-border/40 hover:border-brand/30 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5 flex gap-5">
-          <div class="w-11 h-11 bg-brand-muted group-hover:bg-brand/20 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors">
-            <i class="fas fa-filter text-brand"></i>
-          </div>
-          <div>
-            <h3 class="text-base font-semibold text-ink-primary mb-1"><%= t("views.home.features.exercise_filter_title") %></h3>
-            <p class="text-sm text-ink-muted leading-relaxed"><%= t("views.home.features.exercise_filter_desc") %></p>
-          </div>
-        </div>
-
-        <div class="group bg-surface-base hover:bg-surface-hover border border-surface-border/40 hover:border-brand/30 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5 flex gap-5">
-          <div class="w-11 h-11 bg-brand-muted group-hover:bg-brand/20 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors">
-            <i class="fas fa-plus-circle text-brand"></i>
-          </div>
-          <div>
-            <h3 class="text-base font-semibold text-ink-primary mb-1"><%= t("views.home.features.custom_exercise_title") %></h3>
-            <p class="text-sm text-ink-muted leading-relaxed"><%= t("views.home.features.custom_exercise_desc") %></p>
-          </div>
-        </div>
-      </div>
-
-      <%# Right: exercise bank preview %>
-      <div class="relative">
-        <div class="absolute -inset-4 bg-brand/8 blur-3xl rounded-3xl"></div>
-        <div class="relative bg-surface-base border border-surface-border/60 rounded-2xl overflow-hidden shadow-2xl">
-          <div class="px-5 py-4 border-b border-surface-border/40 flex items-center justify-between">
-            <div>
-              <h4 class="text-sm font-bold text-ink-primary">Banque d'exercices</h4>
-              <p class="text-xs text-ink-subtle mt-0.5">1 131 exercices disponibles</p>
-            </div>
-            <span class="text-xs bg-brand/10 text-brand border border-brand/20 px-2.5 py-1 rounded-lg font-medium">+ Créer</span>
-          </div>
-
-          <%# Mini search + filter %>
-          <div class="px-5 py-3 flex gap-2 border-b border-surface-border/30">
-            <div class="flex-1 bg-surface-raised border border-surface-border rounded-lg px-3 py-1.5 flex items-center gap-2">
-              <i class="fas fa-search text-ink-subtle text-xs"></i>
-              <span class="text-xs text-ink-subtle">Rechercher un exercice...</span>
-            </div>
-            <div class="bg-surface-raised border border-brand/30 text-brand rounded-lg px-3 py-1.5 flex items-center gap-1.5">
-              <span class="text-xs font-medium">Dos</span>
-              <i class="fas fa-times text-[9px]"></i>
-            </div>
-          </div>
-
-          <%# Exercise cards grid %>
-          <div class="p-4 grid grid-cols-3 gap-2.5">
-            <% [
-              { name: "Pull Up",             muscle: "Dorsaux",    diff: "Intermédiaire", dc: "bg-amber-500/15 text-amber-400", has_img: true },
-              { name: "Barbell Row",         muscle: "Dos",        diff: "Avancé",        dc: "bg-red-500/15 text-red-400",    has_img: false },
-              { name: "Lat Pulldown",        muscle: "Dorsaux",    diff: "Débutant",      dc: "bg-green-500/15 text-green-400", has_img: true },
-              { name: "Seated Cable Row",    muscle: "Dorsaux",    diff: "Débutant",      dc: "bg-green-500/15 text-green-400", has_img: false },
-              { name: "T-Bar Row",           muscle: "Dos",        diff: "Avancé",        dc: "bg-red-500/15 text-red-400",    has_img: true },
-              { name: "Face Pull",           muscle: "Trapèzes",   diff: "Intermédiaire", dc: "bg-amber-500/15 text-amber-400", has_img: false },
-            ].each do |ex| %>
-              <div class="bg-surface-raised border border-surface-border/40 rounded-xl overflow-hidden">
-                <div class="aspect-square bg-surface-hover/60 flex items-center justify-center relative">
-                  <% if ex[:has_img] %>
-                    <div class="w-full h-full bg-gradient-to-br from-surface-hover to-surface-raised flex items-center justify-center">
-                      <i class="fas fa-person-running text-ink-subtle/30 text-2xl"></i>
-                    </div>
-                  <% else %>
-                    <i class="fas fa-dumbbell text-ink-subtle/25 text-xl"></i>
-                  <% end %>
-                  <span class="absolute top-1.5 left-1.5 text-[8px] px-1.5 py-0.5 rounded-md <%= ex[:dc] %> font-medium"><%= ex[:diff] %></span>
-                </div>
-                <div class="p-2">
-                  <p class="text-[10px] font-semibold text-ink-primary leading-tight mb-0.5 truncate"><%= ex[:name] %></p>
-                  <p class="text-[9px] text-ink-subtle capitalize"><%= ex[:muscle] %></p>
-                </div>
+    <%= render layout: "home/carousel", locals: { url: "nutriflow.app/exercises", count: 3 } do %>
+      <%# Slide 1 : vraie grille de GIFs animés %>
+      <div class="w-full flex-none aspect-[2/1]" data-carousel-target="slide">
+        <div class="h-full grid grid-cols-4 grid-rows-2 gap-2 p-3 bg-surface-base">
+          <% @exercises.each do |exercise| %>
+            <div class="relative rounded-lg overflow-hidden border border-surface-border/40">
+              <img src="<%= exercise.gif_url %>" loading="lazy" draggable="false" alt="<%= exercise_name(exercise) %>"
+                   class="w-full h-full object-cover">
+              <% if exercise.difficulty.present? %>
+                <span class="absolute top-1 left-1 text-[8px] px-1.5 py-0.5 rounded-md font-medium <%= difficulty_badge_classes(exercise.difficulty) %>">
+                  <%= t("views.exercises.difficulty.#{exercise.difficulty.to_s.downcase}", default: "") %>
+                </span>
+              <% end %>
+              <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-surface-base/90 to-transparent px-2 pt-4 pb-1">
+                <p class="text-[9px] font-semibold text-ink-primary truncate"><%= exercise_name(exercise) %></p>
               </div>
-            <% end %>
-          </div>
+            </div>
+          <% end %>
         </div>
       </div>
+      <%# Slide 2 : fiche exercice %>
+      <div class="w-full flex-none aspect-[2/1]" data-carousel-target="slide">
+        <%= image_tag "landing/exercise_show.png", loading: "lazy", draggable: false,
+              class: "w-full h-full object-cover object-top", alt: t("views.home.features.alt_exercise_show") %>
+      </div>
+      <%# Slide 3 : programmes %>
+      <div class="w-full flex-none aspect-[2/1]" data-carousel-target="slide">
+        <%= image_tag "landing/program_index.png", loading: "lazy", draggable: false,
+              class: "w-full h-full object-cover object-top", alt: t("views.home.features.alt_program_index") %>
+      </div>
+    <% end %>
+  </div>
+</section>
 
+
+<%# ============================================================ %>
+<%# SUIVI & PROGRESSION (carrousel : stats nutrition · training · cardio) %>
+<%# ============================================================ %>
+<section id="suivi" class="py-24 bg-surface-base scroll-mt-16">
+  <div class="max-w-6xl mx-auto px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <p class="text-xs font-semibold text-brand uppercase tracking-widest mb-3"><%= t("views.home.features.stats_eyebrow") %></p>
+      <h2 class="text-3xl lg:text-4xl font-bold text-ink-primary tracking-tight mb-4"><%= t("views.home.features.stats_title") %></h2>
+      <p class="text-lg text-ink-muted leading-relaxed"><%= t("views.home.features.stats_desc") %></p>
+      <ul class="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-6">
+        <% %w[stats_point1 stats_point2 stats_point3 stats_point4].each do |pt| %>
+          <li class="inline-flex items-center gap-2 text-sm text-ink-primary">
+            <i class="fas fa-check text-brand text-xs"></i><%= t("views.home.features.#{pt}") %>
+          </li>
+        <% end %>
+      </ul>
     </div>
+
+    <%= render layout: "home/carousel", locals: { url: "nutriflow.app/statistics", count: 3 } do %>
+      <div class="w-full flex-none aspect-[2/1]" data-carousel-target="slide">
+        <%= image_tag "landing/statistic_nutrition.png", loading: "lazy", draggable: false,
+              class: "w-full h-full object-cover object-top", alt: t("views.home.features.alt_statistic_nutrition") %>
+      </div>
+      <div class="w-full flex-none aspect-[2/1]" data-carousel-target="slide">
+        <%= image_tag "landing/statistic_training.png", loading: "lazy", draggable: false,
+              class: "w-full h-full object-cover object-top", alt: t("views.home.features.alt_statistic_training") %>
+      </div>
+      <div class="w-full flex-none aspect-[2/1]" data-carousel-target="slide">
+        <%= image_tag "landing/statistic_cardio.png", loading: "lazy", draggable: false,
+              class: "w-full h-full object-cover object-top", alt: t("views.home.features.alt_statistic_cardio") %>
+      </div>
+    <% end %>
   </div>
 </section>
 
@@ -425,7 +234,7 @@
 <%# ============================================================ %>
 <%# HOW IT WORKS %>
 <%# ============================================================ %>
-<section id="how-it-works" class="py-24 bg-surface-base">
+<section id="how-it-works" class="py-24 bg-surface-raised scroll-mt-16">
   <div class="max-w-5xl mx-auto px-6 lg:px-8">
 
     <div class="text-center mb-16">
@@ -438,10 +247,10 @@
       <div class="hidden md:block absolute top-9 left-[calc(12.5%+2rem)] right-[calc(12.5%+2rem)] h-px bg-gradient-to-r from-surface-border via-brand/40 to-surface-border"></div>
 
       <% [
-        { num: "1", title: t("views.home.how_it_works.step1_title"), desc: t("views.home.how_it_works.step1_desc"), icon: "fa-user" },
-        { num: "2", title: t("views.home.how_it_works.step2_title"), desc: t("views.home.how_it_works.step2_desc"), icon: "fa-apple-alt" },
-        { num: "3", title: t("views.home.how_it_works.step3_title"), desc: t("views.home.how_it_works.step3_desc"), icon: "fa-calendar-check" },
-        { num: "4", title: t("views.home.how_it_works.step4_title"), desc: t("views.home.how_it_works.step4_desc"), icon: "fa-dumbbell" },
+        { num: "1", title: t("views.home.how_it_works.step1_title"), desc: t("views.home.how_it_works.step1_desc") },
+        { num: "2", title: t("views.home.how_it_works.step2_title"), desc: t("views.home.how_it_works.step2_desc") },
+        { num: "3", title: t("views.home.how_it_works.step3_title"), desc: t("views.home.how_it_works.step3_desc") },
+        { num: "4", title: t("views.home.how_it_works.step4_title"), desc: t("views.home.how_it_works.step4_desc") },
       ].each do |step| %>
         <div class="relative flex flex-col items-center text-center">
           <div class="w-[4.5rem] h-[4.5rem] rounded-2xl bg-brand text-zinc-900 flex items-center justify-center text-2xl font-bold mb-6 shadow-lg shadow-brand/20 relative z-10">
@@ -458,9 +267,37 @@
 
 
 <%# ============================================================ %>
+<%# FAQ %>
+<%# ============================================================ %>
+<section id="faq" class="py-24 bg-surface-base scroll-mt-16">
+  <div class="max-w-3xl mx-auto px-6 lg:px-8">
+
+    <div class="text-center mb-14">
+      <p class="text-sm font-semibold text-brand uppercase tracking-widest mb-3"><%= t("views.home.faq.section_label") %></p>
+      <h2 class="text-4xl font-bold text-ink-primary tracking-tight"><%= t("views.home.faq.section_title") %></h2>
+      <p class="mt-4 text-lg text-ink-muted"><%= t("views.home.faq.section_subtitle") %></p>
+    </div>
+
+    <div class="space-y-3">
+      <% (1..8).each do |i| %>
+        <details class="group bg-surface-raised border border-surface-border/40 rounded-xl overflow-hidden">
+          <summary class="flex items-center justify-between gap-4 cursor-pointer px-6 py-5 list-none [&::-webkit-details-marker]:hidden">
+            <span class="font-semibold text-ink-primary"><%= t("views.home.faq.q#{i}_q") %></span>
+            <i class="fas fa-chevron-down text-ink-subtle text-sm transition-transform duration-200 group-open:rotate-180"></i>
+          </summary>
+          <div class="px-6 pb-5 text-ink-muted leading-relaxed"><%= t("views.home.faq.q#{i}_a") %></div>
+        </details>
+      <% end %>
+    </div>
+
+  </div>
+</section>
+
+
+<%# ============================================================ %>
 <%# CTA FINAL %>
 <%# ============================================================ %>
-<section class="relative py-28 bg-gradient-to-br from-zinc-950 via-surface-base to-zinc-900 overflow-hidden">
+<section class="relative py-28 bg-surface-base overflow-hidden">
   <div class="absolute inset-0 pointer-events-none">
     <div class="absolute -top-24 -right-24 w-80 h-80 bg-brand/10 rounded-full blur-3xl"></div>
     <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-brand/8 rounded-full blur-3xl"></div>
@@ -468,24 +305,21 @@
 
   <div class="relative max-w-2xl mx-auto px-6 text-center">
     <p class="text-sm font-semibold text-brand uppercase tracking-widest mb-4"><%= t("views.home.cta.label") %></p>
-    <h2 class="text-4xl lg:text-5xl font-bold text-white tracking-tight mb-5">
+    <h2 class="text-4xl lg:text-5xl font-bold text-ink-primary tracking-tight mb-5">
       <%= t("views.home.cta.title") %>
     </h2>
     <p class="text-lg text-ink-muted mb-10 leading-relaxed">
       <%= t("views.home.cta.subtitle") %>
     </p>
     <div class="flex flex-col sm:flex-row gap-3 justify-center">
-      <%= link_to new_user_registration_path,
-            class: "inline-flex items-center gap-2 bg-brand text-zinc-900 font-bold px-8 py-4 rounded-xl text-base hover:bg-brand-hover transition-all duration-200 shadow-2xl shadow-brand/30 hover:-translate-y-0.5" do %>
+      <%= link_to new_user_registration_path, class: "btn-primary px-8 py-4 text-base" do %>
         <%= t("views.home.cta.button") %>
         <i class="fas fa-arrow-right"></i>
       <% end %>
-      <%= link_to new_user_session_path,
-            class: "inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 border border-white/20 text-white font-semibold px-8 py-4 rounded-xl text-base transition-all duration-200" do %>
-        <%= t("views.home.cta.login") %>
-      <% end %>
+      <%= link_to t("views.home.cta.login"), new_user_session_path,
+            class: "btn-secondary px-8 py-4 text-base" %>
     </div>
-    <p class="mt-6 text-sm text-slate-500"><%= t("views.home.hero.free_label") %> · <%= t("views.home.hero.no_card") %></p>
+    <p class="mt-6 text-sm text-ink-subtle"><%= t("views.home.cta.fine") %></p>
   </div>
 </section>
 
@@ -493,23 +327,47 @@
 <%# ============================================================ %>
 <%# FOOTER %>
 <%# ============================================================ %>
-<footer class="bg-surface-base py-10 border-t border-surface-border/50">
-  <div class="max-w-7xl mx-auto px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
-    <div class="flex items-center gap-2.5">
-      <%= image_tag "logo.png", class: "h-12 w-12", alt: "NutriFlow" %>
-      <div>
-        <span class="text-ink-primary font-semibold text-sm block">NutriFlow</span>
-        <span class="text-ink-subtle text-xs"><%= t("views.home.footer.tagline") %></span>
+<footer class="bg-surface-base pt-14 pb-10 border-t border-surface-border/50">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-10">
+      <div class="flex items-center gap-2.5">
+        <%= image_tag "logo.png", class: "h-10 w-10", alt: "NutriFlow" %>
+        <div>
+          <span class="text-ink-primary font-semibold text-sm block">NutriFlow</span>
+          <span class="text-ink-subtle text-xs"><%= t("views.home.footer.tagline") %></span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-10">
+        <div>
+          <p class="text-xs font-semibold text-ink-subtle uppercase tracking-widest mb-4"><%= t("views.home.footer.col_product") %></p>
+          <ul class="space-y-2.5 text-sm text-ink-muted">
+            <li><a href="#nutrition" class="hover:text-ink-primary transition-colors"><%= t("views.home.footer.nutrition") %></a></li>
+            <li><a href="#training" class="hover:text-ink-primary transition-colors"><%= t("views.home.footer.training") %></a></li>
+            <li><a href="#suivi" class="hover:text-ink-primary transition-colors"><%= t("views.home.footer.suivi") %></a></li>
+            <li><a href="#how-it-works" class="hover:text-ink-primary transition-colors"><%= t("views.home.footer.how_it_works") %></a></li>
+            <li><a href="#faq" class="hover:text-ink-primary transition-colors"><%= t("views.home.footer.faq") %></a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="text-xs font-semibold text-ink-subtle uppercase tracking-widest mb-4"><%= t("views.home.footer.col_account") %></p>
+          <ul class="space-y-2.5 text-sm text-ink-muted">
+            <li><%= link_to t("views.home.footer.login"), new_user_session_path, class: "hover:text-ink-primary transition-colors" %></li>
+            <li><%= link_to t("views.home.footer.signup"), new_user_registration_path, class: "hover:text-ink-primary transition-colors" %></li>
+          </ul>
+        </div>
+        <div>
+          <p class="text-xs font-semibold text-ink-subtle uppercase tracking-widest mb-4"><%= t("views.home.footer.col_legal") %></p>
+          <ul class="space-y-2.5 text-sm text-ink-muted">
+            <li><a href="#" class="hover:text-ink-primary transition-colors"><%= t("views.home.footer.legal_notice") %></a></li>
+            <li><a href="#" class="hover:text-ink-primary transition-colors"><%= t("views.home.footer.privacy") %></a></li>
+          </ul>
+        </div>
       </div>
     </div>
 
-    <div class="flex items-center gap-6 text-sm text-ink-subtle">
-      <a href="#features" class="hover:text-ink-muted transition-colors"><%= t("views.home.nav.features") %></a>
-      <a href="#training" class="hover:text-ink-muted transition-colors"><%= t("views.home.nav.training") %></a>
-      <%= link_to t("views.home.footer.login"), new_user_session_path, class: "hover:text-ink-muted transition-colors" %>
-      <%= link_to t("views.home.footer.signup"), new_user_registration_path, class: "hover:text-ink-muted transition-colors" %>
+    <div class="mt-12 pt-6 border-t border-surface-border/30 text-sm text-ink-subtle">
+      © <%= Date.current.year %> NutriFlow. <%= t("views.home.footer.rights") %>
     </div>
-
-    <p class="text-ink-subtle text-sm">© <%= Date.current.year %> NutriFlow</p>
   </div>
 </footer>

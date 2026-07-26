@@ -1,0 +1,50 @@
+<%# Carrousel plein largeur — cadre navigateur, flèches, points, swipe, autoplay.
+    locals: url (String), count (Integer). Bloc = les slides (chacun:
+    <div class="w-full flex-none aspect-[2/1]" data-carousel-target="slide">...</div>). %>
+<div class="relative select-none" role="group" aria-roledescription="carousel"
+     data-controller="carousel"
+     data-action="mouseenter->carousel#pause mouseleave->carousel#resume">
+  <div class="rounded-2xl border border-surface-border/60 shadow-2xl bg-surface-raised overflow-hidden">
+    <div class="bg-surface-base px-3 py-2.5 flex items-center gap-2 border-b border-surface-border/60">
+      <div class="flex gap-1.5">
+        <div class="w-2.5 h-2.5 rounded-full bg-red-500/60"></div>
+        <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/60"></div>
+        <div class="w-2.5 h-2.5 rounded-full bg-green-500/60"></div>
+      </div>
+      <div class="ml-2 flex-1 bg-surface-hover/50 rounded h-4 flex items-center px-2">
+        <span class="text-[10px] text-ink-subtle"><%= url %></span>
+      </div>
+    </div>
+
+    <div class="relative overflow-hidden"
+         data-action="pointerdown->carousel#dragStart pointerup->carousel#dragEnd">
+      <div class="flex transition-transform duration-500 ease-out" data-carousel-target="track">
+        <%= yield %>
+      </div>
+
+      <button type="button" data-action="carousel#prev" aria-label="<%= t('views.home.carousel.prev') %>"
+              class="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-surface-base/70 hover:bg-surface-base border border-surface-border/60 text-ink-primary backdrop-blur flex items-center justify-center transition-colors">
+        <i class="fas fa-chevron-left text-sm"></i>
+      </button>
+      <button type="button" data-action="carousel#next" aria-label="<%= t('views.home.carousel.next') %>"
+              class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-surface-base/70 hover:bg-surface-base border border-surface-border/60 text-ink-primary backdrop-blur flex items-center justify-center transition-colors">
+        <i class="fas fa-chevron-right text-sm"></i>
+      </button>
+
+      <button type="button" data-action="carousel#toggle" data-carousel-target="playButton"
+              data-pause-label="<%= t('views.home.carousel.pause') %>" data-play-label="<%= t('views.home.carousel.play') %>"
+              aria-label="<%= t('views.home.carousel.pause') %>"
+              class="absolute bottom-3 right-3 w-8 h-8 rounded-full bg-surface-base/70 hover:bg-surface-base border border-surface-border/60 text-ink-primary backdrop-blur flex items-center justify-center transition-colors">
+        <i data-carousel-target="playIcon" class="fas fa-pause text-[10px]"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="flex justify-center gap-2 mt-5">
+    <% count.times do |i| %>
+      <button type="button" data-carousel-target="dot" data-index="<%= i %>" data-action="carousel#select"
+              aria-label="<%= t('views.home.carousel.go_to', n: i + 1) %>"
+              class="h-2 w-2 rounded-full bg-surface-border transition-all duration-300"></button>
+    <% end %>
+  </div>
+</div>
