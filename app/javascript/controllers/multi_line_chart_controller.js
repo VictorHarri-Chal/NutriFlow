@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { PALETTE } from "chart_palette"
 
 export default class extends Controller {
   static values = {
@@ -9,9 +10,9 @@ export default class extends Controller {
     label1: { type: String, default: "" },
     label2: { type: String, default: "" },
     label3: { type: String, default: "" },
-    color1: { type: String, default: "#EAB308" },
-    color2: { type: String, default: "#34D399" },
-    color3: { type: String, default: "#60A5FA" }
+    color1: { type: String, default: PALETTE.brand },
+    color2: { type: String, default: PALETTE.macro.proteins },
+    color3: { type: String, default: PALETTE.macro.calories }
   }
 
   connect() {
@@ -19,7 +20,7 @@ export default class extends Controller {
     if (!Chart) return
 
     const gridColor = "rgba(82, 82, 91, 0.25)"
-    const tickColor = "#71717A"
+    const tickColor = PALETTE.ink.subtle
 
     const makeDataset = (data, label, color) => ({
       label,
@@ -61,11 +62,11 @@ export default class extends Controller {
             }
           },
           tooltip: {
-            backgroundColor: "#27272A",
+            backgroundColor: PALETTE.surface.raised,
             borderColor: "rgba(82,82,91,0.5)",
             borderWidth: 1,
-            titleColor: "#F4F4F5",
-            bodyColor: "#A1A1AA",
+            titleColor: PALETTE.ink.primary,
+            bodyColor: PALETTE.ink.muted,
             padding: 10,
           }
         },

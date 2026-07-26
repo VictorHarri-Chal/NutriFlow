@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import { formatChartNumber } from "chart_formatters"
+import { PALETTE } from "chart_palette"
 
 export default class extends Controller {
   static values = {
@@ -8,7 +9,7 @@ export default class extends Controller {
     label:  { type: String, default: "" },
     unit:   { type: String, default: "" },
     goal:   { type: Number, default: 0 },
-    color:  { type: String, default: "#EAB308" }
+    color:  { type: String, default: PALETTE.brand }
   }
 
   connect() {
@@ -17,7 +18,7 @@ export default class extends Controller {
 
     const color     = this.colorValue
     const gridColor = "rgba(82, 82, 91, 0.25)"
-    const tickColor = "#71717A"
+    const tickColor = PALETTE.ink.subtle
     const unit      = this.unitValue
 
     this.chart = new Chart(this.element, {
@@ -58,11 +59,11 @@ export default class extends Controller {
         plugins: {
           legend: { display: false },
           tooltip: {
-            backgroundColor: "#27272A",
+            backgroundColor: PALETTE.surface.raised,
             borderColor: "rgba(82,82,91,0.5)",
             borderWidth: 1,
-            titleColor: "#F4F4F5",
-            bodyColor: "#A1A1AA",
+            titleColor: PALETTE.ink.primary,
+            bodyColor: PALETTE.ink.muted,
             padding: 10,
             callbacks: {
               label: ctx => ` ${formatChartNumber(ctx.parsed.y)}${unit ? " " + unit : ""}`

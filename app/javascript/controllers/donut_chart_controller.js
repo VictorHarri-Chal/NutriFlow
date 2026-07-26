@@ -1,7 +1,9 @@
 import { Controller } from "@hotwired/stimulus"
+import { PALETTE } from "chart_palette"
 
 const DEFAULT_PALETTE = [
-  "#EAB308", "#34D399", "#60A5FA", "#F87171", "#C084FC", "#FBBF24"
+  PALETTE.brand, PALETTE.macro.proteins, PALETTE.macro.calories,
+  PALETTE.macro.fats, PALETTE.macro.sugars, PALETTE.macro.carbs
 ]
 
 export default class extends Controller {
@@ -37,7 +39,7 @@ export default class extends Controller {
           legend: {
             position: "right",
             labels: {
-              color: "#A1A1AA",
+              color: PALETTE.ink.muted,
               font: { size: 12 },
               padding: 14,
               boxWidth: 10,
@@ -46,11 +48,11 @@ export default class extends Controller {
             }
           },
           tooltip: {
-            backgroundColor: "#27272A",
+            backgroundColor: PALETTE.surface.raised,
             borderColor: "rgba(82,82,91,0.5)",
             borderWidth: 1,
-            titleColor: "#F4F4F5",
-            bodyColor: "#A1A1AA",
+            titleColor: PALETTE.ink.primary,
+            bodyColor: PALETTE.ink.muted,
             padding: 10,
             callbacks: {
               label: ctx => {
