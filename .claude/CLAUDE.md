@@ -451,8 +451,7 @@ Reusable UI components live in `app/components/ui/` (namespace `Ui::`). **Always
 | `Ui::PanelComponent` | `bg-surface-raised rounded-panel` container (the stat-panel look, distinct from `.card`) | `padding:`, `class:` (appended) |
 | `Ui::StatCardComponent` | KPI block (label + big value + unit + optional 3rd line) | `label:`, `value:`, `unit:`, `value_color:`; `sub` slot (3rd line) |
 | `Ui::ModalComponent` | modal dialogs (wraps the `modal` Stimulus controller) | `title:`, `subtitle:`, `icon:`, `max_width:` (sm/md/lg/xl), `max_height:` (sm/md/lg), `body_padding:`, `body_layout:` (block/flex), `data:` (extra controllers/actions merged onto root); slots `body`, `footer`, `title_accessory` |
-| `Ui::CustomSelectComponent` | custom dropdown select (wraps `custom-select`) | `name:`, `choices:`, `selected:` |
-| `Ui::CollapsibleWidgetComponent` | collapsible calendar-style widget (wraps `collapsible`) | `title:`, `storage_key:`, `force_open:`; slots `content_body`, `header_action` |
+| `Ui::CustomSelectComponent` | custom dropdown select (wraps `custom-select`), for NEW selects | `name:`, `choices:`, `selected:` |
 | `Ui::IconCircleComponent` | icon inside a circle (avatar-like) | `icon:`, `size:`, `bg:`, `color:` |
 | `Ui::ProgressBarComponent` | progress bar (wraps `.progress-track`) | `percent:`, `color:`, `height:` |
 
@@ -469,6 +468,8 @@ Reusable UI components live in `app/components/ui/` (namespace `Ui::`). **Always
 - **Nested-form empty placeholders** (`data-nested-form-target="emptyState"`) — JS-toggled form-item placeholders, not page empty states.
 - **Confirmation dialogs** — generated in JS by `confirm_controller.js` (future `ConfirmModal` candidate).
 - **Bottom-sheets** (`calendars/index` FAB, `workout_programs/_tension_balance_panel`) — future `BottomSheetComponent` candidate.
+- **Collapsible sections** (calendar widgets, form sections) — use the shared `collapsible` Stimulus controller directly. Canonical pattern: `app/views/calendars/_food_widget.html.erb` — keep the `id` (Turbo Stream target), `data-collapsible-scope`, `data-collapsible-storage-key`, and the `force_open` local threaded from the create/destroy turbo streams. No dedicated component (the widgets are already identical; a component didn't fit the id/scope/force_open wiring).
+- **Existing custom-selects & form fields** — already consistent via the shared `custom-select` controller + `.input-dark` / simple_form; not force-migrated. Use `Ui::CustomSelectComponent` / simple_form for NEW ones.
 - **Landing page** (`home/index.html.erb`) — deliberate public-marketing exception, outside the app design system.
 
 **Chart colours (Chart.js controllers):** import `{ PALETTE } from "chart_palette"` (pinned in `importmap.rb`) and reference `PALETTE.brand` / `PALETTE.macro.*` / `PALETTE.ink.*` / `PALETTE.surface.*` / `PALETTE.status.*`. It mirrors the design tokens — the single source for chart colours. Custom-alpha fills (e.g. `rgba(234,179,8,0.08)`) that aren't a token stay inline. (ERB `data-*-color-value` hex passed to charts are not yet centralized — a Ruby-side palette would be needed.)
