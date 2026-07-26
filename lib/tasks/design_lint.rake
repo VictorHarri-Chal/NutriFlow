@@ -3,10 +3,11 @@ namespace :design do
   task lint: :environment do
     raw_color = /\b(?:bg|text|border|from|to|via|ring)-(?:zinc|gray|slate|neutral|stone|yellow|amber|red|green|blue|emerald|sky|orange|teal|violet|purple)-\d{2,3}\b/
     exceptions = [
-      "app/views/home/index.html.erb",
       "app/views/layouts/mailer.html.erb",
       %r{app/views/devise/mailer/},
       %r{app/views/foods/(?:_form|show)\.html\.erb},
+      # wellbeing accent palette (amber/green/blue for energy/mood/sleep) — same scheme as the safelisted wellbeing_rating colours
+      "app/views/calendars/_day_note.html.erb",
     ]
     offenders = Dir.glob("app/{views,components}/**/*.erb").reject do |f|
       exceptions.any? { |e| e.is_a?(Regexp) ? f.match?(e) : f == e }
