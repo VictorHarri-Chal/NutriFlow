@@ -37,13 +37,13 @@
         <%# Add shortcuts %>
         <div class="flex items-center gap-1.5">
           <%= link_to add_food_path,
-                class: "w-8 h-8 inline-flex items-center justify-center rounded-lg bg-brand/15 border border-brand/30 text-brand hover:bg-brand hover:text-zinc-900 transition-colors",
+                class: "w-8 h-8 inline-flex items-center justify-center rounded-lg bg-brand/15 border border-brand/30 text-brand hover:bg-brand hover:text-surface-base transition-colors",
                 data: { turbo_frame: "food_item_form" },
                 title: t("views.calendars.add_food") do %>
             <i class="fas fa-apple-whole text-xs" aria-hidden="true"></i>
           <% end %>
           <%= link_to add_recipe_path,
-                class: "w-8 h-8 inline-flex items-center justify-center rounded-lg bg-brand/15 border border-brand/30 text-brand hover:bg-brand hover:text-zinc-900 transition-colors",
+                class: "w-8 h-8 inline-flex items-center justify-center rounded-lg bg-brand/15 border border-brand/30 text-brand hover:bg-brand hover:text-surface-base transition-colors",
                 data: { turbo_frame: "food_item_form" },
                 title: t("views.calendars.add_recipe") do %>
             <i class="fas fa-utensils text-xs" aria-hidden="true"></i>
