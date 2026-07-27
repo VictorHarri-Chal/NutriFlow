@@ -16,20 +16,12 @@
 
     <% if defined?(show_actions) && show_actions %>
       <div class="flex items-center gap-0.5 opacity-0 group-hover/card:opacity-100 transition-opacity flex-shrink-0">
-        <%= link_to edit_cardio_session_path(cardio_session),
-              class: "p-1.5 text-ink-subtle/50 hover:text-ink-primary transition-colors rounded",
-              data: { turbo_frame: "cardio_item_form" } do %>
-          <i class="fas fa-pen text-[11px]"></i>
-        <% end %>
-        <%= link_to cardio_session_path(cardio_session),
-              class: "p-1.5 text-ink-subtle/50 hover:text-status-danger transition-colors rounded",
-              data: {
-                turbo_method: :delete,
-                action: "click->confirm#show",
-                confirm_message: t("views.cardio_sessions.confirm_delete")
-              } do %>
-          <i class="fas fa-trash text-[11px]"></i>
-        <% end %>
+        <%= render Ui::IconButtonComponent.new(icon: :edit, variant: :neutral, size: :card,
+              href: edit_cardio_session_path(cardio_session),
+              data: { turbo_frame: "cardio_item_form" }) %>
+        <%= render Ui::IconButtonComponent.new(icon: :delete, variant: :delete, size: :card,
+              href: cardio_session_path(cardio_session),
+              confirm: t("views.cardio_sessions.confirm_delete")) %>
       </div>
     <% end %>
   </div>

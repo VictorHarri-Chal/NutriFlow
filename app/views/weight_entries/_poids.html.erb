@@ -250,15 +250,9 @@
                 <% end %>
               <% end %>
               <div class="opacity-0 group-hover:opacity-100 transition-opacity">
-                <%= link_to weight_entry_path(entry),
-                    data: {
-                      turbo_method: :delete,
-                      action: "click->confirm#show",
-                      confirm_message: t("views.weight_entries.history.delete_confirm")
-                    },
-                    class: "inline-flex items-center justify-center w-7 h-7 rounded-lg text-ink-subtle hover:text-status-danger hover:bg-status-danger_dim/20 transition-colors" do %>
-                  <i class="fas fa-trash text-xs"></i>
-                <% end %>
+                <%= render Ui::IconButtonComponent.new(icon: :delete, variant: :delete, size: :sm,
+                      href: weight_entry_path(entry),
+                      confirm: t("views.weight_entries.history.delete_confirm")) %>
               </div>
             </div>
           </div>
