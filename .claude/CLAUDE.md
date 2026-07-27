@@ -444,16 +444,21 @@ Reusable UI components live in `app/components/ui/` (namespace `Ui::`). **Always
 
 | Component | Use it for | Key args / slots |
 |---|---|---|
-| `Ui::ButtonComponent` | buttons, icon-buttons, CTAs (renders `<button>` or `<a>`) | `label:`, `variant:` (primary/secondary/danger/ghost), `size:` (sm/md/lg), `icon:` (ui_icon key), `href:`, `method:`, `aria_label:` |
-| `Ui::BadgeComponent` | non-interactive status labels + simple pills | `label`, `variant:` (brand/success/warning/danger/info/neutral), `style:` (badge/pill), `size:` (sm/md), `active:`, `icon:` |
+| `Ui::ButtonComponent` | buttons, icon-buttons, CTAs (renders `<button>` or `<a>`) | `label:`, `variant:` (primary/secondary/danger/ghost), `size:` (sm/md/lg), `icon:` (**ui_icon key**), `href:`, `method:`, `type:` (default `"button"`), `aria_label:`; caller `class:`/`data:`/`aria:` merged |
+| `Ui::BadgeComponent` | non-interactive status labels + simple pills | `label` (**positional!** e.g. `.new("Actif", variant: :success)`), `variant:` (brand/success/warning/danger/info/neutral), `style:` (badge/pill), `size:` (sm/md), `active:`, `icon:` (**ui_icon key**) |
 | `Ui::EmptyStateComponent` | empty / zero-data states (dashed box, circle icon, title, hint, CTA) | `icon:` (raw glyph), `title:`, `hint:`, `size:` (lg/md/sm), `icon_color:` (default `text-brand`; pass a status color for semantic states), `cta` slot |
 | `Ui::ChartPlaceholderComponent` | "not enough data" box for a chart slot (dashed, bare icon, 1-2 muted lines; distinct from EmptyState) | `icon:` (raw glyph), `text:`, `subtext:`, `height:` (e.g. `"h-40"`, `"py-10"`, `"flex-1 min-h-0"`) |
 | `Ui::PanelComponent` | `bg-surface-raised rounded-panel` container (the stat-panel look, distinct from `.card`) | `padding:`, `class:` (appended) |
 | `Ui::StatCardComponent` | KPI block (label + big value + unit + optional 3rd line) | `label:`, `value:`, `unit:`, `value_color:`; `sub` slot (3rd line) |
-| `Ui::ModalComponent` | modal dialogs (wraps the `modal` Stimulus controller) | `title:`, `subtitle:`, `icon:`, `max_width:` (sm/md/lg/xl), `max_height:` (sm/md/lg), `body_padding:`, `body_layout:` (block/flex), `data:` (extra controllers/actions merged onto root); slots `body`, `footer`, `title_accessory` |
+| `Ui::ModalComponent` | modal dialogs (wraps the `modal` Stimulus controller) | `title:`, `subtitle:`, `icon:` (raw glyph), `max_width:` (sm/md/lg/xl), `max_height:` (sm/md/lg), `body_padding:`, `body_layout:` (block/flex), `data:` (extra controllers/actions merged onto root); slots `body`, `footer`, `title_accessory` |
 | `Ui::CustomSelectComponent` | custom dropdown select (wraps `custom-select`), for NEW selects | `name:`, `choices:`, `selected:` |
-| `Ui::IconCircleComponent` | icon inside a circle (avatar-like) | `icon:`, `size:`, `bg:`, `color:` |
+| `Ui::IconCircleComponent` | icon inside a circle (avatar-like) | `icon:` (raw glyph), `size:`, `bg:`, `color:` |
 | `Ui::ProgressBarComponent` | progress bar (wraps `.progress-track`) | `percent:`, `color:`, `height:` |
+
+**Calling patterns (the 3 things that trip up a first attempt):**
+- **`label` is positional on `BadgeComponent`** (`.new("Actif", variant: :success)`) but a **keyword** on `ButtonComponent` (`.new(label: "Go")`).
+- **`icon:` is a `ui_icon` key (Symbol) on Button/Badge** (`icon: :check`) but a **raw FA glyph String on EmptyState/ChartPlaceholder/Modal/IconCircle** (`icon: "fa-utensils"`).
+- **Slotted components take a block**: `<%= render Ui::ModalComponent.new(title: "X") do |m| %><% m.with_body do %>…<% end %><% end %>`. Slots: Modal → `body`/`footer`/`title_accessory`, EmptyState → `cta`, StatCard → `sub`.
 
 **Established usage norms (apply consistently in new code):**
 - **Modal footer with 2 buttons** → wrapper `flex items-center gap-3`, both buttons `flex-1 text-sm`, the affirmative action on the RIGHT. `confirm_controller.js` dialogs follow the same layout.
