@@ -1,61 +1,37 @@
 <%# ── KPI cards ── %>
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
 
-  <%= render Ui::PanelComponent.new(padding: "px-5 py-4") do %>
-    <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1 flex items-center gap-1">
-      <%= t("views.weight_entries.measurements.stats.waist") %>
-      <i class="fas fa-circle-info normal-case text-ink-subtle/60 hover:text-ink-primary transition-colors cursor-default"
-         data-tooltip="<%= t("views.weight_entries.measurements.stats.waist_info") %>"></i>
-    </p>
-    <% if @latest_waist %>
-      <p class="text-2xl font-bold text-ink-primary">
-        <%= @latest_waist %><span class="text-sm font-normal text-ink-subtle ml-1">cm</span>
-      </p>
-    <% else %>
-      <p class="text-2xl font-bold text-ink-subtle">—</p>
-    <% end %>
-  <% end %>
+  <% measurement_label = ->(text_key, info_key) do
+       tag.span(class: "inline-flex items-center gap-1") do
+         safe_join([
+           t(text_key),
+           tag.i("", class: "fas fa-circle-info normal-case text-ink-subtle/60 hover:text-ink-primary transition-colors cursor-default",
+                 data: { tooltip: t(info_key) })
+         ])
+       end
+     end %>
 
-  <%= render Ui::PanelComponent.new(padding: "px-5 py-4") do %>
-    <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1 flex items-center gap-1">
-      <%= t("views.weight_entries.measurements.stats.waist_hip_ratio") %>
-      <i class="fas fa-circle-info normal-case text-ink-subtle/60 hover:text-ink-primary transition-colors cursor-default"
-         data-tooltip="<%= t("views.weight_entries.measurements.stats.waist_hip_ratio_info") %>"></i>
-    </p>
-    <% if @latest_waist_hip %>
-      <p class="text-2xl font-bold text-ink-primary"><%= @latest_waist_hip %></p>
-    <% else %>
-      <p class="text-2xl font-bold text-ink-subtle">—</p>
-    <% end %>
-  <% end %>
+  <%= render Ui::StatCardComponent.new(
+        label: measurement_label.call("views.weight_entries.measurements.stats.waist", "views.weight_entries.measurements.stats.waist_info"),
+        value: @latest_waist || "—",
+        unit: (@latest_waist ? "cm" : nil),
+        value_color: (@latest_waist ? "text-ink-primary" : "text-ink-subtle")) %>
 
-  <%= render Ui::PanelComponent.new(padding: "px-5 py-4") do %>
-    <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1 flex items-center gap-1">
-      <%= t("views.weight_entries.measurements.stats.waist_height_ratio") %>
-      <i class="fas fa-circle-info normal-case text-ink-subtle/60 hover:text-ink-primary transition-colors cursor-default"
-         data-tooltip="<%= t("views.weight_entries.measurements.stats.waist_height_ratio_info") %>"></i>
-    </p>
-    <% if @latest_waist_height %>
-      <p class="text-2xl font-bold text-ink-primary"><%= @latest_waist_height %></p>
-    <% else %>
-      <p class="text-2xl font-bold text-ink-subtle">—</p>
-    <% end %>
-  <% end %>
+  <%= render Ui::StatCardComponent.new(
+        label: measurement_label.call("views.weight_entries.measurements.stats.waist_hip_ratio", "views.weight_entries.measurements.stats.waist_hip_ratio_info"),
+        value: @latest_waist_hip || "—",
+        value_color: (@latest_waist_hip ? "text-ink-primary" : "text-ink-subtle")) %>
 
-  <%= render Ui::PanelComponent.new(padding: "px-5 py-4") do %>
-    <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1 flex items-center gap-1">
-      <%= t("views.weight_entries.measurements.stats.body_fat") %>
-      <i class="fas fa-circle-info normal-case text-ink-subtle/60 hover:text-ink-primary transition-colors cursor-default"
-         data-tooltip="<%= t("views.weight_entries.measurements.stats.body_fat_info") %>"></i>
-    </p>
-    <% if @latest_body_fat %>
-      <p class="text-2xl font-bold text-ink-primary">
-        <%= @latest_body_fat %><span class="text-sm font-normal text-ink-subtle ml-1">%</span>
-      </p>
-    <% else %>
-      <p class="text-2xl font-bold text-ink-subtle">—</p>
-    <% end %>
-  <% end %>
+  <%= render Ui::StatCardComponent.new(
+        label: measurement_label.call("views.weight_entries.measurements.stats.waist_height_ratio", "views.weight_entries.measurements.stats.waist_height_ratio_info"),
+        value: @latest_waist_height || "—",
+        value_color: (@latest_waist_height ? "text-ink-primary" : "text-ink-subtle")) %>
+
+  <%= render Ui::StatCardComponent.new(
+        label: measurement_label.call("views.weight_entries.measurements.stats.body_fat", "views.weight_entries.measurements.stats.body_fat_info"),
+        value: @latest_body_fat || "—",
+        unit: (@latest_body_fat ? "%" : nil),
+        value_color: (@latest_body_fat ? "text-ink-primary" : "text-ink-subtle")) %>
 
 </div>
 

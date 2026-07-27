@@ -2,55 +2,53 @@
 <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
 
   <%# Poids actuel %>
-  <%= render Ui::PanelComponent.new(padding: "px-5 py-4") do %>
-    <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1">
-      <%= t("views.weight_entries.stats.current") %>
-    </p>
-    <% if @current_weight %>
-      <p class="text-2xl font-bold text-ink-primary">
-        <%= @current_weight %><span class="text-sm font-normal text-ink-subtle ml-1">kg</span>
-      </p>
-      <% if @trend_weekly %>
-        <%
-          good   = @positive_is_good
-          toward = @trend_weekly > 0.05 ? :up : @trend_weekly < -0.05 ? :down : :flat
-          trend_color = toward == :flat ? "text-ink-subtle" :
-                        (toward == :up && good || toward == :down && !good) ? "text-status-success" : "text-status-danger"
-          trend_icon  = toward == :up ? "fa-arrow-trend-up" : toward == :down ? "fa-arrow-trend-down" : "fa-minus"
-        %>
+  <%= render Ui::StatCardComponent.new(
+        label: t("views.weight_entries.stats.current"),
+        value: @current_weight || "—",
+        unit: (@current_weight ? "kg" : nil),
+        value_color: (@current_weight ? "text-ink-primary" : "text-ink-subtle")) do |c| %>
+    <% if @current_weight && @trend_weekly %>
+      <%
+        good   = @positive_is_good
+        toward = @trend_weekly > 0.05 ? :up : @trend_weekly < -0.05 ? :down : :flat
+        trend_color = toward == :flat ? "text-ink-subtle" :
+                      (toward == :up && good || toward == :down && !good) ? "text-status-success" : "text-status-danger"
+        trend_icon  = toward == :up ? "fa-arrow-trend-up" : toward == :down ? "fa-arrow-trend-down" : "fa-minus"
+      %>
+      <% c.with_sub do %>
         <p class="text-xs <%= trend_color %> mt-1.5 flex items-center gap-1">
           <i class="fas <%= trend_icon %> text-[9px]"></i>
           <%= @trend_weekly > 0 ? "+#{@trend_weekly}" : @trend_weekly %> <%= t("views.weight_entries.stats.trend_unit") %>
         </p>
       <% end %>
-    <% else %>
-      <p class="text-2xl font-bold text-ink-subtle">—</p>
     <% end %>
   <% end %>
 
   <%# IMC %>
-  <%= render Ui::PanelComponent.new(padding: "px-5 py-4") do %>
-    <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1">
-      <%= t("views.weight_entries.stats.bmi_label") %>
-    </p>
+  <% if @bmi %>
+    <%
+      bmi_color = case @bmi_category
+                  when :underweight then "text-status-info"
+                  when :normal      then "text-status-success"
+                  when :overweight  then "text-status-warning"
+                  else                   "text-status-danger"
+                  end
+    %>
+  <% end %>
+  <%= render Ui::StatCardComponent.new(
+        label: t("views.weight_entries.stats.bmi_label"),
+        value: @bmi || "—",
+        value_color: (@bmi ? bmi_color : "text-ink-subtle")) do |c| %>
     <% if @bmi %>
-      <%
-        bmi_color = case @bmi_category
-                    when :underweight then "text-status-info"
-                    when :normal      then "text-status-success"
-                    when :overweight  then "text-status-warning"
-                    else                   "text-status-danger"
-                    end
-      %>
-      <p class="text-2xl font-bold <%= bmi_color %>"><%= @bmi %></p>
-      <p class="text-[10px] <%= bmi_color %> mt-1.5 font-medium">
-        <%= t("views.weight_entries.stats.bmi_category.#{@bmi_category}") %>
-      </p>
+      <% c.with_sub do %>
+        <p class="text-[10px] <%= bmi_color %> mt-1.5 font-medium">
+          <%= t("views.weight_entries.stats.bmi_category.#{@bmi_category}") %>
+        </p>
+      <% end %>
     <% elsif @current_weight %>
-      <p class="text-2xl font-bold text-ink-subtle">—</p>
-      <p class="text-[10px] text-ink-subtle mt-1.5"><%= t("views.weight_entries.stats.no_height") %></p>
-    <% else %>
-      <p class="text-2xl font-bold text-ink-subtle">—</p>
+      <% c.with_sub do %>
+        <p class="text-[10px] text-ink-subtle mt-1.5"><%= t("views.weight_entries.stats.no_height") %></p>
+      <% end %>
     <% end %>
   <% end %>
 
@@ -97,24 +95,24 @@
   <% end %>
 
   <%# Objectif %>
-  <%= render Ui::PanelComponent.new(padding: "px-5 py-4") do %>
-    <p class="text-xs font-medium text-ink-subtle uppercase tracking-wider mb-1">
-      <%= t("views.weight_entries.stats.goal") %>
-    </p>
-    <p class="text-2xl font-bold text-ink-primary">
-      <%= @profile.goal_weight %><span class="text-sm font-normal text-ink-subtle ml-1">kg</span>
-    </p>
+  <%= render Ui::StatCardComponent.new(
+        label: t("views.weight_entries.stats.goal"),
+        value: @profile.goal_weight,
+        unit: "kg",
+        value_color: "text-ink-primary") do |c| %>
     <% if @goal_delta %>
       <% remaining_color = @goal_delta.abs < 1 ? "text-status-success" : "text-ink-subtle" %>
-      <p class="text-xs <%= remaining_color %> mt-1">
-        <% if @goal_delta > 0 %>
-          <%= t("views.weight_entries.stats.to_lose", kg: @goal_delta) %>
-        <% elsif @goal_delta < 0 %>
-          <%= t("views.weight_entries.stats.to_gain", kg: @goal_delta.abs) %>
-        <% else %>
-          <%= t("views.weight_entries.stats.goal_reached") %>
-        <% end %>
-      </p>
+      <% c.with_sub do %>
+        <p class="text-xs <%= remaining_color %> mt-1">
+          <% if @goal_delta > 0 %>
+            <%= t("views.weight_entries.stats.to_lose", kg: @goal_delta) %>
+          <% elsif @goal_delta < 0 %>
+            <%= t("views.weight_entries.stats.to_gain", kg: @goal_delta.abs) %>
+          <% else %>
+            <%= t("views.weight_entries.stats.goal_reached") %>
+          <% end %>
+        </p>
+      <% end %>
     <% end %>
   <% end %>
 
