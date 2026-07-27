@@ -1,12 +1,8 @@
 <div class="space-y-6">
 
-  <div>
-    <h2 class="text-base font-semibold text-ink-primary flex items-center gap-2">
-      <i class="fas fa-sliders text-brand text-sm"></i>
-      <%= t("views.settings.preferences.title") %>
-    </h2>
-    <p class="text-sm text-ink-subtle mt-1"><%= t("views.settings.preferences.description") %></p>
-  </div>
+  <%= render Ui::SectionHeaderComponent.new(icon: "fa-sliders",
+        title: t("views.settings.preferences.title"),
+        description: t("views.settings.preferences.description")) %>
 
   <%# ── Sections du calendrier : ordre + masquage ── %>
   <div id="calendar-sections" class="border-t border-surface-border/40 pt-6">

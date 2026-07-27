@@ -1,12 +1,8 @@
 <div class="space-y-6">
 
-  <div>
-    <h2 class="text-base font-semibold text-ink-primary flex items-center gap-2">
-      <i class="fas fa-utensils text-brand text-sm"></i>
-      <%= t("views.settings.food_groups.title") %>
-    </h2>
-    <p class="text-sm text-ink-subtle mt-1"><%= t("views.settings.food_groups.description") %></p>
-  </div>
+  <%= render Ui::SectionHeaderComponent.new(icon: "fa-utensils",
+        title: t("views.settings.food_groups.title"),
+        description: t("views.settings.food_groups.description")) %>
 
   <%# ── Formulaire d'ajout ── %>
   <div class="border-t border-surface-border/40 pt-6" data-controller="form-validation">

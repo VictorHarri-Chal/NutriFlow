@@ -1,0 +1,14 @@
+<div class="<%= root_class %>">
+  <div>
+    <h2 class="<%= title_size %> font-semibold text-ink-primary flex items-center gap-2">
+      <i class="fas <%= icon %> text-brand text-sm"></i>
+      <%= title %>
+    </h2>
+    <% if description %>
+      <p class="text-sm text-ink-subtle mt-1"><%= description %></p>
+    <% end %>
+  </div>
+  <% if actions? %>
+    <%= actions %>
+  <% end %>
+</div>

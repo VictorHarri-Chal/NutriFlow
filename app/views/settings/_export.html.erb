@@ -1,13 +1,9 @@
 <%# app/views/settings/_export.html.erb %>
 <div class="space-y-6">
 
-  <div>
-    <h2 class="text-base font-semibold text-ink-primary flex items-center gap-2">
-      <i class="fas fa-file-export text-brand text-sm"></i>
-      <%= t("views.settings.export.title") %>
-    </h2>
-    <p class="text-sm text-ink-subtle mt-1"><%= t("views.settings.export.description") %></p>
-  </div>
+  <%= render Ui::SectionHeaderComponent.new(icon: "fa-file-export",
+        title: t("views.settings.export.title"),
+        description: t("views.settings.export.description")) %>
 
   <%= form_with url: exports_path, method: :post, data: { controller: "export-form" } do %>
     <div class="border-t border-surface-border/40 pt-6 space-y-6">

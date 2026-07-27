@@ -122,20 +122,19 @@
 
 <%# ── Graphique ── %>
 <%= render Ui::PanelComponent.new do %>
-  <div class="flex items-center justify-between mb-4">
-    <h2 class="text-sm font-semibold text-ink-primary flex items-center gap-2">
-      <i class="fas fa-chart-line text-brand text-sm"></i>
-      <%= t("views.weight_entries.chart.title") %>
-    </h2>
-    <div class="flex items-center gap-1.5">
-      <% MeasurementsTabLoadable::VALID_PERIODS.each do |p| %>
-        <%= link_to weight_entries_path(tab: "poids", period: p),
-              class: "px-3 py-1 rounded-full text-xs font-medium border transition-colors #{@period == p ? 'bg-brand/20 text-brand border-brand/50' : 'text-ink-subtle border-surface-border/50 hover:border-brand/30 hover:text-ink-muted'}" do %>
-          <%= p >= 365 ? t("views.weight_entries.chart.period_label_year") : t("views.weight_entries.chart.period_label", days: p) %>
+  <%= render Ui::SectionHeaderComponent.new(icon: "fa-chart-line",
+        title: t("views.weight_entries.chart.title"), size: :sm, class: "mb-4") do |c| %>
+    <% c.with_actions do %>
+      <div class="flex items-center gap-1.5">
+        <% MeasurementsTabLoadable::VALID_PERIODS.each do |p| %>
+          <%= link_to weight_entries_path(tab: "poids", period: p),
+                class: "px-3 py-1 rounded-full text-xs font-medium border transition-colors #{@period == p ? 'bg-brand/20 text-brand border-brand/50' : 'text-ink-subtle border-surface-border/50 hover:border-brand/30 hover:text-ink-muted'}" do %>
+            <%= p >= 365 ? t("views.weight_entries.chart.period_label_year") : t("views.weight_entries.chart.period_label", days: p) %>
+          <% end %>
         <% end %>
-      <% end %>
-    </div>
-  </div>
+      </div>
+    <% end %>
+  <% end %>
 
   <% if @chart_data.size >= 2 %>
     <div class="relative h-56">
