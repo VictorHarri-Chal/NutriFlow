@@ -444,12 +444,14 @@ Reusable UI components live in `app/components/ui/` (namespace `Ui::`). **Always
 
 | Component | Use it for | Key args / slots |
 |---|---|---|
-| `Ui::ButtonComponent` | buttons, icon-buttons, CTAs (renders `<button>` or `<a>`) | `label:`, `variant:` (primary/secondary/danger/ghost), `size:` (sm/md/lg), `icon:` (**ui_icon key**), `href:`, `method:`, `type:` (default `"button"`), `aria_label:`; caller `class:`/`data:`/`aria:` merged |
+| `Ui::ButtonComponent` | text/label buttons & CTAs (renders `<button>` or `<a>`) — for icon-only use `IconButtonComponent` | `label:`, `variant:` (primary/secondary/danger/ghost), `size:` (sm/md/lg), `icon:` (**ui_icon key**), `href:`, `method:`, `type:` (default `"button"`), `aria_label:`; caller `class:`/`data:`/`aria:` merged |
+| `Ui::IconButtonComponent` | compact icon-only action button on rows/cards (edit/delete/duplicate…); supports delete-confirm | `icon:` (ui_icon key **or** raw glyph), `variant:` (neutral/edit/brand/danger/delete → hover colour), `size:` (md `w-8`/sm `w-7`/card `p-1.5`), `href:`, `method:`, `confirm:` (message → wires `confirm#show`), `title:`, `aria_label:` |
 | `Ui::BadgeComponent` | non-interactive status labels + simple pills | `label` (**positional!** e.g. `.new("Actif", variant: :success)`), `variant:` (brand/success/warning/danger/info/neutral), `style:` (badge/pill), `size:` (sm/md), `active:`, `icon:` (**ui_icon key**) |
 | `Ui::EmptyStateComponent` | empty / zero-data states (dashed box, circle icon, title, hint, CTA) | `icon:` (raw glyph), `title:`, `hint:`, `size:` (lg/md/sm), `icon_color:` (default `text-brand`; pass a status color for semantic states), `cta` slot |
 | `Ui::ChartPlaceholderComponent` | "not enough data" box for a chart slot (dashed, bare icon, 1-2 muted lines; distinct from EmptyState) | `icon:` (raw glyph), `text:`, `subtext:`, `height:` (e.g. `"h-40"`, `"py-10"`, `"flex-1 min-h-0"`) |
 | `Ui::PanelComponent` | `bg-surface-raised rounded-panel` container (the stat-panel look, distinct from `.card`) | `padding:`, `class:` (appended) |
 | `Ui::StatCardComponent` | KPI block (label + big value + unit + optional 3rd line) | `label:`, `value:`, `unit:`, `value_color:`; `sub` slot (3rd line) |
+| `Ui::SectionHeaderComponent` | card/section header (icon + title + optional description + right-aligned actions) | `icon:` (raw glyph), `title:`, `description:`, `size:` (base/sm); `actions` slot |
 | `Ui::ModalComponent` | modal dialogs (wraps the `modal` Stimulus controller) | `title:`, `subtitle:`, `icon:` (raw glyph), `max_width:` (sm/md/lg/xl), `max_height:` (sm/md/lg), `body_padding:`, `body_layout:` (block/flex), `data:` (extra controllers/actions merged onto root); slots `body`, `footer`, `title_accessory` |
 | `Ui::CustomSelectComponent` | custom dropdown select (wraps `custom-select`), for NEW selects | `name:`, `choices:`, `selected:` |
 | `Ui::IconCircleComponent` | icon inside a circle (avatar-like) | `icon:` (raw glyph), `size:`, `bg:`, `color:` |
