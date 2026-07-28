@@ -173,8 +173,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_29_130030) do
     t.integer "sleep_quality"
     t.integer "water_ml", default: 0, null: false
     t.integer "steps"
-    t.index ["date", "user_id"], name: "index_days_on_date_and_user_id", unique: true
-    t.index ["user_id"], name: "index_days_on_user_id"
+    t.index ["user_id", "date"], name: "index_days_on_user_id_and_date", unique: true
   end
 
   create_table "exercise_favorites", force: :cascade do |t|
@@ -296,7 +295,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_29_130030) do
     t.integer "default_daily_steps", null: false
     t.decimal "goal_rate_kg_per_week", precision: 4, scale: 2, default: "0.0", null: false
     t.date "date_of_birth"
-    t.index ["user_id"], name: "index_profiles_on_user_id"
+    t.index ["user_id"], name: "index_profiles_on_user_id", unique: true
   end
 
   create_table "program_days", force: :cascade do |t|
@@ -369,7 +368,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_29_130030) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "favorite", default: false, null: false
-    t.index ["name", "user_id"], name: "index_recipes_on_name_and_user_id"
+    t.index "user_id, lower((name)::text)", name: "index_recipes_on_user_id_and_lower_name", unique: true
     t.index ["user_id"], name: "index_recipes_on_user_id"
   end
 

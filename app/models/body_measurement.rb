@@ -2,8 +2,8 @@ class BodyMeasurement < ApplicationRecord
   belongs_to :user
 
   has_one_attached :image do |attachable|
-    attachable.variant :thumbnail, resize_to_fill: [400, 400]
-    attachable.variant :medium,    resize_to_limit: [800, 800]
+    attachable.variant :thumbnail, resize_to_fill: [400, 400], preprocessed: true
+    attachable.variant :medium,    resize_to_limit: [800, 800], preprocessed: true
   end
 
   MEASUREMENT_FIELDS = %i[waist_cm hips_cm chest_cm biceps_cm thighs_cm calves_cm neck_cm].freeze

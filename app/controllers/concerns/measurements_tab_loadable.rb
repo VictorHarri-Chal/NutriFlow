@@ -13,12 +13,12 @@ module MeasurementsTabLoadable
   end
 
   def load_measurements_tab
-    @measurements      = current_user.body_measurements.ordered.with_attached_image
+    @measurements      = current_user.body_measurements.ordered.with_attached_image.to_a
     @today_measurement ||= current_user.body_measurements.find_or_initialize_by(date: Date.today)
     @measurement_type  = BodyMeasurement::MEASUREMENT_FIELDS.map(&:to_s).include?(params[:measurement]) ? params[:measurement] : "waist_cm"
     @period            = VALID_PERIODS.include?(params[:period]&.to_i) ? params[:period].to_i : 30
 
-    @measurements_pagy, @history_measurements = pagy(@measurements.reverse_order, items: 9)
+    @measurements_pagy, @history_measurements = pagy_array(@measurements.reverse, items: 9)
 
     build_measurement_chart_data
     build_measurement_stats
@@ -26,7 +26,7 @@ module MeasurementsTabLoadable
 
   def build_measurement_chart_data
     since                = @period.days.ago.to_date
-    period_measurements  = @measurements.where("date >= ?", since).select { |m| m.public_send(@measurement_type).present? }
+    period_measurements  = @measurements.select { |m| m.date >= since && m.public_send(@measurement_type).present? }
 
     @measurement_chart_labels = period_measurements.map { |m| l(m.date, format: :short) }
     @measurement_chart_data   = period_measurements.map { |m| m.public_send(@measurement_type).to_f }

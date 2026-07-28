@@ -43,6 +43,7 @@ env:
     - SENTRY_DSN
   clear:
     SOLID_QUEUE_IN_PUMA: true
+    RAILS_MAX_THREADS: 5
     DB_HOST: nutri_flow-db
     CDN_HOST: https://cdn.nutriflow.in
 

@@ -103,6 +103,8 @@ class Profile < ApplicationRecord
 
   belongs_to :user
 
+  validates :user_id, uniqueness: true
+
   before_validation :set_default_steps
   before_validation :set_default_water_goal
   before_validation :default_goal_weight_to_current_weight

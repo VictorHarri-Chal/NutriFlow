@@ -9,7 +9,7 @@ class DayFoodsController < ApplicationController
     group_id          = params.dig(:day_food, :day_food_group_id)
     @day_food         = @day.day_foods.build(day_food_group_id: group_id)
     @day_food_groups  = current_user.day_food_groups.order(:name)
-    @foods            = current_user.foods.order(:name)
+    @foods            = current_user.foods.select(:id, :name, :calories, :proteins, :carbs, :fats, :sugars, :favorite).order(:name)
     @recent_food_ids  = DayFood.joins(:day)
                           .where(days: { user_id: current_user.id })
                           .where("day_foods.created_at > ?", 14.days.ago)
@@ -30,7 +30,7 @@ class DayFoodsController < ApplicationController
       end
     else
       @day_food_groups = current_user.day_food_groups.order(:name)
-      @foods           = current_user.foods.order(:name)
+      @foods           = current_user.foods.select(:id, :name, :calories, :proteins, :carbs, :fats, :sugars, :favorite).order(:name)
       respond_to do |format|
         format.turbo_stream { render turbo_stream: turbo_stream.replace("food_item_form", partial: "day_foods/form_frame", locals: { day: @day, day_food: @day_food, title: t("views.day_foods.new.title"), submit_text: t("shared.add") }) }
         format.html         { render :new, status: :unprocessable_entity }
@@ -40,7 +40,7 @@ class DayFoodsController < ApplicationController
 
   def edit
     @day_food_groups = current_user.day_food_groups.order(:name)
-    @foods           = current_user.foods.order(:name)
+    @foods           = current_user.foods.select(:id, :name, :calories, :proteins, :carbs, :fats, :sugars, :favorite).order(:name)
   end
 
   def update
@@ -54,7 +54,7 @@ class DayFoodsController < ApplicationController
       end
     else
       @day_food_groups = current_user.day_food_groups.order(:name)
-      @foods           = current_user.foods.order(:name)
+      @foods           = current_user.foods.select(:id, :name, :calories, :proteins, :carbs, :fats, :sugars, :favorite).order(:name)
       respond_to do |format|
         format.turbo_stream { render turbo_stream: turbo_stream.replace("food_item_form", partial: "day_foods/form_frame", locals: { day: @day, day_food: @day_food, title: t("views.day_foods.edit.title"), submit_text: t("shared.update") }) }
         format.html         { render :edit, status: :unprocessable_entity }
