@@ -269,6 +269,12 @@
               class: "card p-0 overflow-hidden hover:border-surface-border transition-all block",
               data: { turbo_frame: "_top" } do %>
 
+            <%# Card body is global exercise data (+ locale for translated labels),
+                identical for every user → shared fragment cache. The user-specific
+                link params and favorite button stay outside the cache.
+                expires_in bounds label staleness while FR translations are still
+                being filled in (a locale-file edit doesn't bump exercise.updated_at). %>
+            <% cache [exercise, I18n.locale], expires_in: 12.hours do %>
             <!-- Image / GIF / placeholder -->
             <% has_gif   = exercise.gif_url.present? %>
             <% has_image = !has_gif && exercise.image.attached? %>
@@ -321,6 +327,7 @@
                 <p class="text-xs text-ink-subtle/50 mt-0.5"><%= t_equipment(exercise.equipment) %></p>
               <% end %>
             </div>
+            <% end %>
 
           <% end %>
 
