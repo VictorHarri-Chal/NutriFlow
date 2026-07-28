@@ -1,12 +1,11 @@
 en:
   activerecord:
     models:
-      day_recipe_item:
-        one: "Ingredient"
-        other: "Ingredients"
+      day_food:
+        one: "Food"
+        other: "Foods"
     attributes:
-      day_recipe_item:
+      day_food:
         food: "Food"
         food_id: "Food"
         quantity: "Quantity"
-        unit: "Unit"

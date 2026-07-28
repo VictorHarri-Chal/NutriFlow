@@ -73,7 +73,7 @@ class Day < ApplicationRecord
   def week_aggregated_micronutrients(user: self.user)
     week_range = date.beginning_of_week..date.end_of_week
     user.days.where(date: week_range)
-        .includes(day_foods: :food, day_recipes: { recipe: { recipe_items: :food }, day_recipe_items: :food })
+        .includes(:day_foods, day_recipes: :day_recipe_items)
         .each_with_object({}) do |d, acc|
           d.aggregated_micronutrients.each { |key, value| acc[key] = (acc[key] || 0) + value }
         end.transform_values { |v| v.round(2) }
@@ -100,10 +100,10 @@ class Day < ApplicationRecord
   private
 
   def preloaded_day_foods
-    @preloaded_day_foods ||= day_foods.loaded? ? day_foods.to_a : day_foods.includes(:food).to_a
+    @preloaded_day_foods ||= day_foods.to_a
   end
 
   def preloaded_day_recipes
-    @preloaded_day_recipes ||= day_recipes.loaded? ? day_recipes.to_a : day_recipes.includes(recipe: { recipe_items: :food }).to_a
+    @preloaded_day_recipes ||= day_recipes.loaded? ? day_recipes.to_a : day_recipes.includes(:day_recipe_items).to_a
   end
 end

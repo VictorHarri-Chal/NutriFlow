@@ -4,15 +4,23 @@
     day_recipes/_customize_modal.html.erb (DayRecipeItem, dixièmes de gramme
     car issus d'une répartition proportionnelle). Les deux appellent avec
     quantity_round: 1. %>
+<%# Nom affiché : l'aliment live si présent, sinon le nom figé du snapshot
+    (DayRecipeItem détaché après suppression de l'aliment). `try` car RecipeItem
+    (recette-template, live) n'a pas de colonne food_name. %>
+<% food_display_name = f.object.food&.name.presence || f.object.try(:food_name) %>
+<%# Snapshot figé /100g (DayRecipeItem uniquement) : repli pour l'aperçu macros
+    en direct quand l'aliment de la ligne a été supprimé de la banque. %>
+<% preview_snapshot = f.object.try(:food_snapshot) %>
 <div class="flex items-start gap-3 py-2 px-1 rounded-lg hover:bg-surface-base/50 transition-colors group"
      data-nested-form-target="item"
-     data-ingredient-rows-target="row">
+     data-ingredient-rows-target="row"
+     data-preview-snapshot="<%= preview_snapshot.present? ? preview_snapshot.slice('calories', 'proteins', 'carbs', 'fats').to_json : '' %>">
 
   <%# ── Combobox aliment ── %>
   <div class="flex-1 min-w-0 relative"
        data-controller="food-combobox"
        data-food-combobox-selected-id-value="<%= f.object.food_id.to_i %>"
-       data-food-combobox-food-name-value="<%= f.object.food&.name.to_s %>"
+       data-food-combobox-food-name-value="<%= food_display_name.to_s %>"
        data-food-combobox-no-results-value="<%= t('views.day_foods.form.no_food_found') %>">
 
     <%= f.hidden_field :food_id, data: { "food-combobox-target": "hiddenId", role: "food-id" } %>
@@ -22,7 +30,7 @@
              class="input-dark pl-8 text-sm <%= 'border-status-danger focus:ring-status-danger/50 focus:border-status-danger' if f.object.errors[:food_id].any? %>"
              placeholder="<%= t("#{i18n_scope}.search_food") %>"
              autocomplete="off"
-             value="<%= f.object.food&.name.to_s %>"
+             value="<%= food_display_name.to_s %>"
              data-food-combobox-target="input"
              data-role="food-name"
              data-action="focus->food-combobox#open input->food-combobox#filter keydown->food-combobox#keydown">

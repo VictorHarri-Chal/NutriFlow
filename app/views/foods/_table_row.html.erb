@@ -73,19 +73,10 @@
               href: edit_food_path(food),
               title: t("shared.edit"), data: { turbo_frame: "_top" }) %>
 
-        <% if food_blocked_for_direct_delete?(food) %>
-          <%# Aliment utilisé : la première pop-up de confirmation ne sert à rien ici,
-              puisque la requête n'aboutit jamais à une suppression directe — elle
-              ouvre la pop-up "Impossible de supprimer" à la place. %>
-          <%= render Ui::IconButtonComponent.new(icon: :delete, variant: :delete,
-                href: food_path(food), method: :delete,
-                title: t("shared.delete")) %>
-        <% else %>
-          <%= render Ui::IconButtonComponent.new(icon: :delete, variant: :delete,
-                href: food_path(food),
-                confirm: t("views.foods.delete_confirm", name: food.name),
-                title: t("shared.delete")) %>
-        <% end %>
+        <%= render Ui::IconButtonComponent.new(icon: :delete, variant: :delete,
+              href: food_path(food),
+              confirm: t("views.foods.delete_confirm", name: food.name),
+              title: t("shared.delete")) %>
       </div>
 
       <%# Pantry toggle — toujours visible, tout à droite %>

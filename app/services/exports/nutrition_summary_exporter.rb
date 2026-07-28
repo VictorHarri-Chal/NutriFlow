@@ -33,7 +33,7 @@ module Exports
 
     def scoped_days
       @scoped_days ||= begin
-        scope = @user.days.includes(day_foods: :food, day_recipes: [{ recipe: { recipe_items: :food } }, { day_recipe_items: :food }])
+        scope = @user.days.includes(day_foods: :food, day_recipes: { day_recipe_items: :food })
         range = @period&.range
         (range ? scope.where(date: range) : scope).to_a
       end

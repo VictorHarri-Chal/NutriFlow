@@ -81,10 +81,6 @@
                 <% if is_recipe?(item) %>
                   <div class="text-xs text-brand font-medium">
                     <%= t("views.components.day_food_group.recipe_label") %>
-                    <% if item.customized? %>
-                      <i class="fas fa-sliders text-ink-subtle/70 text-[10px] ml-1"
-                         title="<%= t("views.components.day_food_group.customized_tooltip") %>"></i>
-                    <% end %>
                   </div>
                 <% end %>
               </td>

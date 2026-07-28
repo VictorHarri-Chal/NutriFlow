@@ -1,5 +1,5 @@
 class FoodsController < ApplicationController
-  before_action :set_food, only: [:show, :edit, :update, :destroy, :force_destroy, :duplicate, :toggle_favorite, :toggle_pantry]
+  before_action :set_food, only: [:show, :edit, :update, :destroy, :duplicate, :toggle_favorite, :toggle_pantry]
 
   def index
     @food_labels = current_user.food_labels.order(:name)
@@ -65,7 +65,6 @@ class FoodsController < ApplicationController
 
     food_ids = @foods.pluck(:id)
     @usage_counts = bulk_usage_counts(food_ids)
-    @foods_in_use = Set.new(@usage_counts.reject { |_, count| count.zero? }.keys)
     @missing_count = current_user.foods.where(in_pantry: false).count
   end
 
@@ -102,44 +101,35 @@ class FoodsController < ApplicationController
   end
 
   def destroy
-    usage = food_usage(@food)
+    recipe_names = @food.recipe_items.includes(:recipe).map { |ri| ri.recipe.name }.uniq
 
-    if usage.values.all?(&:zero?)
-      @food.destroy
-      redirect_to foods_path, notice: t("controllers.foods.destroyed")
-    else
+    if recipe_names.any? && params[:confirmed].blank?
       respond_to do |format|
         format.turbo_stream do
           render turbo_stream: turbo_stream.update(
             "food_delete_blocked_modal_root",
-            partial: "foods/delete_blocked_modal",
-            locals: { food: @food, usage: usage }
+            partial: "foods/delete_template_confirm_modal",
+            locals: { food: @food, recipe_names: recipe_names }
           )
         end
         format.html { redirect_to foods_path, alert: t("controllers.foods.delete_blocked") }
       end
+      return
     end
-  end
 
-  # Supprime l'aliment en cascade avec tout ce qui en dépend (recettes, recettes
-  # personnalisées, entrées de journal) — pour l'utilisateur qui préfère perdre
-  # cet historique plutôt que ne jamais pouvoir supprimer l'aliment.
-  def force_destroy
     ActiveRecord::Base.transaction do
-      recipe_ids = @food.recipe_items.distinct.pluck(:recipe_id)
-      day_recipe_ids = (@food.day_recipe_items.distinct.pluck(:day_recipe_id) +
-                         DayRecipe.where(recipe_id: recipe_ids).pluck(:id)).uniq
-
-      # @food is already scoped to current_user (set_food), but the cascade below
-      # walks to other tables — scope each destroy explicitly rather than trusting
-      # that every RecipeItem/DayRecipeItem row satisfies food_belongs_to_user.
-      DayRecipe.joins(:day).where(days: { user_id: current_user.id }, id: day_recipe_ids).destroy_all
-      current_user.recipes.where(id: recipe_ids).destroy_all
-      @food.day_foods.destroy_all
-      @food.destroy!
+      emptied_recipe_ids = []
+      # includes(recipe: :recipe_items) précharge le comptage total par recette :
+      # `recipe.recipe_items.size` lit alors la collection en mémoire (pas un COUNT
+      # par recette).
+      @food.recipe_items.includes(recipe: :recipe_items).group_by(&:recipe).each do |recipe, items|
+        emptied_recipe_ids << recipe.id if (recipe.recipe_items.size - items.size) <= 0
+      end
+      @food.destroy!  # :nullify on logs, :destroy on recipe_items (template)
+      current_user.recipes.where(id: emptied_recipe_ids).destroy_all
     end
 
-    redirect_to foods_path, notice: t("controllers.foods.force_destroyed")
+    redirect_to foods_path, notice: t("controllers.foods.destroyed")
   end
 
   def bulk_pantry
@@ -252,19 +242,9 @@ class FoodsController < ApplicationController
     @food = current_user.foods.find(params[:id])
   end
 
-  def food_usage(food)
-    {
-      day_foods: food.day_foods.count,
-      recipes: food.recipe_items.distinct.count(:recipe_id),
-      day_recipe_items: food.day_recipe_items.distinct.count(:day_recipe_id)
-    }
-  end
-
   # Utilisations totales par aliment (parmi food_ids) : entrées de journal +
   # recettes + recettes personnalisées — c'est le badge "Utilisations" affiché
-  # dans la liste, et sa non-nullité décide aussi si le bouton supprimer doit
-  # sauter la première pop-up de confirmation classique pour aller directement
-  # à la pop-up "Impossible de supprimer".
+  # dans la liste.
   def bulk_usage_counts(food_ids)
     return {} if food_ids.empty?
 

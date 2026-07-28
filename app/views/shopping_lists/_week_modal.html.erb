@@ -23,11 +23,11 @@
       <% else %>
         <div class="relative flex-1 min-h-0 flex flex-col overflow-hidden">
           <div class="flex-1 min-h-0 px-5 py-3 pb-5 overflow-y-auto divide-y divide-surface-border/20">
-            <% candidates.each_value do |candidate| %>
+            <% candidates.each do |key, candidate| %>
               <label class="flex items-center gap-3 py-2 cursor-pointer">
                 <%= render CheckboxComponent.new(
                       name: "food_ids[]",
-                      value: candidate[:food].id,
+                      value: key,
                       checked: true,
                       data: { action: "change->week-shopping-selection#toggle", "week-shopping-selection-target": "checkbox" }
                     ) %>

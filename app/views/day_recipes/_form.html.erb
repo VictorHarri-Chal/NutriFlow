@@ -17,7 +17,7 @@
         data: {
           controller: "day-recipe-preview day-recipe-customize ingredient-rows",
           action: "input->day-recipe-preview#update input->day-recipe-customize#onFieldChange submit->ingredient-rows#guardSubmit",
-          "day-recipe-customize-open-on-connect-value": day_recipe.customized? && day_recipe.errors.any?
+          "day-recipe-customize-open-on-connect-value": day_recipe.day_recipe_items.any? { |i| i.errors.any? } || (day_recipe.persisted? && day_recipe.errors[:base].any?)
         }
       }) do |f| %>
   <div class="space-y-4">
@@ -63,89 +63,86 @@
             } %>
         <div class="flex items-center gap-2 px-3 py-2.5 bg-surface-base border border-surface-border/50 rounded-lg">
           <i class="fas fa-lock text-xs text-ink-subtle shrink-0"></i>
-          <span class="text-sm text-ink-primary"><%= day_recipe.recipe&.name %></span>
+          <span class="text-sm text-ink-primary"><%= day_recipe.recipe&.name || day_recipe.recipe_name %></span>
         </div>
       <% end %>
     </div>
 
-    <%# ── Quantité + Groupe ── %>
-    <div class="grid grid-cols-2 gap-3">
-
-      <%# Quantité %>
-      <div class="<%= 'opacity-60 pointer-events-none' if day_recipe.customized? %>" data-day-recipe-customize-target="globalQuantityFields">
-        <label class="label-dark block mb-1.5"><%= t("shared.quantity") %></label>
-        <div class="relative">
-          <%# Readonly (not disabled) when customized: it must stay visible-but-inert while
-              still submitting its frozen value (a disabled input is dropped from the request
-              entirely, which would silently null out the base quantity on every future save). %>
-          <%= f.number_field :quantity,
-                min: 1, step: 0.1,
-                value: day_recipe.new_record? ? nil : day_recipe.quantity.to_f.round(1),
-                disabled: day_recipe.use_recipe_quantity? && !day_recipe.customized?,
-                readonly: day_recipe.customized?,
-                class: "input-dark text-sm pr-8",
-                data: {
-                  "day-recipe-preview-target": "quantity",
-                  "day-recipe-customize-target": "quantityInput",
-                  controller: "digit-limit",
-                  action: "input->digit-limit#limit",
-                  digit_limit_max_integer_digits_value: 4,
-                  digit_limit_max_decimal_digits_value: 1
-                } %>
-          <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">g</span>
+    <%# Groupe de repas — extrait pour être partagé entre la mise en page
+        "nouvelle entrée" (2 colonnes, aux côtés de la quantité) et "édition"
+        (seule, pleine largeur : quantité/portion totale ne servent qu'au
+        seeding initial, cf. DayRecipe#seed_items_from_recipe on: :create). %>
+    <% food_group_field = capture do %>
+      <% if @day_food_groups.any? %>
+        <label class="label-dark block mb-1.5"><%= t("views.day_recipes.form.food_group") %></label>
+        <div data-controller="custom-select" class="relative">
+          <%= f.association :day_food_group,
+              collection: @day_food_groups,
+              prompt: t("views.day_foods.form.select_group"),
+              label: false,
+              input_html: { class: "sr-only", data: { custom_select_target: "select" } } %>
+          <button type="button" data-action="click->custom-select#toggle"
+                  class="input-dark flex items-center justify-between cursor-pointer w-full text-left text-sm">
+            <span data-custom-select-target="label" class="text-ink-subtle truncate min-w-0 flex-1"></span>
+            <i class="fas fa-chevron-down text-xs text-ink-subtle flex-shrink-0"></i>
+          </button>
+          <div data-custom-select-target="dropdown"
+               class="hidden absolute z-50 w-full mt-1 bg-surface-raised border border-surface-border/60 rounded-lg shadow-2xl max-h-48 overflow-y-auto"></div>
         </div>
+      <% else %>
+        <label class="label-dark block mb-1.5"><%= t("views.day_recipes.form.food_group") %></label>
+        <div class="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-surface-base border border-surface-border/50 text-xs text-ink-subtle">
+          <i class="fas fa-utensils shrink-0"></i>
+          <span><%= t("shared.no_food_groups") %></span>
+        </div>
+      <% end %>
+    <% end %>
+
+    <% if day_recipe.new_record? %>
+      <%# ── Quantité + Groupe ── %>
+      <div class="grid grid-cols-2 gap-3">
+
+        <%# Quantité (transitoire : sert uniquement à semer les ingrédients au moment du log) %>
+        <div>
+          <label class="label-dark block mb-1.5"><%= t("shared.quantity") %></label>
+          <div class="relative">
+            <%= f.number_field :log_quantity,
+                  min: 1, step: 0.1,
+                  disabled: day_recipe.log_use_whole?,
+                  class: "input-dark text-sm pr-8",
+                  data: {
+                    "day-recipe-preview-target": "quantity",
+                    "day-recipe-customize-target": "quantityInput",
+                    controller: "digit-limit",
+                    action: "input->digit-limit#limit",
+                    digit_limit_max_integer_digits_value: 4,
+                    digit_limit_max_decimal_digits_value: 1
+                  } %>
+            <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-ink-subtle pointer-events-none">g</span>
+          </div>
+        </div>
+
+        <div><%= food_group_field %></div>
+
       </div>
 
-      <%# Groupe de repas %>
-      <div>
-        <% if @day_food_groups.any? %>
-          <label class="label-dark block mb-1.5"><%= t("views.day_recipes.form.food_group") %></label>
-          <div data-controller="custom-select" class="relative">
-            <%= f.association :day_food_group,
-                collection: @day_food_groups,
-                prompt: t("views.day_foods.form.select_group"),
-                label: false,
-                input_html: { class: "sr-only", data: { custom_select_target: "select" } } %>
-            <button type="button" data-action="click->custom-select#toggle"
-                    class="input-dark flex items-center justify-between cursor-pointer w-full text-left text-sm">
-              <span data-custom-select-target="label" class="text-ink-subtle truncate min-w-0 flex-1"></span>
-              <i class="fas fa-chevron-down text-xs text-ink-subtle flex-shrink-0"></i>
-            </button>
-            <div data-custom-select-target="dropdown"
-                 class="hidden absolute z-50 w-full mt-1 bg-surface-raised border border-surface-border/60 rounded-lg shadow-2xl max-h-48 overflow-y-auto"></div>
-          </div>
-        <% else %>
-          <label class="label-dark block mb-1.5"><%= t("views.day_recipes.form.food_group") %></label>
-          <div class="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-surface-base border border-surface-border/50 text-xs text-ink-subtle">
-            <i class="fas fa-utensils shrink-0"></i>
-            <span><%= t("shared.no_food_groups") %></span>
-          </div>
-        <% end %>
-      </div>
-
-    </div>
-
-    <%# ── Utiliser la quantité totale ── %>
-    <label class="flex items-center gap-3 cursor-pointer select-none <%= 'opacity-60 pointer-events-none' if day_recipe.customized? %>"
-           data-day-recipe-customize-target="globalQuantityFields">
-      <%# Not disabled when customized — same reason as the quantity field above:
-          it must keep submitting its frozen value on every future save. Checkboxes
-          ignore `readonly`, so tabindex removes it from the keyboard tab order instead. %>
-      <%= f.check_box :use_recipe_quantity, label: false,
-            class: "sr-only peer",
-            checked: day_recipe.use_recipe_quantity?,
-            tabindex: day_recipe.customized? ? -1 : 0,
-            data: {
-              "day-recipe-preview-target": "useRecipeQty",
-              "day-recipe-customize-target": "useRecipeQtyInput",
-              action: "change->day-recipe-preview#update"
-            } %>
-      <div class="relative w-9 h-5 rounded-full shrink-0 transition-colors bg-surface-border peer-checked:bg-brand
-                  after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4"></div>
-      <span class="text-sm text-ink-muted"><%= t("views.day_recipes.form.use_recipe_quantity") %></span>
-    </label>
-
-    <%= f.hidden_field :customized, data: { "day-recipe-customize-target": "customizedField" } %>
+      <%# ── Utiliser la quantité totale ── %>
+      <label class="flex items-center gap-3 cursor-pointer select-none">
+        <%= f.check_box :log_use_whole, label: false,
+              class: "sr-only peer",
+              checked: day_recipe.log_use_whole?,
+              data: {
+                "day-recipe-preview-target": "useRecipeQty",
+                "day-recipe-customize-target": "useRecipeQtyInput",
+                action: "change->day-recipe-preview#update"
+              } %>
+        <div class="relative w-9 h-5 rounded-full shrink-0 transition-colors bg-surface-border peer-checked:bg-brand
+                    after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4"></div>
+        <span class="text-sm text-ink-muted"><%= t("views.day_recipes.form.use_recipe_quantity") %></span>
+      </label>
+    <% else %>
+      <%= food_group_field %>
+    <% end %>
 
     <%# ── Aperçu macros (affiché dès qu'un plat est sélectionné) ── %>
     <div data-day-recipe-preview-target="panel" class="hidden bg-surface-base rounded-lg border border-surface-border/40 px-4 py-3">
@@ -185,7 +182,7 @@
             title="<%= t("views.day_recipes.form.customize_tooltip") %>"
             data-action="click->day-recipe-customize#open"
             data-day-recipe-customize-target="gearButton"
-            <%= "disabled" if day_recipe.recipe_id.blank? %>
+            <%= "disabled" if day_recipe.new_record? && day_recipe.recipe_id.blank? %>
             class="btn-ghost w-10 h-10 !p-0 flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-ink-muted">
       <i class="fas fa-sliders text-sm"></i>
     </button>

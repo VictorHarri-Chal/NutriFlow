@@ -58,8 +58,8 @@ class ShoppingListsController < ApplicationController
 
   def generate_from_week
     @shopping_list = current_user.active_shopping_list
-    selected_ids   = Array(params[:food_ids]).map(&:to_i)
-    candidates     = week_missing_foods.values.select { |c| selected_ids.include?(c[:food].id) }
+    selected_keys  = Array(params[:food_ids]).map(&:to_s)
+    candidates     = week_missing_foods.select { |key, _| selected_keys.include?(key.to_s) }.values
 
     candidates.each do |c|
       @shopping_list.add_or_merge_item(food: c[:food], name: c[:food].name, quantity: c[:quantity], category: c[:category])
@@ -116,19 +116,23 @@ class ShoppingListsController < ApplicationController
   end
 
   # Agrège les aliments in_pantry: false consommés (DayFood direct ou via une
-  # recette) sur les 7 derniers jours. Retourne un Hash food_id => { food:,
-  # quantity:, category: } — recalculé côté serveur à chaque appel, jamais
-  # accepté depuis les params (voir generate_from_week).
+  # recette) sur les 7 derniers jours. Retourne un Hash keyé par food_id =>
+  # { food:, quantity:, category: } — recalculé côté serveur à chaque appel,
+  # jamais accepté depuis les params (voir generate_from_week).
+  #
+  # Un aliment supprimé de la banque (log détaché, food nil) est ignoré : ce
+  # n'est plus un article de la banque, le suggérer à l'achat n'aurait pas de
+  # sens (pas de statut de stock, pas de catégorie, rien à re-référencer).
   def week_missing_foods
     days = current_user.days
              .where(date: 6.days.ago.to_date..Date.current)
-             .includes(day_foods: :food, day_recipes: [{ recipe: { recipe_items: :food } }, { day_recipe_items: :food }])
+             .includes(day_foods: :food, day_recipes: { day_recipe_items: :food })
 
     agg = Hash.new { |h, k| h[k] = { food: nil, grams: 0.0, unit: "g", category: nil } }
 
     days.each do |day|
       day.day_foods.each do |df|
-        next if df.food.in_pantry
+        next if df.food.nil? || df.food.in_pantry
 
         entry = agg[df.food.id]
         entry[:food] ||= df.food
@@ -137,29 +141,17 @@ class ShoppingListsController < ApplicationController
       end
 
       day.day_recipes.each do |dr|
-        # Une recette personnalisée a ses propres ingrédients (potentiellement
-        # différents de la recette d'origine) — ils priment, sans passer par
-        # gram_factor puisqu'ils stockent déjà la quantité réellement utilisée.
-        if dr.customized?
-          dr.day_recipe_items.each do |item|
-            next if item.food.in_pantry
+        # Toujours matérialisée : les day_recipe_items sont la source de
+        # vérité (leur quantité est déjà celle réellement loggée), sans
+        # passer par gram_factor.
+        dr.day_recipe_items.each do |item|
+          next if item.food.nil? || item.food.in_pantry
 
-            entry = agg[item.food.id]
-            entry[:food] ||= item.food
-            entry[:category] ||= item.food.category
-            entry[:unit] = "mL" if %w[mL L].include?(item.unit)
-            entry[:grams] += item.grams_equivalent
-          end
-        else
-          dr.recipe.recipe_items.each do |ri|
-            next if ri.food.in_pantry
-
-            entry = agg[ri.food.id]
-            entry[:food] ||= ri.food
-            entry[:category] ||= ri.food.category
-            entry[:unit] = "mL" if %w[mL L].include?(ri.unit)
-            entry[:grams] += ri.grams_equivalent * dr.gram_factor
-          end
+          entry = agg[item.food.id]
+          entry[:food] ||= item.food
+          entry[:category] ||= item.food.category
+          entry[:unit] = "mL" if %w[mL L].include?(item.unit)
+          entry[:grams] += item.grams_equivalent
         end
       end
     end

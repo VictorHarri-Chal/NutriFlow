@@ -4,14 +4,18 @@ class Food < ApplicationRecord
   CATEGORIES = %w[proteins grains vegetables fruits dairy beverages condiments supplements other].freeze
 
   belongs_to :user
-  # :restrict_with_error, not :destroy — deleting a Food must never silently
-  # erase logged history or gut a recipe out from under the user. Blocking the
-  # deletion (see FoodsController#destroy) forces removing it from those places
-  # first, deliberately.
-  has_many :day_foods, dependent: :restrict_with_error
+  # day_foods/day_recipe_items snapshot their own name + macros at log time
+  # (food_name/food_snapshot) — deleting the Food never erases logged history,
+  # it just detaches the (now immutable) log from its source. recipe_items
+  # is :destroy (not :restrict_with_error): Recipe is NOT snapshotted, it reads
+  # the live Food, so a Recipe must never be left pointing at a nil ingredient.
+  # FoodsController#destroy handles the recipe TEMPLATE removal explicitly
+  # (confirms with the user first, and deletes any recipe left with zero
+  # ingredients after this food is removed from it).
+  has_many :day_foods, dependent: :nullify
   has_many :days, through: :day_foods
-  has_many :recipe_items, dependent: :restrict_with_error
-  has_many :day_recipe_items, dependent: :restrict_with_error
+  has_many :recipe_items, dependent: :destroy
+  has_many :day_recipe_items, dependent: :nullify
   has_many :shopping_list_items, dependent: :nullify
   has_and_belongs_to_many :food_labels, join_table: 'food_labels_foods'
 

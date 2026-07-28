@@ -18,3 +18,4 @@ fr:
       models:
         day_recipe:
           at_least_one_ingredient: "Au moins un ingrédient est requis"
+          quantity_required: "Indiquez une quantité, ou cochez « utiliser la quantité totale de la recette »."

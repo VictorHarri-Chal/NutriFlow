@@ -5,6 +5,9 @@ class Recipe < ApplicationRecord
   has_many :recipe_items, dependent: :destroy
   has_many :foods, through: :recipe_items
   has_many :recipe_ratings, dependent: :destroy
+  # Les DayRecipe sont des logs figés (day_recipe_items + snapshots) : supprimer
+  # une recette les détache (recipe_id → NULL), l'historique reste intact.
+  has_many :day_recipes, dependent: :nullify
 
   accepts_nested_attributes_for :recipe_items, allow_destroy: true, reject_if: :all_blank
 

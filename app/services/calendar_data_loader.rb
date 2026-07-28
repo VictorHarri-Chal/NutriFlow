@@ -25,8 +25,8 @@ class CalendarDataLoader
   # ── Items ────────────────────────────────────────────────────────────────────
 
   def load_items
-    day_foods   = @day.day_foods.includes(:food, :day_food_group)
-    day_recipes = @day.day_recipes.includes(:day_food_group, recipe: { recipe_items: :food }, day_recipe_items: :food)
+    day_foods   = @day.day_foods.includes(:day_food_group)
+    day_recipes = @day.day_recipes.includes(:day_food_group, :day_recipe_items)
     @all_items  = day_foods + day_recipes
 
     by_group                = @all_items.group_by(&:day_food_group)

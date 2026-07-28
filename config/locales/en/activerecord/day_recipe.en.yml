@@ -18,3 +18,4 @@ en:
       models:
         day_recipe:
           at_least_one_ingredient: "At least one ingredient is required"
+          quantity_required: "Enter a quantity, or check \"use the total recipe quantity\"."

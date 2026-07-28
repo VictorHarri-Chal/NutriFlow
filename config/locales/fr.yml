@@ -35,8 +35,7 @@ fr:
     foods:
       created: "Aliment créé avec succès."
       updated: "Aliment mis à jour avec succès."
-      destroyed: "Aliment supprimé avec succès."
-      force_destroyed: "Aliment et tout son historique supprimés avec succès."
+      destroyed: "Aliment supprimé. Vos journaux passés sont conservés."
       delete_blocked: "Cet aliment est encore utilisé et ne peut pas être supprimé."
       duplicated: "Aliment dupliqué. Modifiez-le avant de sauvegarder."
       duplicate_name: "Copie de %{name}"
@@ -77,7 +76,7 @@ fr:
     recipes:
       created: "Recette créée avec succès."
       updated: "Recette mise à jour avec succès."
-      destroyed: "Recette supprimée avec succès."
+      destroyed: "Recette supprimée. Vos journaux passés sont conservés."
       duplicated: "Recette dupliquée. Modifiez-la avant de sauvegarder."
       duplicate_name: "Copie de %{name}"
       duplicate_error: "Impossible de dupliquer cette recette."
@@ -311,21 +310,10 @@ fr:
       add_food: "Ajouter un aliment"
       edit_food: "Modifier un aliment"
       delete_confirm: "Es-tu sûr de vouloir supprimer « %{name} » ?"
-      delete_blocked:
-        title: "Impossible de supprimer"
-        intro: "« %{name} » est encore utilisé et ne peut pas être supprimé pour l'instant :"
-        day_foods:
-          one: "%{count} entrée de journal"
-          other: "%{count} entrées de journal"
-        recipes:
-          one: "%{count} recette"
-          other: "%{count} recettes"
-        day_recipe_items:
-          one: "%{count} recette personnalisée"
-          other: "%{count} recettes personnalisées"
-        confirm: "Compris"
-        force_delete: "Tout supprimer"
-        force_delete_confirm: "Supprimer « %{name} » et tout son historique lié (recettes, recettes personnalisées et entrées de journal) ? Cette action est irréversible."
+      delete_template:
+        title: "Aliment utilisé dans des recettes"
+        intro: "« %{name} » est un ingrédient de %{count} recette(s). Le supprimer le retirera de ces recettes (une recette vidée sera supprimée). Vos journaux passés ne sont pas affectés."
+        confirm: "Retirer et supprimer"
       search_placeholder: "Rechercher un aliment..."
       labels_col: "Labels"
       usages_col: "Utilisations"
@@ -1134,7 +1122,6 @@ fr:
         quantity_col: "Quantité"
         actions_col: "Actions"
         recipe_label: "Plat"
-        customized_tooltip: "Ingrédients modifiés pour cet ajout"
         ungrouped_title: "Éléments sans groupe"
         delete_recipe_confirm: "Es-tu sûr de vouloir supprimer cette recette ?"
         delete_food_confirm: "Es-tu sûr de vouloir supprimer cet aliment ?"

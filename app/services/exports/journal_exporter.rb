@@ -23,7 +23,7 @@ module Exports
         :workout_sessions,
         { cardio_sessions: :cardio_blocks },
         day_foods: [:food, :day_food_group],
-        day_recipes: [{ recipe: { recipe_items: :food } }, { day_recipe_items: :food }, :day_food_group]
+        day_recipes: [{ day_recipe_items: :food }, :day_food_group]
       ).order(:date)
       range = @period&.range
       range ? scope.where(date: range) : scope

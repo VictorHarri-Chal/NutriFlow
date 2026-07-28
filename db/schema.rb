@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_24_131122) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_28_142435) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -124,11 +124,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_24_131122) do
 
   create_table "day_foods", force: :cascade do |t|
     t.bigint "day_id", null: false
-    t.bigint "food_id", null: false
+    t.bigint "food_id"
     t.decimal "quantity", default: "1.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "day_food_group_id"
+    t.string "food_name"
+    t.jsonb "food_snapshot"
     t.index ["day_food_group_id"], name: "index_day_foods_on_day_food_group_id"
     t.index ["day_id", "food_id"], name: "index_day_foods_on_day_id_and_food_id"
     t.index ["day_id"], name: "index_day_foods_on_day_id"
@@ -137,24 +139,24 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_24_131122) do
 
   create_table "day_recipe_items", force: :cascade do |t|
     t.bigint "day_recipe_id", null: false
-    t.bigint "food_id", null: false
+    t.bigint "food_id"
     t.decimal "quantity", null: false
     t.string "unit", default: "g", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "food_name"
+    t.jsonb "food_snapshot"
     t.index ["day_recipe_id"], name: "index_day_recipe_items_on_day_recipe_id"
     t.index ["food_id"], name: "index_day_recipe_items_on_food_id"
   end
 
   create_table "day_recipes", force: :cascade do |t|
     t.bigint "day_id", null: false
-    t.bigint "recipe_id", null: false
+    t.bigint "recipe_id"
     t.bigint "day_food_group_id"
-    t.decimal "quantity", precision: 8, scale: 2
-    t.boolean "use_recipe_quantity", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "customized", default: false, null: false
+    t.string "recipe_name"
     t.index ["day_food_group_id"], name: "index_day_recipes_on_day_food_group_id"
     t.index ["day_id"], name: "index_day_recipes_on_day_id"
     t.index ["recipe_id"], name: "index_day_recipes_on_recipe_id"
@@ -610,12 +612,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_24_131122) do
   add_foreign_key "day_food_groups", "users"
   add_foreign_key "day_foods", "day_food_groups"
   add_foreign_key "day_foods", "days"
-  add_foreign_key "day_foods", "foods"
+  add_foreign_key "day_foods", "foods", on_delete: :nullify
   add_foreign_key "day_recipe_items", "day_recipes"
-  add_foreign_key "day_recipe_items", "foods"
+  add_foreign_key "day_recipe_items", "foods", on_delete: :nullify
   add_foreign_key "day_recipes", "day_food_groups"
   add_foreign_key "day_recipes", "days"
-  add_foreign_key "day_recipes", "recipes"
+  add_foreign_key "day_recipes", "recipes", on_delete: :nullify
   add_foreign_key "days", "users"
   add_foreign_key "exercise_favorites", "exercises"
   add_foreign_key "exercise_favorites", "users"

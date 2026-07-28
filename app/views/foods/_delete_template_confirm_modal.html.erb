@@ -1,0 +1,28 @@
+<%# food: Food, recipe_names: [String] %>
+<%= render Ui::ModalComponent.new(
+      title: t("views.foods.delete_template.title"),
+      icon: "fa-triangle-exclamation",
+      max_width: :sm) do |m| %>
+  <% m.with_body do %>
+    <p class="text-sm text-ink-muted mb-3">
+      <%= t("views.foods.delete_template.intro", name: food.name, count: recipe_names.size) %>
+    </p>
+    <ul class="text-sm text-ink-primary list-disc list-inside space-y-1">
+      <% recipe_names.each do |name| %>
+        <li><%= name %></li>
+      <% end %>
+    </ul>
+  <% end %>
+  <% m.with_footer do %>
+    <div class="flex items-center gap-3">
+      <button type="button" class="btn-secondary text-sm flex-1" data-action="click->modal#close">
+        <%= t("shared.cancel") %>
+      </button>
+      <%= button_to t("views.foods.delete_template.confirm"),
+            food_path(food, confirmed: true),
+            method: :delete,
+            class: "btn-danger text-sm flex-1",
+            form: { class: "contents" } %>
+    </div>
+  <% end %>
+<% end %>

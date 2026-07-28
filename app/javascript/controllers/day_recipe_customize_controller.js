@@ -7,15 +7,14 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = [
     "modal", "panel", "title", "template", "itemsContainer",
-    "customizedField", "recipeId", "quantityInput", "useRecipeQtyInput",
-    "globalQuantityFields", "gearButton", "confirmButton"
+    "recipeId", "quantityInput", "useRecipeQtyInput",
+    "gearButton", "confirmButton"
   ]
   static values = { openOnConnect: Boolean }
 
   connect() {
     const dataEl = document.getElementById("recipes-data")
     this._recipes = dataEl ? JSON.parse(dataEl.textContent) : []
-    this._wasAlreadyCustomized = false
     this._snapshot = ""
     this._pristineState = "[]"
 
@@ -31,10 +30,14 @@ export default class extends Controller {
   }
 
   open() {
-    this._wasAlreadyCustomized = this.customizedFieldTarget.value === "true"
     this._snapshot = this.itemsContainerTarget.innerHTML
 
-    if (!this._wasAlreadyCustomized) {
+    // A fresh (still-empty) ingredient list means this DayRecipe hasn't been
+    // seeded yet in the DOM — pre-fill it from the recipe, scaled by the
+    // current base quantity, so the user edits from a sensible starting point.
+    // Once there's at least one row (persisted items on edit, or a previous
+    // seed/edit in this same session), leave it alone.
+    if (this.itemsContainerTarget.children.length === 0) {
       this._seed(this._currentBaseQuantity())
     }
 
@@ -44,7 +47,6 @@ export default class extends Controller {
     this._updateConfirmButtonState()
 
     this._updateTitle()
-    this._lockGlobalFields(true)
     this._syncEmptyState()
     this._syncRemoveButtons()
 
@@ -56,18 +58,12 @@ export default class extends Controller {
   confirm(event) {
     event.preventDefault()
     if (this.confirmButtonTarget.disabled) return
-    this.customizedFieldTarget.value = "true"
     this._close()
   }
 
   cancel(event) {
     event.preventDefault()
     this.itemsContainerTarget.innerHTML = this._snapshot
-
-    if (!this._wasAlreadyCustomized) {
-      this.customizedFieldTarget.value = "false"
-      this._lockGlobalFields(false)
-    }
 
     this._syncEmptyState()
     this._syncRemoveButtons()
@@ -100,14 +96,12 @@ export default class extends Controller {
     this.quantityInputTarget.value = ""
     this.useRecipeQtyInputTarget.checked = true
 
-    if (this.customizedFieldTarget.value !== "true" && this.itemsContainerTarget.children.length === 0) {
+    if (this.itemsContainerTarget.children.length === 0) {
       this._dispatchInput()
       return
     }
 
     this.itemsContainerTarget.innerHTML = ""
-    this.customizedFieldTarget.value = "false"
-    this._lockGlobalFields(false)
     this._syncEmptyState()
     this._dispatchInput()
   }
@@ -117,23 +111,13 @@ export default class extends Controller {
     document.body.classList.remove("overflow-hidden")
   }
 
-  // Visually inert (dimmed, unclickable) but never disabled: a disabled input
-  // is dropped from the request entirely, which would silently lose the frozen
-  // base quantity/toggle — they must keep submitting their current value.
-  _lockGlobalFields(locked) {
-    this.globalQuantityFieldsTargets.forEach(wrapper => {
-      wrapper.classList.toggle("opacity-60", locked)
-      wrapper.classList.toggle("pointer-events-none", locked)
-      wrapper.querySelectorAll("input").forEach(input => {
-        if (input.type === "number") input.readOnly = locked
-        if (input.type === "checkbox") input.tabIndex = locked ? -1 : 0
-      })
-    })
-  }
-
   _updateGearButtonState() {
+    // Editable when a recipe is selected (new entry) OR the log already has
+    // materialized ingredients — including a detached log whose recipe was
+    // deleted (recipe_id blank but frozen items are still there to adjust).
     const hasRecipe = (parseInt(this.recipeIdTarget.value) || 0) > 0
-    this.gearButtonTarget.disabled = !hasRecipe
+    const hasItems  = this.hasItemsContainerTarget && this.itemsContainerTarget.children.length > 0
+    this.gearButtonTarget.disabled = !hasRecipe && !hasItems
   }
 
   _currentRecipe() {
@@ -141,7 +125,13 @@ export default class extends Controller {
     return this._recipes.find(r => r.id === id)
   }
 
+  // The quantity/toggle inputs only exist on the "new" form (they're
+  // meaningless once a DayRecipe is persisted — seeding only ever happens at
+  // creation), so guard their absence here rather than assuming edit mode
+  // never reaches this (e.g. every ingredient destroyed then a failed
+  // resubmit reopens the modal on an empty, edit-mode itemsContainer).
   _currentBaseQuantity() {
+    if (!this.hasQuantityInputTarget || !this.hasUseRecipeQtyInputTarget) return 0
     const recipe = this._currentRecipe()
     if (!recipe) return 0
     return this.useRecipeQtyInputTarget.checked ? recipe.totalWeight : (parseFloat(this.quantityInputTarget.value) || 0)

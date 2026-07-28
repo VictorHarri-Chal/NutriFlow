@@ -33,7 +33,6 @@ Rails.application.routes.draw do
       post   :duplicate
       patch  :toggle_favorite
       patch  :toggle_pantry
-      delete :force_destroy
     end
   end
   resources :scans, only: [:new, :create] do

@@ -30,7 +30,12 @@ export default class extends Controller {
       const quantityField = row.querySelector('[data-role="quantity"]')
       const unitField = row.querySelector('[data-role="unit-hidden"]')
 
-      const foodOk = !!foodIdField && parseInt(foodIdField.value, 10) > 0
+      // Une ligne déjà figée (elle porte un snapshot /100g) reste valide sans
+      // food_id : son aliment a été supprimé de la banque, on ne peut plus le
+      // re-sélectionner, mais ses macros sont figées et sa quantité reste
+      // éditable. Une ligne neuve (aucun snapshot) exige bien un aliment.
+      const isFrozen = !!row.dataset.previewSnapshot
+      const foodOk = isFrozen || (!!foodIdField && parseInt(foodIdField.value, 10) > 0)
       // `quantity` is a raw number in whatever unit is selected (g/kg/mL/L) — compare
       // its gram-equivalent to the minimum, not the raw value, so "0.5 kg" (= 500 g)
       // isn't wrongly rejected. Mirrors RecipeItem/DayRecipeItem#grams_equivalent,

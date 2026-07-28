@@ -23,7 +23,7 @@ module Exports
     def logged_days
       scope = @user.days.includes(
         day_foods: :food,
-        day_recipes: [{ recipe: { recipe_items: :food } }, { day_recipe_items: :food }]
+        day_recipes: { day_recipe_items: :food }
       ).order(:date)
       range = @period&.range
       scope = scope.where(date: range) if range

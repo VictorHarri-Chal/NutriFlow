@@ -16,8 +16,7 @@ class CalendarsController < ApplicationController
     yesterday   = target_date - 1.day
 
     yesterday_day = current_user.days
-                                .includes(day_foods: :food,
-                                          day_recipes: { recipe: { recipe_items: :food } })
+                                .includes(:day_foods, day_recipes: :day_recipe_items)
                                 .find_by(date: yesterday)
     unless yesterday_day
       return redirect_to calendars_path(date: target_date.to_s),
@@ -29,18 +28,29 @@ class CalendarsController < ApplicationController
     ActiveRecord::Base.transaction do
       yesterday_day.day_foods.each do |df|
         today_day.day_foods.create!(
-          food:             df.food,
-          quantity:         df.quantity,
-          day_food_group:   df.day_food_group
+          food_id:        df.food_id,
+          food_name:      df.food_name,
+          food_snapshot:  df.food_snapshot,
+          quantity:       df.quantity,
+          day_food_group: df.day_food_group
         )
       end
       yesterday_day.day_recipes.each do |dr|
-        today_day.day_recipes.create!(
-          recipe:             dr.recipe,
-          quantity:           dr.quantity,
-          day_food_group:     dr.day_food_group,
-          use_recipe_quantity: dr.use_recipe_quantity
+        copy = today_day.day_recipes.build(
+          recipe_id:      dr.recipe_id,
+          recipe_name:    dr.recipe_name,
+          day_food_group: dr.day_food_group
         )
+        dr.day_recipe_items.each do |item|
+          copy.day_recipe_items.build(
+            food_id:       item.food_id,
+            food_name:     item.food_name,
+            food_snapshot: item.food_snapshot,
+            quantity:      item.quantity,
+            unit:          item.unit
+          )
+        end
+        copy.save!
       end
     end
 

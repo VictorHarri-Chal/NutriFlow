@@ -7,7 +7,7 @@ class DayRecipesController < ApplicationController
 
   def new
     group_id            = params.dig(:day_recipe, :day_food_group_id)
-    @day_recipe         = @day.day_recipes.build(day_food_group_id: group_id, use_recipe_quantity: true)
+    @day_recipe         = @day.day_recipes.build(day_food_group_id: group_id, log_use_whole: true)
     @day_food_groups    = current_user.day_food_groups.order(:name)
     @recipes            = current_user.recipes.includes(recipe_items: :food).order(:name)
     @foods              = current_user.foods.order(:name)
@@ -91,7 +91,7 @@ class DayRecipesController < ApplicationController
 
   def day_recipe_params
     params.require(:day_recipe).permit(
-      :recipe_id, :quantity, :day_food_group_id, :use_recipe_quantity, :customized,
+      :recipe_id, :log_quantity, :log_use_whole, :day_food_group_id,
       day_recipe_items_attributes: [:id, :food_id, :quantity, :unit, :_destroy]
     )
   end
