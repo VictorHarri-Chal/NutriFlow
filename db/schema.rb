@@ -368,6 +368,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_29_130030) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "favorite", default: false, null: false
+    t.decimal "total_calories", precision: 14, scale: 2, default: "0.0", null: false
+    t.decimal "total_proteins", precision: 14, scale: 2, default: "0.0", null: false
+    t.decimal "total_carbs", precision: 14, scale: 2, default: "0.0", null: false
+    t.decimal "total_fats", precision: 14, scale: 2, default: "0.0", null: false
+    t.decimal "total_sugars", precision: 14, scale: 2, default: "0.0", null: false
+    t.decimal "total_weight", precision: 14, scale: 2, default: "0.0", null: false
+    t.decimal "total_fiber", precision: 14, scale: 2, default: "0.0", null: false
+    t.decimal "total_saturated_fat", precision: 14, scale: 2, default: "0.0", null: false
+    t.decimal "total_salt", precision: 14, scale: 2, default: "0.0", null: false
     t.index "user_id, lower((name)::text)", name: "index_recipes_on_user_id_and_lower_name", unique: true
     t.index ["user_id"], name: "index_recipes_on_user_id"
   end

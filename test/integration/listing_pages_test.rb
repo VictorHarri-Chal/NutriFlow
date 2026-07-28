@@ -25,4 +25,19 @@ class ListingPagesTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match "Porridge", response.body
   end
+
+  # SORT-1 / controllers#3: sorting by a macro now orders on the denormalized
+  # column in SQL (no more loading every recipe into memory).
+  test "recipes index sorts by a macro column in SQL" do
+    user = create_user
+    low  = create_food(user: user, calories: 50)
+    high = create_food(user: user, calories: 900)
+    create_recipe(user: user, name: "LightMeal", items: [{ food: low,  quantity: 100 }])
+    create_recipe(user: user, name: "HeavyMeal", items: [{ food: high, quantity: 100 }])
+    sign_in user
+
+    get recipes_path(sort: "calories", direction: "desc")
+    assert_response :success
+    assert_operator response.body.index("HeavyMeal"), :<, response.body.index("LightMeal")
+  end
 end
