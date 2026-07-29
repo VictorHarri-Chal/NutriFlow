@@ -1345,7 +1345,7 @@ en:
         btn_edit: "Edit"
         btn_delete: "Delete"
         confirm_delete: "Delete this exercise?"
-        confirm_delete_used: "This exercise is used in %{sessions} session(s) and %{programs} program(s). Deleting it will remove it from those programs. Your past sessions are kept."
+        confirm_delete_used: "This exercise is used in %{sessions} session(s) and %{programs} program(s).\n\nDeleting it will remove it from those programs. Your past sessions are kept."
         flash:
           created: "Exercise created successfully."
           updated: "Exercise updated."

@@ -1345,7 +1345,7 @@ fr:
         btn_edit: "Modifier"
         btn_delete: "Supprimer"
         confirm_delete: "Supprimer cet exercice ?"
-        confirm_delete_used: "Cet exercice est utilisé dans %{sessions} séance(s) et %{programs} programme(s). Le supprimer le retirera des programmes. Vos séances passées sont conservées."
+        confirm_delete_used: "Cet exercice est utilisé dans %{sessions} séance(s) et %{programs} programme(s).\n\nLe supprimer le retirera de ces programmes. Vos séances passées sont conservées."
         flash:
           created: "Exercice créé avec succès."
           updated: "Exercice mis à jour."

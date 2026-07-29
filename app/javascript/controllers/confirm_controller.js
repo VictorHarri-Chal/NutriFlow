@@ -173,7 +173,7 @@ export default class extends Controller {
 
           <div class="mb-4">
             <h3 class="text-sm font-semibold text-ink-primary">${this.titleValue}</h3>
-            <p class="text-sm text-ink-subtle mt-1 leading-relaxed" data-confirm-target="message">
+            <p class="text-sm text-ink-subtle mt-1 leading-relaxed whitespace-pre-line" data-confirm-target="message">
               ${this.defaultMessageValue}
             </p>
           </div>
