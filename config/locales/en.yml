@@ -105,6 +105,8 @@ en:
         goal_rate_kg_per_week: "Desired rate"
         water_goal_ml: "Daily water goal"
         default_daily_steps: "Steps per day"
+      workout_session/workout_sets:
+        exercise_id: "Exercise"
     errors:
       models:
         profile:
@@ -1343,10 +1345,11 @@ en:
         btn_edit: "Edit"
         btn_delete: "Delete"
         confirm_delete: "Delete this exercise?"
+        confirm_delete_used: "This exercise is used in %{sessions} session(s) and %{programs} program(s). Deleting it will remove it from those programs. Your past sessions are kept."
         flash:
           created: "Exercise created successfully."
           updated: "Exercise updated."
-          deleted: "Exercise deleted."
+          deleted: "Exercise deleted. Your past sessions are kept."
           not_found: "Exercise not found."
         sections:
           general: "General information"

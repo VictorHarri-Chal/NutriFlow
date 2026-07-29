@@ -13,9 +13,12 @@ class WorkoutSession < ApplicationRecord
   has_many :workout_sets, -> { order(:position) }, dependent: :destroy, inverse_of: :workout_session
   has_many :exercises, through: :workout_sets
 
+  # On ne rejette qu'une NOUVELLE ligne vide (ni id ni exercice) : une série
+  # persistée dont l'exercice a été supprimé (id présent, exercise_id vide mais
+  # identité figée) doit rester éditable, pas être ignorée silencieusement.
   accepts_nested_attributes_for :workout_sets,
     allow_destroy: true,
-    reject_if: ->(attrs) { attrs[:exercise_id].blank? }
+    reject_if: ->(attrs) { attrs[:id].blank? && attrs[:exercise_id].blank? }
 
   MAX_SETS_PER_EXERCISE = 10
 
@@ -42,6 +45,8 @@ class WorkoutSession < ApplicationRecord
   }.freeze
 
   DEFAULT_MET = 3.5
+
+  GroupedExercise = Struct.new(:exercise_id, :name, :body_part, :sets, keyword_init: true)
 
   # Formula: MET × weight_kg × hours  (Harris-Benedict / Compendium standard)
   # When no explicit duration: estimate from logged reps + rest_seconds
@@ -70,15 +75,10 @@ class WorkoutSession < ApplicationRecord
   end
 
   def grouped_sets
-    if new_record?
-      # In-memory: exercises were preloaded via set.exercise = pe.exercise in the controller,
-      # or need to be loaded by exercise_id (error re-render case from accepted nested attrs).
-      workout_sets.group_by do |s|
-        s.exercise || (s.exercise_id.present? ? Exercise.find_by(id: s.exercise_id) : nil)
-      end.reject { |exercise, _| exercise.nil? }
-    else
-      workout_sets.includes(:exercise).group_by(&:exercise)
-    end
+    workout_sets
+      .group_by { |s| [s.exercise_id, s.display_exercise_name] }
+      .reject { |(_id, name), _sets| name.blank? }
+      .map { |(exercise_id, name), sets| GroupedExercise.new(exercise_id: exercise_id, name: name, body_part: sets.first.display_body_part, sets: sets) }
   end
 
   private
@@ -109,7 +109,7 @@ class WorkoutSession < ApplicationRecord
   # set = one weight unit — replaces the old "MET of the first logged
   # exercise" shortcut, which made the result depend on set entry order.
   def weighted_met
-    sets_by_body_part = workout_sets.includes(:exercise).group_by { |s| s.exercise&.body_part }
+    sets_by_body_part = workout_sets.group_by(&:display_body_part)
     return DEFAULT_MET if sets_by_body_part.empty?
 
     total        = sets_by_body_part.sum { |_, sets| sets.size }
@@ -121,11 +121,15 @@ class WorkoutSession < ApplicationRecord
   # every set of that exercise so rest scales with set count — consistent with
   # ProgramDay#duration_estimate_pairs and physically closer to real rest time.
   def duration_estimate_pairs
-    rows = workout_sets.pluck(:exercise_id, :reps, :rest_seconds)
-    rest_by_exercise = rows.each_with_object({}) do |(exercise_id, _reps, rest), acc|
-      acc[exercise_id] = rest if rest.present? && !acc.key?(exercise_id)
+    # Clé = identité stable [exercise_id, exercise_name] : deux exercices
+    # supprimés distincts ont tous deux exercise_id nil et ne doivent pas
+    # fusionner (sinon le repos de l'un contaminerait l'autre → durée faussée).
+    rows = workout_sets.pluck(:exercise_id, :exercise_name, :reps, :rest_seconds)
+    rest_by_exercise = rows.each_with_object({}) do |(exercise_id, exercise_name, _reps, rest), acc|
+      key = [exercise_id, exercise_name]
+      acc[key] = rest if rest.present? && !acc.key?(key)
     end
-    rows.map { |exercise_id, reps, _rest| [reps, rest_by_exercise[exercise_id]] }
+    rows.map { |exercise_id, exercise_name, reps, _rest| [reps, rest_by_exercise[[exercise_id, exercise_name]]] }
   end
 
   # Scale MET by perceived effort (RPE). Linear from 1.00 at RPE 6 (or below)

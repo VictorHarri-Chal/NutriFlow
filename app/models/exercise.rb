@@ -10,6 +10,12 @@ class Exercise < ApplicationRecord
     attachable.variant :medium,    resize_to_limit: [800, 800]
   end
   has_many :exercise_favorites, dependent: :destroy
+  # Les WorkoutSet sont des logs figés (exercise_name/body_part) : supprimer un
+  # exercice les DÉTACHE (exercise_id → NULL), l'historique reste intact.
+  has_many :workout_sets, dependent: :nullify
+  # Les ProgramExercise sont des lignes de template (pas des logs) : on les retire
+  # du programme quand l'exercice est supprimé.
+  has_many :program_exercises, dependent: :destroy
 
   enumerize :tension_profile, in: TENSION_PROFILES
 

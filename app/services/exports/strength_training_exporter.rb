@@ -39,9 +39,12 @@ module Exports
         # "Programmes - Séances" et refléter la lecture naturelle.
         set_number = Hash.new(0)
         session.workout_sets.map do |set|
-          set_number[set.exercise_id] += 1
+          # Clé stable [exercise_id, exercise_name] : deux exercices supprimés
+          # (exercise_id nil) ne doivent pas partager le même compteur.
+          key = [set.exercise_id, set.exercise_name]
+          set_number[key] += 1
           [
-            session.day.date, exercise_name(set.exercise), set_number[set.exercise_id], set.reps, set.weight_kg,
+            session.day.date, exercise_name(set), set_number[key], set.reps, set.weight_kg,
             set.effective_rpe, set.set_types.join(", "), set.is_pr ? "Oui" : "Non"
           ]
         end
@@ -49,8 +52,8 @@ module Exports
       Exports::Sheet.simple(name: "Musculation - Séries", headers: headers, rows: rows)
     end
 
-    def exercise_name(exercise)
-      exercise&.name_fr.presence || exercise&.name
+    def exercise_name(set)
+      set.exercise&.name_fr.presence || set.exercise&.name || set.exercise_name
     end
   end
 end

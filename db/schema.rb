@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_28_142435) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_29_130030) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -587,7 +587,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_28_142435) do
 
   create_table "workout_sets", force: :cascade do |t|
     t.bigint "workout_session_id", null: false
-    t.bigint "exercise_id", null: false
+    t.bigint "exercise_id"
     t.decimal "weight_kg", precision: 6, scale: 2
     t.integer "reps"
     t.integer "position", default: 0, null: false
@@ -598,6 +598,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_28_142435) do
     t.boolean "is_pr", default: false, null: false
     t.integer "rpe"
     t.string "set_types", default: ["working"], null: false, array: true
+    t.string "exercise_name"
+    t.string "body_part"
     t.index ["exercise_id"], name: "index_workout_sets_on_exercise_id"
     t.index ["workout_session_id", "position"], name: "index_workout_sets_on_workout_session_id_and_position"
     t.index ["workout_session_id"], name: "index_workout_sets_on_workout_session_id"
@@ -649,6 +651,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_28_142435) do
   add_foreign_key "weight_entries", "users"
   add_foreign_key "workout_programs", "users"
   add_foreign_key "workout_sessions", "days"
-  add_foreign_key "workout_sets", "exercises"
+  add_foreign_key "workout_sets", "exercises", on_delete: :nullify
   add_foreign_key "workout_sets", "workout_sessions"
 end

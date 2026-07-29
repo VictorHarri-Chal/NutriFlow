@@ -33,7 +33,7 @@ module Exports
       prs_table = {
         title: "PR récents",
         headers: ["Date", "Exercice", "Poids (kg)", "Reps"],
-        rows: recent_prs(sets).map { |s| [s.workout_session.day.date, exercise_name(s.exercise), s.weight_kg, s.reps] }
+        rows: recent_prs(sets).map { |s| [s.workout_session.day.date, exercise_name(s), s.weight_kg, s.reps] }
       }
 
       one_rms_table = {
@@ -85,16 +85,19 @@ module Exports
     end
 
     def top_estimated_one_rms(sets, top: 3)
-      one_rm_by_exercise = {}
+      best_by_exercise = {}
       sets.each do |ws|
         orm = estimated_one_rep_max(ws.weight_kg, ws.reps)
         next if orm.nil?
 
-        one_rm_by_exercise[ws.exercise_id] = [one_rm_by_exercise[ws.exercise_id] || 0.0, orm].max
+        # Clé stable [exercise_id, exercise_name] : deux exercices supprimés
+        # (exercise_id nil) ne doivent pas fusionner dans le classement.
+        key = [ws.exercise_id, ws.exercise_name]
+        current = best_by_exercise[key]
+        best_by_exercise[key] = { orm: orm, set: ws } if current.nil? || orm > current[:orm]
       end
 
-      exercises = Exercise.where(id: one_rm_by_exercise.keys).index_by(&:id)
-      one_rm_by_exercise.sort_by { |_, v| -v }.first(top).map { |eid, orm| [exercise_name(exercises[eid]), orm] }
+      best_by_exercise.values.sort_by { |v| -v[:orm] }.first(top).map { |v| [exercise_name(v[:set]), v[:orm]] }
     end
 
     # Brzycki formula, valid for reps 1-10 only — same restriction as StatisticsController.
@@ -104,8 +107,8 @@ module Exports
       (weight_kg.to_f * 36.0 / (37.0 - reps.to_f)).round(1)
     end
 
-    def exercise_name(exercise)
-      exercise&.name_fr.presence || exercise&.name
+    def exercise_name(set)
+      set.exercise&.name_fr.presence || set.exercise&.name || set.exercise_name
     end
   end
 end

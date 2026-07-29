@@ -139,7 +139,7 @@
           <% @recent_prs.each do |pr| %>
             <div class="flex items-center justify-between py-2.5">
               <div>
-                <p class="text-sm font-medium text-ink-primary"><%= pr.exercise&.name %></p>
+                <p class="text-sm font-medium text-ink-primary"><%= pr.display_exercise_name %></p>
                 <p class="text-xs text-ink-subtle"><%= l(pr.workout_session.day.date, format: :long) %></p>
               </div>
               <div class="text-right">

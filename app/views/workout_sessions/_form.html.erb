@@ -81,18 +81,19 @@
 
       <div data-workout-form-target="exercisesList" class="space-y-2">
         <% set_position_counter = 0 %>
-        <% workout_session.grouped_sets.each_with_index do |(exercise, sets), group_idx| %>
+        <% workout_session.grouped_sets.each_with_index do |group, group_idx| %>
+          <% sets = group.sets %>
           <%# Capture first set's key & values before the sets loop %>
           <% first_ws = sets.first %>
           <% first_ws_key = first_ws.persisted? ? first_ws.id : 1_000_000 + set_position_counter %>
 
           <div class="exercise-group rounded-xl border border-surface-border/40 bg-surface-base p-3 space-y-2"
-               data-exercise-id="<%= exercise.id %>">
+               data-exercise-id="<%= group.exercise_id %>">
 
             <%# Group header %>
             <div class="flex items-center justify-between gap-2">
               <div class="flex items-center gap-1.5 min-w-0">
-                <span class="text-sm font-semibold text-ink-primary capitalize break-words"><%= exercise.name %></span>
+                <span class="text-sm font-semibold text-ink-primary capitalize break-words"><%= group.name %></span>
                 <i class="fas fa-circle-info text-xs text-ink-subtle/40 hover:text-ink-subtle cursor-default transition-colors shrink-0"
                    title="<%= t('views.workout_sets.set_editor.info_tooltip') %>"></i>
               </div>
@@ -120,7 +121,7 @@
                     <input type="hidden" name="workout_session[workout_sets_attributes][<%= ws_key %>][id]" value="<%= ws.id %>">
                     <input type="hidden" name="workout_session[workout_sets_attributes][<%= ws_key %>][_destroy]" value="false" data-destroy-flag="true">
                   <% end %>
-                  <input type="hidden" name="workout_session[workout_sets_attributes][<%= ws_key %>][exercise_id]" value="<%= exercise.id %>">
+                  <input type="hidden" name="workout_session[workout_sets_attributes][<%= ws_key %>][exercise_id]" value="<%= group.exercise_id %>">
                   <input type="hidden" name="workout_session[workout_sets_attributes][<%= ws_key %>][position]" value="<%= set_position_counter %>" data-position-input="true">
                   <% set_position_counter += 1 %>
 

@@ -1,4 +1,4 @@
-<% sessions = day.workout_sessions.includes(:day, workout_sets: :exercise).order(:created_at) %>
+<% sessions = day.workout_sessions.includes(:day, :workout_sets).order(:created_at) %>
 <% total_cal = sessions.sum { |s| s.estimated_calories(current_user.profile&.weight&.to_f) } %>
 
 <div id="workout_widget"

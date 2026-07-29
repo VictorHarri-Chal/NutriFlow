@@ -105,6 +105,8 @@ fr:
         goal_rate_kg_per_week: "Rythme souhaité"
         water_goal_ml: "Objectif eau quotidien"
         default_daily_steps: "Pas par jour"
+      workout_session/workout_sets:
+        exercise_id: "Exercice"
     errors:
       models:
         profile:
@@ -1343,10 +1345,11 @@ fr:
         btn_edit: "Modifier"
         btn_delete: "Supprimer"
         confirm_delete: "Supprimer cet exercice ?"
+        confirm_delete_used: "Cet exercice est utilisé dans %{sessions} séance(s) et %{programs} programme(s). Le supprimer le retirera des programmes. Vos séances passées sont conservées."
         flash:
           created: "Exercice créé avec succès."
           updated: "Exercice mis à jour."
-          deleted: "Exercice supprimé."
+          deleted: "Exercice supprimé. Vos séances passées sont conservées."
           not_found: "Exercice introuvable."
         sections:
           general: "Informations générales"

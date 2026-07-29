@@ -171,7 +171,7 @@ class StatisticsController < ApplicationController
   def fetch_period_workout_sessions
     WorkoutSession.joins(:day)
                   .where(days: { user_id: current_user.id, date: @from..Date.today })
-                  .includes(:day, workout_sets: :exercise)
+                  .includes(:day, :workout_sets)
                   .order("days.date")
   end
 
@@ -199,7 +199,7 @@ class StatisticsController < ApplicationController
   # % of total volume per body part, top 6 shown (% computed on the full total, not just the top 6)
   def build_muscle_group_breakdown(all_sets)
     body_vols = all_sets.each_with_object({}) do |ws, h|
-      bp = ws.exercise&.body_part
+      bp = ws.display_body_part
       next if bp.blank?
       h[bp] = (h[bp] || 0) + ws.weight_kg.to_f * ws.reps.to_i
     end
@@ -284,6 +284,7 @@ class StatisticsController < ApplicationController
       gain = ((late - early) / early * 100).round(1)
       next if gain <= 0
       name = localized_exercise_name(exercise_names[eid])
+      next if name.blank?
       [name, gain, late]
     }.sort_by { |_, g, _| -g }.first(top)
   end

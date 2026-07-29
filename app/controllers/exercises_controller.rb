@@ -28,6 +28,15 @@ class ExercisesController < ApplicationController
   def show
     @exercise     = Exercise.accessible_to(current_user).find(params[:id])
     @is_favorited = current_user.exercise_favorites.exists?(exercise: @exercise)
+
+    if @exercise.custom?
+      @exercise_session_count = WorkoutSet.joins(workout_session: :day)
+                                          .where(days: { user_id: current_user.id }, exercise_id: @exercise.id)
+                                          .distinct.count(:workout_session_id)
+      @exercise_program_count = ProgramExercise.joins(program_day: :workout_program)
+                                               .where(workout_programs: { user_id: current_user.id }, exercise_id: @exercise.id)
+                                               .distinct.count("workout_programs.id")
+    end
   end
 
   def search

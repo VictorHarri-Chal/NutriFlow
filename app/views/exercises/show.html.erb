@@ -18,12 +18,15 @@
           <i class="fas fa-pen text-xs"></i>
           <%= t("views.exercises.custom.btn_edit") %>
         <% end %>
+        <% delete_msg = (@exercise_session_count.to_i + @exercise_program_count.to_i) > 0 ?
+             t("views.exercises.custom.confirm_delete_used", sessions: @exercise_session_count.to_i, programs: @exercise_program_count.to_i) :
+             t("views.exercises.custom.confirm_delete") %>
         <%= link_to exercise_path(@exercise),
             class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-status-danger/70 bg-surface-raised border border-surface-border/40 hover:text-status-danger hover:border-status-danger/30 transition-colors",
             data: {
               turbo_method: :delete,
               action: "click->confirm#show",
-              confirm_message: t("views.exercises.custom.confirm_delete")
+              confirm_message: delete_msg
             } do %>
           <i class="fas fa-trash text-xs"></i>
           <%= t("views.exercises.custom.btn_delete") %>
