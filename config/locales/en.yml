@@ -1764,7 +1764,7 @@ en:
         empty_hint: "Search an exercise and click Add to start"
         search_hint: "Type to search an exercise"
         no_exercises_error: "Add at least one exercise before saving the session."
-        no_weight_error: "Fill in weight, reps, and duration before saving."
+        no_weight_error: "Fill in reps and duration before saving."
         submit_add: "Add"
         from_program: "Load from « %{name} »"
       picker:

@@ -78,17 +78,15 @@ export default class extends Controller {
       event.preventDefault()
       if (this.hasNoExerciseErrorTarget) this.noExerciseErrorTarget.classList.remove("hidden")
       if (this.hasNoWeightErrorTarget)   this.noWeightErrorTarget.classList.add("hidden")
+      this._revealError(this.hasNoExerciseErrorTarget ? this.noExerciseErrorTarget : null)
       return
     }
     if (this.hasNoExerciseErrorTarget) this.noExerciseErrorTarget.classList.add("hidden")
 
-    // Check all visible weight and reps inputs are filled
+    // Le POIDS est volontairement non requis : un poids vide = poids de corps (PDC),
+    // c'est un cas légitime (le serveur autorise weight_kg nil). On n'exige que les
+    // répétitions et la durée.
     let missingField = false
-    this.exercisesListTarget.querySelectorAll(".set-row:not(.hidden) input[name*='weight_kg']").forEach(input => {
-      const empty = input.value === ""
-      input.classList.toggle("input-weight-error", empty)
-      if (empty) missingField = true
-    })
     this.exercisesListTarget.querySelectorAll(".set-row:not(.hidden) input[name*='[reps]']").forEach(input => {
       const empty = input.value === ""
       input.classList.toggle("input-weight-error", empty)
@@ -106,9 +104,17 @@ export default class extends Controller {
     if (missingField) {
       event.preventDefault()
       if (this.hasNoWeightErrorTarget) this.noWeightErrorTarget.classList.remove("hidden")
+      this._revealError(this.hasNoWeightErrorTarget ? this.noWeightErrorTarget : null)
       return
     }
     if (this.hasNoWeightErrorTarget) this.noWeightErrorTarget.classList.add("hidden")
+  }
+
+  // Ramène l'encadré d'erreur (en haut du formulaire) dans la vue : la modale de
+  // séance est haute, l'erreur affichée tout en haut serait sinon hors écran quand
+  // on valide depuis le bas.
+  _revealError(el) {
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 
   // ── Exercise added from combobox ──────────────────────────────────
