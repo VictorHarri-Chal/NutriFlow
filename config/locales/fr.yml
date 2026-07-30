@@ -1750,6 +1750,7 @@ fr:
         no_exercise_found: "Aucun exercice trouvé"
         add_exercise: "Ajouter"
         add_set: "Série"
+        add_set_disabled_deleted: "Exercice supprimé : impossible d'ajouter de nouvelles séries. Les séries existantes restent modifiables."
         weight_kg: "Poids (kg)"
         reps: "Répétitions"
         duration: "Durée"

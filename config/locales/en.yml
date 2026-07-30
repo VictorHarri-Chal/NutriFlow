@@ -1750,6 +1750,7 @@ en:
         no_exercise_found: "No exercise found"
         add_exercise: "Add"
         add_set: "Set"
+        add_set_disabled_deleted: "Exercise deleted: you can't add new sets. Existing sets can still be edited."
         weight_kg: "Weight (kg)"
         reps: "Reps"
         duration: "Duration"

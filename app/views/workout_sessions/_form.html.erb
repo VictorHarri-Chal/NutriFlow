@@ -189,8 +189,14 @@
             </div>
 
             <div class="flex items-center gap-2 mt-1">
+              <%# Exercice supprimé (groupe détaché) : on ne peut pas rattacher une
+                  nouvelle série à un exercice qui n'existe plus (elle n'aurait pas
+                  d'identité). On désactive l'ajout ; les séries existantes restent
+                  éditables. %>
+              <% add_set_disabled = group.exercise_id.blank? %>
               <button type="button" data-action="click->workout-form#addSet"
-                      class="text-xs text-brand hover:text-brand/80 transition-colors flex items-center gap-1 cursor-pointer">
+                      <%= "disabled title=\"#{h(t('views.workout_sessions.form.add_set_disabled_deleted'))}\"".html_safe if add_set_disabled %>
+                      class="text-xs text-brand hover:text-brand/80 transition-colors flex items-center gap-1 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:text-brand">
                 <i class="fas fa-plus text-[10px]"></i>
                 <%= t("views.workout_sessions.form.add_set") %>
               </button>
