@@ -5,6 +5,7 @@ json.name                 profile.name
 json.weight               profile.weight&.to_f
 json.height               profile.height&.to_f
 json.age                  profile.age
+json.date_of_birth        profile.date_of_birth
 json.gender               profile.gender
 json.job_activity_level   profile.job_activity_level
 json.goal                 profile.goal

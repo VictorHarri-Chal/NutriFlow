@@ -15,7 +15,7 @@ class Api::V1::ProfilesController < Api::V1::BaseController
 
   def profile_params
     params.permit(
-      :name, :weight, :height, :age, :gender, :job_activity_level,
+      :name, :weight, :height, :date_of_birth, :gender, :job_activity_level,
       :default_daily_steps, :goal, :goal_weight, :water_goal_ml
     )
   end

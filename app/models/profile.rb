@@ -258,7 +258,7 @@ class Profile < ApplicationRecord
     elsif goal_weight > weight
       "muscle_gain"
     else
-      "maintenance"
+      "maintain"
     end
   end
 

@@ -2,10 +2,11 @@ FactoryBot.define do
   factory :profile do
     transient do
       owner { create(:user) }
+      age { 30 }
     end
 
     name { "Test User" }
-    age { 30 }
+    date_of_birth { Date.current - age.years }
     weight { 80.0 }
     height { 180.0 }
     goal_weight { 75.0 }
@@ -22,7 +23,7 @@ FactoryBot.define do
     after(:build) do |profile, evaluator|
       profile.assign_attributes(
         name: evaluator.name,
-        age: evaluator.age,
+        date_of_birth: evaluator.date_of_birth,
         weight: evaluator.weight,
         height: evaluator.height,
         goal_weight: evaluator.goal_weight,
