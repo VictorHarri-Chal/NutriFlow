@@ -44,7 +44,7 @@ class Api::V1::WorkoutProgramsController < Api::V1::BaseController
       is_active:  false
     )
 
-    @program.program_days.includes(program_exercises: :exercise).each do |pd|
+    @program.program_days.includes(program_exercises: [:exercise, :program_exercise_sets]).each do |pd|
       new_pd = new_program.program_days.find_by(day_of_week: pd.day_of_week)
       new_pd ||= new_program.program_days.create!(
         day_of_week:      pd.day_of_week,
@@ -54,17 +54,7 @@ class Api::V1::WorkoutProgramsController < Api::V1::BaseController
       )
       new_pd.update!(name: pd.name, duration_minutes: pd.duration_minutes, notes: pd.notes)
 
-      pd.program_exercises.order(:position).each do |pe|
-        new_pd.program_exercises.create!(
-          exercise_id:  pe.exercise_id,
-          sets:         pe.sets,
-          reps_target:  pe.reps_target,
-          weight_target: pe.weight_target,
-          rest_seconds: pe.rest_seconds,
-          position:     pe.position,
-          notes:        pe.notes
-        )
-      end
+      pd.copy_exercises_to!(new_pd)
     end
 
     @program = new_program

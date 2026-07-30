@@ -75,7 +75,10 @@ class Api::V1::ProgramExercisesController < Api::V1::BaseController
   end
 
   def program_exercise_params
-    params.permit(:exercise_id, :sets, :reps_target, :weight_target, :rest_seconds, :notes)
+    params.permit(
+      :exercise_id, :rest_seconds, :notes,
+      program_exercise_sets_attributes: [:id, :position, :reps_target, :weight_target, :rpe, :_destroy, set_types: []]
+    )
   end
 
   def program_exercise_json(pe)
@@ -83,12 +86,19 @@ class Api::V1::ProgramExercisesController < Api::V1::BaseController
       id:            pe.id,
       exercise_id:   pe.exercise_id,
       exercise_name: pe.exercise&.name,
-      sets:          pe.sets,
-      reps_target:   pe.reps_target,
-      weight_target: pe.weight_target,
       rest_seconds:  pe.rest_seconds,
       position:      pe.position,
-      notes:         pe.notes
+      notes:         pe.notes,
+      sets:          pe.program_exercise_sets.order(:position).map { |s|
+        {
+          id:            s.id,
+          position:      s.position,
+          reps_target:   s.reps_target,
+          weight_target: s.weight_target&.to_f,
+          rpe:           s.rpe,
+          set_types:     s.set_types
+        }
+      }
     }
   end
 end

@@ -27,18 +27,7 @@ class Api::V1::ProgramDaysController < Api::V1::BaseController
   def copy_to
     target = @program.program_days.find(params[:target_day_id])
     target.program_exercises.destroy_all
-
-    @program_day.program_exercises.order(:position).each do |pe|
-      target.program_exercises.create!(
-        exercise_id:  pe.exercise_id,
-        sets:         pe.sets,
-        reps_target:  pe.reps_target,
-        weight_target: pe.weight_target,
-        rest_seconds: pe.rest_seconds,
-        position:     pe.position,
-        notes:        pe.notes
-      )
-    end
+    @program_day.copy_exercises_to!(target)
 
     render json: program_day_json(target.reload)
   end
@@ -64,17 +53,24 @@ class Api::V1::ProgramDaysController < Api::V1::BaseController
       name:             pd.name,
       duration_minutes: pd.duration_minutes,
       notes:            pd.notes,
-      program_exercises: pd.program_exercises.includes(:exercise).order(:position).map { |pe|
+      program_exercises: pd.program_exercises.includes(:exercise, :program_exercise_sets).order(:position).map { |pe|
         {
           id:            pe.id,
           exercise_id:   pe.exercise_id,
           exercise_name: pe.exercise&.name,
-          sets:          pe.sets,
-          reps_target:   pe.reps_target,
-          weight_target: pe.weight_target,
           rest_seconds:  pe.rest_seconds,
           position:      pe.position,
-          notes:         pe.notes
+          notes:         pe.notes,
+          sets:          pe.program_exercise_sets.order(:position).map { |s|
+            {
+              id:            s.id,
+              position:      s.position,
+              reps_target:   s.reps_target,
+              weight_target: s.weight_target&.to_f,
+              rpe:           s.rpe,
+              set_types:     s.set_types
+            }
+          }
         }
       }
     }
