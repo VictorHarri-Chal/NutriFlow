@@ -11,10 +11,16 @@
 <%# Snapshot figé /100g (DayRecipeItem uniquement) : repli pour l'aperçu macros
     en direct quand l'aliment de la ligne a été supprimé de la banque. %>
 <% preview_snapshot = f.object.try(:food_snapshot) %>
-<div class="flex items-start gap-3 py-2 px-1 rounded-lg hover:bg-surface-base/50 transition-colors group"
+<div class="flex flex-wrap items-start gap-x-3 gap-y-1.5 py-2 px-1 rounded-lg hover:bg-surface-base/50 transition-colors group"
      data-nested-form-target="item"
      data-ingredient-rows-target="row"
      data-preview-snapshot="<%= preview_snapshot.present? ? preview_snapshot.slice('calories', 'proteins', 'carbs', 'fats').to_json : '' %>">
+
+  <%# Ingrédient dont l'aliment a été supprimé : pastille sur sa propre ligne
+      (conteneur w-full + flex-wrap) pour ne pas décaler l'input/quantité/unité. %>
+  <% if f.object.try(:detached?) %>
+    <div class="w-full"><%= render(Ui::BadgeComponent.new(t("shared.deleted_badge"), variant: :danger, size: :sm)) %></div>
+  <% end %>
 
   <%# ── Combobox aliment ── %>
   <div class="flex-1 min-w-0 relative"
@@ -24,10 +30,6 @@
        data-food-combobox-no-results-value="<%= t('views.day_foods.form.no_food_found') %>">
 
     <%= f.hidden_field :food_id, data: { "food-combobox-target": "hiddenId", role: "food-id" } %>
-
-    <% if f.object.try(:detached?) %>
-      <div class="mb-1"><%= render(Ui::BadgeComponent.new(t("shared.deleted_badge"), variant: :danger, size: :sm)) %></div>
-    <% end %>
 
     <div class="relative">
       <input type="text"
