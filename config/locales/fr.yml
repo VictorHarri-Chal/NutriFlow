@@ -106,6 +106,7 @@ fr:
         water_goal_ml: "Objectif eau quotidien"
         default_daily_steps: "Pas par jour"
       workout_session/workout_sets:
+        exercise: "Exercice"
         exercise_id: "Exercice"
     errors:
       models:

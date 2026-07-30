@@ -7,8 +7,6 @@ en:
     attributes:
       day_recipe:
         recipe: "Recipe"
-        quantity: "Quantity"
-        use_recipe_quantity: "Use the recipe's quantity"
       day_recipe/day_recipe_items:
         food: "Food"
         food_id: "Food"

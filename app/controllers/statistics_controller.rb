@@ -257,12 +257,15 @@ class StatisticsController < ApplicationController
     all_sets.each do |ws|
       orm = estimated_one_rep_max(ws.weight_kg, ws.reps)
       next if orm.nil?
-      one_rm_by_exercise[ws.exercise_id] = [one_rm_by_exercise[ws.exercise_id] || 0.0, orm].max
+      # Clé [exercise_id, exercise_name] : deux exercices supprimés (exercise_id nil)
+      # ne fusionnent pas, et un exercice supprimé garde son nom figé.
+      key = [ws.exercise_id, ws.exercise_name]
+      one_rm_by_exercise[key] = [one_rm_by_exercise[key] || 0.0, orm].max
     end
 
-    one_rm_by_exercise.sort_by { |_, v| -v }.first(top).filter_map do |eid, orm|
-      name = localized_exercise_name(exercise_names[eid])
-      [name, orm] if name
+    one_rm_by_exercise.sort_by { |_, v| -v }.first(top).filter_map do |(eid, ex_name), orm|
+      name = localized_exercise_name(exercise_names[eid]) || ex_name
+      [name, orm] if name.present?
     end
   end
 
@@ -275,15 +278,16 @@ class StatisticsController < ApplicationController
     mid_date   = @from + (@period / 2).days
     sets_early = all_sets.select { |ws| ws.workout_session.day.date < mid_date }
     sets_late  = all_sets.select { |ws| ws.workout_session.day.date >= mid_date }
-    early_max  = sets_early.group_by(&:exercise_id).transform_values { |ss| ss.map(&:weight_kg).compact.map(&:to_f).max || 0 }
-    late_max   = sets_late.group_by(&:exercise_id).transform_values  { |ss| ss.map(&:weight_kg).compact.map(&:to_f).max || 0 }
+    ex_key     = ->(ws) { [ws.exercise_id, ws.exercise_name] }
+    early_max  = sets_early.group_by(&ex_key).transform_values { |ss| ss.map(&:weight_kg).compact.map(&:to_f).max || 0 }
+    late_max   = sets_late.group_by(&ex_key).transform_values  { |ss| ss.map(&:weight_kg).compact.map(&:to_f).max || 0 }
 
-    (early_max.keys & late_max.keys).filter_map { |eid|
-      early = early_max[eid]; late = late_max[eid]
+    (early_max.keys & late_max.keys).filter_map { |eid, ex_name|
+      early = early_max[[eid, ex_name]]; late = late_max[[eid, ex_name]]
       next if early.zero?
       gain = ((late - early) / early * 100).round(1)
       next if gain <= 0
-      name = localized_exercise_name(exercise_names[eid])
+      name = localized_exercise_name(exercise_names[eid]) || ex_name
       next if name.blank?
       [name, gain, late]
     }.sort_by { |_, g, _| -g }.first(top)

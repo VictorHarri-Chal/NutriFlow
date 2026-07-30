@@ -106,6 +106,7 @@ en:
         water_goal_ml: "Daily water goal"
         default_daily_steps: "Steps per day"
       workout_session/workout_sets:
+        exercise: "Exercise"
         exercise_id: "Exercise"
     errors:
       models:

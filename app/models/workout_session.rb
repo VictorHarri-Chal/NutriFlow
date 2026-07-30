@@ -101,7 +101,10 @@ class WorkoutSession < ApplicationRecord
 
   def max_sets_per_exercise
     active = workout_sets.reject(&:marked_for_destruction?)
-    too_many = active.group_by(&:exercise_id).values.any? { |sets| sets.size > MAX_SETS_PER_EXERCISE }
+    # Clé [exercise_id, exercise_name] : deux exercices supprimés distincts ont
+    # tous deux exercise_id nil et ne doivent pas fusionner (sinon leurs séries
+    # s'additionnent et bloquent l'enregistrement de la séance à tort).
+    too_many = active.group_by { |s| [s.exercise_id, s.exercise_name] }.values.any? { |sets| sets.size > MAX_SETS_PER_EXERCISE }
     errors.add(:base, I18n.t("activerecord.errors.models.workout_session.too_many_sets_per_exercise")) if too_many
   end
 
