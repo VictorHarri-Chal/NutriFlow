@@ -66,6 +66,13 @@ Rails.application.configure do
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
 
+  # Allow ngrok tunnel hostnames through Rails' host authorization so the iOS
+  # app can reach this server via an ngrok URL during local testing. Covers
+  # both the newer *.ngrok-free.dev and older *.ngrok-free.app/*.ngrok.io
+  # domains since the free-tier subdomain changes on every restart.
+  config.hosts << /[a-z0-9-]+\.ngrok-free\.(dev|app)/
+  config.hosts << /[a-z0-9-]+\.ngrok\.io/
+
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
 
