@@ -19,6 +19,10 @@ class WorkoutSet < ApplicationRecord
   def display_exercise_name = exercise_name.presence || exercise&.name
   def display_body_part     = body_part.presence || exercise&.body_part
 
+  # Série détachée : l'exercice a été supprimé (exercise_id nullifié), le nom +
+  # la partie du corps figés subsistent.
+  def detached? = exercise_id.nil? && exercise_name.present?
+
   private
 
   def should_capture_exercise_identity?

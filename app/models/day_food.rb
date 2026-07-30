@@ -18,6 +18,10 @@ class DayFood < ApplicationRecord
     "#{quantity} g"
   end
 
+  # Log détaché : l'aliment a été supprimé de la banque (food_id nullifié), le
+  # snapshot + le nom figé subsistent.
+  def detached? = food_id.nil? && food_name.present?
+
   private
 
   def day_food_group_belongs_to_user

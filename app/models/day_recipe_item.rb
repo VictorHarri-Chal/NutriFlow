@@ -14,6 +14,10 @@ class DayRecipeItem < ApplicationRecord
   validates_shared_owner :food, owner: -> { day_recipe&.day }
   validate :quantity_at_least_one_gram_equivalent
 
+  # Ingrédient détaché : l'aliment a été supprimé de la banque (food_id nullifié),
+  # le snapshot + le nom figé subsistent.
+  def detached? = food_id.nil? && food_name.present?
+
   private
 
   def quantity_at_least_one_gram_equivalent

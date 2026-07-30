@@ -94,6 +94,9 @@
             <div class="flex items-center justify-between gap-2">
               <div class="flex items-center gap-1.5 min-w-0">
                 <span class="text-sm font-semibold text-ink-primary capitalize break-words"><%= group.name %></span>
+                <% if group.exercise_id.blank? %>
+                  <%= render(Ui::BadgeComponent.new(t("shared.deleted_badge"), variant: :danger, size: :sm, class: "shrink-0")) %>
+                <% end %>
                 <i class="fas fa-circle-info text-xs text-ink-subtle/40 hover:text-ink-subtle cursor-default transition-colors shrink-0"
                    title="<%= t('views.workout_sets.set_editor.info_tooltip') %>"></i>
               </div>

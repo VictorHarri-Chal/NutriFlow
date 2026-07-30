@@ -45,6 +45,9 @@
         <div class="flex items-center gap-2 px-3 py-2.5 bg-surface-base border border-surface-border/50 rounded-lg">
           <i class="fas fa-lock text-xs text-ink-subtle shrink-0"></i>
           <span class="text-sm text-ink-primary"><%= day_food.food&.name || day_food.food_name %></span>
+          <% if day_food.detached? %>
+            <%= render(Ui::BadgeComponent.new(t("shared.deleted_badge"), variant: :danger, size: :sm, class: "shrink-0 ml-auto")) %>
+          <% end %>
         </div>
         <%= f.hidden_field :food_id, data: { "day-food-preview-target": "foodId" } %>
       <% end %>

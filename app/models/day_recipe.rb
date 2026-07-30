@@ -37,6 +37,10 @@ class DayRecipe < ApplicationRecord
   def food      = recipe
   def food_name = recipe_name
 
+  # Log détaché : la recette a été supprimée (recipe_id nullifié), les items
+  # figés + le nom figé subsistent.
+  def detached? = recipe_id.nil? && recipe_name.present?
+
   # attr_accessor brut (jamais casté par Rails) : utilisé à la fois par le
   # seeding et par la vue (checked:/disabled: sur la case à cocher).
   def log_use_whole? = ActiveModel::Type::Boolean.new.cast(log_use_whole)

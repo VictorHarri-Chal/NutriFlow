@@ -25,6 +25,10 @@
 
     <%= f.hidden_field :food_id, data: { "food-combobox-target": "hiddenId", role: "food-id" } %>
 
+    <% if f.object.try(:detached?) %>
+      <div class="mb-1"><%= render(Ui::BadgeComponent.new(t("shared.deleted_badge"), variant: :danger, size: :sm)) %></div>
+    <% end %>
+
     <div class="relative">
       <input type="text"
              class="input-dark pl-8 text-sm <%= 'border-status-danger focus:ring-status-danger/50 focus:border-status-danger' if f.object.errors[:food_id].any? %>"

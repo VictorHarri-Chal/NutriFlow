@@ -12,6 +12,9 @@
         <h3 class="text-sm font-semibold text-ink-primary break-words" data-day-recipe-customize-target="title">
           <%= day_recipe.recipe&.name || day_recipe.recipe_name %>
         </h3>
+        <% if day_recipe.detached? %>
+          <div class="mt-1"><%= render(Ui::BadgeComponent.new(t("shared.deleted_badge"), variant: :danger, size: :sm)) %></div>
+        <% end %>
         <p class="text-[11px] text-ink-subtle mt-0.5">
           <%= t("views.day_recipes.form.customize_caption", date: l(day.date, format: :long)) %>
         </p>

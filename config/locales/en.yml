@@ -132,6 +132,7 @@ en:
     save: "Save"
     update: "Update"
     delete: "Delete"
+    deleted_badge: "Deleted item"
     edit: "Edit"
     add: "Add"
     delete_confirm: "Are you sure you want to delete this item?"

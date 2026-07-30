@@ -132,6 +132,7 @@ fr:
     save: "Enregistrer"
     update: "Mettre à jour"
     delete: "Supprimer"
+    deleted_badge: "Élément supprimé"
     edit: "Modifier"
     add: "Ajouter"
     delete_confirm: "Es-tu sûr de vouloir supprimer cet élément ?"
