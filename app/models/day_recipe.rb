@@ -33,6 +33,9 @@ class DayRecipe < ApplicationRecord
   validate :day_food_group_belongs_to_user, if: -> { day_food_group_id.present? && day.present? }
   validate :must_have_at_least_one_ingredient
 
+  after_save    :recompute_day_totals
+  after_destroy :recompute_day_totals
+
   # ── Interface duck-typée avec DayFood ────────────────────────────────────────
   def food      = recipe
   def food_name = recipe_name
@@ -105,6 +108,13 @@ class DayRecipe < ApplicationRecord
     unless day.user.day_food_groups.exists?(day_food_group_id)
       errors.add(:day_food_group, :invalid)
     end
+  end
+
+  # Keep the day's denormalized totals in sync. Covers day_recipe_item edits too,
+  # which are always persisted through this record's nested-attributes save.
+  # Defensive guard against updating an already-destroyed day.
+  def recompute_day_totals
+    day.recompute_totals! unless day.destroyed?
   end
 
   def must_have_at_least_one_ingredient

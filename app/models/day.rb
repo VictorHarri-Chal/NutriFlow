@@ -39,24 +39,25 @@ class Day < ApplicationRecord
     strength_kcal + cardio_kcal
   end
 
-  def total_calories
-    preloaded_day_foods.sum(&:total_calories) + preloaded_day_recipes.sum(&:total_calories)
-  end
+  # Denormalized daily totals, kept in sync by #recompute_totals! on any
+  # day_food/day_recipe change. Logs are snapshot-based (HasFoodSnapshot), so a
+  # later edit/deletion of the source Food/Recipe never changes these — no
+  # cascade from Food/Recipe is needed. Float for display parity with the sum.
+  def total_calories = self[:cached_calories].to_f
+  def total_proteins = self[:cached_proteins].to_f
+  def total_carbs    = self[:cached_carbs].to_f
+  def total_fats     = self[:cached_fats].to_f
+  def total_sugars   = self[:cached_sugars].to_f
 
-  def total_proteins
-    preloaded_day_foods.sum(&:total_proteins) + preloaded_day_recipes.sum(&:total_proteins)
-  end
-
-  def total_carbs
-    preloaded_day_foods.sum(&:total_carbs) + preloaded_day_recipes.sum(&:total_carbs)
-  end
-
-  def total_fats
-    preloaded_day_foods.sum(&:total_fats) + preloaded_day_recipes.sum(&:total_fats)
-  end
-
-  def total_sugars
-    preloaded_day_foods.sum(&:total_sugars) + preloaded_day_recipes.sum(&:total_sugars)
+  # Recompute + persist the cached totals. update_columns fires no callbacks (no
+  # recursion) and bumps updated_at so the statistics conditional-GET ETag stays
+  # reliable (any change to the day's logged foods/recipes moves its timestamp).
+  def recompute_totals!
+    t = compute_live_totals
+    update_columns(
+      cached_calories: t[:calories], cached_proteins: t[:proteins], cached_carbs: t[:carbs],
+      cached_fats: t[:fats], cached_sugars: t[:sugars], updated_at: Time.current
+    )
   end
 
   def aggregated_micronutrients
@@ -98,6 +99,23 @@ class Day < ApplicationRecord
   end
 
   private
+
+  # Live aggregation the cached_* columns mirror. day_food/day_recipe totals are
+  # read from their frozen snapshots (day_recipe totals sum their own items).
+  # Queried fresh by day_id (not via the association) so it reflects the committed
+  # rows even when triggered mid-create — collection#create! fires after_save
+  # BEFORE appending the new record to a loaded association target.
+  def compute_live_totals
+    entries = DayFood.where(day_id: id).to_a +
+              DayRecipe.where(day_id: id).includes(:day_recipe_items).to_a
+    {
+      calories: entries.sum { |e| e.total_calories.to_f }.round(2),
+      proteins: entries.sum { |e| e.total_proteins.to_f }.round(2),
+      carbs:    entries.sum { |e| e.total_carbs.to_f }.round(2),
+      fats:     entries.sum { |e| e.total_fats.to_f }.round(2),
+      sugars:   entries.sum { |e| e.total_sugars.to_f }.round(2)
+    }
+  end
 
   def preloaded_day_foods
     @preloaded_day_foods ||= day_foods.to_a

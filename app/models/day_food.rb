@@ -10,6 +10,9 @@ class DayFood < ApplicationRecord
   validate :day_food_group_belongs_to_user, if: -> { day_food_group_id.present? && day.present? }
   validates_shared_owner :food, owner: :day
 
+  after_save    :recompute_day_totals
+  after_destroy :recompute_day_totals
+
   # day_foods n'a pas de colonne `unit` (toujours en grammes) — le concern en a
   # besoin pour grams_equivalent.
   def unit = "g"
@@ -28,5 +31,11 @@ class DayFood < ApplicationRecord
     unless day.user.day_food_groups.exists?(day_food_group_id)
       errors.add(:day_food_group, :invalid)
     end
+  end
+
+  # Keep the day's denormalized totals in sync. Defensive guard against updating
+  # an already-destroyed day (update_columns would raise on a destroyed record).
+  def recompute_day_totals
+    day.recompute_totals! unless day.destroyed?
   end
 end
