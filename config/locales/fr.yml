@@ -27,7 +27,7 @@ fr:
       preferences_updated_fasting_stopped: "Préférences mises à jour. Votre jeûne en cours a été arrêté."
       preferences_error: "Erreur lors de la mise à jour des préférences."
       other_sessions_signed_out: "Les autres appareils ont été déconnectés."
-      data_reset: "Toutes vos données ont été supprimées. Vous pouvez recommencer l'onboarding."
+      data_reset_started: "La réinitialisation de vos données est en cours. Elle sera terminée dans un instant."
     exports:
       no_category_selected: "Sélectionnez au moins une catégorie à exporter."
       invalid_period: "La période personnalisée n'est pas valide (vérifiez les deux dates)."

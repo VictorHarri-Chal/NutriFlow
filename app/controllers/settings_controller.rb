@@ -55,8 +55,8 @@ class SettingsController < ApplicationController
   end
 
   def reset_data
-    current_user.reset_all_data!
-    redirect_to root_path, notice: t("controllers.settings.data_reset")
+    ResetUserDataJob.perform_later(current_user)
+    redirect_to root_path, notice: t("controllers.settings.data_reset_started")
   end
 
   private
