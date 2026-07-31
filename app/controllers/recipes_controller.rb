@@ -11,9 +11,11 @@ class RecipesController < ApplicationController
       @recipes = @recipes.search_by_name(params[:query])
       @pagy, @recipes = pagy(@recipes, items: 12)
     elsif %w[calories proteins carbs fats].include?(params[:sort])
-      sorted = @recipes.to_a.sort_by { |r| r.public_send(:"total_#{params[:sort]}") }
-      sorted.reverse! unless params[:direction] == "asc"
-      @pagy, @recipes = pagy_array(sorted, items: 12)
+      # Totals are denormalized columns now → sort + paginate in SQL instead of
+      # loading every recipe into memory to sort in Ruby.
+      direction = params[:direction] == "asc" ? :asc : :desc
+      @recipes  = @recipes.order("total_#{params[:sort]}" => direction)
+      @pagy, @recipes = pagy(@recipes, items: 12)
     else
       @recipes = @recipes.order(sort_order)
       @pagy, @recipes = pagy(@recipes, items: 12)
