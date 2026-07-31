@@ -10,7 +10,7 @@ class DayRecipesController < ApplicationController
     @day_recipe         = @day.day_recipes.build(day_food_group_id: group_id, log_use_whole: true)
     @day_food_groups    = current_user.day_food_groups.order(:name)
     @recipes            = current_user.recipes.includes(recipe_items: :food).order(:name)
-    @foods              = current_user.foods.order(:name)
+    @foods              = current_user.foods.select(:id, :name, :calories, :proteins, :carbs, :fats, :sugars, :favorite).order(:name)
     @recent_recipe_ids  = DayRecipe.joins(:day)
                             .where(days: { user_id: current_user.id })
                             .where("day_recipes.created_at > ?", 14.days.ago)
@@ -32,7 +32,7 @@ class DayRecipesController < ApplicationController
     else
       @day_food_groups = current_user.day_food_groups.order(:name)
       @recipes         = current_user.recipes.includes(recipe_items: :food).order(:name)
-      @foods           = current_user.foods.order(:name)
+      @foods           = current_user.foods.select(:id, :name, :calories, :proteins, :carbs, :fats, :sugars, :favorite).order(:name)
       respond_to do |format|
         format.turbo_stream { render turbo_stream: turbo_stream.replace("food_item_form", partial: "day_recipes/form_frame", locals: { day: @day, day_recipe: @day_recipe, title: t("views.day_recipes.new.title"), submit_text: t("shared.add") }) }
         format.html         { render :new, status: :unprocessable_entity }
@@ -43,7 +43,7 @@ class DayRecipesController < ApplicationController
   def edit
     @day_food_groups = current_user.day_food_groups.order(:name)
     @recipes         = current_user.recipes.includes(recipe_items: :food).order(:name)
-    @foods           = current_user.foods.order(:name)
+    @foods           = current_user.foods.select(:id, :name, :calories, :proteins, :carbs, :fats, :sugars, :favorite).order(:name)
   end
 
   def update
@@ -58,7 +58,7 @@ class DayRecipesController < ApplicationController
     else
       @day_food_groups = current_user.day_food_groups.order(:name)
       @recipes         = current_user.recipes.includes(recipe_items: :food).order(:name)
-      @foods           = current_user.foods.order(:name)
+      @foods           = current_user.foods.select(:id, :name, :calories, :proteins, :carbs, :fats, :sugars, :favorite).order(:name)
       respond_to do |format|
         format.turbo_stream { render turbo_stream: turbo_stream.replace("food_item_form", partial: "day_recipes/form_frame", locals: { day: @day, day_recipe: @day_recipe, title: t("views.day_recipes.edit.title"), submit_text: t("shared.update") }) }
         format.html         { render :edit, status: :unprocessable_entity }

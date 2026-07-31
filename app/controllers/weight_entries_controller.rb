@@ -52,13 +52,15 @@ class WeightEntriesController < ApplicationController
   # ── Onglet Poids ─────────────────────────────────────────────────────────
 
   def load_weight_tab
-    @entries     = current_user.weight_entries.ordered
+    # Materialized once: the entries (one per date) are read ~6 times below for
+    # chart/stats/history — all in-memory Ruby now, not repeated SQL.
+    @entries     = current_user.weight_entries.ordered.to_a
     @profile     = current_user.profile
     # ||= preserves the invalid entry set by create's failure path so validation errors survive the re-render
     @today_entry ||= current_user.weight_entries.find_or_initialize_by(date: Date.today)
     @period      = VALID_PERIODS.include?(params[:period]&.to_i) ? params[:period].to_i : 30
 
-    @entries_pagy, @history_entries = pagy(@entries.reverse_order, items: 5)
+    @entries_pagy, @history_entries = pagy_array(@entries.reverse, items: 5)
 
     build_chart_data
     build_stats
@@ -66,7 +68,7 @@ class WeightEntriesController < ApplicationController
 
   def build_chart_data
     since          = @period.days.ago.to_date
-    period_entries = @entries.where("date >= ?", since)
+    period_entries = @entries.select { |e| e.date >= since }
 
     @chart_labels = period_entries.map { |e| l(e.date, format: :short) }
     @chart_data   = period_entries.map { |e| e.weight_kg.to_f }
@@ -90,8 +92,8 @@ class WeightEntriesController < ApplicationController
     @current_weight = @entries.last&.weight_kg
     return unless @current_weight
 
-    ref_30d = @entries.where("date <= ?", 30.days.ago.to_date).last
-    ref_90d = @entries.where("date <= ?", 90.days.ago.to_date).last
+    ref_30d = @entries.select { |e| e.date <= 30.days.ago.to_date }.last
+    ref_90d = @entries.select { |e| e.date <= 90.days.ago.to_date }.last
 
     @delta_30d = ref_30d ? (@current_weight - ref_30d.weight_kg).round(1) : nil
     @delta_90d = ref_90d ? (@current_weight - ref_90d.weight_kg).round(1) : nil

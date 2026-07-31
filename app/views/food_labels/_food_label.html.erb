@@ -7,7 +7,7 @@
       </div>
       <div>
         <div class="text-sm font-medium <%= style[:text] %>"><%= food_label.name %></div>
-        <% food_count = food_label.foods.size %>
+        <% food_count = (@food_label_food_counts && @food_label_food_counts[food_label.id]) || food_label.foods.count %>
         <div class="text-xs text-ink-subtle mt-0.5">
           <%= food_count > 0 ? t("shared.food_count", count: food_count) : t("views.settings.food_groups.no_food") %>
         </div>

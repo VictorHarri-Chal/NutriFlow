@@ -14,8 +14,11 @@ module SettingsDataLoadable
     current_user.food_labels.reset
     @day_food_groups = current_user.day_food_groups
     @day_food_group ||= DayFoodGroup.new
-    @food_labels = current_user.food_labels.includes(:foods)
+    @food_labels = current_user.food_labels
     @food_label ||= FoodLabel.new
+    # Per-label food counts in one grouped query instead of hydrating every
+    # tagged Food into memory just to call .size on the association.
+    @food_label_food_counts = current_user.food_labels.joins(:foods).group("food_labels.id").count
     @preference_data_presence = PreferenceDataPresenceLoader.new(current_user).call
     @export_categories = Exports::CategoryRegistry.visible_for(current_user)
   end

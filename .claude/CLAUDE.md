@@ -489,4 +489,11 @@ Conventional commits (`feat:`, `fix:`, `refactor:`). Branch prefixes: `feature/`
 
 ## Testing
 
-No test suite yet. When introduced: **Minitest** (Rails default). System tests are disabled in generators.
+Test suite: **Minitest** (Rails default), under `test/`. Run with `bin/rails test` (one file: `bin/rails test test/models/recipe_test.rb`; one case: append `:LINE`).
+
+**Tests are now expected** (the earlier "no test suite" era is over — the app is being stabilized). Write tests for new behavior, bug fixes, and **especially any change to a calculation path**: macros/calories scaling, BMR/TDEE, MET-based and ACSM calorie burn, and any denormalized/cached total. When a value is denormalized, add a **characterization test** proving the stored value equals the previous live computation.
+
+- Test **behavior, not implementation**; minimal mocking.
+- Build records inline via the `test_helper` factory helpers (`create_user`, `create_food`, …) + Faker (dev/test) rather than maintaining large fixtures. Scope every query in a test to its user, mirroring production.
+- System/browser tests are disabled in generators — stick to model, controller, and integration tests.
+- Before shipping a phase/feature: `bin/rails test` green **and** the Post-Feature review.

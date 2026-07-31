@@ -6,8 +6,8 @@ class Exercise < ApplicationRecord
 
   belongs_to :custom_user, class_name: "User", foreign_key: :custom_user_id, optional: true
   has_one_attached :image do |attachable|
-    attachable.variant :thumbnail, resize_to_fill: [400, 400]
-    attachable.variant :medium,    resize_to_limit: [800, 800]
+    attachable.variant :thumbnail, resize_to_fill: [400, 400], preprocessed: true
+    attachable.variant :medium,    resize_to_limit: [800, 800], preprocessed: true
   end
   has_many :exercise_favorites, dependent: :destroy
   # Les WorkoutSet sont des logs figés (exercise_name/body_part) : supprimer un
@@ -16,6 +16,8 @@ class Exercise < ApplicationRecord
   # Les ProgramExercise sont des lignes de template (pas des logs) : on les retire
   # du programme quand l'exercice est supprimé.
   has_many :program_exercises, dependent: :destroy
+
+  after_commit :bust_metadata_cache, if: -> { custom_user_id.nil? }
 
   enumerize :tension_profile, in: TENSION_PROFILES
 
@@ -41,15 +43,31 @@ class Exercise < ApplicationRecord
   scope :with_gif, -> { where(gif_status: "ok") }
   scope :visible, -> { where(gif_status: [nil, "ok"]) }
 
+  # Global exercise metadata is admin-managed and identical for every user, so
+  # the distinct-scan behind the index filter dropdowns is cached rather than
+  # re-run on each request.
   def self.body_parts
-    global.distinct.order(:body_part).pluck(:body_part).compact
+    Rails.cache.fetch("exercise/body_parts", expires_in: 1.day) do
+      global.distinct.order(:body_part).pluck(:body_part).compact
+    end
   end
 
   def self.equipments
-    global.distinct.order(:equipment).pluck(:equipment).compact
+    Rails.cache.fetch("exercise/equipments", expires_in: 1.day) do
+      global.distinct.order(:equipment).pluck(:equipment).compact
+    end
   end
 
   def custom?
     custom_user_id.present?
+  end
+
+  private
+
+  # body_parts/equipments only reflect global exercises, so bust their cache
+  # only when a global record changes (a user's custom exercise never affects
+  # those lists). Keeps the 1-day cache correct without churn on user writes.
+  def bust_metadata_cache
+    Rails.cache.delete_multi(["exercise/body_parts", "exercise/equipments"])
   end
 end

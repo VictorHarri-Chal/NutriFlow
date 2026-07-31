@@ -186,7 +186,7 @@
           %>
             <div class="flex items-center gap-3">
               <% if thumbnail_url.present? %>
-                <%= image_tag thumbnail_url,
+                <%= image_tag thumbnail_url, loading: "lazy",
                       class: "w-10 h-10 rounded-lg object-cover border border-surface-border/40 group-hover:border-brand/50 transition-colors" %>
               <% end %>
               <p class="text-sm text-ink-muted"><%= l(entry.date, format: :long) %></p>
