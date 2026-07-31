@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class RecipeCardComponent < ApplicationComponent
+  with_collection_parameter :recipe
+
   def initialize(recipe:, current_user:)
     @recipe = recipe
     @current_user = current_user
