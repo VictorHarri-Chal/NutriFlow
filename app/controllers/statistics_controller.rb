@@ -26,6 +26,17 @@ class StatisticsController < ApplicationController
 
     @from = @period.days.ago.to_date
 
+    # Conditional GET: skip the heavy per-tab aggregation (304) when the tab's
+    # underlying data hasn't changed since the client's last view. The nutrition
+    # stamp is reliable because every logged food/recipe change bumps the day's
+    # updated_at (denormalization recompute, phase 2b); snapshot logs mean a later
+    # Food/Recipe edit legitimately does NOT invalidate past days.
+    # The data stamp is folded INTO the etag (not only Last-Modified) so the etag
+    # itself changes on any data change — a 304 is then correct even for a client
+    # that sends only If-None-Match.
+    return unless stale?(etag: [current_user.id, @tab, @period, statistics_stamp],
+                         public: false)
+
     case @tab
     when "nutrition"    then load_nutrition_stats
     when "training"     then load_training_stats
@@ -37,6 +48,32 @@ class StatisticsController < ApplicationController
   end
 
   private
+
+  # Cache stamp for the current tab: [MAX(updated_at), COUNT] over every table the
+  # tab reads (children included). MAX catches edits; COUNT catches additions AND
+  # deletions (a plain MAX is blind to deleting a non-latest row). Children are
+  # stamped directly because they don't touch: their parent, so a set/block edit
+  # wouldn't move the session's timestamp.
+  def statistics_stamp
+    scoped_days = current_user.days.where(date: @from..Date.today)
+
+    case @tab
+    when "nutrition", "bien_etre", "hydratation"
+      # days.updated_at is bumped by the nutrition recompute and by note/steps/water edits.
+      [scoped_days.maximum(:updated_at), scoped_days.count]
+    when "training"
+      sessions = WorkoutSession.where(day_id: scoped_days.select(:id))
+      sets     = WorkoutSet.where(workout_session_id: sessions.select(:id))
+      [sessions.maximum(:updated_at), sessions.count, sets.maximum(:updated_at), sets.count]
+    when "cardio"
+      sessions = CardioSession.where(day_id: scoped_days.select(:id))
+      blocks   = CardioBlock.where(cardio_session_id: sessions.select(:id))
+      [sessions.maximum(:updated_at), sessions.count, blocks.maximum(:updated_at), blocks.count]
+    when "jeune"
+      fasting = current_user.fasting_sessions
+      [fasting.maximum(:updated_at), fasting.count]
+    end
+  end
 
   # ── Nutrition ───────────────────────────────────────────────────────────────
 
@@ -538,19 +575,14 @@ class StatisticsController < ApplicationController
 
   # ── Helpers ──────────────────────────────────────────────────────────────────
 
-  # Memoized per day: called up to three times per logged day (averages + the
-  # calories and protein charts), and each call sums the day's items eight times.
+  # Reads the day's denormalized totals (phase 2b) — no per-item summing.
   def day_macros(day)
-    (@day_macros_cache ||= {})[day.id] ||= begin
-      foods   = day.day_foods
-      recipes = day.day_recipes
-      {
-        calories: (foods.sum { |f| f.total_calories.to_f } + recipes.sum { |r| r.total_calories.to_f }).round,
-        proteins: (foods.sum { |f| f.total_proteins.to_f } + recipes.sum { |r| r.total_proteins.to_f }).round(1),
-        carbs:    (foods.sum { |f| f.total_carbs.to_f }    + recipes.sum { |r| r.total_carbs.to_f }).round(1),
-        fats:     (foods.sum { |f| f.total_fats.to_f }     + recipes.sum { |r| r.total_fats.to_f }).round(1)
-      }
-    end
+    {
+      calories: day.total_calories.round,
+      proteins: day.total_proteins.round(1),
+      carbs:    day.total_carbs.round(1),
+      fats:     day.total_fats.round(1)
+    }
   end
 
   def calc_current_streak(sorted_dates)

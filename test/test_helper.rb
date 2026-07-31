@@ -54,6 +54,26 @@ module ActiveSupport
     def create_weight_entry(user:, date: Date.today, weight_kg: 75.0)
       user.weight_entries.create!(date: date, weight_kg: weight_kg)
     end
+
+    def create_day(user:, date: Date.today)
+      user.days.create!(date: date)
+    end
+
+    def create_day_food(day:, food:, quantity: 100)
+      day.day_foods.create!(food: food, quantity: quantity)
+    end
+
+    # Seeds day_recipe_items from the recipe (snapshot logs); log_use_whole logs
+    # the whole recipe, otherwise pass log_quantity (grams) to scale it.
+    def create_day_recipe(day:, recipe:, log_use_whole: true, log_quantity: nil)
+      day.day_recipes.create!(recipe: recipe, log_use_whole: log_use_whole, log_quantity: log_quantity)
+    end
+
+    def create_workout_session(day:, exercise:, reps: 10, weight_kg: 50)
+      day.workout_sessions.create!(
+        workout_sets_attributes: [{ exercise_id: exercise.id, position: 1, reps: reps, weight_kg: weight_kg }]
+      )
+    end
   end
 end
 

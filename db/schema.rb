@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_29_130030) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_30_131239) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -173,6 +173,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_29_130030) do
     t.integer "sleep_quality"
     t.integer "water_ml", default: 0, null: false
     t.integer "steps"
+    t.decimal "cached_calories", precision: 14, scale: 2, default: "0.0", null: false
+    t.decimal "cached_proteins", precision: 14, scale: 2, default: "0.0", null: false
+    t.decimal "cached_carbs", precision: 14, scale: 2, default: "0.0", null: false
+    t.decimal "cached_fats", precision: 14, scale: 2, default: "0.0", null: false
+    t.decimal "cached_sugars", precision: 14, scale: 2, default: "0.0", null: false
     t.index ["user_id", "date"], name: "index_days_on_user_id_and_date", unique: true
   end
 
